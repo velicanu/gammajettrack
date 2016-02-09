@@ -11,17 +11,10 @@ void ztree::Loop(std::string outfname , std::string tag)
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(outfname.data(),"recreate");
-  TH1D * hdphi = new TH1D("hdphi",";#Delta#phi",100,0,TMath::Pi());
-  TH1D * hdr = new TH1D("hdr",";#DeltaR",100,0,1);
-  TH1D * hdeta = new TH1D("hdeta",";#Delta#eta",100,-2.5,2.5);
-  TH1D * hdpt = new TH1D("hdpt",";#Deltap_{T}",100,-2.5,2.5);
-  TH1D * hzpt = new TH1D(Form("hzpt_%s",tag.data()),";Z p_{T}",25,0,100);
-  TH1D * hzmass = new TH1D(Form("hzmass_%s",tag.data()),";Z p_{T}",60,60,120);
-  TH2D * hdptdr = new TH2D("hdptdr",";#Deltap_{T};#DeltaR",100,-2.5,2.5,100,0,1);
-
-  int jetptbins[] = {30,40,60,1000};
-  const int njetbins = 3;
-  
+  int jetptbins[] = {30,40,60,100,1000};
+  const int njetbins = 4;
+  TH1D * hfragFunctIn[njetbins];
+  TH1D * hfragFunctOut[njetbins];
   TH1D * hnTrkincone[njetbins];
   TH1D * hnTrkoutcone[njetbins];
   TH1D * htrkPtincone[njetbins];
@@ -32,6 +25,8 @@ void ztree::Loop(std::string outfname , std::string tag)
   TH1D * hjetphi[njetbins];
   for(int k = 0 ; k < njetbins ; ++k)
   {
+    hfragFunctIn[k] = new TH1D(Form("hfragFunctIn_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";trkPt/jetPt #DeltaR<0.4;",100,0,2);
+    hfragFunctOut[k] = new TH1D(Form("hfragFunctOut_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";trkPt/jetPt reflected;",100,0,2);
     hnTrkincone[k] = new TH1D(Form("hnTrkincone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
     hnTrkoutcone[k] = new TH1D(Form("hnTrkoutcone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
     htrkPtincone[k] = new TH1D(Form("htrkPtincone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";p_{T} #DeltaR<0.4;",100,0,50);
@@ -41,27 +36,7 @@ void ztree::Loop(std::string outfname , std::string tag)
     hjeteta[k] = new TH1D(Form("hjeteta_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),"",100,-2.5,2.5);
     hjetphi[k] = new TH1D(Form("hjetphi_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),"",100,-TMath::Pi(),TMath::Pi());
   }
-  std::vector< std::vector< int > > jetindecies ( njetbins, std::vector<int> ( 0, 0 ) );
-  // std::cout<<jetindecies.size()<<" "<<jetindecies[2].size()<<std::endl;
-  // jetindecies[2].clear();
-  // std::cout<<jetindecies.size()<<" "<<jetindecies[2].size()<<std::endl;
-  // return;
-  // TH1D * htrkPtincone = new TH1D(Form("htrkPtincone_%s",tag.data()),";p_{T} #DeltaR<0.4;",100,0,50);
-  
-  
-  float jetradius = 0.3;
-  for(int k = 0 ; k < njetbins ; ++k)
-  {
-    hnjets[k]->Sumw2();
-    hjeteta[k]->Sumw2();
-    hjetphi[k]->Sumw2();
-    
-    hnTrkincone[k]->Sumw2();
-    hnTrkoutcone[k]->Sumw2();
-    htrkPtincone[k]->Sumw2();
-    htrkPtoutcone[k]->Sumw2();
-  }
-  
+  float jetradius = 0.4;
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = LoadTree(jentry);
@@ -69,83 +44,48 @@ void ztree::Loop(std::string outfname , std::string tag)
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     // if (Cut(ientry) < 0) continue;
     if(weight==0)                   weight=1;
-    if(Zpt < 40) continue;
-    hzpt->Fill(Zpt,weight);
-    hzmass->Fill(Zmass,weight);
+    if(ientry % 9999 == 0 ) cout<<ientry<<"/"<<nentries<<endl;
+    
+    
     for(int k = 0 ; k < njetbins ; ++k)
     {
-      for(int j = 0 ; j < njet ; ++j)
+      int njetinptbin = 0;
+      for(int jidx = 0 ; jidx < njet ; ++jidx)
       {
-        if(jeteta[j]<jetradius) continue;
+        if(jeteta[jidx]<jetradius) continue;
         if(jetID==0) continue;
-        if(jetpt[j] < jetptbins[k] || jetpt[j] > jetptbins[k+1]) continue;
-        jetindecies[k].push_back(j);
-        
-        hnjets[k]->Fill(1,weight);
-        hjetpt[k]->Fill(jetpt[j],weight);
-        hjeteta[k]->Fill(jeteta[j],weight);
-        hjetphi[k]->Fill(jetphi[j],weight);
-      }
-    }
-    
-    
-    for(int k = 0 ; k < njetbins ; ++k)
-    {
-      for(unsigned int j = 0 ; j < jetindecies[k].size() ; ++j)
-      {
-        int jidx = jetindecies[k][j];
-        int ntrkincone = 0 ;
-        int ntrkoutcone = 0 ;
-        for(int i = 0 ; i < nTrk ; ++i)
+        if(jetpt[jidx] < jetptbins[k] || jetpt[jidx] > jetptbins[k+1]) continue;
+        njetinptbin++;
+        hjetpt[k]->Fill(jetpt[jidx]);
+        hjeteta[k]->Fill(jeteta[jidx]);
+        hjetphi[k]->Fill(jetphi[jidx]);
+        int ntrkincone = 0 , ntrkoutcone = 0;
+        float totalptincone = 0.0 , totalptoutcone = 0.0;
+        for(int trkidx = 0 ; trkidx < nTrk ; ++trkidx)
         {
-          hdphi->Fill(getDphi(Zlepton1Phi,trkPhi[i]));
-          hdphi->Fill(getDphi(Zlepton2Phi,trkPhi[i]));
-          hdeta->Fill(Zlepton1Eta - trkEta[i]);
-          hdeta->Fill(Zlepton2Eta - trkEta[i]);
-          hdpt->Fill((Zlepton1Pt - trkPt[i])/Zlepton1Pt);
-          hdpt->Fill((Zlepton2Pt - trkPt[i])/Zlepton2Pt);
-          float dR1 = sqrt( (Zlepton1Eta-trkEta[i])*(Zlepton1Eta-trkEta[i]) + getDphi(Zlepton1Phi,trkPhi[i])*getDphi(Zlepton1Phi,trkPhi[i]) );
-          float dR2 = sqrt( (Zlepton2Eta-trkEta[i])*(Zlepton2Eta-trkEta[i]) + getDphi(Zlepton2Phi,trkPhi[i])*getDphi(Zlepton2Phi,trkPhi[i]) );
-          float dpt1 = (Zlepton1Pt - trkPt[i])/Zlepton1Pt;
-          float dpt2 = (Zlepton2Pt - trkPt[i])/Zlepton2Pt;
-          
-          hdr->Fill(dR1);
-          hdr->Fill(dR2);
-          hdptdr->Fill(dpt1,dR1);
-          hdptdr->Fill(dpt2,dR2);
-          
-          if( ( dpt1 < 0.2 && dR1 < 0.1 ) || ( dpt2 < 0.2 && dR2 < 0.1 ) ) continue; // skip Z tracks
-          
-          // Trk pt distribution in and out of cone
-        
-          float dRjet = sqrt( (jeteta[jidx]-trkEta[i])*(jeteta[jidx]-trkEta[i]) + getDphi(jetphi[jidx],trkPhi[i])*getDphi(jetphi[jidx],trkPhi[i]) );
-          float dRcone = sqrt( (-jeteta[jidx]-trkEta[i])*(-jeteta[jidx]-trkEta[i]) + getDphi(jetphi[jidx],trkPhi[i])*getDphi(jetphi[jidx],trkPhi[i]) );
-          if(dRjet < jetradius)   
+          float dRjet = sqrt( (jeteta[jidx]-trkEta[trkidx])*(jeteta[jidx]-trkEta[trkidx]) + getDphi(jetphi[jidx],trkPhi[trkidx])*getDphi(jetphi[jidx],trkPhi[trkidx]) );
+          float dRcone = sqrt( (-jeteta[jidx]-trkEta[trkidx])*(-jeteta[jidx]-trkEta[trkidx]) + getDphi(jetphi[jidx],trkPhi[trkidx])*getDphi(jetphi[jidx],trkPhi[trkidx]) );
+          if(dRjet<jetradius)
           {
+            hfragFunctIn[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
             ntrkincone++;
-            htrkPtincone[k]->Fill(trkPt[i],weight);
+            totalptincone+=trkPt[trkidx];
           }
-          if(dRcone < jetradius)
+          if(dRcone<jetradius)
           {
+            hfragFunctOut[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
             ntrkoutcone++;
-            htrkPtoutcone[k]->Fill(trkPt[i],weight);
+            totalptoutcone+=trkPt[trkidx];
           }
         }
-        hnTrkincone[k]->Fill(ntrkincone,weight);
-        hnTrkoutcone[k]->Fill(ntrkoutcone,weight);
-        jetindecies[k].clear(); //clean up vector for next iteration
+        hnTrkincone[k]->Fill(ntrkincone);
+        hnTrkoutcone[k]->Fill(ntrkoutcone);
+        htrkPtincone[k]->Fill(totalptincone);
+        htrkPtoutcone[k]->Fill(totalptoutcone);
       }
+      hnjets[k]->Fill(njetinptbin);
     }
   }
-  
-  // for(int k = 0 ; k < njetbins ; ++k)
-  // {
-    // hjetpt[k]->Scale(1.0/hnjets[k]->Integral());
-    // hjeteta[k]->Scale(1.0/hnjets[k]->Integral());
-    // hjetphi[k]->Scale(1.0/hnjets[k]->Integral());
-    // htrkPtincone[k]->Scale(1.0/hnjets[k]->Integral());
-    // htrkPtoutcone[k]->Scale(1.0/hnjets[k]->Integral());
-  // }
   
   fout->Write();
   fout->Close();
