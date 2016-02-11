@@ -6,7 +6,7 @@
 #include <TCanvas.h>
 #include "ggTree.h"
 
-void ztree::Loop(std::string outfname , std::string tag)
+void ztree::Loop(std::string outfname , std::string tag, int pfTypeSelection)
 {
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
@@ -15,6 +15,7 @@ void ztree::Loop(std::string outfname , std::string tag)
   const int njetbins = 4;
   TH1D * hfragFunctIn[njetbins];
   TH1D * hfragFunctOut[njetbins];
+  TH1D * hpfTypeIn[njetbins];
   TH1D * hnTrkincone[njetbins];
   TH1D * hnTrkoutcone[njetbins];
   TH1D * htrkPtincone[njetbins];
@@ -23,14 +24,19 @@ void ztree::Loop(std::string outfname , std::string tag)
   TH1D * hjetpt[njetbins];
   TH1D * hjeteta[njetbins];
   TH1D * hjetphi[njetbins];
+  int pfCode = pfTypeSelection;
+  if(pfCode == -1) pfCode = 991;
+  if(pfCode == -99) pfCode = 990;
+  
   for(int k = 0 ; k < njetbins ; ++k)
   {
-    hfragFunctIn[k] = new TH1D(Form("hfragFunctIn_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";trkPt/jetPt #DeltaR<0.4;",100,0,2);
-    hfragFunctOut[k] = new TH1D(Form("hfragFunctOut_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";trkPt/jetPt reflected;",100,0,2);
-    hnTrkincone[k] = new TH1D(Form("hnTrkincone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
-    hnTrkoutcone[k] = new TH1D(Form("hnTrkoutcone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
-    htrkPtincone[k] = new TH1D(Form("htrkPtincone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";p_{T} #DeltaR<0.4;",100,0,50);
-    htrkPtoutcone[k] = new TH1D(Form("htrkPtoutcone_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";p_{T} #DeltaR>0.4;",100,0,50);
+    hfragFunctIn[k] = new TH1D(Form("hfragFunctIn_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";trkPt/jetPt #DeltaR<0.4;",100,0,2);
+    hfragFunctOut[k] = new TH1D(Form("hfragFunctOut_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";trkPt/jetPt reflected;",100,0,2);
+    hpfTypeIn[k] = new TH1D(Form("hpfTypeIn_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),";pfType;",9,-1.5,7.5);
+    hnTrkincone[k] = new TH1D(Form("hnTrkincone_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
+    hnTrkoutcone[k] = new TH1D(Form("hnTrkoutcone_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";nTrk #DeltaR<0.4;",100,0,50);
+    htrkPtincone[k] = new TH1D(Form("htrkPtincone_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";p_{T} #DeltaR<0.4;",100,0,50);
+    htrkPtoutcone[k] = new TH1D(Form("htrkPtoutcone_%s_pf%d_jt%d_%d",tag.data(),pfCode,jetptbins[k],jetptbins[k+1]),";p_{T} #DeltaR>0.4;",100,0,50);
     hnjets[k] = new TH1D(Form("hnjets_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),"",1,0,2);
     hjetpt[k] = new TH1D(Form("hjetpt_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),"",25,0,100);
     hjeteta[k] = new TH1D(Form("hjeteta_%s_jt%d_%d",tag.data(),jetptbins[k],jetptbins[k+1]),"",100,-2.5,2.5);
@@ -67,15 +73,36 @@ void ztree::Loop(std::string outfname , std::string tag)
           float dRcone = sqrt( (-jeteta[jidx]-trkEta[trkidx])*(-jeteta[jidx]-trkEta[trkidx]) + getDphi(jetphi[jidx],trkPhi[trkidx])*getDphi(jetphi[jidx],trkPhi[trkidx]) );
           if(dRjet<jetradius)
           {
-            hfragFunctIn[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
-            ntrkincone++;
-            totalptincone+=trkPt[trkidx];
+            hpfTypeIn->Fill(pfType[trkidx]);
+            if(pfTypeSelection == -99) // default
+            {
+              hfragFunctIn[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
+              ntrkincone++;
+              totalptincone+=trkPt[trkidx];
+            } else {
+              if(pfType[trkidx]==pfTypeSelection)
+              {
+                hfragFunctIn[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
+                ntrkincone++;
+                totalptincone+=trkPt[trkidx];
+              }
+            }
           }
           if(dRcone<jetradius)
           {
-            hfragFunctOut[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
-            ntrkoutcone++;
-            totalptoutcone+=trkPt[trkidx];
+            if(pfTypeSelection == -99) // default
+            {
+              hfragFunctOut[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
+              ntrkoutcone++;
+              totalptoutcone+=trkPt[trkidx];
+            } else {
+              if(pfType[trkidx]==pfTypeSelection)
+              {
+                hfragFunctOut[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
+                ntrkoutcone++;
+                totalptoutcone+=trkPt[trkidx];
+              }
+            }
           }
         }
         hnTrkincone[k]->Fill(ntrkincone);
@@ -94,14 +121,15 @@ void ztree::Loop(std::string outfname , std::string tag)
 
 int main(int argc, char *argv[])
 {
-  if(argc != 3 && argc != 4)
+  if(argc != 3 && argc != 4 && argc != 5)
   {    
-    std::cout<<"usage: ./ztree.exe <infilename> <outfilename>"<<std::endl;
+    std::cout<<"usage: ./ztree.exe <infilename> <outfilename> [tag] [pfTypeSelection]"<<std::endl;
     exit(1);
   }
   ztree * t = new ztree(argv[1]);
   if(argc==3) t->Loop(argv[2]);
   if(argc==4) t->Loop(argv[2],argv[3]);
+  if(argc==5) t->Loop(argv[2],argv[3],std::atoi(argv[4]));
   return 0;
 }
 
