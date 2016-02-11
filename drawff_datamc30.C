@@ -1,7 +1,7 @@
 {
   TFile *_file0 = TFile::Open("all.root");
   int save = 0;
-  
+  // BinWidth = 2.000000e-02
   
   // ---------------------------------------------------------------------- //
   // ------------------- jt30_40 ------------------------------------------ //
@@ -17,10 +17,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf1_jt30_40 = hjetpt_pbpbdatamb_jt30_40->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf1_jt30_40 = hjetpt_pbpbmc30_jt30_40->Integral();
   hfragFunctIn_pbpbdatamb_pf1_jt30_40->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf1_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf1_jt30_40);
+  hfragFunctIn_pbpbdatamb_pf1_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf1_jt30_40);
   hfragFunctIn_pbpbdatamb_pf1_jt30_40->Draw("pe");
   hfragFunctIn_pbpbmc30_pf1_jt30_40->Sumw2();
-  hfragFunctIn_pbpbmc30_pf1_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt30_40);
+  hfragFunctIn_pbpbmc30_pf1_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf1_jt30_40);
   hfragFunctIn_pbpbmc30_pf1_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt30_40->Draw("pesame");
   TLegend * leg_ff_pf1_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
@@ -44,10 +44,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf2_jt30_40 = hjetpt_pbpbdatamb_jt30_40->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf2_jt30_40 = hjetpt_pbpbmc30_jt30_40->Integral();
   hfragFunctIn_pbpbdatamb_pf2_jt30_40->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf2_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf2_jt30_40);
+  hfragFunctIn_pbpbdatamb_pf2_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf2_jt30_40);
   hfragFunctIn_pbpbdatamb_pf2_jt30_40->Draw("pe");
   hfragFunctIn_pbpbmc30_pf2_jt30_40->Sumw2();
-  hfragFunctIn_pbpbmc30_pf2_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt30_40);
+  hfragFunctIn_pbpbmc30_pf2_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf2_jt30_40);
   hfragFunctIn_pbpbmc30_pf2_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt30_40->Draw("pesame");
   TLegend * leg_ff_pf2_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
@@ -71,10 +71,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf3_jt30_40 = hjetpt_pbpbdatamb_jt30_40->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf3_jt30_40 = hjetpt_pbpbmc30_jt30_40->Integral();
   hfragFunctIn_pbpbdatamb_pf3_jt30_40->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf3_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf3_jt30_40);
+  hfragFunctIn_pbpbdatamb_pf3_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf3_jt30_40);
   hfragFunctIn_pbpbdatamb_pf3_jt30_40->Draw("pe");
   hfragFunctIn_pbpbmc30_pf3_jt30_40->Sumw2();
-  hfragFunctIn_pbpbmc30_pf3_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt30_40);
+  hfragFunctIn_pbpbmc30_pf3_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf3_jt30_40);
   hfragFunctIn_pbpbmc30_pf3_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt30_40->Draw("pesame");
   TLegend * leg_ff_pf3_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
@@ -98,10 +98,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf991_jt30_40 = hjetpt_pbpbdatamb_jt30_40->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf991_jt30_40 = hjetpt_pbpbmc30_jt30_40->Integral();
   hfragFunctIn_pbpbdatamb_pf991_jt30_40->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf991_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf991_jt30_40);
+  hfragFunctIn_pbpbdatamb_pf991_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf991_jt30_40);
   hfragFunctIn_pbpbdatamb_pf991_jt30_40->Draw("pe");
   hfragFunctIn_pbpbmc30_pf991_jt30_40->Sumw2();
-  hfragFunctIn_pbpbmc30_pf991_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt30_40);
+  hfragFunctIn_pbpbmc30_pf991_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf991_jt30_40);
   hfragFunctIn_pbpbmc30_pf991_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt30_40->Draw("pesame");
   TLegend * leg_ff_pf991_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
@@ -125,10 +125,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf990_jt30_40 = hjetpt_pbpbdatamb_jt30_40->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf990_jt30_40 = hjetpt_pbpbmc30_jt30_40->Integral();
   hfragFunctIn_pbpbdatamb_pf990_jt30_40->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf990_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf990_jt30_40);
+  hfragFunctIn_pbpbdatamb_pf990_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf990_jt30_40);
   hfragFunctIn_pbpbdatamb_pf990_jt30_40->Draw("pe");
   hfragFunctIn_pbpbmc30_pf990_jt30_40->Sumw2();
-  hfragFunctIn_pbpbmc30_pf990_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt30_40);
+  hfragFunctIn_pbpbmc30_pf990_jt30_40->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf990_jt30_40);
   hfragFunctIn_pbpbmc30_pf990_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt30_40->Draw("pesame");
   TLegend * leg_ff_pf990_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
@@ -159,10 +159,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf1_jt40_60 = hjetpt_pbpbdatamb_jt40_60->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf1_jt40_60 = hjetpt_pbpbmc30_jt40_60->Integral();
   hfragFunctIn_pbpbdatamb_pf1_jt40_60->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf1_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf1_jt40_60);
+  hfragFunctIn_pbpbdatamb_pf1_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf1_jt40_60);
   hfragFunctIn_pbpbdatamb_pf1_jt40_60->Draw("pe");
   hfragFunctIn_pbpbmc30_pf1_jt40_60->Sumw2();
-  hfragFunctIn_pbpbmc30_pf1_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt40_60);
+  hfragFunctIn_pbpbmc30_pf1_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf1_jt40_60);
   hfragFunctIn_pbpbmc30_pf1_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt40_60->Draw("pesame");
   TLegend * leg_ff_pf1_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
@@ -186,10 +186,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf2_jt40_60 = hjetpt_pbpbdatamb_jt40_60->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf2_jt40_60 = hjetpt_pbpbmc30_jt40_60->Integral();
   hfragFunctIn_pbpbdatamb_pf2_jt40_60->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf2_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf2_jt40_60);
+  hfragFunctIn_pbpbdatamb_pf2_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf2_jt40_60);
   hfragFunctIn_pbpbdatamb_pf2_jt40_60->Draw("pe");
   hfragFunctIn_pbpbmc30_pf2_jt40_60->Sumw2();
-  hfragFunctIn_pbpbmc30_pf2_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt40_60);
+  hfragFunctIn_pbpbmc30_pf2_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf2_jt40_60);
   hfragFunctIn_pbpbmc30_pf2_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt40_60->Draw("pesame");
   TLegend * leg_ff_pf2_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
@@ -213,10 +213,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf3_jt40_60 = hjetpt_pbpbdatamb_jt40_60->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf3_jt40_60 = hjetpt_pbpbmc30_jt40_60->Integral();
   hfragFunctIn_pbpbdatamb_pf3_jt40_60->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf3_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf3_jt40_60);
+  hfragFunctIn_pbpbdatamb_pf3_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf3_jt40_60);
   hfragFunctIn_pbpbdatamb_pf3_jt40_60->Draw("pe");
   hfragFunctIn_pbpbmc30_pf3_jt40_60->Sumw2();
-  hfragFunctIn_pbpbmc30_pf3_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt40_60);
+  hfragFunctIn_pbpbmc30_pf3_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf3_jt40_60);
   hfragFunctIn_pbpbmc30_pf3_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt40_60->Draw("pesame");
   TLegend * leg_ff_pf3_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
@@ -240,10 +240,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf991_jt40_60 = hjetpt_pbpbdatamb_jt40_60->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf991_jt40_60 = hjetpt_pbpbmc30_jt40_60->Integral();
   hfragFunctIn_pbpbdatamb_pf991_jt40_60->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf991_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf991_jt40_60);
+  hfragFunctIn_pbpbdatamb_pf991_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf991_jt40_60);
   hfragFunctIn_pbpbdatamb_pf991_jt40_60->Draw("pe");
   hfragFunctIn_pbpbmc30_pf991_jt40_60->Sumw2();
-  hfragFunctIn_pbpbmc30_pf991_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt40_60);
+  hfragFunctIn_pbpbmc30_pf991_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf991_jt40_60);
   hfragFunctIn_pbpbmc30_pf991_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt40_60->Draw("pesame");
   TLegend * leg_ff_pf991_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
@@ -267,10 +267,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf990_jt40_60 = hjetpt_pbpbdatamb_jt40_60->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf990_jt40_60 = hjetpt_pbpbmc30_jt40_60->Integral();
   hfragFunctIn_pbpbdatamb_pf990_jt40_60->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf990_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf990_jt40_60);
+  hfragFunctIn_pbpbdatamb_pf990_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf990_jt40_60);
   hfragFunctIn_pbpbdatamb_pf990_jt40_60->Draw("pe");
   hfragFunctIn_pbpbmc30_pf990_jt40_60->Sumw2();
-  hfragFunctIn_pbpbmc30_pf990_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt40_60);
+  hfragFunctIn_pbpbmc30_pf990_jt40_60->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf990_jt40_60);
   hfragFunctIn_pbpbmc30_pf990_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt40_60->Draw("pesame");
   TLegend * leg_ff_pf990_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
@@ -300,10 +300,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf1_jt60_100 = hjetpt_pbpbdatamb_jt60_100->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf1_jt60_100 = hjetpt_pbpbmc30_jt60_100->Integral();
   hfragFunctIn_pbpbdatamb_pf1_jt60_100->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf1_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf1_jt60_100);
+  hfragFunctIn_pbpbdatamb_pf1_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf1_jt60_100);
   hfragFunctIn_pbpbdatamb_pf1_jt60_100->Draw("pe");
   hfragFunctIn_pbpbmc30_pf1_jt60_100->Sumw2();
-  hfragFunctIn_pbpbmc30_pf1_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt60_100);
+  hfragFunctIn_pbpbmc30_pf1_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf1_jt60_100);
   hfragFunctIn_pbpbmc30_pf1_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt60_100->Draw("pesame");
   TLegend * leg_ff_pf1_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
@@ -327,10 +327,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf2_jt60_100 = hjetpt_pbpbdatamb_jt60_100->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf2_jt60_100 = hjetpt_pbpbmc30_jt60_100->Integral();
   hfragFunctIn_pbpbdatamb_pf2_jt60_100->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf2_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf2_jt60_100);
+  hfragFunctIn_pbpbdatamb_pf2_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf2_jt60_100);
   hfragFunctIn_pbpbdatamb_pf2_jt60_100->Draw("pe");
   hfragFunctIn_pbpbmc30_pf2_jt60_100->Sumw2();
-  hfragFunctIn_pbpbmc30_pf2_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt60_100);
+  hfragFunctIn_pbpbmc30_pf2_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf2_jt60_100);
   hfragFunctIn_pbpbmc30_pf2_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt60_100->Draw("pesame");
   TLegend * leg_ff_pf2_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
@@ -354,10 +354,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf3_jt60_100 = hjetpt_pbpbdatamb_jt60_100->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf3_jt60_100 = hjetpt_pbpbmc30_jt60_100->Integral();
   hfragFunctIn_pbpbdatamb_pf3_jt60_100->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf3_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf3_jt60_100);
+  hfragFunctIn_pbpbdatamb_pf3_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf3_jt60_100);
   hfragFunctIn_pbpbdatamb_pf3_jt60_100->Draw("pe");
   hfragFunctIn_pbpbmc30_pf3_jt60_100->Sumw2();
-  hfragFunctIn_pbpbmc30_pf3_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt60_100);
+  hfragFunctIn_pbpbmc30_pf3_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf3_jt60_100);
   hfragFunctIn_pbpbmc30_pf3_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt60_100->Draw("pesame");
   TLegend * leg_ff_pf3_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
@@ -381,10 +381,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf991_jt60_100 = hjetpt_pbpbdatamb_jt60_100->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf991_jt60_100 = hjetpt_pbpbmc30_jt60_100->Integral();
   hfragFunctIn_pbpbdatamb_pf991_jt60_100->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf991_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf991_jt60_100);
+  hfragFunctIn_pbpbdatamb_pf991_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf991_jt60_100);
   hfragFunctIn_pbpbdatamb_pf991_jt60_100->Draw("pe");
   hfragFunctIn_pbpbmc30_pf991_jt60_100->Sumw2();
-  hfragFunctIn_pbpbmc30_pf991_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt60_100);
+  hfragFunctIn_pbpbmc30_pf991_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf991_jt60_100);
   hfragFunctIn_pbpbmc30_pf991_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt60_100->Draw("pesame");
   TLegend * leg_ff_pf991_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
@@ -408,10 +408,10 @@
   float njet_hfragFunctIn_pbpbdatamb_pf990_jt60_100 = hjetpt_pbpbdatamb_jt60_100->Integral();
   float njet_hfragFunctIn_pbpbmc30_pf990_jt60_100 = hjetpt_pbpbmc30_jt60_100->Integral();
   hfragFunctIn_pbpbdatamb_pf990_jt60_100->Sumw2();
-  hfragFunctIn_pbpbdatamb_pf990_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbdatamb_pf990_jt60_100);
+  hfragFunctIn_pbpbdatamb_pf990_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbdatamb_pf990_jt60_100);
   hfragFunctIn_pbpbdatamb_pf990_jt60_100->Draw("pe");
   hfragFunctIn_pbpbmc30_pf990_jt60_100->Sumw2();
-  hfragFunctIn_pbpbmc30_pf990_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt60_100);
+  hfragFunctIn_pbpbmc30_pf990_jt60_100->Scale(1.0/2.000000e-02/njet_hfragFunctIn_pbpbmc30_pf990_jt60_100);
   hfragFunctIn_pbpbmc30_pf990_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt60_100->Draw("pesame");
   TLegend * leg_ff_pf990_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
