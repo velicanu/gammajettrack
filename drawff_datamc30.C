@@ -23,7 +23,7 @@
   hfragFunctIn_pbpbmc30_pf1_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt30_40);
   hfragFunctIn_pbpbmc30_pf1_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt30_40->Draw("pesame");
-  TLegend * leg_ff_pf1_jt30_40 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf1_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf1_jt30_40->SetFillColor(0);
   leg_ff_pf1_jt30_40->SetTextSize(0.05);
   leg_ff_pf1_jt30_40->SetFillStyle(0);
@@ -50,7 +50,7 @@
   hfragFunctIn_pbpbmc30_pf2_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt30_40);
   hfragFunctIn_pbpbmc30_pf2_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt30_40->Draw("pesame");
-  TLegend * leg_ff_pf2_jt30_40 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf2_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf2_jt30_40->SetFillColor(0);
   leg_ff_pf2_jt30_40->SetTextSize(0.05);
   leg_ff_pf2_jt30_40->SetFillStyle(0);
@@ -77,7 +77,7 @@
   hfragFunctIn_pbpbmc30_pf3_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt30_40);
   hfragFunctIn_pbpbmc30_pf3_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt30_40->Draw("pesame");
-  TLegend * leg_ff_pf3_jt30_40 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf3_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf3_jt30_40->SetFillColor(0);
   leg_ff_pf3_jt30_40->SetTextSize(0.05);
   leg_ff_pf3_jt30_40->SetFillStyle(0);
@@ -104,7 +104,7 @@
   hfragFunctIn_pbpbmc30_pf991_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt30_40);
   hfragFunctIn_pbpbmc30_pf991_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt30_40->Draw("pesame");
-  TLegend * leg_ff_pf991_jt30_40 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf991_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf991_jt30_40->SetFillColor(0);
   leg_ff_pf991_jt30_40->SetTextSize(0.05);
   leg_ff_pf991_jt30_40->SetFillStyle(0);
@@ -131,7 +131,7 @@
   hfragFunctIn_pbpbmc30_pf990_jt30_40->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt30_40);
   hfragFunctIn_pbpbmc30_pf990_jt30_40->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt30_40->Draw("pesame");
-  TLegend * leg_ff_pf990_jt30_40 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf990_jt30_40 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf990_jt30_40->SetFillColor(0);
   leg_ff_pf990_jt30_40->SetTextSize(0.05);
   leg_ff_pf990_jt30_40->SetFillStyle(0);
@@ -165,7 +165,7 @@
   hfragFunctIn_pbpbmc30_pf1_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt40_60);
   hfragFunctIn_pbpbmc30_pf1_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt40_60->Draw("pesame");
-  TLegend * leg_ff_pf1_jt40_60 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf1_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf1_jt40_60->SetFillColor(0);
   leg_ff_pf1_jt40_60->SetTextSize(0.05);
   leg_ff_pf1_jt40_60->SetFillStyle(0);
@@ -192,7 +192,7 @@
   hfragFunctIn_pbpbmc30_pf2_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt40_60);
   hfragFunctIn_pbpbmc30_pf2_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt40_60->Draw("pesame");
-  TLegend * leg_ff_pf2_jt40_60 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf2_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf2_jt40_60->SetFillColor(0);
   leg_ff_pf2_jt40_60->SetTextSize(0.05);
   leg_ff_pf2_jt40_60->SetFillStyle(0);
@@ -219,7 +219,7 @@
   hfragFunctIn_pbpbmc30_pf3_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt40_60);
   hfragFunctIn_pbpbmc30_pf3_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt40_60->Draw("pesame");
-  TLegend * leg_ff_pf3_jt40_60 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf3_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf3_jt40_60->SetFillColor(0);
   leg_ff_pf3_jt40_60->SetTextSize(0.05);
   leg_ff_pf3_jt40_60->SetFillStyle(0);
@@ -246,7 +246,7 @@
   hfragFunctIn_pbpbmc30_pf991_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt40_60);
   hfragFunctIn_pbpbmc30_pf991_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt40_60->Draw("pesame");
-  TLegend * leg_ff_pf991_jt40_60 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf991_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf991_jt40_60->SetFillColor(0);
   leg_ff_pf991_jt40_60->SetTextSize(0.05);
   leg_ff_pf991_jt40_60->SetFillStyle(0);
@@ -273,7 +273,7 @@
   hfragFunctIn_pbpbmc30_pf990_jt40_60->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt40_60);
   hfragFunctIn_pbpbmc30_pf990_jt40_60->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt40_60->Draw("pesame");
-  TLegend * leg_ff_pf990_jt40_60 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf990_jt40_60 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf990_jt40_60->SetFillColor(0);
   leg_ff_pf990_jt40_60->SetTextSize(0.05);
   leg_ff_pf990_jt40_60->SetFillStyle(0);
@@ -306,7 +306,7 @@
   hfragFunctIn_pbpbmc30_pf1_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf1_jt60_100);
   hfragFunctIn_pbpbmc30_pf1_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf1_jt60_100->Draw("pesame");
-  TLegend * leg_ff_pf1_jt60_100 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf1_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf1_jt60_100->SetFillColor(0);
   leg_ff_pf1_jt60_100->SetTextSize(0.05);
   leg_ff_pf1_jt60_100->SetFillStyle(0);
@@ -333,7 +333,7 @@
   hfragFunctIn_pbpbmc30_pf2_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf2_jt60_100);
   hfragFunctIn_pbpbmc30_pf2_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf2_jt60_100->Draw("pesame");
-  TLegend * leg_ff_pf2_jt60_100 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf2_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf2_jt60_100->SetFillColor(0);
   leg_ff_pf2_jt60_100->SetTextSize(0.05);
   leg_ff_pf2_jt60_100->SetFillStyle(0);
@@ -360,7 +360,7 @@
   hfragFunctIn_pbpbmc30_pf3_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf3_jt60_100);
   hfragFunctIn_pbpbmc30_pf3_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf3_jt60_100->Draw("pesame");
-  TLegend * leg_ff_pf3_jt60_100 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf3_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf3_jt60_100->SetFillColor(0);
   leg_ff_pf3_jt60_100->SetTextSize(0.05);
   leg_ff_pf3_jt60_100->SetFillStyle(0);
@@ -387,7 +387,7 @@
   hfragFunctIn_pbpbmc30_pf991_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf991_jt60_100);
   hfragFunctIn_pbpbmc30_pf991_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf991_jt60_100->Draw("pesame");
-  TLegend * leg_ff_pf991_jt60_100 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf991_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf991_jt60_100->SetFillColor(0);
   leg_ff_pf991_jt60_100->SetTextSize(0.05);
   leg_ff_pf991_jt60_100->SetFillStyle(0);
@@ -414,7 +414,7 @@
   hfragFunctIn_pbpbmc30_pf990_jt60_100->Scale(1.0/njet_hfragFunctIn_pbpbmc30_pf990_jt60_100);
   hfragFunctIn_pbpbmc30_pf990_jt60_100->SetMarkerColor(2);
   hfragFunctIn_pbpbmc30_pf990_jt60_100->Draw("pesame");
-  TLegend * leg_ff_pf990_jt60_100 = new TLegend(0.22,0.20,0.50,0.45);
+  TLegend * leg_ff_pf990_jt60_100 = new TLegend(0.50,0.68,0.78,0.93);
   leg_ff_pf990_jt60_100->SetFillColor(0);
   leg_ff_pf990_jt60_100->SetTextSize(0.05);
   leg_ff_pf990_jt60_100->SetFillStyle(0);
