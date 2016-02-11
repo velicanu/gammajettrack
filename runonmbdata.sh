@@ -7,5 +7,5 @@ echo running pF FF histos...
 ./ztree.exe /data/velicanu/store/group/phys_heavyions/velicanu/forest/HIRun2015/HIMinimumBias2/Merged/DijetSkim-xaa.root g.DijetSkim-xaa11-3.root pbpbdatamb 3 &
 wait
 echo done, merging output...
-hadd -f all.root g.DijetSkim-xaa11-*.root
+hadd -f allmb.root g.DijetSkim-xaa11-*.root
 echo done
