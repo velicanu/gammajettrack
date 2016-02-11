@@ -73,7 +73,7 @@ void ztree::Loop(std::string outfname , std::string tag, int pfTypeSelection)
           float dRcone = sqrt( (-jeteta[jidx]-trkEta[trkidx])*(-jeteta[jidx]-trkEta[trkidx]) + getDphi(jetphi[jidx],trkPhi[trkidx])*getDphi(jetphi[jidx],trkPhi[trkidx]) );
           if(dRjet<jetradius)
           {
-            hpfTypeIn->Fill(pfType[trkidx]);
+            hpfTypeIn[k]->Fill(pfType[trkidx]);
             if(pfTypeSelection == -99) // default
             {
               hfragFunctIn[k]->Fill(trkPt[trkidx]/jetpt[jidx]);
