@@ -71,152 +71,54 @@ public :
    Float_t         pfCandPt[5000];   //[nTrk]
    Float_t         pfEcal[5000];   //[nTrk]
    Float_t         pfHcal[5000];   //[nTrk]
-   vector<int>     *eleCharge;
-   vector<int>     *eleChargeConsistent;
-   vector<float>   *eleEn;
-   vector<float>   *eleD0;
-   vector<float>   *eleDz;
-   vector<float>   *eleD0Err;
-   vector<float>   *eleDzErr;
-   vector<float>   *eleTrkPt;
-   vector<float>   *eleTrkEta;
-   vector<float>   *eleTrkPhi;
-   vector<int>     *eleTrkCharge;
-   vector<float>   *eleTrkChi2;
-   vector<float>   *eleTrkNdof;
-   vector<float>   *eleTrkNormalizedChi2;
-   vector<int>     *eleTrkValidHits;
-   vector<int>     *eleTrkLayers;
-   vector<float>   *elePt;
-   vector<float>   *eleEta;
-   vector<float>   *elePhi;
-   vector<float>   *eleSCEn;
-   vector<float>   *eleESEn;
-   vector<float>   *eleSCEta;
-   vector<float>   *eleSCPhi;
-   vector<float>   *eleSCRawEn;
-   vector<float>   *eleSCEtaWidth;
-   vector<float>   *eleSCPhiWidth;
-   vector<float>   *eleHoverE;
-   vector<float>   *eleEoverP;
-   vector<float>   *eleEoverPInv;
-   vector<float>   *eleBrem;
-   vector<float>   *eledEtaAtVtx;
-   vector<float>   *eledPhiAtVtx;
-   vector<float>   *eleSigmaIEtaIEta;
-   vector<float>   *eleSigmaIEtaIEta_2012;
-   vector<float>   *eleSigmaIPhiIPhi;
-   vector<int>     *eleMissHits;
-   vector<float>   *eleESEffSigmaRR;
-   vector<float>   *elePFChIso;
-   vector<float>   *elePFPhoIso;
-   vector<float>   *elePFNeuIso;
-   vector<float>   *elePFPUIso;
-   vector<float>   *elePFChIso03;
-   vector<float>   *elePFPhoIso03;
-   vector<float>   *elePFNeuIso03;
-   vector<float>   *elePFChIso04;
-   vector<float>   *elePFPhoIso04;
-   vector<float>   *elePFNeuIso04;
-   vector<float>   *eleBC1E;
-   vector<float>   *eleBC1Eta;
-   vector<float>   *eleBC2E;
-   vector<float>   *eleBC2Eta;
-   Int_t           nPho;
-   vector<float>   *phoE;
-   vector<float>   *phoEt;
-   vector<float>   *phoEta;
-   vector<float>   *phoPhi;
-   vector<float>   *phoSCE;
-   vector<float>   *phoSCRawE;
-   vector<float>   *phoESEn;
-   vector<float>   *phoSCEta;
-   vector<float>   *phoSCPhi;
-   vector<float>   *phoSCEtaWidth;
-   vector<float>   *phoSCPhiWidth;
-   vector<float>   *phoSCBrem;
-   vector<int>     *phohasPixelSeed;
-   vector<float>   *phoR9;
-   vector<float>   *phoHoverE;
-   vector<float>   *phoSigmaIEtaIEta;
-   vector<float>   *phoE1x3;
-   vector<float>   *phoE2x2;
-   vector<float>   *phoE3x3;
-   vector<float>   *phoE2x5Max;
-   vector<float>   *phoE1x5;
-   vector<float>   *phoE2x5;
-   vector<float>   *phoE5x5;
-   vector<float>   *phoMaxEnergyXtal;
-   vector<float>   *phoSigmaEtaEta;
-   vector<float>   *phoR1x5;
-   vector<float>   *phoR2x5;
-   vector<float>   *phoESEffSigmaRR;
-   vector<float>   *phoSigmaIEtaIEta_2012;
-   vector<float>   *phoSigmaIEtaIPhi_2012;
-   vector<float>   *phoSigmaIPhiIPhi_2012;
-   vector<float>   *phoE1x3_2012;
-   vector<float>   *phoE2x2_2012;
-   vector<float>   *phoE3x3_2012;
-   vector<float>   *phoE2x5Max_2012;
-   vector<float>   *phoE5x5_2012;
-   vector<float>   *phoBC1E;
-   vector<float>   *phoBC1Eta;
-   vector<float>   *phoBC2E;
-   vector<float>   *phoBC2Eta;
-   vector<float>   *pho_ecalClusterIsoR2;
-   vector<float>   *pho_ecalClusterIsoR3;
-   vector<float>   *pho_ecalClusterIsoR4;
-   vector<float>   *pho_ecalClusterIsoR5;
-   vector<float>   *pho_hcalRechitIsoR1;
-   vector<float>   *pho_hcalRechitIsoR2;
-   vector<float>   *pho_hcalRechitIsoR3;
-   vector<float>   *pho_hcalRechitIsoR4;
-   vector<float>   *pho_hcalRechitIsoR5;
-   vector<float>   *pho_trackIsoR1PtCut20;
-   vector<float>   *pho_trackIsoR2PtCut20;
-   vector<float>   *pho_trackIsoR3PtCut20;
-   vector<float>   *pho_trackIsoR4PtCut20;
-   vector<float>   *pho_trackIsoR5PtCut20;
-   vector<float>   *pho_swissCrx;
-   vector<float>   *pho_seedTime;
-   vector<float>   *pfcIso1;
-   vector<float>   *pfcIso2;
-   vector<float>   *pfcIso3;
-   vector<float>   *pfcIso4;
-   vector<float>   *pfcIso5;
-   vector<float>   *pfpIso1;
-   vector<float>   *pfpIso2;
-   vector<float>   *pfpIso3;
-   vector<float>   *pfpIso4;
-   vector<float>   *pfpIso5;
-   vector<float>   *pfnIso1;
-   vector<float>   *pfnIso2;
-   vector<float>   *pfnIso3;
-   vector<float>   *pfnIso4;
-   vector<float>   *pfnIso5;
-   Int_t           nMu;
-   vector<float>   *muPt;
-   vector<float>   *muEta;
-   vector<float>   *muPhi;
-   vector<int>     *muCharge;
-   vector<int>     *muType;
-   vector<int>     *muIsGood;
-   vector<float>   *muD0;
-   vector<float>   *muDz;
-   vector<float>   *muChi2NDF;
-   vector<float>   *muInnerD0;
-   vector<float>   *muInnerDz;
-   vector<int>     *muTrkLayers;
-   vector<int>     *muPixelLayers;
-   vector<int>     *muPixelHits;
-   vector<int>     *muMuonHits;
-   vector<int>     *muTrkQuality;
-   vector<int>     *muStations;
-   vector<float>   *muIsoTrk;
-   vector<float>   *muPFChIso;
-   vector<float>   *muPFPhoIso;
-   vector<float>   *muPFNeuIso;
-   vector<float>   *muPFPUIso;
+  Int_t    nPho;
+  Float_t  phoE[100];   //_nPho
+  Float_t  phoEt[100];   //_nPho
+  Float_t  phoEta[100];   //_nPho
+  Float_t  phoPhi[100];   //_nPho
+  Float_t  phoSCE[100];   //_nPho
+  Float_t  phoSCRawE[100];   //_nPho
+  Float_t  phoESEn[100];   //_nPho
+  Float_t  phoSCEta[100];   //_nPho
+  Float_t  phoSCPhi[100];   //_nPho
+  Float_t  phoSCEtaWidth[100];   //_nPho
+  Float_t  phoSCPhiWidth[100];   //_nPho
+  Float_t  phoSCBrem[100];   //_nPho
+  Int_t    phohasPixelSeed[100];   //_nPho
+  Float_t  phoR9[100];   //_nPho
+  Float_t  phoHoverE[100];   //_nPho
+  Float_t  phoSigmaIEtaIEta[100];   //_nPho
+  Float_t  pho_ecalClusterIsoR2[100];   //_nPho
+  Float_t  pho_ecalClusterIsoR3[100];   //_nPho
+  Float_t  pho_ecalClusterIsoR4[100];   //_nPho
+  Float_t  pho_ecalClusterIsoR5[100];   //_nPho
+  Float_t  pho_hcalRechitIsoR1[100];   //_nPho
+  Float_t  pho_hcalRechitIsoR2[100];   //_nPho
+  Float_t  pho_hcalRechitIsoR3[100];   //_nPho
+  Float_t  pho_hcalRechitIsoR4[100];   //_nPho
+  Float_t  pho_hcalRechitIsoR5[100];   //_nPho
+  Float_t  pho_trackIsoR1PtCut20[100];   //_nPho
+  Float_t  pho_trackIsoR2PtCut20[100];   //_nPho
+  Float_t  pho_trackIsoR3PtCut20[100];   //_nPho
+  Float_t  pho_trackIsoR4PtCut20[100];   //_nPho
+  Float_t  pho_trackIsoR5PtCut20[100];   //_nPho
+  Float_t  pho_swissCrx[100];   //_nPho
+  Float_t  pho_seedTime[100];   //_nPho
+  Float_t  pfcIso1[100];   //_nPho
+  Float_t  pfcIso2[100];   //_nPho
+  Float_t  pfcIso3[100];   //_nPho
+  Float_t  pfcIso4[100];   //_nPho
+  Float_t  pfcIso5[100];   //_nPho
+  Float_t  pfpIso1[100];   //_nPho
+  Float_t  pfpIso2[100];   //_nPho
+  Float_t  pfpIso3[100];   //_nPho
+  Float_t  pfpIso4[100];   //_nPho
+  Float_t  pfpIso5[100];   //_nPho
+  Float_t  pfnIso1[100];   //_nPho
+  Float_t  pfnIso2[100];   //_nPho
+  Float_t  pfnIso3[100];   //_nPho
+  Float_t  pfnIso4[100];   //_nPho
+  Float_t  pfnIso5[100];   //_nPho
 
    // List of branches
    TBranch        *b_run;   //!
@@ -270,57 +172,6 @@ public :
    TBranch        *b_pfHcal;   //!
    
    
-    TBranch   *b_eleCharge;
-    TBranch   *b_eleChargeConsistent;
-    TBranch   *b_eleEn;
-    TBranch   *b_eleD0;
-    TBranch   *b_eleDz;
-    TBranch   *b_eleD0Err;
-    TBranch   *b_eleDzErr;
-    TBranch   *b_eleTrkPt;
-    TBranch   *b_eleTrkEta;
-    TBranch   *b_eleTrkPhi;
-    TBranch   *b_eleTrkCharge;
-    TBranch   *b_eleTrkChi2;
-    TBranch   *b_eleTrkNdof;
-    TBranch   *b_eleTrkNormalizedChi2;
-    TBranch   *b_eleTrkValidHits;
-    TBranch   *b_eleTrkLayers;
-    TBranch   *b_elePt;
-    TBranch   *b_eleEta;
-    TBranch   *b_elePhi;
-    TBranch   *b_eleSCEn;
-    TBranch   *b_eleESEn;
-    TBranch   *b_eleSCEta;
-    TBranch   *b_eleSCPhi;
-    TBranch   *b_eleSCRawEn;
-    TBranch   *b_eleSCEtaWidth;
-    TBranch   *b_eleSCPhiWidth;
-    TBranch   *b_eleHoverE;
-    TBranch   *b_eleEoverP;
-    TBranch   *b_eleEoverPInv;
-    TBranch   *b_eleBrem;
-    TBranch   *b_eledEtaAtVtx;
-    TBranch   *b_eledPhiAtVtx;
-    TBranch   *b_eleSigmaIEtaIEta;
-    TBranch   *b_eleSigmaIEtaIEta_2012;
-    TBranch   *b_eleSigmaIPhiIPhi;
-    TBranch   *b_eleMissHits;
-    TBranch   *b_eleESEffSigmaRR;
-    TBranch   *b_elePFChIso;
-    TBranch   *b_elePFPhoIso;
-    TBranch   *b_elePFNeuIso;
-    TBranch   *b_elePFPUIso;
-    TBranch   *b_elePFChIso03;
-    TBranch   *b_elePFPhoIso03;
-    TBranch   *b_elePFNeuIso03;
-    TBranch   *b_elePFChIso04;
-    TBranch   *b_elePFPhoIso04;
-    TBranch   *b_elePFNeuIso04;
-    TBranch   *b_eleBC1E;
-    TBranch   *b_eleBC1Eta;
-    TBranch   *b_eleBC2E;
-    TBranch   *b_eleBC2Eta;
     TBranch   *b_nPho;
     TBranch   *b_phoE;
     TBranch   *b_phoEt;
@@ -338,30 +189,6 @@ public :
     TBranch   *b_phoR9;
     TBranch   *b_phoHoverE;
     TBranch   *b_phoSigmaIEtaIEta;
-    TBranch   *b_phoE1x3;
-    TBranch   *b_phoE2x2;
-    TBranch   *b_phoE3x3;
-    TBranch   *b_phoE2x5Max;
-    TBranch   *b_phoE1x5;
-    TBranch   *b_phoE2x5;
-    TBranch   *b_phoE5x5;
-    TBranch   *b_phoMaxEnergyXtal;
-    TBranch   *b_phoSigmaEtaEta;
-    TBranch   *b_phoR1x5;
-    TBranch   *b_phoR2x5;
-    TBranch   *b_phoESEffSigmaRR;
-    TBranch   *b_phoSigmaIEtaIEta_2012;
-    TBranch   *b_phoSigmaIEtaIPhi_2012;
-    TBranch   *b_phoSigmaIPhiIPhi_2012;
-    TBranch   *b_phoE1x3_2012;
-    TBranch   *b_phoE2x2_2012;
-    TBranch   *b_phoE3x3_2012;
-    TBranch   *b_phoE2x5Max_2012;
-    TBranch   *b_phoE5x5_2012;
-    TBranch   *b_phoBC1E;
-    TBranch   *b_phoBC1Eta;
-    TBranch   *b_phoBC2E;
-    TBranch   *b_phoBC2Eta;
     TBranch   *b_pho_ecalClusterIsoR2;
     TBranch   *b_pho_ecalClusterIsoR3;
     TBranch   *b_pho_ecalClusterIsoR4;
@@ -393,29 +220,6 @@ public :
     TBranch   *b_pfnIso3;
     TBranch   *b_pfnIso4;
     TBranch   *b_pfnIso5;
-    TBranch   *b_nMu;
-    TBranch   *b_muPt;
-    TBranch   *b_muEta;
-    TBranch   *b_muPhi;
-    TBranch   *b_muCharge;
-    TBranch   *b_muType;
-    TBranch   *b_muIsGood;
-    TBranch   *b_muD0;
-    TBranch   *b_muDz;
-    TBranch   *b_muChi2NDF;
-    TBranch   *b_muInnerD0;
-    TBranch   *b_muInnerDz;
-    TBranch   *b_muTrkLayers;
-    TBranch   *b_muPixelLayers;
-    TBranch   *b_muPixelHits;
-    TBranch   *b_muMuonHits;
-    TBranch   *b_muTrkQuality;
-    TBranch   *b_muStations;
-    TBranch   *b_muIsoTrk;
-    TBranch   *b_muPFChIso;
-    TBranch   *b_muPFPhoIso;
-    TBranch   *b_muPFNeuIso;
-    TBranch   *b_muPFPUIso;
 
 
    ztree(std::string thisfilename);
@@ -531,6 +335,57 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("pfCandPt", pfCandPt, &b_pfCandPt);
    fChain->SetBranchAddress("pfEcal", pfEcal, &b_pfEcal);
    fChain->SetBranchAddress("pfHcal", pfHcal, &b_pfHcal);
+   
+   fChain->SetBranchAddress("nPho", &nPho, &b_nPho);
+  fChain->SetBranchAddress("phoE", phoE, &b_phoE);
+  fChain->SetBranchAddress("phoEt", phoEt, &b_phoEt);
+  fChain->SetBranchAddress("phoEta", phoEta, &b_phoEta);
+  fChain->SetBranchAddress("phoPhi", phoPhi, &b_phoPhi);
+  fChain->SetBranchAddress("phoSCE", phoSCE, &b_phoSCE);
+  fChain->SetBranchAddress("phoSCRawE", phoSCRawE, &b_phoSCRawE);
+  fChain->SetBranchAddress("phoESEn", phoESEn, &b_phoESEn);
+  fChain->SetBranchAddress("phoSCEta", phoSCEta, &b_phoSCEta);
+  fChain->SetBranchAddress("phoSCPhi", phoSCPhi, &b_phoSCPhi);
+  fChain->SetBranchAddress("phoSCEtaWidth", phoSCEtaWidth, &b_phoSCEtaWidth);
+  fChain->SetBranchAddress("phoSCPhiWidth", phoSCPhiWidth, &b_phoSCPhiWidth);
+  fChain->SetBranchAddress("phoSCBrem", phoSCBrem, &b_phoSCBrem);
+  fChain->SetBranchAddress("phohasPixelSeed", phohasPixelSeed, &b_phohasPixelSeed);
+  fChain->SetBranchAddress("phoR9", phoR9, &b_phoR9);
+  fChain->SetBranchAddress("phoHoverE", phoHoverE, &b_phoHoverE);
+  fChain->SetBranchAddress("phoSigmaIEtaIEta", phoSigmaIEtaIEta, &b_phoSigmaIEtaIEta);
+  fChain->SetBranchAddress("pho_ecalClusterIsoR2", pho_ecalClusterIsoR2, &b_pho_ecalClusterIsoR2);
+  fChain->SetBranchAddress("pho_ecalClusterIsoR3", pho_ecalClusterIsoR3, &b_pho_ecalClusterIsoR3);
+  fChain->SetBranchAddress("pho_ecalClusterIsoR4", pho_ecalClusterIsoR4, &b_pho_ecalClusterIsoR4);
+  fChain->SetBranchAddress("pho_ecalClusterIsoR5", pho_ecalClusterIsoR5, &b_pho_ecalClusterIsoR5);
+  fChain->SetBranchAddress("pho_hcalRechitIsoR1", pho_hcalRechitIsoR1, &b_pho_hcalRechitIsoR1);
+  fChain->SetBranchAddress("pho_hcalRechitIsoR2", pho_hcalRechitIsoR2, &b_pho_hcalRechitIsoR2);
+  fChain->SetBranchAddress("pho_hcalRechitIsoR3", pho_hcalRechitIsoR3, &b_pho_hcalRechitIsoR3);
+  fChain->SetBranchAddress("pho_hcalRechitIsoR4", pho_hcalRechitIsoR4, &b_pho_hcalRechitIsoR4);
+  fChain->SetBranchAddress("pho_hcalRechitIsoR5", pho_hcalRechitIsoR5, &b_pho_hcalRechitIsoR5);
+  fChain->SetBranchAddress("pho_trackIsoR1PtCut20", pho_trackIsoR1PtCut20, &b_pho_trackIsoR1PtCut20);
+  fChain->SetBranchAddress("pho_trackIsoR2PtCut20", pho_trackIsoR2PtCut20, &b_pho_trackIsoR2PtCut20);
+  fChain->SetBranchAddress("pho_trackIsoR3PtCut20", pho_trackIsoR3PtCut20, &b_pho_trackIsoR3PtCut20);
+  fChain->SetBranchAddress("pho_trackIsoR4PtCut20", pho_trackIsoR4PtCut20, &b_pho_trackIsoR4PtCut20);
+  fChain->SetBranchAddress("pho_trackIsoR5PtCut20", pho_trackIsoR5PtCut20, &b_pho_trackIsoR5PtCut20);
+  fChain->SetBranchAddress("pho_swissCrx", pho_swissCrx, &b_pho_swissCrx);
+  fChain->SetBranchAddress("pho_seedTime", pho_seedTime, &b_pho_seedTime);
+  fChain->SetBranchAddress("pfcIso1", pfcIso1, &b_pfcIso1);
+  fChain->SetBranchAddress("pfcIso2", pfcIso2, &b_pfcIso2);
+  fChain->SetBranchAddress("pfcIso3", pfcIso3, &b_pfcIso3);
+  fChain->SetBranchAddress("pfcIso4", pfcIso4, &b_pfcIso4);
+  fChain->SetBranchAddress("pfcIso5", pfcIso5, &b_pfcIso5);
+  fChain->SetBranchAddress("pfpIso1", pfpIso1, &b_pfpIso1);
+  fChain->SetBranchAddress("pfpIso2", pfpIso2, &b_pfpIso2);
+  fChain->SetBranchAddress("pfpIso3", pfpIso3, &b_pfpIso3);
+  fChain->SetBranchAddress("pfpIso4", pfpIso4, &b_pfpIso4);
+  fChain->SetBranchAddress("pfpIso5", pfpIso5, &b_pfpIso5);
+  fChain->SetBranchAddress("pfnIso1", pfnIso1, &b_pfnIso1);
+  fChain->SetBranchAddress("pfnIso2", pfnIso2, &b_pfnIso2);
+  fChain->SetBranchAddress("pfnIso3", pfnIso3, &b_pfnIso3);
+  fChain->SetBranchAddress("pfnIso4", pfnIso4, &b_pfnIso4);
+  fChain->SetBranchAddress("pfnIso5", pfnIso5, &b_pfnIso5);
+   
+   
    Notify();
 }
 
