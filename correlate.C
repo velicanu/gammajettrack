@@ -25,6 +25,7 @@ void ztree::Loop(std::string outfname , std::string tag, int pfTypeSelection)
     if(ientry % 10001 == 0 ) cout<<ientry<<"/"<<nentries<<endl;
     int ipho = 0 ;
     if(nPho==2 && phoEt[1]>phoEt[0]) ipho=1;
+    if(phoEt[ipho]<50) continue;
     // cout<<vz<<endl;
     float gammajetdphi = fabs(phoPhi[0]-jetphi[0]);
     if(gammajetdphi > pi) gammajetdphi = 2*pi - gammajetdphi;
@@ -45,8 +46,8 @@ void ztree::Loop(std::string outfname , std::string tag, int pfTypeSelection)
       hGammaSig->Fill(deta,(2*pi)-dphi,weight);
       hGammaSig->Fill(-deta,(2*pi)-dphi,weight);
       
-      deta = fabs(jeteta[ipho]-trkEta[itrk]);
-      dphi = fabs(jetphi[ipho]-trkPhi[itrk]);
+      deta = fabs(jeteta[0]-trkEta[itrk]);
+      dphi = fabs(jetphi[0]-trkPhi[itrk]);
       if( dphi > pi ) dphi = 2*pi - dphi;
       hJetSig->Fill(deta,dphi,weight);
       hJetSig->Fill(-deta,dphi,weight);
@@ -74,6 +75,7 @@ void ztree::MixedEvent(std::string outfname)
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("mix_%s",outfname.data()),"recreate");
   TH2D * hGammaMix = new TH2D(Form("hGammaMix"),";#Delta#eta;#Delta#phi",33,-5,5,48,-pi,2*pi);
+  TH2D * hJetMix = new TH2D(Form("hJetMix"),";#Delta#eta;#Delta#phi",33,-5,5,48,-pi,2*pi);
   Long64_t nbytes = 0, nb = 0;
   
   std::vector<int>    vhiBin;
@@ -115,6 +117,13 @@ void ztree::MixedEvent(std::string outfname)
         nmatched++;
       }
     }
+    float gammajetdphi = fabs(phoPhi[0]-jetphi[0]);
+    if(gammajetdphi > pi) gammajetdphi = 2*pi - gammajetdphi;
+    if(gammajetdphi < 5.0 * pi / 6.0) 
+    {
+      continue;
+    }
+    
     
     for(int i = 0 ; i < nmatched ; ++i)
     {
@@ -133,12 +142,23 @@ void ztree::MixedEvent(std::string outfname)
         hGammaMix->Fill(-deta,-dphi,weight);
         hGammaMix->Fill(deta,(2*pi)-dphi,weight);
         hGammaMix->Fill(-deta,(2*pi)-dphi,weight);
+        
+        deta = fabs(jeteta[0]-mix_trkEta[itrk]);
+        dphi = fabs(jetphi[0]-mix_trkPhi[itrk]);
+        if( dphi > pi ) dphi = 2*pi - dphi;
+        hJetMix->Fill(deta,dphi,weight);
+        hJetMix->Fill(-deta,dphi,weight);
+        hJetMix->Fill(deta,-dphi,weight);
+        hJetMix->Fill(-deta,-dphi,weight);
+        hJetMix->Fill(deta,(2*pi)-dphi,weight);
+        hJetMix->Fill(-deta,(2*pi)-dphi,weight);
+        
+        
       }
       
     }
     
     
-    hGammaMix->Fill(0.0,0.0,weight);
   }
   fout->Write();
   fout->Close();
