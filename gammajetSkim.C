@@ -196,6 +196,16 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  pfnIso3[100];   //_nPho
   Float_t  pfnIso4[100];   //_nPho
   Float_t  pfnIso5[100];   //_nPho
+	Int_t    nMC;
+	Int_t    mcPID[100];
+	Int_t    mcStatus[100];
+	Float_t  mcPt[100];
+	Float_t  mcEta[100];
+	Float_t  mcPhi[100];
+	Float_t  mcMomPt[100];
+	Float_t  mcMomEta[100];
+	Float_t  mcMomPhi[100];
+	Int_t    mcMomPID[100];
   // Int_t     nMu;
   // Float_t  muPt[100];   //_nMu
   // Float_t  muEta[100];   //_nMu
@@ -401,6 +411,16 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pfnIso3",&pfnIso3,"pfnIso3[nPho]/F");    
   ztree->Branch("pfnIso4",&pfnIso4,"pfnIso4[nPho]/F");    
   ztree->Branch("pfnIso5",&pfnIso5,"pfnIso5[nPho]/F");  
+	ztree->Branch("nMC", &nMC,"nMC/I");
+	ztree->Branch("mcPID", &mcPID,"mcPID[nMC]/I");
+	ztree->Branch("mcStatus", &mcStatus,"mcStatus[nMC]/I");
+	ztree->Branch("mcPt", &mcPt,"mcPt[nMC]/F");
+	ztree->Branch("mcEta", &mcEta,"mcEta[nMC]/F");
+	ztree->Branch("mcPhi", &mcPhi,"mcPhi[nMC]/F");
+	ztree->Branch("mcMomPt", &mcMomPt,"mcMomPt[nMC]/F");
+	ztree->Branch("mcMomEta", &mcMomEta,"mcMomEta[nMC]/F");
+	ztree->Branch("mcMomPhi", &mcMomPhi,"mcMomPhi[nMC]/F");
+	ztree->Branch("mcMomPID", &mcMomPID,"mcMomPID[nMC]/I");
   // ztree->Branch("nMu",&nMu,"nMu/I");   
   // ztree->Branch("muPt",&muPt,"muPt[nMu]/F");    
   // ztree->Branch("muEta",&muEta,"[nMu]/F");    
@@ -509,10 +529,28 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(njet==0) continue;
     
     inggTree->GetEntry(j);
+		int nmcphoton = 0;
+    for(int imc = 0 ; imc < _nMC ; ++imc)
+		{
+			// if(abs((*_mcMomPID)[imc])!=22) continue; //only signal photons if mc
+			nmcphoton++;
+			mcPID[imc] = (*_mcPID)[imc];
+			mcStatus[imc] = (*_mcStatus)[imc];
+			mcPt[imc] = (*_mcPt)[imc];
+			mcEta[imc] = (*_mcEta)[imc];
+			mcPhi[imc] = (*_mcPhi)[imc];
+			mcMomPt[imc] = (*_mcMomPt)[imc];
+			mcMomEta[imc] = (*_mcMomEta)[imc];
+			mcMomPhi[imc] = (*_mcMomPhi)[imc];
+			mcMomPID[imc] = (*_mcMomPID)[imc];
+		}
+		nMC = nmcphoton;
+		// if(!(_nMC==0 || nmcphoton!=0)) continue;
+		
     int nphoton = 0;
-    for(int ipho = 0 ; ipho < _nPho ; ++ipho)
+		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
     {
-      
+				
       if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 ) //photon selection
       {
         phoE[nphoton] = (*_phoE)[ipho];   
