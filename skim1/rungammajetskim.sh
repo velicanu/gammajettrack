@@ -5,7 +5,7 @@ then
 fi
 
 echo ./rungammajetskim.sh $@
-echo $HOSTNAME
+echo `hostname`
 linenum=$(($1+1))
 
 ./gammajetSkim.exe `head -n${linenum} $2 | tail -n1 ` skim_${linenum}.root akPu4CaloJetAnalyzer
