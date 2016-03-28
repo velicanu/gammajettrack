@@ -1,6 +1,7 @@
 #include "ggTree.h"
 #include "jetTree.h"
 #include "trackTree.h"
+#include "L2L3ResidualWFits.h"
 
 //! cuts defined here , {veto, loose, medium, tight}
 float cuts_barrel_pbpb_eleSigmaIEtaIEta_2012[4] = {0.0111,0.0108,0.0106,0.0097};
@@ -126,6 +127,7 @@ bool goodElectron(int i, bool is_pp) {
 void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 ) {
 
   bool is_pp = (i_is_pp == 1) ;
+  L2L3Residual * jetcorr = new L2L3Residual(3);
   TFile *fin = TFile::Open(infilename);
 
   TFile *fout = new TFile(outfilename,"recreate");
@@ -461,7 +463,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(jtpt[ij]>30 && goodJet(ij))
       // if(goodJet(ij))
       {
-        jetpt[njet] = jtpt[ij];
+        jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
         jeteta[njet] = jteta[ij];
         jetphi[njet] = jtphi[ij];
         jetID[njet] = goodJet(ij);
