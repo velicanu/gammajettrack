@@ -118,6 +118,10 @@ void ztree::Loop(std::string outfname , std::string tag, int pfTypeSelection)
   fout->Close();
 }
 
+void ztree::MixedEvent(std::string outfname )
+{
+  
+}
 
 int main(int argc, char *argv[])
 {

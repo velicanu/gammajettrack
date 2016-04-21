@@ -468,6 +468,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int nEv = evttree->GetEntries();
 
   for (int j=0; j<nEv; j++) {
+    Zlepton1Pt=-99; 
+    Zlepton2Pt=-99; 
+    Zlepton1Eta=-99; 
+    Zlepton2Eta=-99;
+    Zlepton1Phi=-99;
+    Zlepton2Phi=-99;
 
     Zlepton1Pt=-99; 
     Zlepton2Pt=-99; 

@@ -11,6 +11,8 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include "TrkCorr_Feb16_Iterative_PbPb/getTrkCorr.h"
+
 
 // Header file for the classes stored in the TTree if any.
 
@@ -434,6 +436,7 @@ class ztree {
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
   virtual void     InitMix(TTree *tree);
+	float 					 getTrkWeight(TrkCorr * trkCorr, int itrk);
   virtual void     Loop(std::string outfname, std::string tag="", int pfTypeSelection = -99);
   virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
