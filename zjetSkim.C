@@ -1,6 +1,7 @@
 #include "ggTree.h"
 #include "jetTree.h"
 #include "trackTree.h"
+#include "SkimTree.h"
 #include "L2L3ResidualWFits.h"
 
 //! cuts defined here , {veto, loose, medium, tight}
@@ -43,12 +44,12 @@ int cut_type_pbpb = 1;
 int cut_type_pp = 2;
 
 bool goodJet(int i) {
-  if(	neutralSum[i]/rawpt[i] < 0.9
-      && chargedSum[i]/rawpt[i] > 0.01
+  if(	_neutralSum[i]/rawpt[i] < 0.9
+      && _chargedSum[i]/rawpt[i] > 0.01
       && chargedN[i]+photonN[i]+neutralN[i]+eN[i]+muN[i] > 0
       && chargedMax[i]/rawpt[i] < 0.99
       && photonSum[i]/rawpt[i] < 0.99
-      && eSum[i]/rawpt[i] < 0.99
+      && _eSum[i]/rawpt[i] < 0.99
       ) return true;
   else return false;
 }
@@ -146,7 +147,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   int njet;
   float jetpt[200], jeteta[200], jetphi[200]; 
-  int jetID[200];
+  float chargedSum[200], neutralSum[200], eSum[200]; 
+  int jetID[200], subid[200];
   
   const int nPtBins = 13;
   const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
@@ -282,6 +284,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("jeteta",	&jeteta,	"jeteta[njet]/F");
   ztree->Branch("jetphi",	&jetphi,	"jetphi[njet]/F");
   ztree->Branch("jetID",	&jetID,	"jetID[njet]/I");
+  ztree->Branch("subid",	&subid,	"subid[njet]/I");
+  ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
+  ztree->Branch("neutralSum",	&neutralSum,	"neutralSum[njet]/F");
+  ztree->Branch("eSum",	&eSum,	"eSum[njet]/F");
   ztree->Branch("nTrk",	&nTrk,	"nTrk/I");
   ztree->Branch("trkPt",	&trkPt,	"trkPt[nTrk]/F");
   ztree->Branch("trkPtError", &trkPtError,"trkPtError[nTrk]/F");
@@ -448,6 +454,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   }
   initTrackTree(tracktree_);
   
+  TTree * skimTree                     = (TTree*) fin->Get("skimanalysis/HltTree");
+  if( skimTree == 0 )
+  {
+    cout<<"Could not access skim tree!"<<endl;
+    return;
+  }
+  initSkimTree(skimTree);
+  
 
 
   // int nEv = inggTree->GetEntries();
@@ -455,22 +469,39 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   for (int j=0; j<nEv; j++) {
 
+    Zlepton1Pt=-99; 
+    Zlepton2Pt=-99; 
+    Zlepton1Eta=-99; 
+    Zlepton2Eta=-99;
+    Zlepton1Phi=-99;
+    Zlepton2Phi=-99;
+
+    skimTree->GetEntry(j);
+    // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
+    evttree->GetEntry(j);
+    if(fabs(vz)>15) continue;
     injetTree->GetEntry(j);
     if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
     
     njet = 0;
     for(int ij=0; ij<nref; ij++) {
-      if(jtpt[ij]>30 && goodJet(ij))
+      // if(jtpt[ij]>1)
       // if(goodJet(ij))
+      if(jtpt[ij]>1 && goodJet(ij))
       {
         jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
+        jetpt[njet] = jtpt[ij];
         jeteta[njet] = jteta[ij];
         jetphi[njet] = jtphi[ij];
         jetID[njet] = goodJet(ij);
+        subid[njet] = _subid[ij];
+        chargedSum[njet] = _chargedSum[ij];
+        neutralSum[njet] = _neutralSum[ij];
+        eSum[njet] = _eSum[ij];
         njet++;
       }
     } //end of jet loop
-    if(njet==0) continue;
+    // if(njet==0) continue;
     // cout<<njet<<endl;
     
     inggTree->GetEntry(j);
@@ -496,8 +527,16 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
     {
 				
-      if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 ) //photon selection
+      // if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 && _phoEt->at(ipho)>40 ) //photon selection
+      if(_phoEt->at(ipho)>40 ) //photon selection
       {
+        float phopt = _phoEt->at(ipho);
+        float phoptphopt = phopt*phopt;
+        if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
+        if(fabs(_pho_swissCrx->at(ipho)) > 0.9) continue;
+        if(!(_pfcIso4->at(ipho) < 0.76  && _pfnIso4->at(ipho) < (0.97 + 0.014*phopt + 0.000019*phoptphopt) && _pfpIso4->at(ipho) < (0.08 + 0.0053*phopt))) continue;
+        if(_phoHoverE->at(ipho)>0.05) continue;
+        if(_phoSigmaIEtaIEta->at(ipho) > 0.0100 ) continue;
         phoE[nphoton] = (*_phoE)[ipho];   
         phoEt[nphoton] = (*_phoEt)[ipho];   
         phoEta[nphoton] = (*_phoEta)[ipho];   
@@ -552,6 +591,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // if(nphoton==0) continue;
     
     bool flagMu = 0; bool flagEle = 0;
+    if(flagMu || flagEle) cout<<"nothing"<<endl;
 
     TLorentzVector muon1, muon2;
     TLorentzVector ele1, ele2;
@@ -600,7 +640,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
       }
     } //end of muon loop
-
+    // cout<<Zlepton1Eta<<" "<<Zlepton2Eta<<endl;
     for(int i1 = 0; i1 < _nEle; i1++) {
 
       if(_elePt->at(i1)>leptonptcut && fabs(_eleSCEta->at(i1))<2.5 && goodElectron(i1,is_pp) && (fabs(_eleSCEta->at(i1))<1.4442 || fabs(_eleSCEta->at(i1))>1.566)) {
@@ -647,16 +687,17 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     } //end of electron loop
     
-    if( flagEle==0 && flagMu==0 ) continue;
+    // if( flagEle==0 && flagMu==0 ) continue;
 
     
     tracktree_->GetEntry(j);
-    evttree->GetEntry(j);
 
     int ntracks = 0;
     for(int i = 0 ; i < nTrk_ ; ++i)
     {
       if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
+      if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
+      if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       trkPt[ntracks] = trkPt_[i];   //[nTrk]
       trkPtError[ntracks] = trkPtError_[i];   //[nTrk]
       trkNHit[ntracks] = trkNHit_[i];   //[nTrk]
