@@ -693,7 +693,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     } //end of electron loop
     
-    // if( flagEle==0 && flagMu==0 ) continue;
+    if( flagEle==0 && flagMu==0 ) continue;
 
     
     tracktree_->GetEntry(j);
