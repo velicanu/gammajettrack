@@ -3,6 +3,7 @@
 #include "trackTree.h"
 #include "SkimTree.h"
 #include "L2L3ResidualWFits.h"
+#include "getTrkCorr.h"
 
 //! cuts defined here , {veto, loose, medium, tight}
 float cuts_barrel_pbpb_eleSigmaIEtaIEta_2012[4] = {0.0111,0.0108,0.0106,0.0097};
@@ -42,6 +43,21 @@ float cuts_endcap_pp_eleDz[4]        = {0.921,0.822,0.602,0.417};
 float cuts_endcap_pp_eleMissHits[4]  = {3,1,1,1};
 int cut_type_pbpb = 1;
 int cut_type_pp = 2;
+
+float getTrkWeight(TrkCorr * trkCorr, int itrk)
+{
+  float rmin = 999;
+  for(int k = 0; k<njet; k++)
+  {
+    if(jtpt[k]<50) break;
+    if(!goodJet(k)) continue;
+    if(TMath::Abs(jteta[k]>2)) continue;//jet quality cut
+    float R = TMath::Power(jteta[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi_[itrk])),2);
+    if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
+  }
+  return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
+}
+
 
 bool goodJet(int i) {
   if(	_neutralSum[i]/rawpt[i] < 0.9
@@ -128,6 +144,9 @@ bool goodElectron(int i, bool is_pp) {
 void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 ) {
 
   bool is_pp = (i_is_pp == 1) ;
+  TrkCorr* trkCorr;
+  if(is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
+  else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
   L2L3Residual * jetcorr = new L2L3Residual(3);
   TFile *fin = TFile::Open(infilename);
 
@@ -201,6 +220,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t         pfCandPt[100000];   //[nTrk]
   Float_t         pfEcal[100000];   //[nTrk]
   Float_t         pfHcal[100000];   //[nTrk]
+  Float_t         trkWeight[100000];   //[nTrk]
   Int_t    nPho;
   Float_t  phoE[100];   //_nPho
   Float_t  phoEt[100];   //_nPho
@@ -314,6 +334,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pfCandPt", &pfCandPt,"pfCandPt[nTrk]/F");
   ztree->Branch("pfEcal", &pfEcal,"pfEcal[nTrk]/F");
   ztree->Branch("pfHcal", &pfHcal,"pfHcal[nTrk]/F");
+  ztree->Branch("trkWeight", &trkWeight,"trkWeight[nTrk]/F");
   ztree->Branch("weight", &weight,"weight/F");
 
   ztree->Branch("nPho",&nPho,"nPho/I");
@@ -704,6 +725,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
       if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
+      float trkweight = getTrkWeight(trkCorr,i);
       trkPt[ntracks] = trkPt_[i];   //[nTrk]
       trkPtError[ntracks] = trkPtError_[i];   //[nTrk]
       trkNHit[ntracks] = trkNHit_[i];   //[nTrk]
@@ -729,6 +751,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       pfCandPt[ntracks] = pfCandPt_[i];   //[nTrk]
       pfEcal[ntracks] = pfEcal_[i];   //[nTrk]
       pfHcal[ntracks] = pfHcal_[i];   //[nTrk]
+      trkWeight[ntracks] = trkweight;
       ntracks++;
       //if((trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>15 && (trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>pfHcal[i]+pfEcal[i]) continue;} //Calo Matching
     }
