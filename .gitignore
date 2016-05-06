@@ -1,6 +1,7 @@
 # ROOT Specific
 *.root
 *.png
+*~
 
 # Compiled Object files
 *.slo

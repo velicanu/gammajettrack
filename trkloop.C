@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   }
   std::cout << '\n';
   TrkCorr* trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
-  for(int i = 0 ; i < 10 ; ++i)
+  for(int i = 0 ; i < std::atoi(argv[1]) ; ++i)
   {
     float trkweight = 0;
     trkweight=trkCorr->getTrkCorr(trkpt(gen),trketa(gen),trkphi(gen),hibin(gen),rmin(gen), i);
