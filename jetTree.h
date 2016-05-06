@@ -15,7 +15,7 @@
    Float_t         trackHardSum[300];   //[nref]
    Int_t           trackHardN[300];   //[nref]
    Float_t         chargedMax[300];   //[nref]
-   Float_t         chargedSum[300];   //[nref]
+   Float_t         _chargedSum[300];   //[nref]
    Int_t           chargedN[300];   //[nref]
    Float_t         chargedHardSum[300];   //[nref]
    Int_t           chargedHardN[300];   //[nref]
@@ -25,10 +25,10 @@
    Float_t         photonHardSum[300];   //[nref]
    Int_t           photonHardN[300];   //[nref]
    Float_t         neutralMax[300];   //[nref]
-   Float_t         neutralSum[300];   //[nref]
+   Float_t         _neutralSum[300];   //[nref]
    Int_t           neutralN[300];   //[nref]
    Float_t         eMax[300];   //[nref]
-   Float_t         eSum[300];   //[nref]
+   Float_t         _eSum[300];   //[nref]
    Int_t           eN[300];   //[nref]
    Float_t         muMax[300];   //[nref]
    Float_t         muSum[300];   //[nref]
@@ -64,6 +64,7 @@
    Float_t         svtxpt[300];   //[nref]
    Int_t           nIPtrk[300];   //[nref]
    Int_t           nselIPtrk[300];   //[nref]
+   Int_t           _subid[300];   //[nref]
    /*Int_t           nIP;
    Int_t           ipJetIndex[30000];   //[nIP]
    Float_t         ipPt[30000];   //[nIP]
@@ -103,7 +104,7 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("trackHardSum", trackHardSum);
    tree->SetBranchAddress("trackHardN", trackHardN);
    tree->SetBranchAddress("chargedMax", chargedMax);
-   tree->SetBranchAddress("chargedSum", chargedSum);
+   tree->SetBranchAddress("chargedSum", _chargedSum);
    tree->SetBranchAddress("chargedN", chargedN);
    tree->SetBranchAddress("chargedHardSum", chargedHardSum);
    tree->SetBranchAddress("chargedHardN", chargedHardN);
@@ -113,10 +114,10 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("photonHardSum", photonHardSum);
    tree->SetBranchAddress("photonHardN", photonHardN);
    tree->SetBranchAddress("neutralMax", neutralMax);
-   tree->SetBranchAddress("neutralSum", neutralSum);
+   tree->SetBranchAddress("neutralSum", _neutralSum);
    tree->SetBranchAddress("neutralN", neutralN);
    tree->SetBranchAddress("eMax", eMax);
-   tree->SetBranchAddress("eSum", eSum);
+   tree->SetBranchAddress("eSum", _eSum);
    tree->SetBranchAddress("eN", eN);
    tree->SetBranchAddress("muMax", muMax);
    tree->SetBranchAddress("muSum", muSum);
@@ -152,6 +153,7 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("svtxpt", svtxpt);
    tree->SetBranchAddress("nIPtrk", nIPtrk);
    tree->SetBranchAddress("nselIPtrk", nselIPtrk);
+   tree->SetBranchAddress("subid", _subid);
    /*tree->SetBranchAddress("nIP", &nIP);
    tree->SetBranchAddress("ipJetIndex", ipJetIndex);
    tree->SetBranchAddress("ipPt", ipPt);

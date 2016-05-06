@@ -44,20 +44,6 @@ float cuts_endcap_pp_eleMissHits[4]  = {3,1,1,1};
 int cut_type_pbpb = 1;
 int cut_type_pp = 2;
 
-float getTrkWeight(TrkCorr * trkCorr, int itrk)
-{
-  float rmin = 999;
-  for(int k = 0; k<njet; k++)
-  {
-    if(jtpt[k]<50) break;
-    if(!goodJet(k)) continue;
-    if(TMath::Abs(jteta[k]>2)) continue;//jet quality cut
-    float R = TMath::Power(jteta[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi_[itrk])),2);
-    if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
-  }
-  return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
-}
-
 
 bool goodJet(int i) {
   if(	_neutralSum[i]/rawpt[i] < 0.9
@@ -69,6 +55,22 @@ bool goodJet(int i) {
       ) return true;
   else return false;
 }
+
+
+float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin)
+{
+  float rmin = 999;
+  for(int k = 0; k<nref; k++)
+  {
+    if(jtpt[k]<50) break;
+    if(!goodJet(k)) continue;
+    if(TMath::Abs(jteta[k]>2)) continue;//jet quality cut
+    float R = TMath::Power(jteta[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi_[itrk])),2);
+    if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
+  }
+  return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
+}
+
 
 bool goodMuon(int imu) {
   if(_muChi2NDF->at(imu)<10
@@ -725,7 +727,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
       if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      float trkweight = getTrkWeight(trkCorr,i);
+      if(trkPt_[i]<0.5 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      float trkweight = 0;
+      if(is_pp) getTrkWeight(trkCorr,i,0);
+      else getTrkWeight(trkCorr,i,hiBin);
       trkPt[ntracks] = trkPt_[i];   //[nTrk]
       trkPtError[ntracks] = trkPtError_[i];   //[nTrk]
       trkNHit[ntracks] = trkNHit_[i];   //[nTrk]

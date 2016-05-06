@@ -11,13 +11,15 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 class TrkCorr{
   public:
-    double getTrkCorr(float pt, float eta, float phi, float hiBin, float rmin=99, float jtpt=0, int correction=0);
+    double getTrkCorr(float pt, float eta, float phi, float hiBin, float rmin=99, int nev=0, float jtpt=0, int correction=0);
     TrkCorr(std::string inputDirectory = "trkCorrections/");
     ~TrkCorr();    
 
-  private:
+  // private:
     int nFiles;
     int nSteps;
 
@@ -89,8 +91,9 @@ TrkCorr::TrkCorr(std::string inputDirectory)
 }
 
 //correction=0 is total, 1 is eff, 2 is fake, 3 is second, 4 is mult
-double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rmin, float jtpt, int correction)
+double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rmin, int nev, float jtpt, int correction)
 {
+  std::cout << "pre crash " <<pt << " " << eta << " " << phi  << " " <<rmin<<" "<<hiBin<< std::endl;
   if(pt<0.5 || pt>=400){  std::cout << "\nPt of " << pt << " less than 500 MeV or > 300 GeV, please place a cut to prevent this. Returning a correction of 1" << std::endl; return 1;}
   if(eta<-2.4 || eta>2.4){  std::cout << "\nEta outside of |2.4|, please place a cut to prevent this. Returning a correction of 1" << std::endl; return 1;}
   if(hiBin<0 || hiBin>199){  std::cout << "\nhiBin not within 0 to 200, please place a cut to prevent this.  Returning a correction of 1" << std::endl; return 1;}
@@ -99,6 +102,7 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
   int coarseBin = 0;
   float cent = hiBin;
   if(s->nPb==2) cent = cent/2.0;
+  // std::cout<<"pre first for loop"<<endl;
   for(int i = 0; i<s->nPtBinCoarse; i++)
   {
     if(pt >= s->ptBinCoarse[i+1]) coarseBin+=s->nCentPUBinCoarse[i];
@@ -119,41 +123,52 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
   float netMult = 0; 
 
   int th1indx = 0;
-  int th2indx = 0; 
+  int th2indx = 0;
+  std::cout<<"pre second for loop"<< coarseBin<<" "<<th1indx<<endl;
   for(int j = 0; j<nSteps; j++)
   {
+    std::cout<<"in for "<<j<<std::endl;
     if(s->stepOrder.at(j)==0)
     {
+    std::cout<<"in if "<<0<<" "<<coarseBin<<" "<<pt<<" "<<nev<<std::endl;
+    std::cout<<"in if "<<eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))<<std::endl;
+    std::cout<<"in if "<<fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))<<std::endl;
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt));
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt));
     }
     if(s->stepOrder.at(j)==1)
     {
+    std::cout<<"in if "<<1<<std::endl;
       netEff *= eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
       netFake *= fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
     }
     if(s->stepOrder.at(j)==2)
     {
+    std::cout<<"in if "<<2<<std::endl;
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(cent));
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(cent));
     }
     if(s->stepOrder.at(j)==3)
     {
+    std::cout<<"in if "<<3<<std::endl;
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(jtpt));
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(jtpt));
     }
     if(s->stepOrder.at(j)==4)
     {
+    std::cout<<"in if "<<4<<std::endl;
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(eta));
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(eta));
     }
     if(s->stepOrder.at(j)==5)
     {
+    std::cout<<"in if "<<5<<std::endl;
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(rmin));
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(rmin));
     }
     if(s->stepOrder.at(j)==7)
     {
+    std::cout<<"in if "<<7<<std::endl;
       netEff *= eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(pt));
       netFake *= fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(pt));
     }
@@ -161,6 +176,7 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
     if(s->stepOrder.at(j)==1 || s->stepOrder.at(j)==7) th2indx++;
     else                      th1indx++;
   }
+  std::cout<<"post second for loop"<<endl;
   netMult = multiple[coarseBin]->GetBinContent(multiple[coarseBin]->FindBin(pt));
   netSec  = secondary[coarseBin]->GetBinContent(secondary[coarseBin]->GetXaxis()->FindBin(pt),secondary[coarseBin]->GetYaxis()->FindBin(eta));
 
@@ -186,7 +202,7 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
 //  std::cout << "Multiple Reco Rate: " << netMult << "\nTotal Correction: " << (1.0-netSec)/(netEff*netFake*(1+netMult)) << std::endl;
 
 
-  if(1/netEff>100000) std::cout << "problem here!" << netEff <<  " " <<pt << " " << eta << " " << phi << " " << " " << coarseBin << std::endl;
+  if(1/netEff>100000) std::cout << "problem here! " << netEff <<  " " <<pt << " " << eta << " " << phi << " " << " " << coarseBin << " " <<rmin<<" "<<hiBin<< std::endl;
 
   if(correction==1) return 1/(netEff);
   else if(correction==2) return 1/(netFake);
