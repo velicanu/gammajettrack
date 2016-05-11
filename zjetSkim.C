@@ -669,7 +669,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
       }
     } //end of muon loop
-    // cout<<Zlepton1Eta<<" "<<Zlepton2Eta<<endl;
+    
     for(int i1 = 0; i1 < _nEle; i1++) {
 
       if(_elePt->at(i1)>leptonptcut && fabs(_eleSCEta->at(i1))<2.5 && goodElectron(i1,is_pp) && (fabs(_eleSCEta->at(i1))<1.4442 || fabs(_eleSCEta->at(i1))>1.566)) {
@@ -722,15 +722,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     tracktree_->GetEntry(j);
 
     int ntracks = 0;
+    // std::cout<<nTrk_<<std::endl;
     for(int i = 0 ; i < nTrk_ ; ++i)
     {
       if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
       if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      if(trkPt_[i]<0.5 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      // if(!highPurity_[i]) continue;
+      // std::cout<<"here"<<std::endl;
       float trkweight = 0;
-      if(is_pp) getTrkWeight(trkCorr,i,0);
-      else getTrkWeight(trkCorr,i,hiBin);
+      if(is_pp) trkweight = getTrkWeight(trkCorr,i,0);
+      else trkweight = getTrkWeight(trkCorr,i,hiBin);
       trkPt[ntracks] = trkPt_[i];   //[nTrk]
       trkPtError[ntracks] = trkPtError_[i];   //[nTrk]
       trkNHit[ntracks] = trkNHit_[i];   //[nTrk]

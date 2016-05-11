@@ -128,48 +128,66 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
   for(int j = 0; j<nSteps; j++)
   {
     //    std::cout<<"in for "<<j<<std::endl;
+    if(th1indx==0 && coarseBin==10){
+        
+      // std::cout<<"would break "<<0<<" "<<coarseBin<<" "<<th1indx<<" "<<pt<<" "<<nev<<std::endl;
+      continue;
+    }
     if(s->stepOrder.at(j)==0)
     {
-      //std::cout<<"in if "<<0<<" "<<coarseBin<<" "<<pt<<" "<<nev<<std::endl;
-      //std::cout<<"in if "<<eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))<<std::endl;
-      //std::cout<<"in if "<<fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))<<std::endl;
-      netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt));
-      netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt));
+      // std::cout<<"in if "<<0<<" "<<coarseBin<<" "<<th1indx<<" "<<pt<<std::endl;
+      // std::cout<<"in if "<<fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
+        netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
+        netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt));
     }
     if(s->stepOrder.at(j)==1)
     {
-      //std::cout<<"in if "<<1<<std::endl;
-      netEff *= eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
-      netFake *= fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
+      // std::cout<<"in if "<<1<<std::endl;
+      if(eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(phi))>0)
+        netEff *= eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
+      if(fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(phi)))
+        netFake *= fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(phi));
     }
     if(s->stepOrder.at(j)==2)
     {
-      //std::cout<<"in if "<<2<<std::endl;
+      // std::cout<<"in if "<<2<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(cent));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(cent));
     }
     if(s->stepOrder.at(j)==3)
     {
-      //std::cout<<"in if "<<3<<std::endl;
+      // std::cout<<"in if "<<3<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(jtpt));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(jtpt));
     }
     if(s->stepOrder.at(j)==4)
     {
-      //std::cout<<"in if "<<4<<std::endl;
+      // std::cout<<"in if "<<4<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(eta));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(eta));
     }
     if(s->stepOrder.at(j)==5)
     {
-      //std::cout<<"in if "<<5<<std::endl;
+      // std::cout<<"in if "<<5<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
       netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(rmin));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
       netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(rmin));
     }
     if(s->stepOrder.at(j)==7)
     {
-      //std::cout<<"in if "<<7<<std::endl;
+      // std::cout<<"in if "<<7<<std::endl;
+      if(eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(pt))>0)
       netEff *= eff2[coarseBin][th2indx]->GetBinContent(eff2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),eff2[coarseBin][th2indx]->GetYaxis()->FindBin(pt));
+      if(fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(pt))>0)
       netFake *= fake2[coarseBin][th2indx]->GetBinContent(fake2[coarseBin][th2indx]->GetXaxis()->FindBin(eta),fake2[coarseBin][th2indx]->GetYaxis()->FindBin(pt));
     }
 
@@ -177,9 +195,16 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
     else                      th1indx++;
   }
   //std::cout<<"post second for loop"<<endl;
-  netMult = multiple[coarseBin]->GetBinContent(multiple[coarseBin]->FindBin(pt));
-  netSec  = secondary[coarseBin]->GetBinContent(secondary[coarseBin]->GetXaxis()->FindBin(pt),secondary[coarseBin]->GetYaxis()->FindBin(eta));
-
+  if(th1indx==0 && coarseBin==10)
+  {
+    // std::cout<<"would break post"<<" "<<coarseBin<<" "<<th1indx<<" "<<pt<<" "<<nev<<std::endl;
+    // continue;
+  }
+  else
+  {
+    netMult = multiple[coarseBin]->GetBinContent(multiple[coarseBin]->FindBin(pt));
+    netSec  = secondary[coarseBin]->GetBinContent(secondary[coarseBin]->GetXaxis()->FindBin(pt),secondary[coarseBin]->GetYaxis()->FindBin(eta));
+  }
 /*
   netEff *= eff[coarseBin][0]->GetBinContent(eff[coarseBin][0]->FindBin(pt));
   netEff *= eff[coarseBin][1]->GetBinContent(eff[coarseBin][1]->FindBin(cent));
