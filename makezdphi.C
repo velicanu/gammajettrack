@@ -33,9 +33,10 @@
   TCanvas * stackedcanvasepbpb [2];
   THStack * hspp[2];
   THStack * hspbpb[2];
+  int itrkstart = 1;
   for(int izcut = 0 ; izcut < 2 ; ++izcut)
   {
-    for(int itrkcut = 0 ; itrkcut < ntrkcuts ; ++itrkcut)
+    for(int itrkcut = itrkstart ; itrkcut < ntrkcuts ; ++itrkcut)
     {
       
       hppzdphi[izcut][itrkcut] = new TH1D(Form("hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),";Z-trk #Delta#phi",12,0,3.1415);
@@ -44,8 +45,8 @@
       int npbpbzpassingcuts = pbpbztree->Draw("Zpt",Form("Zpt>%d && Zmass>80 && Zmass<110",zptcuts[izcut]),"goff");
       float ppbinwidth   = hppzdphi[izcut][itrkcut]->GetBinWidth(1);
       float pbpbbinwidth = hpbpbzdphi[izcut][itrkcut]->GetBinWidth(1);
-      ppztree->Draw(Form("acos(cos(Zphi - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(Zpt>%d && trkPt>%2.1f && trkPt<%2.1f && Zmass>80 && Zmass<110)*trkPt",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
-      pbpbztree->Draw(Form("acos(cos(Zphi - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(Zpt>%d && trkPt>%2.1f && trkPt<%2.1f && Zmass>80 && Zmass<110)*trkPt",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      ppztree->Draw(Form("acos(cos(Zphi - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(Zpt>%d && trkPt>%2.1f && trkPt<%2.1f && Zmass>80 && Zmass<110)*trkPt*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      pbpbztree->Draw(Form("acos(cos(Zphi - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(Zpt>%d && trkPt>%2.1f && trkPt<%2.1f && Zmass>80 && Zmass<110)*trkPt*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
       hppzdphi[izcut][itrkcut]->Sumw2();
       hppzdphi[izcut][itrkcut]->SetMarkerStyle(24);
       hpbpbzdphi[izcut][itrkcut]->Sumw2();
@@ -57,7 +58,7 @@
       hsubpbpbzdphi[izcut][itrkcut] = (TH1D*) hpbpbzdphi[izcut][itrkcut]->Clone(Form("hsubpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])));
       
       
-      canvases[izcut][itrkcut] = new TCanvas();
+      // canvases[izcut][itrkcut] = new TCanvas();
       float maxvalue = hppzdphi[izcut][itrkcut]->GetMaximum();
       if( hpbpbzdphi[izcut][itrkcut]->GetMaximum() > maxvalue ) maxvalue = hpbpbzdphi[izcut][itrkcut]->GetMaximum();
       float minvalue = hppzdphi[izcut][itrkcut]->GetMinimum();
@@ -73,9 +74,9 @@
       subdummy->GetYaxis()->SetTitleOffset(1.25);
       
       // TCanvas c2;
-      dummy->Draw();
-      hppzdphi[izcut][itrkcut]->Draw("same");
-      hpbpbzdphi[izcut][itrkcut]->Draw("same");
+      // dummy->Draw();
+      // hppzdphi[izcut][itrkcut]->Draw("same");
+      // hpbpbzdphi[izcut][itrkcut]->Draw("same");
       
       for(int icoll = 0 ; icoll < 2 ; ++icoll)
       {        
@@ -91,9 +92,9 @@
           hpbpbzdphi[izcut][itrkcut]->Fit(Form("flat_%s",collision[icoll].data()),"0","",0, TMath::Pi()/2.0);
         }
         flat[izcut][itrkcut][icoll]->SetLineStyle(linestyle[icoll]);
-        flat[izcut][itrkcut][icoll]->Draw("same");
+        // flat[izcut][itrkcut][icoll]->Draw("same");
       }
-      
+      /*
       TLegend * leg = new TLegend(0.45,0.58,0.75,0.9);
       leg->AddEntry(hpbpbzdphi[izcut][itrkcut],"#sqrt{s_{NN}}=5TeV PbPb","lp");
       leg->AddEntry(hppzdphi[izcut][itrkcut],"#sqrt{s}   =5TeV pp","lp");
@@ -114,27 +115,26 @@
       // TLatex * lztype = new TLatex(.52,0.95,Form("%d pp, %d PbPb Z-#mu#mu",nppzpassingcuts,npbpbzpassingcuts));
       lztype->SetNDC();
       lztype->Draw();
+      */
+      // canvases[izcut][itrkcut]->SaveAs(Form("ztrkdphi_%d_%d_%d_%s.png",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut]),thistype.data()));
       
-      canvases[izcut][itrkcut]->SaveAs(Form("ztrkdphi_%d_%d_%d_%s.png",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut]),thistype.data()));
-      
-      subcanvases[izcut][itrkcut] = new TCanvas();
+      // subcanvases[izcut][itrkcut] = new TCanvas();
       for(int ibin = 0 ; ibin < hsubppzdphi[izcut][itrkcut]->GetNbinsX() ; ++ibin)
       {
         hsubppzdphi[izcut][itrkcut]->SetBinContent(ibin,hppzdphi[izcut][itrkcut]->GetBinContent(ibin) - flat[izcut][itrkcut][0]->Eval(1.0));
         hsubpbpbzdphi[izcut][itrkcut]->SetBinContent(ibin,hpbpbzdphi[izcut][itrkcut]->GetBinContent(ibin) - flat[izcut][itrkcut][1]->Eval(1.0));
       }
       
-      subdummy->Draw();
-      hsubppzdphi[izcut][itrkcut]->Draw("same");
-      hsubpbpbzdphi[izcut][itrkcut]->Draw("same");
-      leg->Draw();
-      lint->Draw();
-      lztype->Draw();
-      TLine * lzero = new TLine(0,0,TMath::Pi(),0);
-      lzero->SetLineStyle(9);
-      lzero->Draw();
-      subcanvases[izcut][itrkcut]->SaveAs(Form("sub_ztrkdphi_%d_%d_%d_%s.png",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut]),thistype.data()));
-      // break;
+      // subdummy->Draw();
+      // hsubppzdphi[izcut][itrkcut]->Draw("same");
+      // hsubpbpbzdphi[izcut][itrkcut]->Draw("same");
+      // leg->Draw();
+      // lint->Draw();
+      // lztype->Draw();
+      // TLine * lzero = new TLine(0,0,TMath::Pi(),0);
+      // lzero->SetLineStyle(9);
+      // lzero->Draw();
+      // subcanvases[izcut][itrkcut]->SaveAs(Form("sub_ztrkdphi_%d_%d_%d_%s.png",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut]),thistype.data()));
     }
     stackedcanvasepp[izcut] = new TCanvas();
     hspp[izcut] = new THStack(Form("hspp_%d",zptcuts[izcut]),"");
@@ -152,14 +152,14 @@
     // TLatex * lztype = new TLatex(.52,0.95,Form("%d pp, %d PbPb Z-#mu#mu",nppzpassingcuts,npbpbzpassingcuts));
     lztype->SetNDC();
 
-    for(int itrkcut = 0 ; itrkcut < ntrkcuts ; ++itrkcut)
+    for(int itrkcut = itrkstart ; itrkcut < ntrkcuts ; ++itrkcut)
     {
       hsubppzdphi[izcut][itrkcut]->SetFillColor(histcolors[itrkcut]);
       hspp[izcut]->Add(hsubppzdphi[izcut][itrkcut]);
       leg->AddEntry(hsubppzdphi[izcut][itrkcut],Form("%2.1f<trk p_{T}<%2.1f GeV",trkptmin[itrkcut],trkptmax[itrkcut]),"fl");
     }
-    leg->AddEntry(hppzdphi[izcut][0],Form("Z p_{T}>%d GeV",zptcuts[izcut]),"");
-    leg->AddEntry(hppzdphi[izcut][0],Form("80<Zmass<110 GeV"),"");
+    leg->AddEntry(hppzdphi[izcut][itrkstart],Form("Z p_{T}>%d GeV",zptcuts[izcut]),"");
+    leg->AddEntry(hppzdphi[izcut][itrkstart],Form("80<Zmass<110 GeV"),"");
 
     // hspp[izcut]->GetXaxis()->SetTitle("Z-trk #Delta#phi");
     hspp[izcut]->Draw("hist");
@@ -180,14 +180,14 @@
     // TLatex * lztype = new TLatex(.52,0.95,Form("%d pbpb, %d PbPb Z-#mu#mu",npbpbzpassingcuts,npbpbzpassingcuts));
     lztypepbpb->SetNDC();
 
-    for(int itrkcut = 0 ; itrkcut < ntrkcuts ; ++itrkcut)
+    for(int itrkcut = itrkstart ; itrkcut < ntrkcuts ; ++itrkcut)
     {
       hsubpbpbzdphi[izcut][itrkcut]->SetFillColor(histcolors[itrkcut]);
       hspbpb[izcut]->Add(hsubpbpbzdphi[izcut][itrkcut]);
       legpbpb->AddEntry(hsubpbpbzdphi[izcut][itrkcut],Form("%2.1f<trk p_{T}<%2.1f GeV",trkptmin[itrkcut],trkptmax[itrkcut]),"fl");
     }
-    legpbpb->AddEntry(hpbpbzdphi[izcut][0],Form("Z p_{T}>%d GeV",zptcuts[izcut]),"");
-    legpbpb->AddEntry(hpbpbzdphi[izcut][0],Form("80<Zmass<110 GeV"),"");
+    legpbpb->AddEntry(hpbpbzdphi[izcut][itrkstart],Form("Z p_{T}>%d GeV",zptcuts[izcut]),"");
+    legpbpb->AddEntry(hpbpbzdphi[izcut][itrkstart],Form("80<Zmass<110 GeV"),"");
 
     hspbpb[izcut]->Draw("hist");
     lint->Draw();
