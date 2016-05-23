@@ -2,15 +2,17 @@
   string thistype = "mm";
   // both.azsigmon-HIRun2015E-PromptReco-AOD-DielectronSkim-ElePt8-v3_forest_csjet_v1_3.azsigmon-HIRun2015E-PromptReco-AOD-DimuonSkim-Mass40-v3_forest_csjet_v1_2.root
   // both.PromptReco-AOD-DielectronSkim-262274-262328_ppFOREST_v24.PromptReco-AOD-DimuonSkim-Mass40-262274-262328_ppFOREST_v24.root
-  
-  TFile * ppfile = TFile::Open("/home/ursu/both.PromptReco-AOD-DielectronSkim-262274-262328_ppFOREST_v24.PromptReco-AOD-DimuonSkim-Mass40-262274-262328_ppFOREST_v24.root");
-  TFile * pbpbfile = TFile::Open("/home/ursu/both.azsigmon-HIRun2015E-PromptReco-AOD-DielectronSkim-ElePt8-v3_forest_csjet_v1_3.azsigmon-HIRun2015E-PromptReco-AOD-DimuonSkim-Mass40-v3_forest_csjet_v1_2.root");
-  
+
+  TFile * ppfile = TFile::Open("/home/ursu/z.PromptReco-AOD-DimuonSkim-Mass40-262274-262328_ppFOREST_v24.root");
+  // TFile * ppfile = TFile::Open("/home/ursu/both.PromptReco-AOD-DielectronSkim-262274-262328_ppFOREST_v24.PromptReco-AOD-DimuonSkim-Mass40-262274-262328_ppFOREST_v24.root");
+  TFile * pbpbfile = TFile::Open("/home/ursu/z.azsigmon-HIRun2015E-PromptReco-AOD-DimuonSkim-Mass40-v3_forest_csjet_v1_2.root");
+  // TFile * pbpbfile = TFile::Open("/home/ursu/both.azsigmon-HIRun2015E-PromptReco-AOD-DielectronSkim-ElePt8-v3_forest_csjet_v1_3.azsigmon-HIRun2015E-PromptReco-AOD-DimuonSkim-Mass40-v3_forest_csjet_v1_2.root");
+
   TTree * ppztree = (TTree*) ppfile->Get("ztree");
   TTree * pbpbztree = (TTree*) pbpbfile->Get("ztree");
-  
+
   const int ntrkcuts = 6;
-  
+
   int trkptcuts [ntrkcuts] = {4,8};
   float trkptmin [ntrkcuts] = {0.5,1,2,3,4,8};
   float trkptmax [ntrkcuts] = {1,2,3,4,8,1000};
@@ -38,7 +40,7 @@
   {
     for(int itrkcut = itrkstart ; itrkcut < ntrkcuts ; ++itrkcut)
     {
-      
+
       hppzdphi[izcut][itrkcut] = new TH1D(Form("hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),";Z-trk #Delta#phi",12,0,3.1415);
       hpbpbzdphi[izcut][itrkcut] = new TH1D(Form("hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),";Z-trk #Delta#phi",12,0,3.1415);
       int nppzpassingcuts = ppztree->Draw("Zpt",Form("Zpt>%d && Zmass>80 && Zmass<110",zptcuts[izcut]),"goff");
@@ -50,20 +52,20 @@
       hppzdphi[izcut][itrkcut]->Sumw2();
       hppzdphi[izcut][itrkcut]->SetMarkerStyle(24);
       hpbpbzdphi[izcut][itrkcut]->Sumw2();
-      
+
       hppzdphi[izcut][itrkcut]->Scale(1.0/(float)nppzpassingcuts/ppbinwidth);
       hpbpbzdphi[izcut][itrkcut]->Scale(1.0/(float)npbpbzpassingcuts/pbpbbinwidth);
-      
+
       hsubppzdphi[izcut][itrkcut] = (TH1D*) hppzdphi[izcut][itrkcut]->Clone(Form("hsubppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])));
       hsubpbpbzdphi[izcut][itrkcut] = (TH1D*) hpbpbzdphi[izcut][itrkcut]->Clone(Form("hsubpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])));
-      
-      
+
+
       canvases[izcut][itrkcut] = new TCanvas();
       float maxvalue = hppzdphi[izcut][itrkcut]->GetMaximum();
       if( hpbpbzdphi[izcut][itrkcut]->GetMaximum() > maxvalue ) maxvalue = hpbpbzdphi[izcut][itrkcut]->GetMaximum();
       float minvalue = hppzdphi[izcut][itrkcut]->GetMinimum();
       if( hpbpbzdphi[izcut][itrkcut]->GetMinimum() < minvalue ) minvalue = hpbpbzdphi[izcut][itrkcut]->GetMinimum();
-      
+
       TH2D * dummy = new TH2D("dummy",";Z-trk #Delta#phi;#frac{1}{N_{Z}} #frac{dN}{d#Delta#phi}",1,0,3.1415,1,minvalue-1,maxvalue+1);
       dummy->GetXaxis()->CenterTitle();
       dummy->GetYaxis()->CenterTitle();
@@ -72,14 +74,14 @@
       subdummy->GetXaxis()->CenterTitle();
       subdummy->GetYaxis()->CenterTitle();
       subdummy->GetYaxis()->SetTitleOffset(1.25);
-      
+
       //      TCanvas c2;
       dummy->Draw();
       hppzdphi[izcut][itrkcut]->Draw("same");
       hpbpbzdphi[izcut][itrkcut]->Draw("same");
-      
+
       for(int icoll = 0 ; icoll < 2 ; ++icoll)
-      {        
+      {
         flat[izcut][itrkcut][icoll] = new TF1(Form("flat_%s",collision[icoll].data()),"[0]", 0, TMath::Pi());
         flat[izcut][itrkcut][icoll]->SetParameter(0,0);
         // flat[izcut][itrkcut][icoll]->SetParameter(1,1);
@@ -95,7 +97,7 @@
         // flat[izcut][itrkcut][icoll]->Draw("same");
       }
       //continue;
-      
+
       TLegend * leg = new TLegend(0.45,0.58,0.75,0.9);
       leg->AddEntry(hpbpbzdphi[izcut][itrkcut],"#sqrt{s_{NN}}=5TeV PbPb","lp");
       leg->AddEntry(hppzdphi[izcut][itrkcut],"#sqrt{s}   =5TeV pp","lp");
@@ -108,7 +110,7 @@
       leg->SetTextFont(42);
       leg->Draw();
 
-      
+
       TLatex * lint = new TLatex(.22,0.95,"CMS Preliminary");
       lint->SetNDC();
       lint->Draw();
@@ -116,16 +118,16 @@
       // TLatex * lztype = new TLatex(.52,0.95,Form("%d pp, %d PbPb Z-#mu#mu",nppzpassingcuts,npbpbzpassingcuts));
       lztype->SetNDC();
       lztype->Draw();
-      
+
       canvases[izcut][itrkcut]->SaveAs(Form("ztrkdphi_%d_%d_%d_%s.png",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut]),thistype.data()));
-      
+
       subcanvases[izcut][itrkcut] = new TCanvas();
       for(int ibin = 0 ; ibin < hsubppzdphi[izcut][itrkcut]->GetNbinsX()+1 ; ++ibin)
       {
         hsubppzdphi[izcut][itrkcut]->SetBinContent(ibin,hppzdphi[izcut][itrkcut]->GetBinContent(ibin) - flat[izcut][itrkcut][0]->Eval(1.0));
         hsubpbpbzdphi[izcut][itrkcut]->SetBinContent(ibin,hpbpbzdphi[izcut][itrkcut]->GetBinContent(ibin) - flat[izcut][itrkcut][1]->Eval(1.0));
       }
-      
+
       subdummy->Draw();
       hsubppzdphi[izcut][itrkcut]->Draw("same");
       hsubpbpbzdphi[izcut][itrkcut]->Draw("same");
@@ -146,7 +148,7 @@
     leg->SetFillStyle(0);
     leg->SetTextFont(42);
 
-    
+
     TLatex * lint = new TLatex(.22,0.95,"CMS Preliminary");
     lint->SetNDC();
     TLatex * lztype = new TLatex(.52,0.95,Form("pp Z"));
@@ -169,7 +171,7 @@
     leg->Draw();
     lztype->Draw();
     stackedcanvasepp[izcut]->SaveAs(Form("sub_ztrkdphi_stacked_pp_%d.png",zptcuts[izcut]));
-    
+
     stackedcanvasepbpb[izcut] = new TCanvas();
 
     hspbpb[izcut] = new THStack(Form("hspbpb_%d",zptcuts[izcut]),"");
