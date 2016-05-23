@@ -627,11 +627,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
     for(int i1 = 0; i1 < _nMu; i1++) {
 
-      if(_muPt->at(i1)>leptonptcut && fabs(_muEta->at(i1))<2.4 && goodMuon(i1)) {
+      if(_muPt->at(i1)>(leptonptcut-10) && fabs(_muEta->at(i1))<2.4 && goodMuon(i1)) {
 
         for(int i2 = i1+1; i2 < _nMu; i2++) {
 
-          if(_muPt->at(i2)>leptonptcut && fabs(_muEta->at(i2))<2.4 && goodMuon(i2)) {
+          if(_muPt->at(i2)>(leptonptcut-10) && fabs(_muEta->at(i2))<2.4 && goodMuon(i2)) {
 
             muon1.SetPtEtaPhiM(_muPt->at(i1), _muEta->at(i1), _muPhi->at(i1), 0.105658);
             muon2.SetPtEtaPhiM(_muPt->at(i2), _muEta->at(i2), _muPhi->at(i2), 0.105658);
@@ -725,12 +725,21 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // std::cout<<nTrk_<<std::endl;
     for(int i = 0 ; i < nTrk_ ; ++i)
     {
-      if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
-      if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      // if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
+      // if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
+      // if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       // if(!highPurity_[i]) continue;
       // std::cout<<"here"<<std::endl;
+      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      if(highPurity_[j]!=1) continue;
+      if(trkPtError_[j]/trkPt_[j]>0.1 || TMath::Abs(trkDz1_[j]/trkDzError1_[j])>3 || TMath::Abs(trkDxy1_[j]/trkDxyError1_[j])>3) continue;
+      if(trkChi2_[j]/(float)trkNdof_[j]/(float)trkNlayer_[j]>0.15) continue;
+      if(trkNHit_[j]<11 && trkPt_[j]>0.7) continue;
+      if((maxJetPt>50 && trkPt[j]>maxJetPt) || (maxJetPt<50 && trkPt[j]>50)) continue;
+
+      float Et = (pfHcal[j]+pfEcal[j])/TMath::CosH(trkEta[j]);
+      if(!(trkPt[j]<20 || (Et>0.5*trkPt[j]))) continue;
+
       float trkweight = 0;
       if(is_pp) trkweight = getTrkWeight(trkCorr,i,0);
       else trkweight = getTrkWeight(trkCorr,i,hiBin);

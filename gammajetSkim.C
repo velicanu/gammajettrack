@@ -163,7 +163,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float weight = 0 , vz = -99;
   int hiBin = -99;
   int Zcharge;
-  float leptonptcut = 20;
+  float leptonptcut = 10;
 
 
   int njet;
@@ -192,6 +192,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int nMuPair = 0;
   int nElPair = 0;
 
+  Int_t           hiNevtPlane;
+  Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
   
   Int_t           nTrk;
   Int_t           run;
@@ -283,11 +285,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	Int_t    mcMomPID[100];
   
   TTree *ztree = new TTree("ztree","Jet track tree");
-  ztree->Branch("run",	&run,	"run/I");
-  ztree->Branch("event",	&event,	"event/I");
-  ztree->Branch("lumis",	&lumis,	"lumis/I");
+
+  ztree->Branch("run",  &run, "run/I");
+  ztree->Branch("event",  &event, "event/I");
+  ztree->Branch("lumis",  &lumis, "lumis/I");
   ztree->Branch("hiBin", &hiBin, "hiBin/I");
   ztree->Branch("vz", &vz, "vz/F");
+  ztree->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
+  ztree->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
   ztree->Branch("Ztype",	&Ztype,	"Ztype/I");
   ztree->Branch("Zmass",	&Zmass,	"Zmass/F");
   ztree->Branch("Zpt",	&Zpt,	"Zpt/F");
@@ -468,6 +473,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("weight", &weight);
   evttree->SetBranchAddress("hiBin", &hiBin);
   evttree->SetBranchAddress("vz", &vz);
+  evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
+  evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
   
   TTree * tracktree_                     = (TTree*) fin->Get("anaTrack/trackTree");
   if( tracktree_ == 0 ) tracktree_        = (TTree*) fin->Get("ppTrack/trackTree");
@@ -510,13 +517,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     evttree->GetEntry(j);
     if(fabs(vz)>15) continue;
     injetTree->GetEntry(j);
+    // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
     if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
     
     njet = 0;
+    float maxJetPt = 0;
     for(int ij=0; ij<nref; ij++) {
       // if(jtpt[ij]>1)
       // if(goodJet(ij))
-      if(jtpt[ij]>1 && goodJet(ij))
+      if(jtpt[ij]>1 && goodJet(ij) && fabs(jeteta[ij])<2)
       {
         jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
         jetpt[njet] = jtpt[ij];
@@ -527,6 +536,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         chargedSum[njet] = _chargedSum[ij];
         neutralSum[njet] = _neutralSum[ij];
         eSum[njet] = _eSum[ij];
+        if(maxJetPt<jetpt[njet]) maxJetPt = jetpt[njet];
         njet++;
       }
     } //end of jet loop
@@ -565,7 +575,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
         if(fabs(_pho_swissCrx->at(ipho)) > 0.9) continue;
         //if(!(_pfcIso4->at(ipho) < 0.76  && _pfnIso4->at(ipho) < (0.97 + 0.014*phopt + 0.000019*phoptphopt) && _pfpIso4->at(ipho) < (0.08 + 0.0053*phopt))) continue;
+        
+        // Isolation cone cut
         if((*_pho_ecalClusterIsoR4)[ipho]+(*_pho_hcalRechitIsoR4)[ipho]+(*_pho_trackIsoR4PtCut20)[ipho]>1) continue;
+        
         if(_phoHoverE->at(ipho)>0.1) continue;
         if(_phoSigmaIEtaIEta->at(ipho) > 0.0100 ) continue;
         phoE[nphoton] = (*_phoE)[ipho];   
@@ -727,12 +740,21 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // std::cout<<nTrk_<<std::endl;
     for(int i = 0 ; i < nTrk_ ; ++i)
     {
-      if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
-      if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      // if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
+      // if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
+      // if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
       // if(!highPurity_[i]) continue;
       // std::cout<<"here"<<std::endl;
+      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      if(highPurity_[j]!=1) continue;
+      if(trkPtError_[j]/trkPt_[j]>0.1 || TMath::Abs(trkDz1_[j]/trkDzError1_[j])>3 || TMath::Abs(trkDxy1_[j]/trkDxyError1_[j])>3) continue;
+      if(trkChi2_[j]/(float)trkNdof_[j]/(float)trkNlayer_[j]>0.15) continue;
+      if(trkNHit_[j]<11 && trkPt_[j]>0.7) continue;
+      if((maxJetPt>50 && trkPt[j]>maxJetPt) || (maxJetPt<50 && trkPt[j]>50)) continue;
+
+      float Et = (pfHcal[j]+pfEcal[j])/TMath::CosH(trkEta[j]);
+      if(!(trkPt[j]<20 || (Et>0.5*trkPt[j]))) continue;
+
       float trkweight = 0;
       if(is_pp) trkweight = getTrkWeight(trkCorr,i,0);
       else trkweight = getTrkWeight(trkCorr,i,hiBin);
