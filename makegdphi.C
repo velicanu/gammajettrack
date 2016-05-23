@@ -6,7 +6,9 @@
   // g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root
   // g.pp-photonHLTFilter-v0-HiForest.root  
   TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest.root");
-  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  TFile * pbpbfile = TFile::Open("/home/ursu/g.newtrkcuts.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  // TFile * pbpbfile = TFile::Open("/home/ursu/g.noiso.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  // TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
   
   TTree * ppztree = (TTree*) ppfile->Get("ztree");
   TTree * pbpbztree = (TTree*) pbpbfile->Get("ztree");
@@ -16,7 +18,7 @@
   int trkptcuts [ntrkcuts] = {4,8};
   float trkptmin [ntrkcuts] = {0.5,1,2,3,4,8};
   float trkptmax [ntrkcuts] = {1,2,3,4,8,1000};
-  int zptcuts   [2] = {40, 60};
+  int zptcuts   [2] = {200, 220};
   float ymins [2] = {0,0};
   float subymins [2] = {-1,-1};
   float ymaxs [2] = {6,3};
@@ -48,8 +50,10 @@
       int npbpbzpassingcuts = pbpbztree->Draw("phoEt[0]",Form("phoEt[0]>%d",zptcuts[izcut]),"goff");
       float ppbinwidth   = hppzdphi[izcut][itrkcut]->GetBinWidth(1);
       float pbpbbinwidth = hpbpbzdphi[izcut][itrkcut]->GetBinWidth(1);
-      ppztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
-      pbpbztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      // ppztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      // pbpbztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      ppztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      pbpbztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity*trkWeight",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
       hppzdphi[izcut][itrkcut]->Sumw2();
       hppzdphi[izcut][itrkcut]->SetMarkerStyle(24);
       hpbpbzdphi[izcut][itrkcut]->Sumw2();
