@@ -138,7 +138,7 @@ bool goodElectron(int i, bool is_pp) {
       else return false;
     }
   }
-  
+
   return false;
 }
 
@@ -162,15 +162,16 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float Zlepton1Pt, Zlepton2Pt, Zlepton1Eta, Zlepton2Eta, Zlepton1Phi, Zlepton2Phi;
   float weight = 0 , vz = -99;
   int hiBin = -99;
+  int HLT_HISinglePhoton40_Eta1p5_v1 = -99;
   int Zcharge;
   float leptonptcut = 10;
 
 
   int njet;
-  float jetpt[200], jeteta[200], jetphi[200]; 
-  float chargedSum[200], neutralSum[200], eSum[200]; 
+  float jetpt[200], jeteta[200], jetphi[200];
+  float chargedSum[200], neutralSum[200], eSum[200];
   int jetID[200], subid[200];
-  
+
   const int nPtBins = 13;
   const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
   const int nYBins = 13;
@@ -194,7 +195,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   Int_t           hiNevtPlane;
   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
-  
+
   Int_t           nTrk;
   Int_t           run;
   Int_t           event;
@@ -283,7 +284,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	Float_t  mcMomEta[100];
 	Float_t  mcMomPhi[100];
 	Int_t    mcMomPID[100];
-  
+
   TTree *ztree = new TTree("ztree","Jet track tree");
 
   ztree->Branch("run",  &run, "run/I");
@@ -345,53 +346,53 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("weight", &weight,"weight/F");
 
   ztree->Branch("nPho",&nPho,"nPho/I");
-  ztree->Branch("phoE",&phoE,"phoE[nPho]/F");    
-  ztree->Branch("phoEt",&phoEt,"phoEt[nPho]/F");    
-  ztree->Branch("phoEta",&phoEta,"phoEta[nPho]/F");    
-  ztree->Branch("phoPhi",&phoPhi,"phoPhi[nPho]/F");    
-  ztree->Branch("phoSCE",&phoSCE,"phoSCE[nPho]/F");    
-  ztree->Branch("phoSCRawE",&phoSCRawE,"phoSCRawE[nPho]/F");    
-  ztree->Branch("phoESEn",&phoESEn,"phoESEn[nPho]/F");    
-  ztree->Branch("phoSCEta",&phoSCEta,"phoSCEta[nPho]/F");    
-  ztree->Branch("phoSCPhi",&phoSCPhi,"phoSCPhi[nPho]/F");    
-  ztree->Branch("phoSCEtaWidth",&phoSCEtaWidth,"phoSCEtaWidth[nPho]/F");    
-  ztree->Branch("phoSCPhiWidth",&phoSCPhiWidth,"phoSCPhiWidth[nPho]/F");    
-  ztree->Branch("phoSCBrem",&phoSCBrem,"phoSCBrem[nPho]/F");    
-  ztree->Branch("phohasPixelSeed",&phohasPixelSeed,"phohasPixelSeed[nPho]/I");    
-  ztree->Branch("phoR9",&phoR9,"phoR9[nPho]/F");    
-  ztree->Branch("phoHoverE",&phoHoverE,"phoHoverE[nPho]/F");    
-  ztree->Branch("phoSigmaIEtaIEta",&phoSigmaIEtaIEta,"phoSigmaIEtaIEta[nPho]/F");    
-  ztree->Branch("pho_ecalClusterIsoR2",&pho_ecalClusterIsoR2,"pho_ecalClusterIsoR2[nPho]/F");    
-  ztree->Branch("pho_ecalClusterIsoR3",&pho_ecalClusterIsoR3,"pho_ecalClusterIsoR3[nPho]/F");    
-  ztree->Branch("pho_ecalClusterIsoR4",&pho_ecalClusterIsoR4,"pho_ecalClusterIsoR4[nPho]/F");    
-  ztree->Branch("pho_ecalClusterIsoR5",&pho_ecalClusterIsoR5,"pho_ecalClusterIsoR5[nPho]/F");    
-  ztree->Branch("pho_hcalRechitIsoR1",&pho_hcalRechitIsoR1,"pho_hcalRechitIsoR1[nPho]/F");    
-  ztree->Branch("pho_hcalRechitIsoR2",&pho_hcalRechitIsoR2,"pho_hcalRechitIsoR2[nPho]/F");    
-  ztree->Branch("pho_hcalRechitIsoR3",&pho_hcalRechitIsoR3,"pho_hcalRechitIsoR3[nPho]/F");    
-  ztree->Branch("pho_hcalRechitIsoR4",&pho_hcalRechitIsoR4,"pho_hcalRechitIsoR4[nPho]/F");    
-  ztree->Branch("pho_hcalRechitIsoR5",&pho_hcalRechitIsoR5,"pho_hcalRechitIsoR5[nPho]/F");    
-  ztree->Branch("pho_trackIsoR1PtCut20",&pho_trackIsoR1PtCut20,"pho_trackIsoR1PtCut20[nPho]/F");    
-  ztree->Branch("pho_trackIsoR2PtCut20",&pho_trackIsoR2PtCut20,"pho_trackIsoR2PtCut20[nPho]/F");    
-  ztree->Branch("pho_trackIsoR3PtCut20",&pho_trackIsoR3PtCut20,"pho_trackIsoR3PtCut20[nPho]/F");    
-  ztree->Branch("pho_trackIsoR4PtCut20",&pho_trackIsoR4PtCut20,"pho_trackIsoR4PtCut20[nPho]/F");    
-  ztree->Branch("pho_trackIsoR5PtCut20",&pho_trackIsoR5PtCut20,"pho_trackIsoR5PtCut20[nPho]/F");    
-  ztree->Branch("pho_swissCrx",&pho_swissCrx,"pho_swissCrx[nPho]/F");    
-  ztree->Branch("pho_seedTime",&pho_seedTime,"pho_seedTime[nPho]/F");    
-  ztree->Branch("pfcIso1",&pfcIso1,"pfcIso1[nPho]/F");    
-  ztree->Branch("pfcIso2",&pfcIso2,"pfcIso2[nPho]/F");    
-  ztree->Branch("pfcIso3",&pfcIso3,"pfcIso3[nPho]/F");    
-  ztree->Branch("pfcIso4",&pfcIso4,"pfcIso4[nPho]/F");    
-  ztree->Branch("pfcIso5",&pfcIso5,"pfcIso5[nPho]/F");    
-  ztree->Branch("pfpIso1",&pfpIso1,"pfpIso1[nPho]/F");    
-  ztree->Branch("pfpIso2",&pfpIso2,"pfpIso2[nPho]/F");    
-  ztree->Branch("pfpIso3",&pfpIso3,"pfpIso3[nPho]/F");    
-  ztree->Branch("pfpIso4",&pfpIso4,"pfpIso4[nPho]/F");    
-  ztree->Branch("pfpIso5",&pfpIso5,"pfpIso5[nPho]/F");    
-  ztree->Branch("pfnIso1",&pfnIso1,"pfnIso1[nPho]/F");    
-  ztree->Branch("pfnIso2",&pfnIso2,"pfnIso2[nPho]/F");    
-  ztree->Branch("pfnIso3",&pfnIso3,"pfnIso3[nPho]/F");    
-  ztree->Branch("pfnIso4",&pfnIso4,"pfnIso4[nPho]/F");    
-  ztree->Branch("pfnIso5",&pfnIso5,"pfnIso5[nPho]/F");  
+  ztree->Branch("phoE",&phoE,"phoE[nPho]/F");
+  ztree->Branch("phoEt",&phoEt,"phoEt[nPho]/F");
+  ztree->Branch("phoEta",&phoEta,"phoEta[nPho]/F");
+  ztree->Branch("phoPhi",&phoPhi,"phoPhi[nPho]/F");
+  ztree->Branch("phoSCE",&phoSCE,"phoSCE[nPho]/F");
+  ztree->Branch("phoSCRawE",&phoSCRawE,"phoSCRawE[nPho]/F");
+  ztree->Branch("phoESEn",&phoESEn,"phoESEn[nPho]/F");
+  ztree->Branch("phoSCEta",&phoSCEta,"phoSCEta[nPho]/F");
+  ztree->Branch("phoSCPhi",&phoSCPhi,"phoSCPhi[nPho]/F");
+  ztree->Branch("phoSCEtaWidth",&phoSCEtaWidth,"phoSCEtaWidth[nPho]/F");
+  ztree->Branch("phoSCPhiWidth",&phoSCPhiWidth,"phoSCPhiWidth[nPho]/F");
+  ztree->Branch("phoSCBrem",&phoSCBrem,"phoSCBrem[nPho]/F");
+  ztree->Branch("phohasPixelSeed",&phohasPixelSeed,"phohasPixelSeed[nPho]/I");
+  ztree->Branch("phoR9",&phoR9,"phoR9[nPho]/F");
+  ztree->Branch("phoHoverE",&phoHoverE,"phoHoverE[nPho]/F");
+  ztree->Branch("phoSigmaIEtaIEta",&phoSigmaIEtaIEta,"phoSigmaIEtaIEta[nPho]/F");
+  ztree->Branch("pho_ecalClusterIsoR2",&pho_ecalClusterIsoR2,"pho_ecalClusterIsoR2[nPho]/F");
+  ztree->Branch("pho_ecalClusterIsoR3",&pho_ecalClusterIsoR3,"pho_ecalClusterIsoR3[nPho]/F");
+  ztree->Branch("pho_ecalClusterIsoR4",&pho_ecalClusterIsoR4,"pho_ecalClusterIsoR4[nPho]/F");
+  ztree->Branch("pho_ecalClusterIsoR5",&pho_ecalClusterIsoR5,"pho_ecalClusterIsoR5[nPho]/F");
+  ztree->Branch("pho_hcalRechitIsoR1",&pho_hcalRechitIsoR1,"pho_hcalRechitIsoR1[nPho]/F");
+  ztree->Branch("pho_hcalRechitIsoR2",&pho_hcalRechitIsoR2,"pho_hcalRechitIsoR2[nPho]/F");
+  ztree->Branch("pho_hcalRechitIsoR3",&pho_hcalRechitIsoR3,"pho_hcalRechitIsoR3[nPho]/F");
+  ztree->Branch("pho_hcalRechitIsoR4",&pho_hcalRechitIsoR4,"pho_hcalRechitIsoR4[nPho]/F");
+  ztree->Branch("pho_hcalRechitIsoR5",&pho_hcalRechitIsoR5,"pho_hcalRechitIsoR5[nPho]/F");
+  ztree->Branch("pho_trackIsoR1PtCut20",&pho_trackIsoR1PtCut20,"pho_trackIsoR1PtCut20[nPho]/F");
+  ztree->Branch("pho_trackIsoR2PtCut20",&pho_trackIsoR2PtCut20,"pho_trackIsoR2PtCut20[nPho]/F");
+  ztree->Branch("pho_trackIsoR3PtCut20",&pho_trackIsoR3PtCut20,"pho_trackIsoR3PtCut20[nPho]/F");
+  ztree->Branch("pho_trackIsoR4PtCut20",&pho_trackIsoR4PtCut20,"pho_trackIsoR4PtCut20[nPho]/F");
+  ztree->Branch("pho_trackIsoR5PtCut20",&pho_trackIsoR5PtCut20,"pho_trackIsoR5PtCut20[nPho]/F");
+  ztree->Branch("pho_swissCrx",&pho_swissCrx,"pho_swissCrx[nPho]/F");
+  ztree->Branch("pho_seedTime",&pho_seedTime,"pho_seedTime[nPho]/F");
+  ztree->Branch("pfcIso1",&pfcIso1,"pfcIso1[nPho]/F");
+  ztree->Branch("pfcIso2",&pfcIso2,"pfcIso2[nPho]/F");
+  ztree->Branch("pfcIso3",&pfcIso3,"pfcIso3[nPho]/F");
+  ztree->Branch("pfcIso4",&pfcIso4,"pfcIso4[nPho]/F");
+  ztree->Branch("pfcIso5",&pfcIso5,"pfcIso5[nPho]/F");
+  ztree->Branch("pfpIso1",&pfpIso1,"pfpIso1[nPho]/F");
+  ztree->Branch("pfpIso2",&pfpIso2,"pfpIso2[nPho]/F");
+  ztree->Branch("pfpIso3",&pfpIso3,"pfpIso3[nPho]/F");
+  ztree->Branch("pfpIso4",&pfpIso4,"pfpIso4[nPho]/F");
+  ztree->Branch("pfpIso5",&pfpIso5,"pfpIso5[nPho]/F");
+  ztree->Branch("pfnIso1",&pfnIso1,"pfnIso1[nPho]/F");
+  ztree->Branch("pfnIso2",&pfnIso2,"pfnIso2[nPho]/F");
+  ztree->Branch("pfnIso3",&pfnIso3,"pfnIso3[nPho]/F");
+  ztree->Branch("pfnIso4",&pfnIso4,"pfnIso4[nPho]/F");
+  ztree->Branch("pfnIso5",&pfnIso5,"pfnIso5[nPho]/F");
 	ztree->Branch("nMC", &nMC,"nMC/I");
 	ztree->Branch("mcPID", &mcPID,"mcPID[nMC]/I");
 	ztree->Branch("mcStatus", &mcStatus,"mcStatus[nMC]/I");
@@ -402,29 +403,29 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	ztree->Branch("mcMomEta", &mcMomEta,"mcMomEta[nMC]/F");
 	ztree->Branch("mcMomPhi", &mcMomPhi,"mcMomPhi[nMC]/F");
 	ztree->Branch("mcMomPID", &mcMomPID,"mcMomPID[nMC]/I");
-  // ztree->Branch("nMu",&nMu,"nMu/I");   
-  // ztree->Branch("muPt",&muPt,"muPt[nMu]/F");    
-  // ztree->Branch("muEta",&muEta,"[nMu]/F");    
-  // ztree->Branch("muPhi",&muPhi,"muPhi[nMu]/F");    
-  // ztree->Branch("muCharge",&muCharge,"muCharge[nMu]/I");    
-  // ztree->Branch("muType",&muType,"muType[nMu]/I");    
-  // ztree->Branch("muIsGood",&muIsGood,"muIsGood[nMu]/I");    
-  // ztree->Branch("muD0",&muD0,"muD0[nMu]/F");    
-  // ztree->Branch("muDz",&muDz,"muDz[nMu]/F");    
-  // ztree->Branch("muChi2NDF",&muChi2NDF,"muChi2NDF[nMu]/F");    
-  // ztree->Branch("muInnerD0",&muInnerD0,"muInnerD0[nMu]/F");    
-  // ztree->Branch("muInnerDz",&muInnerDz,"muInnerDz[nMu]/F");    
-  // ztree->Branch("muTrkLayers",&muTrkLayers,"muTrkLayers[nMu]/I");    
-  // ztree->Branch("muPixelLayers",&muPixelLayers,"muPixelLayers[nMu]/I");    
-  // ztree->Branch("muPixelHits",&muPixelHits,"muPixelHits[nMu]/I");    
-  // ztree->Branch("muMuonHits",&muMuonHits,"muMuonHits[nMu]/I");    
-  // ztree->Branch("muTrkQuality",&muTrkQuality,"muTrkQuality[nMu]/I");    
-  // ztree->Branch("muStations",&muStations,"muStations[nMu]/I");    
-  // ztree->Branch("muIsoTrk",&muIsoTrk,"muIsoTrk[nMu]/F");    
-  // ztree->Branch("muPFChIso",&muPFChIso,"muPFChIso[nMu]/F");    
-  // ztree->Branch("muPFPhoIso",&muPFPhoIso,"muPFPhoIso[nMu]/F");    
-  // ztree->Branch("muPFNeuIso",&muPFNeuIso,"muPFNeuIso[nMu]/F");    
-  // ztree->Branch("muPFPUIso",&muPFPUIso,"muPFPUIso[nMu]/F");    
+  // ztree->Branch("nMu",&nMu,"nMu/I");
+  // ztree->Branch("muPt",&muPt,"muPt[nMu]/F");
+  // ztree->Branch("muEta",&muEta,"[nMu]/F");
+  // ztree->Branch("muPhi",&muPhi,"muPhi[nMu]/F");
+  // ztree->Branch("muCharge",&muCharge,"muCharge[nMu]/I");
+  // ztree->Branch("muType",&muType,"muType[nMu]/I");
+  // ztree->Branch("muIsGood",&muIsGood,"muIsGood[nMu]/I");
+  // ztree->Branch("muD0",&muD0,"muD0[nMu]/F");
+  // ztree->Branch("muDz",&muDz,"muDz[nMu]/F");
+  // ztree->Branch("muChi2NDF",&muChi2NDF,"muChi2NDF[nMu]/F");
+  // ztree->Branch("muInnerD0",&muInnerD0,"muInnerD0[nMu]/F");
+  // ztree->Branch("muInnerDz",&muInnerDz,"muInnerDz[nMu]/F");
+  // ztree->Branch("muTrkLayers",&muTrkLayers,"muTrkLayers[nMu]/I");
+  // ztree->Branch("muPixelLayers",&muPixelLayers,"muPixelLayers[nMu]/I");
+  // ztree->Branch("muPixelHits",&muPixelHits,"muPixelHits[nMu]/I");
+  // ztree->Branch("muMuonHits",&muMuonHits,"muMuonHits[nMu]/I");
+  // ztree->Branch("muTrkQuality",&muTrkQuality,"muTrkQuality[nMu]/I");
+  // ztree->Branch("muStations",&muStations,"muStations[nMu]/I");
+  // ztree->Branch("muIsoTrk",&muIsoTrk,"muIsoTrk[nMu]/F");
+  // ztree->Branch("muPFChIso",&muPFChIso,"muPFChIso[nMu]/F");
+  // ztree->Branch("muPFPhoIso",&muPFPhoIso,"muPFPhoIso[nMu]/F");
+  // ztree->Branch("muPFNeuIso",&muPFNeuIso,"muPFNeuIso[nMu]/F");
+  // ztree->Branch("muPFPUIso",&muPFPUIso,"muPFPUIso[nMu]/F");
 
 
   // const int nPtBins = 13;
@@ -464,7 +465,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initjetTree(injetTree);
-  
+
   TTree *evttree = (TTree*)fin->Get("hiEvtAnalyzer/HiTree");
   if(!evttree){
     cout<<"Could not access event tree!"<<endl;
@@ -475,7 +476,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("vz", &vz);
   evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
   evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
-  
+
+  TTree *hlttree = (TTree*)fin->Get("HltTree/HltTree");
+  if(!hlttree){
+    cout<<"Could not access hlt tree!"<<endl;
+    return;
+  }
+  hlttree->SetBranchAddress("HLT_HISinglePhoton40_Eta1p5_v1", &HLT_HISinglePhoton40_Eta1p5_v1);
+
   TTree * tracktree_                     = (TTree*) fin->Get("anaTrack/trackTree");
   if( tracktree_ == 0 ) tracktree_        = (TTree*) fin->Get("ppTrack/trackTree");
   if(!tracktree_){
@@ -483,7 +491,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initTrackTree(tracktree_);
-  
+
   TTree * skimTree                     = (TTree*) fin->Get("skimanalysis/HltTree");
   if( skimTree == 0 )
   {
@@ -491,23 +499,23 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initSkimTree(skimTree);
-  
+
 
 
   // int nEv = inggTree->GetEntries();
   int nEv = evttree->GetEntries();
 
   for (int j=0; j<nEv; j++) {
-    Zlepton1Pt=-99; 
-    Zlepton2Pt=-99; 
-    Zlepton1Eta=-99; 
+    Zlepton1Pt=-99;
+    Zlepton2Pt=-99;
+    Zlepton1Eta=-99;
     Zlepton2Eta=-99;
     Zlepton1Phi=-99;
     Zlepton2Phi=-99;
 
-    Zlepton1Pt=-99; 
-    Zlepton2Pt=-99; 
-    Zlepton1Eta=-99; 
+    Zlepton1Pt=-99;
+    Zlepton2Pt=-99;
+    Zlepton1Eta=-99;
     Zlepton2Eta=-99;
     Zlepton1Phi=-99;
     Zlepton2Phi=-99;
@@ -516,10 +524,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
     if(fabs(vz)>15) continue;
+    if( HLT_HISinglePhoton40_Eta1p5_v1 != 1 ) continue; // photon 40 trigger cut
     injetTree->GetEntry(j);
     // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
     if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
-    
+
     njet = 0;
     float maxJetPt = 0;
     for(int ij=0; ij<nref; ij++) {
@@ -542,7 +551,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     } //end of jet loop
     // if(njet==0) continue;
     // cout<<njet<<endl;
-    
+
     inggTree->GetEntry(j);
 		int nmcphoton = 0;
     for(int imc = 0 ; imc < _nMC ; ++imc)
@@ -561,13 +570,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 		}
 		nMC = nmcphoton;
 		// if(!(_nMC==0 || nmcphoton!=0)) continue;
-		
+
     int nphoton = 0;
 		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
     {
-				
+
       // if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 && _phoEt->at(ipho)>40 ) //photon selection
-      if(_phoEt->at(ipho)>40 ) //photon selection
+      if(_phoEt->at(ipho)>35 ) //photon selection
       {
         // float phopt = _phoEt->at(ipho);
         // float phoptphopt = phopt*phopt;
@@ -575,65 +584,65 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
         if(fabs(_pho_swissCrx->at(ipho)) > 0.9) continue;
         //if(!(_pfcIso4->at(ipho) < 0.76  && _pfnIso4->at(ipho) < (0.97 + 0.014*phopt + 0.000019*phoptphopt) && _pfpIso4->at(ipho) < (0.08 + 0.0053*phopt))) continue;
-        
+
         // Isolation cone cut
         if((*_pho_ecalClusterIsoR4)[ipho]+(*_pho_hcalRechitIsoR4)[ipho]+(*_pho_trackIsoR4PtCut20)[ipho]>1) continue;
-        
+
         if(_phoHoverE->at(ipho)>0.1) continue;
         if(_phoSigmaIEtaIEta->at(ipho) > 0.0100 ) continue;
-        phoE[nphoton] = (*_phoE)[ipho];   
-        phoEt[nphoton] = (*_phoEt)[ipho];   
-        phoEta[nphoton] = (*_phoEta)[ipho];   
-        phoPhi[nphoton] = (*_phoPhi)[ipho];   
-        phoSCE[nphoton] = (*_phoSCE)[ipho];   
-        phoSCRawE[nphoton] = (*_phoSCRawE)[ipho];   
-        phoESEn[nphoton] = (*_phoESEn)[ipho];   
-        phoSCEta[nphoton] = (*_phoSCEta)[ipho];   
-        phoSCPhi[nphoton] = (*_phoSCPhi)[ipho];   
-        phoSCEtaWidth[nphoton] = (*_phoSCEtaWidth)[ipho];   
-        phoSCPhiWidth[nphoton] = (*_phoSCPhiWidth)[ipho];   
-        phoSCBrem[nphoton] = (*_phoSCBrem)[ipho];   
-        phohasPixelSeed[nphoton] = (*_phohasPixelSeed)[ipho];   
-        phoR9[nphoton] = (*_phoR9)[ipho];   
-        phoHoverE[nphoton] = (*_phoHoverE)[ipho];   
-        phoSigmaIEtaIEta[nphoton] = (*_phoSigmaIEtaIEta)[ipho];   
-        pho_ecalClusterIsoR2[nphoton] = (*_pho_ecalClusterIsoR2)[ipho];   
-        pho_ecalClusterIsoR3[nphoton] = (*_pho_ecalClusterIsoR3)[ipho];   
-        pho_ecalClusterIsoR4[nphoton] = (*_pho_ecalClusterIsoR4)[ipho];   
-        pho_ecalClusterIsoR5[nphoton] = (*_pho_ecalClusterIsoR5)[ipho];   
-        pho_hcalRechitIsoR1[nphoton] = (*_pho_hcalRechitIsoR1)[ipho];   
-        pho_hcalRechitIsoR2[nphoton] = (*_pho_hcalRechitIsoR2)[ipho];   
-        pho_hcalRechitIsoR3[nphoton] = (*_pho_hcalRechitIsoR3)[ipho];   
-        pho_hcalRechitIsoR4[nphoton] = (*_pho_hcalRechitIsoR4)[ipho];   
-        pho_hcalRechitIsoR5[nphoton] = (*_pho_hcalRechitIsoR5)[ipho];   
-        pho_trackIsoR1PtCut20[nphoton] = (*_pho_trackIsoR1PtCut20)[ipho];   
-        pho_trackIsoR2PtCut20[nphoton] = (*_pho_trackIsoR2PtCut20)[ipho];   
-        pho_trackIsoR3PtCut20[nphoton] = (*_pho_trackIsoR3PtCut20)[ipho];   
-        pho_trackIsoR4PtCut20[nphoton] = (*_pho_trackIsoR4PtCut20)[ipho];   
-        pho_trackIsoR5PtCut20[nphoton] = (*_pho_trackIsoR5PtCut20)[ipho];   
-        pho_swissCrx[nphoton] = (*_pho_swissCrx)[ipho];   
-        pho_seedTime[nphoton] = (*_pho_seedTime)[ipho];   
-        pfcIso1[nphoton] = (*_pfcIso1)[ipho];   
-        pfcIso2[nphoton] = (*_pfcIso2)[ipho];   
-        pfcIso3[nphoton] = (*_pfcIso3)[ipho];   
-        pfcIso4[nphoton] = (*_pfcIso4)[ipho];   
-        pfcIso5[nphoton] = (*_pfcIso5)[ipho];   
-        pfpIso1[nphoton] = (*_pfpIso1)[ipho];   
-        pfpIso2[nphoton] = (*_pfpIso2)[ipho];   
-        pfpIso3[nphoton] = (*_pfpIso3)[ipho];   
-        pfpIso4[nphoton] = (*_pfpIso4)[ipho];   
-        pfpIso5[nphoton] = (*_pfpIso5)[ipho];   
-        pfnIso1[nphoton] = (*_pfnIso1)[ipho];   
-        pfnIso2[nphoton] = (*_pfnIso2)[ipho];   
-        pfnIso3[nphoton] = (*_pfnIso3)[ipho];   
-        pfnIso4[nphoton] = (*_pfnIso4)[ipho];   
-        pfnIso5[nphoton] = (*_pfnIso5)[ipho];   
+        phoE[nphoton] = (*_phoE)[ipho];
+        phoEt[nphoton] = (*_phoEt)[ipho];
+        phoEta[nphoton] = (*_phoEta)[ipho];
+        phoPhi[nphoton] = (*_phoPhi)[ipho];
+        phoSCE[nphoton] = (*_phoSCE)[ipho];
+        phoSCRawE[nphoton] = (*_phoSCRawE)[ipho];
+        phoESEn[nphoton] = (*_phoESEn)[ipho];
+        phoSCEta[nphoton] = (*_phoSCEta)[ipho];
+        phoSCPhi[nphoton] = (*_phoSCPhi)[ipho];
+        phoSCEtaWidth[nphoton] = (*_phoSCEtaWidth)[ipho];
+        phoSCPhiWidth[nphoton] = (*_phoSCPhiWidth)[ipho];
+        phoSCBrem[nphoton] = (*_phoSCBrem)[ipho];
+        phohasPixelSeed[nphoton] = (*_phohasPixelSeed)[ipho];
+        phoR9[nphoton] = (*_phoR9)[ipho];
+        phoHoverE[nphoton] = (*_phoHoverE)[ipho];
+        phoSigmaIEtaIEta[nphoton] = (*_phoSigmaIEtaIEta)[ipho];
+        pho_ecalClusterIsoR2[nphoton] = (*_pho_ecalClusterIsoR2)[ipho];
+        pho_ecalClusterIsoR3[nphoton] = (*_pho_ecalClusterIsoR3)[ipho];
+        pho_ecalClusterIsoR4[nphoton] = (*_pho_ecalClusterIsoR4)[ipho];
+        pho_ecalClusterIsoR5[nphoton] = (*_pho_ecalClusterIsoR5)[ipho];
+        pho_hcalRechitIsoR1[nphoton] = (*_pho_hcalRechitIsoR1)[ipho];
+        pho_hcalRechitIsoR2[nphoton] = (*_pho_hcalRechitIsoR2)[ipho];
+        pho_hcalRechitIsoR3[nphoton] = (*_pho_hcalRechitIsoR3)[ipho];
+        pho_hcalRechitIsoR4[nphoton] = (*_pho_hcalRechitIsoR4)[ipho];
+        pho_hcalRechitIsoR5[nphoton] = (*_pho_hcalRechitIsoR5)[ipho];
+        pho_trackIsoR1PtCut20[nphoton] = (*_pho_trackIsoR1PtCut20)[ipho];
+        pho_trackIsoR2PtCut20[nphoton] = (*_pho_trackIsoR2PtCut20)[ipho];
+        pho_trackIsoR3PtCut20[nphoton] = (*_pho_trackIsoR3PtCut20)[ipho];
+        pho_trackIsoR4PtCut20[nphoton] = (*_pho_trackIsoR4PtCut20)[ipho];
+        pho_trackIsoR5PtCut20[nphoton] = (*_pho_trackIsoR5PtCut20)[ipho];
+        pho_swissCrx[nphoton] = (*_pho_swissCrx)[ipho];
+        pho_seedTime[nphoton] = (*_pho_seedTime)[ipho];
+        pfcIso1[nphoton] = (*_pfcIso1)[ipho];
+        pfcIso2[nphoton] = (*_pfcIso2)[ipho];
+        pfcIso3[nphoton] = (*_pfcIso3)[ipho];
+        pfcIso4[nphoton] = (*_pfcIso4)[ipho];
+        pfcIso5[nphoton] = (*_pfcIso5)[ipho];
+        pfpIso1[nphoton] = (*_pfpIso1)[ipho];
+        pfpIso2[nphoton] = (*_pfpIso2)[ipho];
+        pfpIso3[nphoton] = (*_pfpIso3)[ipho];
+        pfpIso4[nphoton] = (*_pfpIso4)[ipho];
+        pfpIso5[nphoton] = (*_pfpIso5)[ipho];
+        pfnIso1[nphoton] = (*_pfnIso1)[ipho];
+        pfnIso2[nphoton] = (*_pfnIso2)[ipho];
+        pfnIso3[nphoton] = (*_pfnIso3)[ipho];
+        pfnIso4[nphoton] = (*_pfnIso4)[ipho];
+        pfnIso5[nphoton] = (*_pfnIso5)[ipho];
         nphoton++;
       }
     }
     nPho = nphoton;
     if(nphoton==0) continue;
-    
+
     bool flagMu = 0; bool flagEle = 0;
     if(flagMu || flagEle) cout<<"nothing"<<endl;
 
@@ -684,7 +693,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
       }
     } //end of muon loop
-    
+
     for(int i1 = 0; i1 < _nEle; i1++) {
 
       if(_elePt->at(i1)>leptonptcut && fabs(_eleSCEta->at(i1))<2.5 && goodElectron(i1,is_pp) && (fabs(_eleSCEta->at(i1))<1.4442 || fabs(_eleSCEta->at(i1))>1.566)) {
@@ -730,10 +739,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
       }
     } //end of electron loop
-    
+
     // if( flagEle==0 && flagMu==0 ) continue;
 
-    
+
     tracktree_->GetEntry(j);
 
     int ntracks = 0;
@@ -788,7 +797,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       //if((trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>15 && (trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>pfHcal[i]+pfEcal[i]) continue;} //Calo Matching
     }
     nTrk=ntracks;
-    
+
     ztree->Fill();
 
   } //end of loop over events
@@ -815,4 +824,3 @@ int main(int argc, char *argv[])
   if(argc==5)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]));
   return 0;
 }
-
