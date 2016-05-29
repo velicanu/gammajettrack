@@ -32,7 +32,7 @@ void ztree::ffgammajet(std::string outfname)
       if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
       if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
 
-      // photons:
+      // photons: normal mode power mode
       // pho 40 trigger
       // photon spike cuts etc
       // phoet > 35
