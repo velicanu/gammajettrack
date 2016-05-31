@@ -143,12 +143,13 @@ bool goodElectron(int i, bool is_pp) {
 }
 
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 ) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , int startindex = 0, int endindex = -1) {
 
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
   if(is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
   else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
+  cout<<trkCorr<<endl;
   L2L3Residual * jetcorr = new L2L3Residual(3);
   TFile *fin = TFile::Open(infilename);
 
@@ -163,6 +164,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float weight = 0 , vz = -99;
   int hiBin = -99;
   int HLT_HISinglePhoton40_Eta1p5_v1 = -99;
+  int HLT_HISinglePhoton40_Eta1p5_v2 = -99;
+  int HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 = -99;
   int Zcharge;
   float leptonptcut = 10;
 
@@ -477,12 +480,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
   evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
 
-  TTree *hlttree = (TTree*)fin->Get("HltTree/HltTree");
+  TTree *hlttree = (TTree*)fin->Get("hltanalysis/HltTree");
   if(!hlttree){
     cout<<"Could not access hlt tree!"<<endl;
     return;
   }
   hlttree->SetBranchAddress("HLT_HISinglePhoton40_Eta1p5_v1", &HLT_HISinglePhoton40_Eta1p5_v1);
+  hlttree->SetBranchAddress("HLT_HISinglePhoton40_Eta1p5_v2", &HLT_HISinglePhoton40_Eta1p5_v2);
+  hlttree->SetBranchAddress("HLT_HISinglePhoton40_Eta1p5ForPPRef_v1", &HLT_HISinglePhoton40_Eta1p5ForPPRef_v1);
 
   TTree * tracktree_                     = (TTree*) fin->Get("anaTrack/trackTree");
   if( tracktree_ == 0 ) tracktree_        = (TTree*) fin->Get("ppTrack/trackTree");
@@ -505,7 +510,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   // int nEv = inggTree->GetEntries();
   int nEv = evttree->GetEntries();
 
-  for (int j=0; j<nEv; j++) {
+  for (int j=startindex; j<nEv; j++) {
     Zlepton1Pt=-99;
     Zlepton2Pt=-99;
     Zlepton1Eta=-99;
@@ -523,12 +528,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     skimTree->GetEntry(j);
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
+    hlttree->GetEntry(j);
+    if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
+    if(j == endindex ) { cout << "stopping: " << j << endl; break; }
     if(fabs(vz)>15) continue;
-    if( HLT_HISinglePhoton40_Eta1p5_v1 != 1 ) continue; // photon 40 trigger cut
+    if( !( HLT_HISinglePhoton40_Eta1p5_v1 == 1 || HLT_HISinglePhoton40_Eta1p5_v2 == 1 || HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 == 1 ) ) continue; // photon 40 trigger cut for pbpb+pp data, pbpb mc, pp mc
     injetTree->GetEntry(j);
     // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
-    if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
-
+    // cout<<"event: "<<j<<endl;
     njet = 0;
     float maxJetPt = 0;
     for(int ij=0; ij<nref; ij++) {
@@ -550,7 +557,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     } //end of jet loop
     // if(njet==0) continue;
-    // cout<<njet<<endl;
+    // cout<<"end of jet loop "<<njet<<endl;
 
     inggTree->GetEntry(j);
 		int nmcphoton = 0;
@@ -570,6 +577,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 		}
 		nMC = nmcphoton;
 		// if(!(_nMC==0 || nmcphoton!=0)) continue;
+    // cout<<"end mc loop "<<_nMC<<endl;
 
     int nphoton = 0;
 		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
@@ -641,6 +649,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     }
     nPho = nphoton;
+    // cout<<"end photon loop "<<nphoton<<endl;
     if(nphoton==0) continue;
 
     bool flagMu = 0; bool flagEle = 0;
@@ -739,7 +748,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
       }
     } //end of electron loop
-
+    // cout<<"end z loop "<<_nEle<<" "<<_nMu<<endl;
     // if( flagEle==0 && flagMu==0 ) continue;
 
 
@@ -747,55 +756,58 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
     int ntracks = 0;
     // std::cout<<nTrk_<<std::endl;
-    for(int i = 0 ; i < nTrk_ ; ++i)
+    for(int itrk = 0 ; itrk < nTrk_ ; ++itrk)
     {
-      // if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
-      // if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[i],2) + pow(Zlepton1Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      // if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[i],2) + pow(Zlepton2Eta- trkEta_[i],2))<0.006)) continue; // reject z leptons
-      // if(!highPurity_[i]) continue;
+      // cout<<"itrk "<<itrk<<endl;
+      // if((trkMVA_zzz[itrk]<0.5 && trkMVA_[itrk]!=-99) || (int)trkNHit_[itrk]<8 || trkPtError_[itrk]/trkPt_[itrk]>0.3 || fabs(trkDz1_[itrk])/trkDzError1_[itrk]>3 || fabs(trkDxy1_[itrk])/trkDxyError1_[itrk]>3) continue;
+      // if((Zlepton1Pt!=-99&&sqrt(pow(Zlepton1Phi- trkPhi_[itrk],2) + pow(Zlepton1Eta- trkEta_[itrk],2))<0.006)) continue; // reject z leptons
+      // if((Zlepton2Pt!=-99&&sqrt(pow(Zlepton2Phi- trkPhi_[itrk],2) + pow(Zlepton2Eta- trkEta_[itrk],2))<0.006)) continue; // reject z leptons
+      // if(!highPurity_[itrk]) continue;
       // std::cout<<"here"<<std::endl;
-      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
-      if(highPurity_[j]!=1) continue;
-      if(trkPtError_[j]/trkPt_[j]>0.1 || TMath::Abs(trkDz1_[j]/trkDzError1_[j])>3 || TMath::Abs(trkDxy1_[j]/trkDxyError1_[j])>3) continue;
-      if(trkChi2_[j]/(float)trkNdof_[j]/(float)trkNlayer_[j]>0.15) continue;
-      if(trkNHit_[j]<11 && trkPt_[j]>0.7) continue;
-      if((maxJetPt>50 && trkPt[j]>maxJetPt) || (maxJetPt<50 && trkPt[j]>50)) continue;
+      if(trkPt_[itrk]<1 || trkPt_[itrk]>300 || fabs(trkEta_[itrk])>2.4 ) continue;
+      if(highPurity_[itrk]!=1) continue;
+      if(trkPtError_[itrk]/trkPt_[itrk]>0.1 || TMath::Abs(trkDz1_[itrk]/trkDzError1_[itrk])>3 || TMath::Abs(trkDxy1_[itrk]/trkDxyError1_[itrk])>3) continue;
+      if(trkChi2_[itrk]/(float)trkNdof_[itrk]/(float)trkNlayer_[itrk]>0.15) continue;
+      if(trkNHit_[itrk]<11 && trkPt_[itrk]>0.7) continue;
+      if((maxJetPt>50 && trkPt[itrk]>maxJetPt) || (maxJetPt<50 && trkPt[itrk]>50)) continue;
 
-      float Et = (pfHcal[j]+pfEcal[j])/TMath::CosH(trkEta[j]);
-      if(!(trkPt[j]<20 || (Et>0.5*trkPt[j]))) continue;
+      float Et = (pfHcal[itrk]+pfEcal[itrk])/TMath::CosH(trkEta[itrk]);
+      if(!(trkPt[itrk]<20 || (Et>0.5*trkPt[itrk]))) continue;
+      // cout<<"itrk "<<itrk<<endl;
 
       float trkweight = 0;
-      if(is_pp) trkweight = getTrkWeight(trkCorr,i,0);
-      else trkweight = getTrkWeight(trkCorr,i,hiBin);
-      trkPt[ntracks] = trkPt_[i];   //[nTrk]
-      trkPtError[ntracks] = trkPtError_[i];   //[nTrk]
-      trkNHit[ntracks] = trkNHit_[i];   //[nTrk]
-      trkNlayer[ntracks] = trkNlayer_[i];   //[nTrk]
-      trkEta[ntracks] = trkEta_[i];   //[nTrk]
-      trkPhi[ntracks] = trkPhi_[i];   //[nTrk]
-      trkCharge[ntracks] = trkCharge_[i];   //[nTrk]
-      trkNVtx[ntracks] = trkNVtx_[i];   //[nTrk]
-      highPurity[ntracks] = highPurity_[i];   //[nTrk]
-      tight[ntracks] = tight_[i];   //[nTrk]
-      loose[ntracks] = loose_[i];   //[nTrk]
-      trkChi2[ntracks] = trkChi2_[i];   //[nTrk]
-      trkNdof[ntracks] = trkNdof_[i];   //[nTrk]
-      trkDxy1[ntracks] = trkDxy1_[i];   //[nTrk]
-      trkDxyError1[ntracks] = trkDxyError1_[i];   //[nTrk]
-      trkDz1[ntracks] = trkDz1_[i];   //[nTrk]
-      trkDzError1[ntracks] = trkDzError1_[i];   //[nTrk]
-      trkFake[ntracks] = trkFake_[i];   //[nTrk]
-      trkAlgo[ntracks] = trkAlgo_[i];   //[nTrk]
-      trkOriginalAlgo[ntracks] = trkOriginalAlgo_[i];   //[nTrk]
-      trkMVA[ntracks] = trkMVA_[i];   //[nTrk]
-      pfType[ntracks] = pfType_[i];   //[nTrk]
-      pfCandPt[ntracks] = pfCandPt_[i];   //[nTrk]
-      pfEcal[ntracks] = pfEcal_[i];   //[nTrk]
-      pfHcal[ntracks] = pfHcal_[i];   //[nTrk]
+      if(is_pp) trkweight = getTrkWeight(trkCorr,itrk,0);
+      else trkweight = getTrkWeight(trkCorr,itrk,hiBin);
+      trkPt[ntracks] = trkPt_[itrk];   //[nTrk]
+      trkPtError[ntracks] = trkPtError_[itrk];   //[nTrk]
+      trkNHit[ntracks] = trkNHit_[itrk];   //[nTrk]
+      trkNlayer[ntracks] = trkNlayer_[itrk];   //[nTrk]
+      trkEta[ntracks] = trkEta_[itrk];   //[nTrk]
+      trkPhi[ntracks] = trkPhi_[itrk];   //[nTrk]
+      trkCharge[ntracks] = trkCharge_[itrk];   //[nTrk]
+      trkNVtx[ntracks] = trkNVtx_[itrk];   //[nTrk]
+      highPurity[ntracks] = highPurity_[itrk];   //[nTrk]
+      tight[ntracks] = tight_[itrk];   //[nTrk]
+      loose[ntracks] = loose_[itrk];   //[nTrk]
+      trkChi2[ntracks] = trkChi2_[itrk];   //[nTrk]
+      trkNdof[ntracks] = trkNdof_[itrk];   //[nTrk]
+      trkDxy1[ntracks] = trkDxy1_[itrk];   //[nTrk]
+      trkDxyError1[ntracks] = trkDxyError1_[itrk];   //[nTrk]
+      trkDz1[ntracks] = trkDz1_[itrk];   //[nTrk]
+      trkDzError1[ntracks] = trkDzError1_[itrk];   //[nTrk]
+      trkFake[ntracks] = trkFake_[itrk];   //[nTrk]
+      trkAlgo[ntracks] = trkAlgo_[itrk];   //[nTrk]
+      trkOriginalAlgo[ntracks] = trkOriginalAlgo_[itrk];   //[nTrk]
+      trkMVA[ntracks] = trkMVA_[itrk];   //[nTrk]
+      pfType[ntracks] = pfType_[itrk];   //[nTrk]
+      pfCandPt[ntracks] = pfCandPt_[itrk];   //[nTrk]
+      pfEcal[ntracks] = pfEcal_[itrk];   //[nTrk]
+      pfHcal[ntracks] = pfHcal_[itrk];   //[nTrk]
       trkWeight[ntracks] = trkweight;
       ntracks++;
-      //if((trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>15 && (trkPt[i]-2*trkPtError[i])*TMath::CosH(trkEta[i])>pfHcal[i]+pfEcal[i]) continue;} //Calo Matching
+      //if((trkPt[itrk]-2*trkPtError[itrk])*TMath::CosH(trkEta[itrk])>15 && (trkPt[itrk]-2*trkPtError[itrk])*TMath::CosH(trkEta[itrk])>pfHcal[itrk]+pfEcal[itrk]) continue;} //Calo Matching
     }
+    // cout<<"end track loop "<<ntracks<<endl;
     nTrk=ntracks;
 
     ztree->Fill();
@@ -822,5 +834,7 @@ int main(int argc, char *argv[])
   if(argc==3)  gammajetSkim(argv[1], argv[2]);
   if(argc==4)  gammajetSkim(argv[1], argv[2], argv[3]);
   if(argc==5)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]));
+  if(argc==6)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atoi(argv[5]));
+  if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atoi(argv[5]),std::atoi(argv[6]));
   return 0;
 }
