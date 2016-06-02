@@ -23,6 +23,7 @@ class ztree {
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
   // Declaration of leaf types
+  Float_t         trkWeight[5000];   //[nTrk]
   Int_t           run;
   Int_t           event;
   Int_t           lumis;
@@ -43,10 +44,10 @@ class ztree {
   Float_t         Zlepton2Phi;
   Int_t           Zcharge;
   Int_t           njet;
-  Float_t         jetpt[11];   //[njet]
-  Float_t         jeteta[11];   //[njet]
-  Float_t         jetphi[11];   //[njet]
-  Int_t           jetID[11];   //[njet]
+  Float_t         jetpt[40];   //[njet]
+  Float_t         jeteta[40];   //[njet]
+  Float_t         jetphi[40];   //[njet]
+  Int_t           jetID[40];   //[njet]
   Int_t           nTrk;
   Float_t         trkPt[5000];   //[nTrk]
   Float_t         trkPtError[5000];   //[nTrk]
@@ -123,6 +124,7 @@ class ztree {
   Float_t  pfnIso5[100];   //_nPho
 
   // List of branches
+  TBranch        *b_trkWeight;   //!
   TBranch        *b_run;   //!
   TBranch        *b_event;   //!
   TBranch        *b_lumis;   //!
@@ -173,8 +175,8 @@ class ztree {
   TBranch        *b_pfCandPt;   //!
   TBranch        *b_pfEcal;   //!
   TBranch        *b_pfHcal;   //!
-  
-  
+
+
   TBranch   *b_nPho;
   TBranch   *b_phoE;
   TBranch   *b_phoEt;
@@ -374,7 +376,7 @@ class ztree {
   TBranch        *mix_b_pfCandPt;   //!
   TBranch        *mix_b_pfEcal;   //!
   TBranch        *mix_b_pfHcal;   //!
-  
+
   TBranch   *mix_b_nPho;
   TBranch   *mix_b_phoE;
   TBranch   *mix_b_phoEt;
@@ -434,8 +436,9 @@ class ztree {
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
   virtual void     InitMix(TTree *tree);
-  virtual void     Loop(std::string outfname, std::string tag="", std::string probe="", std::string alpha="");
-  virtual void     gammajetBalance(std::string outfname, std::string tag="", std::string probe="", std::string alpha="");
+  virtual void     ffgammajet(std::string outfname);
+  virtual float    jettrk_dr(int itrk, int ijet);
+  virtual float    refconetrk_dr(int itrk, int ijet);
   // virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
@@ -444,7 +447,7 @@ class ztree {
 #endif
 
 #ifdef ztree_cxx
-ztree::ztree(std::string thisfilename) : fChain(0) 
+ztree::ztree(std::string thisfilename) : fChain(0)
 {
   // if parameter tree is not specified (or zero), connect the file
   // used to generate this class and read the Tree.
@@ -507,6 +510,7 @@ void ztree::Init(TTree *tree)
   fCurrent = -1;
   fChain->SetMakeClass(1);
 
+  fChain->SetBranchAddress("trkWeight", trkWeight, &b_trkWeight);
   fChain->SetBranchAddress("run", &run, &b_run);
   fChain->SetBranchAddress("event", &event, &b_event);
   fChain->SetBranchAddress("lumis", &lumis, &b_lumis);
@@ -557,7 +561,7 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("pfCandPt", pfCandPt, &b_pfCandPt);
   fChain->SetBranchAddress("pfEcal", pfEcal, &b_pfEcal);
   fChain->SetBranchAddress("pfHcal", pfHcal, &b_pfHcal);
-  
+
   fChain->SetBranchAddress("nPho", &nPho, &b_nPho);
   fChain->SetBranchAddress("phoE", phoE, &b_phoE);
   fChain->SetBranchAddress("phoEt", phoEt, &b_phoEt);
@@ -606,8 +610,8 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("pfnIso3", pfnIso3, &b_pfnIso3);
   fChain->SetBranchAddress("pfnIso4", pfnIso4, &b_pfnIso4);
   fChain->SetBranchAddress("pfnIso5", pfnIso5, &b_pfnIso5);
-  
-  
+
+
   Notify();
 }
 void ztree::InitMix(TTree *tree)
@@ -667,7 +671,7 @@ void ztree::InitMix(TTree *tree)
   mix_fChain->SetBranchAddress("pfCandPt", mix_pfCandPt, &mix_b_pfCandPt);
   mix_fChain->SetBranchAddress("pfEcal", mix_pfEcal, &mix_b_pfEcal);
   mix_fChain->SetBranchAddress("pfHcal", mix_pfHcal, &mix_b_pfHcal);
-  
+
   mix_fChain->SetBranchAddress("nPho", &mix_nPho, &mix_b_nPho);
   mix_fChain->SetBranchAddress("phoE", mix_phoE, &mix_b_phoE);
   mix_fChain->SetBranchAddress("phoEt", mix_phoEt, &mix_b_phoEt);
@@ -716,8 +720,8 @@ void ztree::InitMix(TTree *tree)
   mix_fChain->SetBranchAddress("pfnIso3", mix_pfnIso3, &mix_b_pfnIso3);
   mix_fChain->SetBranchAddress("pfnIso4", mix_pfnIso4, &mix_b_pfnIso4);
   mix_fChain->SetBranchAddress("pfnIso5", mix_pfnIso5, &mix_b_pfnIso5);
-  
-  
+
+
   Notify();
 }
 
