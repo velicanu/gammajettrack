@@ -143,7 +143,7 @@ bool goodElectron(int i, bool is_pp) {
 }
 
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , int startindex = 0, int endindex = -1) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, int startindex = 0, int endindex = -1) {
 
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
@@ -528,8 +528,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     skimTree->GetEntry(j);
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
+
+    if(weight==1) weight = mcweight;
+
     hlttree->GetEntry(j);
-    if(j%10000 == 0) { cout << "Processing event: " << j << endl; }
+    if(j%1000 == 0) { cout << "Processing event: " << j << endl; }
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
     if(fabs(vz)>15) continue;
     if( !( HLT_HISinglePhoton40_Eta1p5_v1 == 1 || HLT_HISinglePhoton40_Eta1p5_v2 == 1 || HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 == 1 ) ) continue; // photon 40 trigger cut for pbpb+pp data, pbpb mc, pp mc
@@ -828,13 +831,14 @@ int main(int argc, char *argv[])
 {
   if((argc < 3))
   {
-    std::cout << "Usage: ./gammajetSkim.exe <inputfile> <outputfile> [jetname] [is_pp]" << std::endl;
+    std::cout << "Usage: ./gammajetSkim.exe <inputfile> <outputfile> [jetname] [is_pp] [mcweight] [startindex] [endindex]" << std::endl;
     return 1;
   }
-  if(argc==3)  gammajetSkim(argv[1], argv[2]);
-  if(argc==4)  gammajetSkim(argv[1], argv[2], argv[3]);
-  if(argc==5)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]));
-  if(argc==6)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atoi(argv[5]));
-  if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atoi(argv[5]),std::atoi(argv[6]));
+  if(argc==3)  gammajetSkim(argv[1], argv[2]); //basic input output files
+  if(argc==4)  gammajetSkim(argv[1], argv[2], argv[3]); //add jet name
+  if(argc==5)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4])); //add is_pp
+  if(argc==6)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5])); //add custom mcweight
+  if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),std::atoi(argv[6])); //add startindex
+  if(argc==8)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),std::atoi(argv[6]),std::atoi(argv[7])); //add endindex
   return 0;
 }
