@@ -42,13 +42,13 @@ void ztree::ffgammajet(std::string outfname)
     // cout<<njet<<endl;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if(nPho!=1) continue;
-    if(phoEt[0]<45 || phoEt[0]>60) continue;
+    if(phoEt[0]<45 || phoEt[0]>100) continue;
     if(weight==0)                   weight=1;
     // cout<<njet<<endl;
 
     for (int ijet = 0; ijet < njet; ijet++) {
       if( nPho==2 ) continue;
-      if( jetpt[ijet]<50 ) continue; //jet pt Cut
+      if( jetpt[ijet]<40 ) continue; //jet pt Cut
       if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
       if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
       if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
