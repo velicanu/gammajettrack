@@ -16,7 +16,7 @@
   hgammaffxi_pbpbdata_->SetYTitle("dN/d#xi");
   hgammaffxi_pbpbdata_->GetYaxis()->CenterTitle();
   hgammaffxi_pbpbdata_->Draw();
-  
+
   hgammaffxi_refcone_pbpbdata_->SetMarkerStyle(24);
   hgammaffxi_refcone_pbpbdata_->Draw("same");
   TLegend * leg_ff_pbpbdata = new TLegend(0.23,0.59,0.50,0.92);
@@ -32,8 +32,8 @@
   leg_ff_pbpbdata->Draw();
 
   c1_pbpbdata->SaveAs("pbpbdata_unsubffspectrum_45_gamma_100.png");
-  // Raw FF pbpdata 
-  
+  // Raw FF pbpdata
+
   // Raw FF pbpbmc
   TCanvas * c1_pbpbmc50 = new TCanvas();
   TH1D * hgammaffxi_pbpbmc50_ = (TH1D*) _file0->Get("hgammaffxi_pbpbmc50_");
@@ -47,10 +47,10 @@
   hgammaffxi_pbpbmc50_->SetYTitle("dN/d#xi");
   hgammaffxi_pbpbmc50_->GetYaxis()->CenterTitle();
   hgammaffxi_pbpbmc50_->Draw();
-  
+
   hgammaffxi_refcone_pbpbmc50_->SetMarkerStyle(24);
   hgammaffxi_refcone_pbpbmc50_->Draw("same");
-  
+
   TLegend * leg_ff_pbpbmc50 = new TLegend(0.22,0.59,0.49,0.92);
   leg_ff_pbpbmc50->SetFillColor(0);
   leg_ff_pbpbmc50->SetTextSize(0.05);
@@ -70,22 +70,22 @@
   TH2D * dummy_pbpbsub = new TH2D("dummy_pbpbsub",";#xi;dN/d#xi",1,0,5,1,0,3.1);
   dummy_pbpbsub->GetXaxis()->CenterTitle();
   dummy_pbpbsub->GetYaxis()->CenterTitle();
-  
+
   TH1D * clone_hgammaffxi_refcone_pbpbdata_ = (TH1D*) hgammaffxi_refcone_pbpbdata_->Clone("clone_hgammaffxi_refcone_pbpbdata_");
   clone_hgammaffxi_refcone_pbpbdata_->Scale(-1);
   TH1D * clone_hgammaffxi_pbpbdata_ = (TH1D*) hgammaffxi_pbpbdata_->Clone("clone_hgammaffxi_pbpbdata_");
   clone_hgammaffxi_pbpbdata_->Add(clone_hgammaffxi_refcone_pbpbdata_);
-  
+
   TH1D * clone_hgammaffxi_refcone_pbpbmc50_ = (TH1D*) hgammaffxi_refcone_pbpbmc50_->Clone("clone_hgammaffxi_refcone_pbpbmc50_");
   clone_hgammaffxi_refcone_pbpbmc50_->Scale(-1);
   TH1D * clone_hgammaffxi_pbpbmc50_ = (TH1D*) hgammaffxi_pbpbmc50_->Clone("clone_hgammaffxi_pbpbmc50_");
   clone_hgammaffxi_pbpbmc50_->Add(clone_hgammaffxi_refcone_pbpbmc50_);
   clone_hgammaffxi_pbpbmc50_->SetMarkerColor(kRed);
-  
+
   dummy_pbpbsub->Draw();
   clone_hgammaffxi_pbpbdata_->Draw("same");
   clone_hgammaffxi_pbpbmc50_->Draw("same");
-  
+
   TLegend * leg_ff_pbpbsub = new TLegend(0.23,0.59,0.50,0.92);
   leg_ff_pbpbsub->SetFillColor(0);
   leg_ff_pbpbsub->SetTextSize(0.05);
@@ -100,7 +100,7 @@
   c1_subpbpb->SaveAs("pbpbdata_pbpbmc_etaconesubtracted_45_gamma_100.png");
   // Eta cone subtracted FF pbpbdata and pbpbmc
 
-  // Raw FF ppata 
+  // Raw FF ppata
   TCanvas * c1_ppdata = new TCanvas();
   TH1D * hgammaffxi_ppdata_ = (TH1D*) _file0->Get("hgammaffxi_ppdata_");
   TH1D * hgammaffxi_refcone_ppdata_ = (TH1D*) _file0->Get("hgammaffxi_refcone_ppdata_");
@@ -113,10 +113,10 @@
   hgammaffxi_ppdata_->SetYTitle("dN/d#xi");
   hgammaffxi_ppdata_->GetYaxis()->CenterTitle();
   hgammaffxi_ppdata_->Draw();
-  
+
   hgammaffxi_refcone_ppdata_->SetMarkerStyle(24);
   hgammaffxi_refcone_ppdata_->Draw("same");
-  
+
   TLegend * leg_ff_ppdata = new TLegend(0.23,0.59,0.50,0.92);
   leg_ff_ppdata->SetFillColor(0);
   leg_ff_ppdata->SetTextSize(0.05);
@@ -128,10 +128,10 @@
   leg_ff_ppdata->AddEntry(hgammaffxi_refcone_ppdata_,"trk p_{T}>1 GeV","");
   leg_ff_ppdata->AddEntry(hgammaffxi_refcone_ppdata_,"45>#gamma p_{T}>100 GeV","");
   leg_ff_ppdata->Draw();
-  // Raw FF ppata 
+  // Raw FF ppata
 
 
-  
+
   // Raw FF ppmc
   TCanvas * c1_ppmc50 = new TCanvas();
   TH1D * hgammaffxi_ppmc50_ = (TH1D*) _file0->Get("hgammaffxi_ppmc50_");
@@ -145,10 +145,10 @@
   hgammaffxi_ppmc50_->SetYTitle("dN/d#xi");
   hgammaffxi_ppmc50_->GetYaxis()->CenterTitle();
   hgammaffxi_ppmc50_->Draw();
-  
+
   hgammaffxi_refcone_ppmc50_->SetMarkerStyle(24);
   hgammaffxi_refcone_ppmc50_->Draw("same");
-  
+
   TLegend * leg_ff_ppmc50 = new TLegend(0.22,0.59,0.49,0.92);
   leg_ff_ppmc50->SetFillColor(0);
   leg_ff_ppmc50->SetTextSize(0.05);
@@ -167,22 +167,22 @@
   TH2D * dummy_ppsub = new TH2D("dummy_ppsub",";#xi;dN/d#xi",1,0,5,1,0,3.1);
   dummy_ppsub->GetXaxis()->CenterTitle();
   dummy_ppsub->GetYaxis()->CenterTitle();
-  
+
   TH1D * clone_hgammaffxi_refcone_ppdata_ = (TH1D*) hgammaffxi_refcone_ppdata_->Clone("clone_hgammaffxi_refcone_ppdata_");
   clone_hgammaffxi_refcone_ppdata_->Scale(-1);
   TH1D * clone_hgammaffxi_ppdata_ = (TH1D*) hgammaffxi_ppdata_->Clone("clone_hgammaffxi_ppdata_");
   clone_hgammaffxi_ppdata_->Add(clone_hgammaffxi_refcone_ppdata_);
-  
+
   TH1D * clone_hgammaffxi_refcone_ppmc50_ = (TH1D*) hgammaffxi_refcone_ppmc50_->Clone("clone_hgammaffxi_refcone_ppmc50_");
   clone_hgammaffxi_refcone_ppmc50_->Scale(-1);
   TH1D * clone_hgammaffxi_ppmc50_ = (TH1D*) hgammaffxi_ppmc50_->Clone("clone_hgammaffxi_ppmc50_");
   clone_hgammaffxi_ppmc50_->Add(clone_hgammaffxi_refcone_ppmc50_);
   clone_hgammaffxi_ppmc50_->SetMarkerColor(kRed);
-  
+
   dummy_ppsub->Draw();
   clone_hgammaffxi_ppdata_->Draw("same");
   clone_hgammaffxi_ppmc50_->Draw("same");
-  
+
   TLegend * leg_ff_ppsub = new TLegend(0.23,0.59,0.50,0.92);
   leg_ff_ppsub->SetFillColor(0);
   leg_ff_ppsub->SetTextSize(0.05);
@@ -196,24 +196,24 @@
   leg_ff_ppsub->Draw();
   c1_subpp->SaveAs("ppdata_ppmc_etaconesubtracted_45_gamma_100.png");
   // Eta cone subtracted FF ppdata and ppmc
-  
+
   // PbPb - pp data and mc
   TCanvas * c1_pbpb_minus_pp = new TCanvas();
   TH2D * dummy_pbpb_minus_pp = new TH2D("dummy_pbpb_minus_pp",";#xi;dN/d#xi PbPb-pp",1,0,5,1,-1.3,1.1);
   dummy_pbpb_minus_pp->GetXaxis()->CenterTitle();
   dummy_pbpb_minus_pp->GetYaxis()->CenterTitle();
   dummy_pbpb_minus_pp->GetYaxis()->SetTitleOffset(1.2);
-  
+
   TH1D * clone2_hgammaffxi_pbpbdata_ = (TH1D*) clone_hgammaffxi_pbpbdata_->Clone("clone2_hgammaffxi_pbpbdata_");
   TH1D * clone2_hgammaffxi_pbpbmc50_ = (TH1D*) clone_hgammaffxi_pbpbmc50_->Clone("clone2_hgammaffxi_pbpbmc50_");
   TH1D * clone2_hgammaffxi_ppdata_ = (TH1D*) clone_hgammaffxi_ppdata_->Clone("clone2_hgammaffxi_ppdata_");
   clone2_hgammaffxi_ppdata_->Scale(-1);
   TH1D * clone2_hgammaffxi_ppmc50_ = (TH1D*) clone_hgammaffxi_ppmc50_->Clone("clone2_hgammaffxi_ppmc50_");
   clone2_hgammaffxi_ppmc50_->Scale(-1);
-  
+
   clone2_hgammaffxi_pbpbdata_->Add(clone2_hgammaffxi_ppdata_);
   clone2_hgammaffxi_pbpbmc50_->Add(clone2_hgammaffxi_ppmc50_);
-  
+
   dummy_pbpb_minus_pp->Draw();
   clone2_hgammaffxi_pbpbdata_->Draw("same");
   clone2_hgammaffxi_pbpbmc50_->Draw("same");
@@ -234,6 +234,5 @@
   leg_ff_pbpb_minus_pp->Draw();
   c1_pbpb_minus_pp->SaveAs("pbpb_minus_pp_45_gamma_100.png");
   // PbPb - pp data and mc
-  
-}
 
+}

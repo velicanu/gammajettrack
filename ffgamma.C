@@ -40,6 +40,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax)
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
     // cout<<njet<<endl;
+    // if(jentry > 10000) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if(hiBin < centmin || hiBin >= centmax) continue; //centrality cut
     if(nPho!=1) continue;
@@ -69,6 +70,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax)
           hgammaff->Fill(z,trkWeight[itrk]);
           hgammaffxi->Fill(xi,trkWeight[itrk]);
           hgammaphoffxi->Fill(xipho,trkWeight[itrk]);
+          // cout<<jetpt[ijet]<<endl;
         }
         if(dr_refcone<0.3)
         {
