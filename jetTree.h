@@ -3,9 +3,12 @@
    Int_t           nref;
    Float_t         * rawpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jtpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+   Float_t         * refpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jteta = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+   Float_t         * refeta = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jty = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jtphi = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+   Float_t         * refphi = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jtpu = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jtm = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * discr_fr01 = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
@@ -92,9 +95,12 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("nref", &nref);
    tree->SetBranchAddress("rawpt", rawpt);
    tree->SetBranchAddress("jtpt", jtpt);
+   tree->SetBranchAddress("refpt", refpt);
    tree->SetBranchAddress("jteta", jteta);
+   tree->SetBranchAddress("refeta", refeta);
    tree->SetBranchAddress("jty", jty);
    tree->SetBranchAddress("jtphi", jtphi);
+   tree->SetBranchAddress("refphi", refphi);
    tree->SetBranchAddress("jtpu", jtpu);
    tree->SetBranchAddress("jtm", jtm);
    tree->SetBranchAddress("discr_fr01", discr_fr01);

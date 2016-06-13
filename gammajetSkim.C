@@ -151,6 +151,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
   cout<<trkCorr<<endl;
   L2L3Residual * jetcorr = new L2L3Residual(3);
+  cout<<jetcorr<<endl;
   TFile *fin = TFile::Open(infilename);
 
   TFile *fout = new TFile(outfilename,"recreate");
@@ -172,8 +173,24 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   int njet;
   float jetpt[200], jeteta[200], jetphi[200];
+  float gjetpt[200], gjeteta[200], gjetphi[200];
   float chargedSum[200], neutralSum[200], eSum[200];
   int jetID[200], subid[200];
+  
+  int _mult;
+  vector<float> *_pt;
+  vector<float> *_eta;
+  vector<float> *_phi;
+  vector<int> *_pdg;
+  vector<int> *_chg;
+  vector<int> *_matchingID;
+  int mult;
+  float pt[10000];
+  float eta[10000];
+  float phi[10000];
+  int pdg[10000];
+  int chg[10000];
+  int matchingID[10000];
 
   const int nPtBins = 13;
   const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
@@ -278,15 +295,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  pfnIso4[100];   //_nPho
   Float_t  pfnIso5[100];   //_nPho
 	Int_t    nMC;
-	Int_t    mcPID[100];
-	Int_t    mcStatus[100];
-	Float_t  mcPt[100];
-	Float_t  mcEta[100];
-	Float_t  mcPhi[100];
-	Float_t  mcMomPt[100];
-	Float_t  mcMomEta[100];
-	Float_t  mcMomPhi[100];
-	Int_t    mcMomPID[100];
+	Int_t    mcPID[500];
+	Int_t    mcStatus[500];
+	Float_t  mcPt[500];
+	Float_t  mcEta[500];
+	Float_t  mcPhi[500];
+	Float_t  mcMomPt[500];
+	Float_t  mcMomEta[500];
+	Float_t  mcMomPhi[500];
+	Int_t    mcMomPID[500];
 
   TTree *ztree = new TTree("ztree","Jet track tree");
 
@@ -295,8 +312,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("lumis",  &lumis, "lumis/I");
   ztree->Branch("hiBin", &hiBin, "hiBin/I");
   ztree->Branch("vz", &vz, "vz/F");
+  
   ztree->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
   ztree->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
+  
+  ztree->Branch("mult", &mult, "mult/I");
+  ztree->Branch("pt", pt, "pt[mult]/F");
+  ztree->Branch("eta", eta, "eta[mult]/F");
+  ztree->Branch("phi", phi, "phi[mult]/F");
+  ztree->Branch("pdg", pdg, "pdg[mult]/I");
+  ztree->Branch("chg", chg, "chg[mult]/I");
+  ztree->Branch("matchingID", matchingID, "matchingID[mult]/I");
+
   ztree->Branch("Ztype",	&Ztype,	"Ztype/I");
   ztree->Branch("Zmass",	&Zmass,	"Zmass/F");
   ztree->Branch("Zpt",	&Zpt,	"Zpt/F");
@@ -314,6 +341,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("jetpt",	&jetpt,	"jetpt[njet]/F");
   ztree->Branch("jeteta",	&jeteta,	"jeteta[njet]/F");
   ztree->Branch("jetphi",	&jetphi,	"jetphi[njet]/F");
+  ztree->Branch("gjetpt",	&gjetpt,	"gjetpt[njet]/F");
+  ztree->Branch("gjeteta",	&gjeteta,	"gjeteta[njet]/F");
+  ztree->Branch("gjetphi",	&gjetphi,	"gjetphi[njet]/F");
   ztree->Branch("jetID",	&jetID,	"jetID[njet]/I");
   ztree->Branch("subid",	&subid,	"subid[njet]/I");
   ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
@@ -480,6 +510,23 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
   evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
 
+  
+  bool ismc = true;
+  TTree *genptree = (TTree*)fin->Get("HiGenParticleAna/hi");
+  if(!genptree){
+    cout<<"Could not access gen particle tree!"<<endl;
+    ismc = false;
+  }
+  if(ismc)
+  {
+    genptree->SetBranchAddress("mult", &_mult);
+    genptree->SetBranchAddress("pt", &_pt);
+    genptree->SetBranchAddress("eta", &_eta);
+    genptree->SetBranchAddress("phi", &_phi);
+    genptree->SetBranchAddress("pdg", &_pdg);
+    genptree->SetBranchAddress("chg", &_chg);
+    genptree->SetBranchAddress("matchingID", &_matchingID);
+  }
   TTree *hlttree = (TTree*)fin->Get("hltanalysis/HltTree");
   if(!hlttree){
     cout<<"Could not access hlt tree!"<<endl;
@@ -530,7 +577,21 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     evttree->GetEntry(j);
 
     if(weight==1) weight = mcweight;
-
+    
+    if(ismc)
+    {
+      genptree->GetEntry(j);
+      mult = _mult;
+      for(int igenp = 0 ; igenp < _mult ; ++igenp)
+      {
+        pt[igenp] = _pt->at(igenp);
+        eta[igenp] = _eta->at(igenp);
+        phi[igenp] = _phi->at(igenp);
+        pdg[igenp] = _pdg->at(igenp);
+        chg[igenp] = _chg->at(igenp);
+        matchingID[igenp] = _matchingID->at(igenp);
+      }
+    }
     hlttree->GetEntry(j);
     if(j%1000 == 0) { cout << "Processing event: " << j << endl; }
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
@@ -546,10 +607,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       // if(goodJet(ij))
       if(jtpt[ij]>1 && goodJet(ij) && fabs(jeteta[ij])<2)
       {
-        jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
-        jetpt[njet] = jtpt[ij];
+        //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
+        //        cout<<jetpt[njet]<<endl;
+       	jetpt[njet] = jtpt[ij];
         jeteta[njet] = jteta[ij];
         jetphi[njet] = jtphi[ij];
+       	gjetpt[njet] = refpt[ij];
+        gjeteta[njet] = refeta[ij];
+        gjetphi[njet] = refphi[ij];
         jetID[njet] = goodJet(ij);
         subid[njet] = _subid[ij];
         chargedSum[njet] = _chargedSum[ij];
@@ -559,8 +624,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         njet++;
       }
     } //end of jet loop
-    // if(njet==0) continue;
+    if(njet==0) continue;
     // cout<<"end of jet loop "<<njet<<endl;
+    //cout<<"before: "<<jetpt[0]<<endl;
 
     inggTree->GetEntry(j);
 		int nmcphoton = 0;
@@ -654,6 +720,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     nPho = nphoton;
     // cout<<"end photon loop "<<nphoton<<endl;
     if(nphoton==0) continue;
+    //cout<<"after: "<<jetpt[0]<<endl;
 
     bool flagMu = 0; bool flagEle = 0;
     if(flagMu || flagEle) cout<<"nothing"<<endl;
@@ -754,7 +821,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // cout<<"end z loop "<<_nEle<<" "<<_nMu<<endl;
     // if( flagEle==0 && flagMu==0 ) continue;
 
-
     tracktree_->GetEntry(j);
 
     int ntracks = 0;
@@ -812,7 +878,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
     // cout<<"end track loop "<<ntracks<<endl;
     nTrk=ntracks;
-
     ztree->Fill();
 
   } //end of loop over events
