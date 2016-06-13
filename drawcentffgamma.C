@@ -31,7 +31,8 @@ void drawcentffgamma() {
   TLegend * leg_ff_pbpbsub[ncentbins];
 
   TCanvas * call = new TCanvas("call","",1600,500);
-  makeMultiPanelCanvas(call,5,1,0.02,0.02,0.2,0.2,0.04);
+  // makeMultiPanelCanvas(call,6,1,0,0,-2.99,0.2,0.04);
+  makeMultiPanelCanvas(call,6,1,0.02,0.0,-6,0.2,0.04);
   for (int icent = 0; icent < 5; icent++) {
     // Raw FF pbpdata
     // c1_pbpbdata[icent] = new TCanvas(Form("c1_pbpbdata_%d_%d",centmins[icent],centmaxs[icent]));
@@ -101,10 +102,15 @@ void drawcentffgamma() {
 
     // Eta cone subtracted FF pbpbdata and pbpbmc
     // c1_subpbpb[icent] = new TCanvas(Form("c1_subpbpb_%d_%d",centmins[icent],centmaxs[icent]));
-    call->cd(icent+1);
+    call->cd(icent+2);
     dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,3.1);
+    dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.9);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
+    // if(icent!=0)
+    // {
+      dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.4);
+    // }
 
     clone_hgammaffxi_refcone_pbpbdata_[icent] = (TH1D*) hgammaffxi_refcone_pbpbdata_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_refcone_pbpbdata_[icent]->Scale(-1);
@@ -124,12 +130,13 @@ void drawcentffgamma() {
     clone_hgammaffxi_pbpbmc_[icent]->Draw("same");
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent] = new TLegend(0.23,0.697,0.50,0.92);
-      leg_ff_pbpbsub[icent]->SetTextSize(0.05);
+      leg_ff_pbpbsub[icent] = new TLegend(0.05,0.697,0.275,0.92);
+      leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
     }
     else
     {
       leg_ff_pbpbsub[icent] = new TLegend(0,0.697,0.27,0.92);
+      // leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
       leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
     }
     leg_ff_pbpbsub[icent]->SetFillColor(0);
@@ -144,7 +151,7 @@ void drawcentffgamma() {
     {
       // leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"#eta cone sub","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"trk p_{T}>1 GeV, R < 0.3","");
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"45>#gamma p_{T}>100 GeV","");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"100>#gamma p_{T}>300 GeV","");
     }
     else if(icent==2)
     {
@@ -162,4 +169,10 @@ void drawcentffgamma() {
     // Eta cone subtracted FF pbpbdata and pbpbmc
 
   }
+  call->cd(1);
+  TLatex * ldndxi = new TLatex(0.7,0.5,"dN/d#xi");
+  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+  ldndxi->SetNDC();
+  ldndxi->SetTextAngle(90);
+  ldndxi->Draw();
 }
