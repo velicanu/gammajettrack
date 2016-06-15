@@ -21,14 +21,29 @@ float ztree::refconetrk_dr(int itrk, int ijet)
   return sqrt((dphi*dphi)+(deta*deta));
 }
 
-void ztree::ffgammajet(std::string outfname, int centmin, int centmax)
+float ztree::genjettrk_dr(int itrk, int ijet)
+{
+  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
+  float deta = fabs( gjeteta[ijet] - eta[itrk]);
+  return sqrt((dphi*dphi)+(deta*deta));
+}
+
+float ztree::genrefconetrk_dr(int itrk, int ijet)
+{
+  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
+  float deta = fabs( gjeteta[ijet] + eta[itrk]);
+  return sqrt((dphi*dphi)+(deta*deta));
+}
+
+void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::string gen)
 {
   string tag = outfname;
-  string s_alpha = "";
+  string s_alpha = gen;
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
+  TH1D * hjetgendphi = new TH1D(Form("hjetgendphi_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#DeltaR_{gen,reco};"),20,0,0.1);
   TH1D * hgammaff = new TH1D(Form("hgammaff_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";z;"),20,0,1);
   TH1D * hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5);
   TH1D * hgammaffxi_refcone = new TH1D(Form("hgammaffxi_refcone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5);
@@ -48,61 +63,106 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax)
     if(weight==0)                   weight=1;
     // cout<<njet<<endl;
 
-    for (int ijet = 0; ijet < njet; ijet++) {
-      if( nPho==2 ) continue;
-      if( jetpt[ijet]<40 ) continue; //jet pt Cut
-      if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
-      if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
-      if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
-      if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
-      hjetpt->Fill(jetpt[ijet]);
-
-      for (int itrk = 0; itrk < nTrk; itrk++) {
-        float dr = jettrk_dr(itrk,ijet);
-        float dr_refcone = refconetrk_dr(itrk,ijet);
-        if(dr<0.3)
+    if(gen.compare("gen")==0)
+    {
+      for (int ijet = 0; ijet < njet; ijet++) {
+        if( nPho==2 ) continue;
+        if( jetpt[ijet]<40 ) continue; //jet pt Cut
+        if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
+        if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
+        if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
+        if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+        hjetpt->Fill(jetpt[ijet]);
+        float denrecodphi = acos(cos(jetphi[ijet] - gjetphi[ijet]));
+        hjetgendphi->Fill(denrecodphi);
+        for(int igen = 0 ; igen < mult ; ++igen)
         {
-          float z = trkPt[itrk]/jetpt[ijet];
-          float zpho = trkPt[itrk]/phoEt[0];
-          float xi = log(1.0/z);
-          float xipho = log(1.0/zpho);
+          if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321)) continue;
+          float dr = genjettrk_dr(igen,ijet);
+          float dr_refcone = genrefconetrk_dr(igen,ijet);
+          if(dr<0.3)
+          {
+            float z = pt[igen]/gjetpt[ijet];
+            float zpho = pt[igen]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
 
-          hgammaff->Fill(z,trkWeight[itrk]);
-          hgammaffxi->Fill(xi,trkWeight[itrk]);
-          hgammaphoffxi->Fill(xipho,trkWeight[itrk]);
-          // cout<<jetpt[ijet]<<endl;
-        }
-        if(dr_refcone<0.3)
-        {
-          float z = trkPt[itrk]/jetpt[ijet];
-          float zpho = trkPt[itrk]/phoEt[0];
-          float xi = log(1.0/z);
-          float xipho = log(1.0/zpho);
+            hgammaff->Fill(z);
+            hgammaffxi->Fill(xi);
+            hgammaphoffxi->Fill(xipho);
+            // cout<<jetpt[ijet]<<endl;
+          }
+          if(dr_refcone<0.3)
+          {
+            float z = pt[igen]/gjetpt[ijet];
+            float zpho = pt[igen]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
 
-          hgammaffxi_refcone->Fill(xi,trkWeight[itrk]);
-          hgammaphoffxi_refcone->Fill(xipho,trkWeight[itrk]);
+            hgammaffxi_refcone->Fill(xi);
+            hgammaphoffxi_refcone->Fill(xipho);
+          }
         }
+      }
+    }
+    else
+    {
+      for (int ijet = 0; ijet < njet; ijet++) {
+        if( nPho==2 ) continue;
+        if( jetpt[ijet]<40 ) continue; //jet pt Cut
+        if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
+        if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
+        if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
+        if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+        hjetpt->Fill(jetpt[ijet]);
+
+        for (int itrk = 0; itrk < nTrk; itrk++) {
+          float dr = jettrk_dr(itrk,ijet);
+          float dr_refcone = refconetrk_dr(itrk,ijet);
+          if(dr<0.3)
+          {
+            float z = trkPt[itrk]/jetpt[ijet];
+            float zpho = trkPt[itrk]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
+
+            hgammaff->Fill(z,trkWeight[itrk]);
+            hgammaffxi->Fill(xi,trkWeight[itrk]);
+            hgammaphoffxi->Fill(xipho,trkWeight[itrk]);
+            // cout<<jetpt[ijet]<<endl;
+          }
+          if(dr_refcone<0.3)
+          {
+            float z = trkPt[itrk]/jetpt[ijet];
+            float zpho = trkPt[itrk]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
+
+            hgammaffxi_refcone->Fill(xi,trkWeight[itrk]);
+            hgammaphoffxi_refcone->Fill(xipho,trkWeight[itrk]);
+          }
+
+        }
+        // photons: normal mode power mode
+        // pho 40 trigger
+        // photon spike cuts etc
+        // phoet > 35
+        // phoet > 40 after correction // haven't made it yet
+        // phoeta < 1.44
+        // sumiso < 1 GeV
+        // h/em < 0.1
+        // sigmaetaeta < 0.01
+
+        // jets:
+        // some pt
+        // jeteta < 1.6
+        // some id cuts // none yet but we'll add some
+        // ak3pupf jets
+
+        // delphi > 7 pi / 8
+
 
       }
-      // photons: normal mode power mode
-      // pho 40 trigger
-      // photon spike cuts etc
-      // phoet > 35
-      // phoet > 40 after correction // haven't made it yet
-      // phoeta < 1.44
-      // sumiso < 1 GeV
-      // h/em < 0.1
-      // sigmaetaeta < 0.01
-
-      // jets:
-      // some pt
-      // jeteta < 1.6
-      // some id cuts // none yet but we'll add some
-      // ak3pupf jets
-
-      // delphi > 7 pi / 8
-
-
     }
 
 
@@ -116,9 +176,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax)
 
 int main(int argc, char *argv[])
 {
-  if(argc != 3 && argc != 5 && argc != 6)
+  if(argc != 3 && argc != 5 && argc != 6 && argc != 7)
   {
-    std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax]"<<std::endl;
+    std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [gen]"<<std::endl;
     exit(1);
   }
   ztree * t = new ztree(argv[1]);
@@ -128,5 +188,9 @@ int main(int argc, char *argv[])
   if (argc==5) {
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]));
   }
+  if (argc==6) {
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),argv[5]);
+  }
+
   return 0;
 }

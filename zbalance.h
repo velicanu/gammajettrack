@@ -43,11 +43,24 @@ class ztree {
   Float_t         Zlepton1Phi;
   Float_t         Zlepton2Phi;
   Int_t           Zcharge;
+
+  Int_t           mult;
+  Float_t         pt[10000];   //[mult]
+  Float_t         eta[10000];   //[mult]
+  Float_t         phi[10000];   //[mult]
+  Int_t           pdg[10000];   //[mult]
+  Int_t           chg[10000];   //[mult]
+  Int_t           matchingID[10000];   //[mult]
+
+
   Int_t           njet;
   Float_t         jetpt[40];   //[njet]
   Float_t         jeteta[40];   //[njet]
   Float_t         jetphi[40];   //[njet]
   Int_t           jetID[40];   //[njet]
+  Float_t         gjetpt[40];   //[njet]
+  Float_t         gjeteta[40];   //[njet]
+  Float_t         gjetphi[40];   //[njet]
   Int_t           nTrk;
   Float_t         trkPt[5000];   //[nTrk]
   Float_t         trkPtError[5000];   //[nTrk]
@@ -144,10 +157,21 @@ class ztree {
   TBranch        *b_Zlepton1Phi;   //!
   TBranch        *b_Zlepton2Phi;   //!
   TBranch        *b_Zcharge;   //!
+     TBranch        *b_mult;   //!
+   TBranch        *b_pt;   //!
+   TBranch        *b_eta;   //!
+   TBranch        *b_phi;   //!
+   TBranch        *b_pdg;   //!
+   TBranch        *b_chg;   //!
+   TBranch        *b_matchingID;   //!
+
   TBranch        *b_njet;   //!
   TBranch        *b_jetpt;   //!
   TBranch        *b_jeteta;   //!
   TBranch        *b_jetphi;   //!
+   TBranch        *b_gjetpt;   //!
+   TBranch        *b_gjeteta;   //!
+   TBranch        *b_gjetphi;   //!
   TBranch        *b_jetID;   //!
   TBranch        *b_nTrk;   //!
   TBranch        *b_trkPt;   //!
@@ -436,9 +460,11 @@ class ztree {
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
   virtual void     InitMix(TTree *tree);
-  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200);
+  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, std::string gen="");
   virtual float    jettrk_dr(int itrk, int ijet);
   virtual float    refconetrk_dr(int itrk, int ijet);
+  virtual float    genjettrk_dr(int itrk, int ijet);
+  virtual float    genrefconetrk_dr(int itrk, int ijet);
   // virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
@@ -530,12 +556,24 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("Zlepton1Phi", &Zlepton1Phi, &b_Zlepton1Phi);
   fChain->SetBranchAddress("Zlepton2Phi", &Zlepton2Phi, &b_Zlepton2Phi);
   fChain->SetBranchAddress("Zcharge", &Zcharge, &b_Zcharge);
+   fChain->SetBranchAddress("mult", &mult, &b_mult);
+   fChain->SetBranchAddress("pt", pt, &b_pt);
+   fChain->SetBranchAddress("eta", eta, &b_eta);
+   fChain->SetBranchAddress("phi", phi, &b_phi);
+   fChain->SetBranchAddress("pdg", pdg, &b_pdg);
+   fChain->SetBranchAddress("chg", chg, &b_chg);
+   fChain->SetBranchAddress("matchingID", matchingID, &b_matchingID);
+
   fChain->SetBranchAddress("njet", &njet, &b_njet);
   fChain->SetBranchAddress("jetpt", jetpt, &b_jetpt);
   fChain->SetBranchAddress("jeteta", jeteta, &b_jeteta);
   fChain->SetBranchAddress("jetphi", jetphi, &b_jetphi);
   fChain->SetBranchAddress("jetID", jetID, &b_jetID);
-  fChain->SetBranchAddress("nTrk", &nTrk, &b_nTrk);
+   fChain->SetBranchAddress("gjetpt", gjetpt, &b_gjetpt);
+   fChain->SetBranchAddress("gjeteta", gjeteta, &b_gjeteta);
+   fChain->SetBranchAddress("gjetphi", gjetphi, &b_gjetphi);
+
+   fChain->SetBranchAddress("nTrk", &nTrk, &b_nTrk);
   fChain->SetBranchAddress("trkPt", trkPt, &b_trkPt);
   fChain->SetBranchAddress("trkPtError", trkPtError, &b_trkPtError);
   fChain->SetBranchAddress("trkNHit", trkNHit, &b_trkNHit);

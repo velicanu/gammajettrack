@@ -32,7 +32,8 @@ void drawcentffgamma() {
 
   TCanvas * call = new TCanvas("call","",1600,500);
   // makeMultiPanelCanvas(call,6,1,0,0,-2.99,0.2,0.04);
-  makeMultiPanelCanvas(call,6,1,0.02,0.0,-6,0.2,0.04);
+  // makeMultiPanelCanvas(call,6,1,0.02,0.0,-6,0.2,0.04);
+  makeMultiPanelCanvas(call,5,1,0,0,0.2,0.2,0.04);
   for (int icent = 0; icent < 5; icent++) {
     // Raw FF pbpdata
     // c1_pbpbdata[icent] = new TCanvas(Form("c1_pbpbdata_%d_%d",centmins[icent],centmaxs[icent]));
@@ -102,7 +103,8 @@ void drawcentffgamma() {
 
     // Eta cone subtracted FF pbpbdata and pbpbmc
     // c1_subpbpb[icent] = new TCanvas(Form("c1_subpbpb_%d_%d",centmins[icent],centmaxs[icent]));
-    call->cd(icent+2);
+    // call->cd(icent+2);
+    call->cd(icent+1);
     dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,3.1);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.9);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
@@ -130,7 +132,7 @@ void drawcentffgamma() {
     clone_hgammaffxi_pbpbmc_[icent]->Draw("same");
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent] = new TLegend(0.05,0.697,0.275,0.92);
+      leg_ff_pbpbsub[icent] = new TLegend(0.25,0.697,0.875,0.92);
       leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
     }
     else
@@ -174,5 +176,5 @@ void drawcentffgamma() {
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
-  ldndxi->Draw();
+  // ldndxi->Draw();
 }
