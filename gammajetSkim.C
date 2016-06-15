@@ -176,7 +176,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float gjetpt[200], gjeteta[200], gjetphi[200];
   float chargedSum[200], neutralSum[200], eSum[200];
   int jetID[200], subid[200];
-  
+
   int _mult;
   vector<float> *_pt;
   vector<float> *_eta;
@@ -184,6 +184,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> *_pdg;
   vector<int> *_chg;
   vector<int> *_matchingID;
+  vector<int> *_sube;
   int mult;
   float pt[10000];
   float eta[10000];
@@ -191,6 +192,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int pdg[10000];
   int chg[10000];
   int matchingID[10000];
+  int sube[10000];
 
   const int nPtBins = 13;
   const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
@@ -312,10 +314,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("lumis",  &lumis, "lumis/I");
   ztree->Branch("hiBin", &hiBin, "hiBin/I");
   ztree->Branch("vz", &vz, "vz/F");
-  
+
   ztree->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
   ztree->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
-  
+
   ztree->Branch("mult", &mult, "mult/I");
   ztree->Branch("pt", pt, "pt[mult]/F");
   ztree->Branch("eta", eta, "eta[mult]/F");
@@ -323,6 +325,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pdg", pdg, "pdg[mult]/I");
   ztree->Branch("chg", chg, "chg[mult]/I");
   ztree->Branch("matchingID", matchingID, "matchingID[mult]/I");
+  ztree->Branch("sube", sube, "sube[mult]/I");
 
   ztree->Branch("Ztype",	&Ztype,	"Ztype/I");
   ztree->Branch("Zmass",	&Zmass,	"Zmass/F");
@@ -510,7 +513,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
   evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
 
-  
+
   bool ismc = true;
   TTree *genptree = (TTree*)fin->Get("HiGenParticleAna/hi");
   if(!genptree){
@@ -526,6 +529,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     genptree->SetBranchAddress("pdg", &_pdg);
     genptree->SetBranchAddress("chg", &_chg);
     genptree->SetBranchAddress("matchingID", &_matchingID);
+    genptree->SetBranchAddress("sube", &_sube);
   }
   TTree *hlttree = (TTree*)fin->Get("hltanalysis/HltTree");
   if(!hlttree){
@@ -577,7 +581,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     evttree->GetEntry(j);
 
     if(weight==1) weight = mcweight;
-    
+
     if(ismc)
     {
       genptree->GetEntry(j);
@@ -590,6 +594,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         pdg[igenp] = _pdg->at(igenp);
         chg[igenp] = _chg->at(igenp);
         matchingID[igenp] = _matchingID->at(igenp);
+        sube[igenp] = _sube->at(igenp);
       }
     }
     hlttree->GetEntry(j);
