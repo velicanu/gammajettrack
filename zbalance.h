@@ -51,6 +51,7 @@ class ztree {
   Int_t           pdg[10000];   //[mult]
   Int_t           chg[10000];   //[mult]
   Int_t           matchingID[10000];   //[mult]
+  Int_t           sube[10000];   //[mult]
 
 
   Int_t           njet;
@@ -164,6 +165,7 @@ class ztree {
    TBranch        *b_pdg;   //!
    TBranch        *b_chg;   //!
    TBranch        *b_matchingID;   //!
+   TBranch        *b_sube;   //!
 
   TBranch        *b_njet;   //!
   TBranch        *b_jetpt;   //!
@@ -465,6 +467,8 @@ class ztree {
   virtual float    refconetrk_dr(int itrk, int ijet);
   virtual float    genjettrk_dr(int itrk, int ijet);
   virtual float    genrefconetrk_dr(int itrk, int ijet);
+  virtual float    genjetrecotrk_dr(int itrk, int ijet);
+  virtual float    genrefconerecotrk_dr(int itrk, int ijet);
   // virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
@@ -563,6 +567,7 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("pdg", pdg, &b_pdg);
    fChain->SetBranchAddress("chg", chg, &b_chg);
    fChain->SetBranchAddress("matchingID", matchingID, &b_matchingID);
+   fChain->SetBranchAddress("sube", sube, &b_sube);
 
   fChain->SetBranchAddress("njet", &njet, &b_njet);
   fChain->SetBranchAddress("jetpt", jetpt, &b_jetpt);

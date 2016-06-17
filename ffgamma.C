@@ -35,6 +35,20 @@ float ztree::genrefconetrk_dr(int itrk, int ijet)
   return sqrt((dphi*dphi)+(deta*deta));
 }
 
+float ztree::genjetrecotrk_dr(int itrk, int ijet)
+{
+  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
+  float deta = fabs( gjeteta[ijet] - trkEta[itrk]);
+  return sqrt((dphi*dphi)+(deta*deta));
+}
+
+float ztree::genrefconerecotrk_dr(int itrk, int ijet)
+{
+  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
+  float deta = fabs( gjeteta[ijet] + trkEta[itrk]);
+  return sqrt((dphi*dphi)+(deta*deta));
+}
+
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::string gen)
 {
   string tag = outfname;
@@ -42,6 +56,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
+
+  TH2D * hsubept = new TH2D(Form("hsubept_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-0.5,99.5,100,0,100);
+  TH2D * hsubept_refcone = new TH2D(Form("hsubept_refcone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-0.5,99.5,100,0,100);
+
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetgendphi = new TH1D(Form("hjetgendphi_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#DeltaR_{gen,reco};"),20,0,0.1);
   TH1D * hgammaff = new TH1D(Form("hgammaff_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";z;"),20,0,1);
@@ -78,6 +96,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
         for(int igen = 0 ; igen < mult ; ++igen)
         {
           if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321)) continue;
+          if(sube[igen] != 0) continue;
           float dr = genjettrk_dr(igen,ijet);
           float dr_refcone = genrefconetrk_dr(igen,ijet);
           if(dr<0.3)
@@ -90,6 +109,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
             hgammaff->Fill(z);
             hgammaffxi->Fill(xi);
             hgammaphoffxi->Fill(xipho);
+            hsubept->Fill(sube[igen],pt[igen]);
             // cout<<jetpt[ijet]<<endl;
           }
           if(dr_refcone<0.3)
@@ -101,6 +121,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
 
             hgammaffxi_refcone->Fill(xi);
             hgammaphoffxi_refcone->Fill(xipho);
+            hsubept_refcone->Fill(sube[igen],pt[igen]);
           }
         }
       }
@@ -117,8 +138,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
         hjetpt->Fill(jetpt[ijet]);
 
         for (int itrk = 0; itrk < nTrk; itrk++) {
-          float dr = jettrk_dr(itrk,ijet);
-          float dr_refcone = refconetrk_dr(itrk,ijet);
+          // float dr = jettrk_dr(itrk,ijet);
+          float dr = genjetrecotrk_dr(itrk,ijet);
+          // float dr_refcone = refconetrk_dr(itrk,ijet);
+          float dr_refcone = genrefconerecotrk_dr(itrk,ijet);
           if(dr<0.3)
           {
             float z = trkPt[itrk]/jetpt[ijet];
@@ -126,9 +149,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
             float xi = log(1.0/z);
             float xipho = log(1.0/zpho);
 
-            hgammaff->Fill(z,trkWeight[itrk]);
-            hgammaffxi->Fill(xi,trkWeight[itrk]);
-            hgammaphoffxi->Fill(xipho,trkWeight[itrk]);
+            // hgammaff->Fill(z,trkWeight[itrk]);
+            // hgammaffxi->Fill(xi,trkWeight[itrk]);
+            // hgammaphoffxi->Fill(xipho,trkWeight[itrk]);
+            hgammaff->Fill(z);
+            hgammaffxi->Fill(xi);
+            hgammaphoffxi->Fill(xipho);
             // cout<<jetpt[ijet]<<endl;
           }
           if(dr_refcone<0.3)
@@ -138,10 +164,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, std::stri
             float xi = log(1.0/z);
             float xipho = log(1.0/zpho);
 
-            hgammaffxi_refcone->Fill(xi,trkWeight[itrk]);
-            hgammaphoffxi_refcone->Fill(xipho,trkWeight[itrk]);
+            // hgammaffxi_refcone->Fill(xi,trkWeight[itrk]);
+            // hgammaphoffxi_refcone->Fill(xipho,trkWeight[itrk]);
+            hgammaffxi_refcone->Fill(xi);
+            hgammaphoffxi_refcone->Fill(xipho);
           }
-
         }
         // photons: normal mode power mode
         // pho 40 trigger
