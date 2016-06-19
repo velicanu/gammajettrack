@@ -44,6 +44,13 @@ float cuts_endcap_pp_eleMissHits[4]  = {3,1,1,1};
 int cut_type_pbpb = 1;
 int cut_type_pp = 2;
 
+Int_t           nref_corr;
+Float_t         chargedSum_corr[29];   //[hiNevtPlane]
+Float_t         rawpt_corr[29];   //[hiNevtPlane]
+Float_t         jtpt_corr[29];   //[hiNevtPlane]
+Float_t         jteta_corr[29];   //[hiNevtPlane]
+Float_t         jtphi_corr[29];   //[hiNevtPlane]
+
 
 bool goodJet(int i) {
   if(	_neutralSum[i]/rawpt[i] < 0.9
@@ -60,12 +67,12 @@ bool goodJet(int i) {
 float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin)
 {
   float rmin = 999;
-  for(int k = 0; k<nref; k++)
+  for(int k = 0; k<nref_corr; k++)
   {
-    if(jtpt[k]<50) break;
-    if(!goodJet(k)) continue;
-    if(TMath::Abs(jteta[k]>2)) continue;//jet quality cut
-    float R = TMath::Power(jteta[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi_[itrk])),2);
+    if(jtpt_corr[k]<50) break;
+    // if(!goodJet(k)) continue;
+    if((TMath::Abs(chargedSum_corr[k]/rawpt_corr[k])<0.01) || (TMath::Abs(jteta_corr[k]>2))) continue;//jet quality cut
+    float R = TMath::Power(jteta_corr[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi_corr[k]-trkPhi_[itrk])),2);
     if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
   }
   return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
@@ -147,7 +154,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
-  if(is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
+  if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
   else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
   cout<<trkCorr<<endl;
   L2L3Residual * jetcorr = new L2L3Residual(3);
@@ -217,6 +224,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   Int_t           hiNevtPlane;
   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
+
+
+  
+  injetTreeFORTRKCORR->SetBranchAddress("nref", &nref_corr);
+  evttree->SetBranchAddress("chargedSum", &chargedSum_corr);
+  evttree->SetBranchAddress("rawpt", &rawpt_corr);
+  evttree->SetBranchAddress("jtpt", &jtpt_corr);
+  evttree->SetBranchAddress("jteta", &jteta_corr);
+  evttree->SetBranchAddress("jtphi", &jtphi_corr);
 
   Int_t           nTrk;
   Int_t           run;
@@ -501,6 +517,47 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initjetTree(injetTree);
+  
+  TTree *injetTreeFORTRKCORR;
+  if(!is_pp) injetTreeFORTRKCORR = (TTree*)fin->Get(Form("akPu4CaloJetAnalyzer/t"));
+  else       injetTreeFORTRKCORR = (TTree*)fin->Get(Form("ak4CaloJetAnalyzer/t"));
+  if(!injetTreeFORTRKCORR){
+    cout<<"Could not access akPu4Calo tree!"<<endl;
+    return;
+  }
+  injetTreeFORTRKCORR->SetBranchAddress("nref", &nref_corr);
+  injetTreeFORTRKCORR->SetBranchAddress("chargedSum", &chargedSum_corr);
+  injetTreeFORTRKCORR->SetBranchAddress("rawpt", &rawpt_corr);
+  injetTreeFORTRKCORR->SetBranchAddress("jtpt", &jtpt_corr);
+  injetTreeFORTRKCORR->SetBranchAddress("jteta", &jteta_corr);
+  injetTreeFORTRKCORR->SetBranchAddress("jtphi", &jtphi_corr);
+
+  
+/*
+  rmin is calculated thusly (assumes jet array is ordered by pt):
+uses akPu4Calo jets
+//find rmin parameters for the track
+      float rmin = 999;
+      for(int k = 0; k<nref; k++)
+      {
+        if(jtpt[k]<50) break;
+        if((TMath::Abs(chargedSum[k]/rawpt[k])<0.01) || (TMath::Abs(jteta[k]>2))) continue;//jet quality cut
+        float R = TMath::Power(jteta[k]-trkEta[j],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi[j]))),2);
+        if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
+      }
+
+******************************************************************
+maxJetPt is calculated as:
+
+float maxJetPt = -999;
+for(int k = 0; k<nref; k++)
+{
+  if(TMath::Abs(jteta[k])>2) continue;
+  if(jtpt[k]>maxJetPt) maxJetPt=jtpt[k];
+}
+*/
+  
+  
 
   TTree *evttree = (TTree*)fin->Get("hiEvtAnalyzer/HiTree");
   if(!evttree){
@@ -606,10 +663,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
     // cout<<"event: "<<j<<endl;
     njet = 0;
-    float maxJetPt = 0;
+    
+    float maxJetPt = -999;
+    for(int k = 0; k<nref_corr; k++)
+    {
+      if(TMath::Abs(jteta_corr[k])>2) continue;
+      if(jtpt_corr[k]>maxJetPt) maxJetPt=jtpt_corr[k];
+    }
+    
     for(int ij=0; ij<nref; ij++) {
-      // if(jtpt[ij]>1)
-      // if(goodJet(ij))
       if(jtpt[ij]>1 && goodJet(ij) && fabs(jeteta[ij])<2)
       {
         //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
@@ -625,7 +687,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         chargedSum[njet] = _chargedSum[ij];
         neutralSum[njet] = _neutralSum[ij];
         eSum[njet] = _eSum[ij];
-        if(maxJetPt<jetpt[njet]) maxJetPt = jetpt[njet];
         njet++;
       }
     } //end of jet loop
