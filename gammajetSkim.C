@@ -225,15 +225,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Int_t           hiNevtPlane;
   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
 
-
-  
-  injetTreeFORTRKCORR->SetBranchAddress("nref", &nref_corr);
-  evttree->SetBranchAddress("chargedSum", &chargedSum_corr);
-  evttree->SetBranchAddress("rawpt", &rawpt_corr);
-  evttree->SetBranchAddress("jtpt", &jtpt_corr);
-  evttree->SetBranchAddress("jteta", &jteta_corr);
-  evttree->SetBranchAddress("jtphi", &jtphi_corr);
-
   Int_t           nTrk;
   Int_t           run;
   Int_t           event;
