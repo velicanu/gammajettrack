@@ -446,51 +446,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	ztree->Branch("mcMomEta", &mcMomEta,"mcMomEta[nMC]/F");
 	ztree->Branch("mcMomPhi", &mcMomPhi,"mcMomPhi[nMC]/F");
 	ztree->Branch("mcMomPID", &mcMomPID,"mcMomPID[nMC]/I");
-  // ztree->Branch("nMu",&nMu,"nMu/I");
-  // ztree->Branch("muPt",&muPt,"muPt[nMu]/F");
-  // ztree->Branch("muEta",&muEta,"[nMu]/F");
-  // ztree->Branch("muPhi",&muPhi,"muPhi[nMu]/F");
-  // ztree->Branch("muCharge",&muCharge,"muCharge[nMu]/I");
-  // ztree->Branch("muType",&muType,"muType[nMu]/I");
-  // ztree->Branch("muIsGood",&muIsGood,"muIsGood[nMu]/I");
-  // ztree->Branch("muD0",&muD0,"muD0[nMu]/F");
-  // ztree->Branch("muDz",&muDz,"muDz[nMu]/F");
-  // ztree->Branch("muChi2NDF",&muChi2NDF,"muChi2NDF[nMu]/F");
-  // ztree->Branch("muInnerD0",&muInnerD0,"muInnerD0[nMu]/F");
-  // ztree->Branch("muInnerDz",&muInnerDz,"muInnerDz[nMu]/F");
-  // ztree->Branch("muTrkLayers",&muTrkLayers,"muTrkLayers[nMu]/I");
-  // ztree->Branch("muPixelLayers",&muPixelLayers,"muPixelLayers[nMu]/I");
-  // ztree->Branch("muPixelHits",&muPixelHits,"muPixelHits[nMu]/I");
-  // ztree->Branch("muMuonHits",&muMuonHits,"muMuonHits[nMu]/I");
-  // ztree->Branch("muTrkQuality",&muTrkQuality,"muTrkQuality[nMu]/I");
-  // ztree->Branch("muStations",&muStations,"muStations[nMu]/I");
-  // ztree->Branch("muIsoTrk",&muIsoTrk,"muIsoTrk[nMu]/F");
-  // ztree->Branch("muPFChIso",&muPFChIso,"muPFChIso[nMu]/F");
-  // ztree->Branch("muPFPhoIso",&muPFPhoIso,"muPFPhoIso[nMu]/F");
-  // ztree->Branch("muPFNeuIso",&muPFNeuIso,"muPFNeuIso[nMu]/F");
-  // ztree->Branch("muPFPUIso",&muPFPUIso,"muPFPUIso[nMu]/F");
-
-
-  // const int nPtBins = 13;
-  // const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
-  // const int nYBins = 13;
-
-  // TH1F *mmMass = new TH1F("mmMass",";m^{#mu#mu} (GeV/c^{2});Events",30,60,120);
-  // TH1F *mmMassSS = new TH1F("mmMassSS",";m^{#mu#mu} (GeV/c^{2});Events",30,60,120);
-
-  // TH1F *mmPt = new TH1F("mmPt",";p_{T}^{#mu#mu} (GeV/c);dN/dp_{T}",nPtBins,PtBins);
-  // TH1F *mmY = new TH1F("mmY",";y^{#mu#mu};Events",nYBins,-2.6,2.6);
-  // TH1F *mmPhi = new TH1F("mmPhi",";#phi^{#mu#mu};Events",20,-pi,pi);
-
-  // TH1F *eeMass = new TH1F("eeMass",";m^{ee} (GeV/c^{2});Events",30,60,120);
-  // TH1F *eeMassSS = new TH1F("eeMassSS",";m^{ee} (GeV/c^{2});Events",30,60,120);
-
-  // TH1F *eePt = new TH1F("eePt",";p_{T}^{ee} (GeV/c);dN/dp_{T}",nPtBins,PtBins);
-  // TH1F *eeY = new TH1F("eeY",";y^{ee};Events",nYBins,-2.6,2.6);
-  // TH1F *eePhi = new TH1F("eePhi",";#phi^{ee};Events",20,-pi,pi);
-
-  // int nMuPair = 0;
-  // int nElPair = 0;
 
 
   TTree *inggTree = (TTree*)fin->Get("ggHiNtuplizer/EventTree");
@@ -508,7 +463,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initjetTree(injetTree);
-  
+
   TTree *injetTreeFORTRKCORR;
   if(!is_pp) injetTreeFORTRKCORR = (TTree*)fin->Get(Form("akPu4CaloJetAnalyzer/t"));
   else       injetTreeFORTRKCORR = (TTree*)fin->Get(Form("ak4CaloJetAnalyzer/t"));
@@ -523,32 +478,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   injetTreeFORTRKCORR->SetBranchAddress("jteta", &jteta_corr);
   injetTreeFORTRKCORR->SetBranchAddress("jtphi", &jtphi_corr);
 
-  
-/*
-  rmin is calculated thusly (assumes jet array is ordered by pt):
-uses akPu4Calo jets
-//find rmin parameters for the track
-      float rmin = 999;
-      for(int k = 0; k<nref; k++)
-      {
-        if(jtpt[k]<50) break;
-        if((TMath::Abs(chargedSum[k]/rawpt[k])<0.01) || (TMath::Abs(jteta[k]>2))) continue;//jet quality cut
-        float R = TMath::Power(jteta[k]-trkEta[j],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi[j]))),2);
-        if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
-      }
 
-******************************************************************
-maxJetPt is calculated as:
 
-float maxJetPt = -999;
-for(int k = 0; k<nref; k++)
-{
-  if(TMath::Abs(jteta[k])>2) continue;
-  if(jtpt[k]>maxJetPt) maxJetPt=jtpt[k];
-}
-*/
-  
-  
 
   TTree *evttree = (TTree*)fin->Get("hiEvtAnalyzer/HiTree");
   if(!evttree){
@@ -650,18 +581,32 @@ for(int k = 0; k<nref; k++)
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
     if(fabs(vz)>15) continue;
     if( !( HLT_HISinglePhoton40_Eta1p5_v1 == 1 || HLT_HISinglePhoton40_Eta1p5_v2 == 1 || HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 == 1 ) ) continue; // photon 40 trigger cut for pbpb+pp data, pbpb mc, pp mc
+
+    skimTree->GetEntry(j);
+    if (!is_pp) // HI event selection
+    {
+      if ((pcollisionEventSelection < 1))  continue;
+      if(!ismc)
+      {
+        if (HBHENoiseFilterResultRun2Loose < 1) continue; // re-use config value...
+      }
+    }
+    else // pp event selection
+    {
+      if (pPAprimaryVertexFilter < 1 || pBeamScrapingFilter < 1)  continue;
+    }
     injetTree->GetEntry(j);
     // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
     // cout<<"event: "<<j<<endl;
     njet = 0;
-    
+
     float maxJetPt = -999;
     for(int k = 0; k<nref_corr; k++)
     {
       if(TMath::Abs(jteta_corr[k])>2) continue;
       if(jtpt_corr[k]>maxJetPt) maxJetPt=jtpt_corr[k];
     }
-    
+
     for(int ij=0; ij<nref; ij++) {
       if(jtpt[ij]>1 && goodJet(ij) && fabs(jeteta[ij])<2)
       {
@@ -708,9 +653,19 @@ for(int k = 0; k<nref; k++)
     int nphoton = 0;
 		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
     {
-
+      bool failedNoiseCut;
+      failedNoiseCut = ((_phoE3x3->at(ipho)/_phoE5x5->at(ipho) > 2./3.-0.03 &&
+                         _phoE3x3->at(ipho)/_phoE5x5->at(ipho) < 2./3.+0.03) &&
+                        (_phoE1x5->at(ipho)/_phoE5x5->at(ipho) > 1./3.-0.03 &&
+                         _phoE1x5->at(ipho)/_phoE5x5->at(ipho) < 1./3.+0.03) &&
+                        (_phoE2x5->at(ipho)/_phoE5x5->at(ipho) > 2./3.-0.03 &&
+                         _phoE2x5->at(ipho)/_phoE5x5->at(ipho) < 2./3.+0.03));
+      if (failedNoiseCut) {
+        // phoIdx = -1;
+        break;
+      }
       // if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 && _phoEt->at(ipho)>40 ) //photon selection
-      if(_phoEt->at(ipho)>35 ) //photon selection
+      if(_phoEt->at(ipho)>=35 ) //photon selection
       {
         // float phopt = _phoEt->at(ipho);
         // float phoptphopt = phopt*phopt;

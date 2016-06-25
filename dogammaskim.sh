@@ -22,6 +22,8 @@
 
 wait
 hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v10.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_pp502_*
-hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon15_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_v10.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_*
+hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_v10.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_*
 
+wait
+echo
 echo done

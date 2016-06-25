@@ -29,6 +29,7 @@
    Int_t           pVertexFilterCutE;
    Int_t           pVertexFilterCutEandG;
    Int_t           superFilterPath;
+   Int_t           pcollisionEventSelection;
 
    // List of branches
    TBranch        *b_ana_step;   //!
@@ -47,6 +48,7 @@
    TBranch        *b_pVertexFilterCutE;   //!
    TBranch        *b_pVertexFilterCutEandG;   //!
    TBranch        *b_superFilterPath;   //!
+   TBranch        *b_pcollisionEventSelection;   //!
 
 #endif
 
@@ -69,6 +71,7 @@ void initSkimTree(TTree *tree)
    b_pVertexFilterCutE = 0;
    b_pVertexFilterCutEandG = 0;
    b_superFilterPath = 0;
+   b_pcollisionEventSelection = 0;
    tree->SetBranchAddress("ana_step", &ana_step, &b_ana_step);
    tree->SetBranchAddress("pHBHENoiseFilterResultProducer", &pHBHENoiseFilterResultProducer, &b_pHBHENoiseFilterResultProducer);
    tree->SetBranchAddress("HBHENoiseFilterResult", &HBHENoiseFilterResult, &b_HBHENoiseFilterResult);
@@ -85,5 +88,5 @@ void initSkimTree(TTree *tree)
    tree->SetBranchAddress("pVertexFilterCutE", &pVertexFilterCutE, &b_pVertexFilterCutE);
    tree->SetBranchAddress("pVertexFilterCutEandG", &pVertexFilterCutEandG, &b_pVertexFilterCutEandG);
    tree->SetBranchAddress("superFilterPath", &superFilterPath, &b_superFilterPath);
+   tree->SetBranchAddress("pcollisionEventSelection", &pcollisionEventSelection, &b_pcollisionEventSelection);
 }
-
