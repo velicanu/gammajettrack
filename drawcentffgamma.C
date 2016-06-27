@@ -3,11 +3,13 @@
 void drawcentffgamma() {
   TFile *_file0 = TFile::Open("all.root");
   int save = 1;
-  const static int ncentbins = 5;
+  
+  const int yaxismax = 5;
+  const static int ncentbins = 4;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
-  int centmaxs[] = {20,60,100,140,200};
-  string cents[] = {"0-10%","10-30%","30-50%","50-70%","70-100%"};
+  int centmaxs[] = {20,60,100,200,200};
+  string cents[] = {"0-10%","10-30%","30-50%","50-100%","70-100%"};
   TCanvas * c1_pbpbdata[ncentbins]; // ncentbins
   TH1D * hgammaffxi_pbpbdata_[ncentbins];
   TH1D * hjetpt_pbpbdata_[ncentbins];
@@ -30,11 +32,12 @@ void drawcentffgamma() {
   TH1D * clone_hgammaffxi_pbpbmc_[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
 
-  TCanvas * call = new TCanvas("call","",1600,500);
+  TCanvas * call = new TCanvas("call","",1400,500);
   // makeMultiPanelCanvas(call,6,1,0,0,-2.99,0.2,0.04);
   // makeMultiPanelCanvas(call,6,1,0.02,0.0,-6,0.2,0.04);
-  makeMultiPanelCanvas(call,5,1,0,0,0.2,0.2,0.04);
-  for (int icent = 0; icent < 5; icent++) {
+  // makeMultiPanelCanvas(call,4,1,0,0,0.2,0.2,0.04);
+  makeMultiPanelCanvas(call,ncentbins+1,1,0.02,0.0,-6,0.2,0.04);
+  for (int icent = 0; icent < ncentbins; icent++) {
     // Raw FF pbpdata
     // c1_pbpbdata[icent] = new TCanvas(Form("c1_pbpbdata_%d_%d",centmins[icent],centmaxs[icent]));
     hgammaffxi_pbpbdata_[icent] = (TH1D*) _file0->Get(Form("hgammaffxi_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
@@ -104,14 +107,14 @@ void drawcentffgamma() {
     // Eta cone subtracted FF pbpbdata and pbpbmc
     // c1_subpbpb[icent] = new TCanvas(Form("c1_subpbpb_%d_%d",centmins[icent],centmaxs[icent]));
     // call->cd(icent+2);
-    call->cd(icent+1);
-    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,3.1);
-    dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.9);
+    call->cd(icent+2);
+    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
+    dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
     // if(icent!=0)
     // {
-      dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.4);
+      dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.5);
     // }
 
     clone_hgammaffxi_refcone_pbpbdata_[icent] = (TH1D*) hgammaffxi_refcone_pbpbdata_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
@@ -132,14 +135,15 @@ void drawcentffgamma() {
     clone_hgammaffxi_pbpbmc_[icent]->Draw("same");
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent] = new TLegend(0.25,0.697,0.875,0.92);
-      leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
+      // leg_ff_pbpbsub[icent] = new TLegend(0.25,0.697,0.875,0.92);
+      leg_ff_pbpbsub[icent] = new TLegend(0.05,0.697,0.27,0.92);
+      leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.3);
     }
     else
     {
       leg_ff_pbpbsub[icent] = new TLegend(0,0.697,0.27,0.92);
       // leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
-      leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.2);
+      leg_ff_pbpbsub[icent]->SetTextSize(0.05*1.3);
     }
     leg_ff_pbpbsub[icent]->SetFillColor(0);
     leg_ff_pbpbsub[icent]->SetFillStyle(0);
@@ -172,9 +176,30 @@ void drawcentffgamma() {
 
   }
   call->cd(1);
-  TLatex * ldndxi = new TLatex(0.7,0.5,"dN/d#xi");
-  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+
+  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0,yaxismax);
+  gStyle->SetFrameLineColor(0);
+  axis_dummy->UseCurrentStyle();
+  axis_dummy->Draw("FB BB A");
+
+  TLatex * ldndxi = new TLatex(0.4,0.5,"dN/d#xi");
+  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.3);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
+
+  TLatex * laxis[yaxismax];
+  for (int ilatex = 0; ilatex < yaxismax; ilatex++) {
+    laxis[ilatex] = new TLatex(3.,ilatex-0.1,Form("%d",ilatex));
+    laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
+    laxis[ilatex]->Draw();
+  }
+  ldndxi->Draw();
+
+  
+  // call->cd(1);
+  // TLatex * ldndxi = new TLatex(0.7,0.5,"dN/d#xi");
+  // ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+  // ldndxi->SetNDC();
+  // ldndxi->SetTextAngle(90);
   // ldndxi->Draw();
 }

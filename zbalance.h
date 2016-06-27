@@ -462,7 +462,7 @@ class ztree {
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
   virtual void     InitMix(TTree *tree);
-  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, std::string gen="");
+  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, std::string gen="");
   virtual float    jettrk_dr(int itrk, int ijet);
   virtual float    refconetrk_dr(int itrk, int ijet);
   virtual float    genjettrk_dr(int itrk, int ijet);
