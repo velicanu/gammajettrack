@@ -288,6 +288,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  pho_trackIsoR5PtCut20[100];   //_nPho
   Float_t  pho_swissCrx[100];   //_nPho
   Float_t  pho_seedTime[100];   //_nPho
+
+  Float_t  phoE3x3[100];   //_nPho
+  Float_t  phoE1x5[100];   //_nPho
+  Float_t  phoE2x5[100];   //_nPho
+  Float_t  phoE5x5[100];   //_nPho
+  Int_t    phoNoise[100];   //_nPho
+
   Float_t  pfcIso1[100];   //_nPho
   Float_t  pfcIso2[100];   //_nPho
   Float_t  pfcIso3[100];   //_nPho
@@ -305,6 +312,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  pfnIso5[100];   //_nPho
 	Int_t    nMC;
 	Int_t    mcPID[500];
+
 	Int_t    mcStatus[500];
 	Float_t  mcPt[500];
 	Float_t  mcEta[500];
@@ -421,6 +429,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pho_trackIsoR5PtCut20",&pho_trackIsoR5PtCut20,"pho_trackIsoR5PtCut20[nPho]/F");
   ztree->Branch("pho_swissCrx",&pho_swissCrx,"pho_swissCrx[nPho]/F");
   ztree->Branch("pho_seedTime",&pho_seedTime,"pho_seedTime[nPho]/F");
+
+  ztree->Branch("phoE3x3",&phoE3x3,"phoE3x3[nPho]/F");
+  ztree->Branch("phoE1x5",&phoE1x5,"phoE1x5[nPho]/F");
+  ztree->Branch("phoE2x5",&phoE2x5,"phoE2x5[nPho]/F");
+  ztree->Branch("phoE5x5",&phoE5x5,"phoE5x5[nPho]/F");
+  ztree->Branch("phoNoise",&phoNoise,"phoNoise[nPho]/I");
+
   ztree->Branch("pfcIso1",&pfcIso1,"pfcIso1[nPho]/F");
   ztree->Branch("pfcIso2",&pfcIso2,"pfcIso2[nPho]/F");
   ztree->Branch("pfcIso3",&pfcIso3,"pfcIso3[nPho]/F");
@@ -448,7 +463,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	ztree->Branch("mcMomPID", &mcMomPID,"mcMomPID[nMC]/I");
 
 
-  TTree *inggTree = (TTree*)fin->Get("ggHiNtuplizer/EventTree");
+  TTree *inggTree;
+  if(is_pp) inggTree = (TTree*)fin->Get("ggHiNtuplizerGED/EventTree");
+  else      inggTree = (TTree*)fin->Get("ggHiNtuplizer/EventTree");
   if(!inggTree){
     cout<<"Could not access gg tree!"<<endl;
     return;
@@ -660,10 +677,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
                          _phoE1x5->at(ipho)/_phoE5x5->at(ipho) < 1./3.+0.03) &&
                         (_phoE2x5->at(ipho)/_phoE5x5->at(ipho) > 2./3.-0.03 &&
                          _phoE2x5->at(ipho)/_phoE5x5->at(ipho) < 2./3.+0.03));
-      if (failedNoiseCut) {
+      // if (failedNoiseCut) {
+
         // phoIdx = -1;
-        break;
-      }
+        // break;
+      // }
       // if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 && _phoEt->at(ipho)>40 ) //photon selection
       if(_phoEt->at(ipho)>=35 ) //photon selection
       {
@@ -678,7 +696,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         if((*_pho_ecalClusterIsoR4)[ipho]+(*_pho_hcalRechitIsoR4)[ipho]+(*_pho_trackIsoR4PtCut20)[ipho]>1) continue;
 
         if(_phoHoverE->at(ipho)>0.1) continue;
-        if(_phoSigmaIEtaIEta->at(ipho) > 0.0100 ) continue;
+        if(_phoSigmaIEtaIEta_2012->at(ipho) > 0.0100 ) continue;
+        phoE3x3[nphoton] = _phoE3x3->at(ipho);
+        phoE1x5[nphoton] = _phoE1x5->at(ipho);
+        phoE2x5[nphoton] = _phoE2x5->at(ipho);
+        phoE5x5[nphoton] = _phoE5x5->at(ipho);
+        if(failedNoiseCut)   phoNoise[nphoton] = 0;
+        else                 phoNoise[nphoton] = 1;
         phoE[nphoton] = (*_phoE)[ipho];
         phoEt[nphoton] = (*_phoEt)[ipho];
         phoEta[nphoton] = (*_phoEta)[ipho];
