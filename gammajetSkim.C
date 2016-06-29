@@ -293,6 +293,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  phoE1x5[100];   //_nPho
   Float_t  phoE2x5[100];   //_nPho
   Float_t  phoE5x5[100];   //_nPho
+  Float_t  phoSigmaIEtaIEta_2012[100];   //_nPho
   Int_t    phoNoise[100];   //_nPho
 
   Float_t  pfcIso1[100];   //_nPho
@@ -434,6 +435,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("phoE1x5",&phoE1x5,"phoE1x5[nPho]/F");
   ztree->Branch("phoE2x5",&phoE2x5,"phoE2x5[nPho]/F");
   ztree->Branch("phoE5x5",&phoE5x5,"phoE5x5[nPho]/F");
+  ztree->Branch("phoSigmaIEtaIEta_2012",&phoSigmaIEtaIEta_2012,"phoSigmaIEtaIEta_2012[nPho]/F");
   ztree->Branch("phoNoise",&phoNoise,"phoNoise[nPho]/I");
 
   ztree->Branch("pfcIso1",&pfcIso1,"pfcIso1[nPho]/F");
@@ -643,7 +645,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         njet++;
       }
     } //end of jet loop
-    if(njet==0) continue;
+    //if(njet==0) continue;
     // cout<<"end of jet loop "<<njet<<endl;
     //cout<<"before: "<<jetpt[0]<<endl;
 
@@ -667,89 +669,90 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 		// if(!(_nMC==0 || nmcphoton!=0)) continue;
     // cout<<"end mc loop "<<_nMC<<endl;
 
-    int nphoton = 0;
+    int maxPhoIndex = -1;
+    float maxPhoEt = -1;
 		for(int ipho = 0 ; ipho < _nPho ; ++ipho)
     {
-      bool failedNoiseCut;
-      failedNoiseCut = ((_phoE3x3->at(ipho)/_phoE5x5->at(ipho) > 2./3.-0.03 &&
-                         _phoE3x3->at(ipho)/_phoE5x5->at(ipho) < 2./3.+0.03) &&
-                        (_phoE1x5->at(ipho)/_phoE5x5->at(ipho) > 1./3.-0.03 &&
-                         _phoE1x5->at(ipho)/_phoE5x5->at(ipho) < 1./3.+0.03) &&
-                        (_phoE2x5->at(ipho)/_phoE5x5->at(ipho) > 2./3.-0.03 &&
-                         _phoE2x5->at(ipho)/_phoE5x5->at(ipho) < 2./3.+0.03));
-      // if (failedNoiseCut) {
-
-        // phoIdx = -1;
-        // break;
-      // }
-      // if((*_phoHoverE)[ipho]<0.1 && (*_pho_swissCrx)[ipho]<0.9 && abs((*_pho_seedTime)[ipho])<3.0 && ((*_pho_ecalClusterIsoR4)[ipho] + (*_pho_hcalRechitIsoR4)[ipho] + (*_pho_trackIsoR4PtCut20)[ipho]) < 1.0 && (*_phoSigmaIEtaIEta_2012)[ipho]<0.01 && (*_phoR9)[ipho]>0.3 && _phoEt->at(ipho)>40 ) //photon selection
-      if(_phoEt->at(ipho)>=35 ) //photon selection
+      if(_phoEt->at(ipho)<35 ) continue;
+      if(fabs(_phoEta->at(ipho))>1.44) continue;
+      if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
+      if(_pho_swissCrx->at(ipho) > 0.9) continue;
+      if(_phoEt->at(ipho) > maxPhoEt)
       {
-        // float phopt = _phoEt->at(ipho);
-        // float phoptphopt = phopt*phopt;
-        if(fabs(_phoEta->at(ipho))>1.44) continue;
-        if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
-        if(fabs(_pho_swissCrx->at(ipho)) > 0.9) continue;
-        //if(!(_pfcIso4->at(ipho) < 0.76  && _pfnIso4->at(ipho) < (0.97 + 0.014*phopt + 0.000019*phoptphopt) && _pfpIso4->at(ipho) < (0.08 + 0.0053*phopt))) continue;
-
-        // Isolation cone cut
-        if((*_pho_ecalClusterIsoR4)[ipho]+(*_pho_hcalRechitIsoR4)[ipho]+(*_pho_trackIsoR4PtCut20)[ipho]>1) continue;
-
-        if(_phoHoverE->at(ipho)>0.1) continue;
-        if(_phoSigmaIEtaIEta_2012->at(ipho) > 0.0100 ) continue;
-        phoE3x3[nphoton] = _phoE3x3->at(ipho);
-        phoE1x5[nphoton] = _phoE1x5->at(ipho);
-        phoE2x5[nphoton] = _phoE2x5->at(ipho);
-        phoE5x5[nphoton] = _phoE5x5->at(ipho);
+        maxPhoEt = _phoEt->at(ipho);
+        maxPhoIndex = ipho;
+      }
+    }
+    int nphoton = 0;
+    bool passed = true;
+    if(maxPhoIndex>-1)
+    {
+      bool failedNoiseCut =  ((_phoE3x3->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) > 2./3.-0.03 &&
+                              _phoE3x3->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) < 2./3.+0.03) &&
+                              (_phoE1x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) > 1./3.-0.03 &&
+                              _phoE1x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) < 1./3.+0.03) &&
+                              (_phoE2x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) > 2./3.-0.03 &&
+                              _phoE2x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) < 2./3.+0.03));
+      // Isolation cone cut
+      if((*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex]>1) passed = false;
+      if(_phoHoverE->at(maxPhoIndex)>0.1) passed = false;
+      if(_phoSigmaIEtaIEta_2012->at(maxPhoIndex) > 0.0170 ) passed = false;
+      if(passed)
+      {
+        phoE3x3[nphoton] = _phoE3x3->at(maxPhoIndex);
+        phoE1x5[nphoton] = _phoE1x5->at(maxPhoIndex);
+        phoE2x5[nphoton] = _phoE2x5->at(maxPhoIndex);
+        phoE5x5[nphoton] = _phoE5x5->at(maxPhoIndex);
+        phoSigmaIEtaIEta_2012[nphoton] = _phoSigmaIEtaIEta_2012->at(maxPhoIndex);
         if(failedNoiseCut)   phoNoise[nphoton] = 0;
         else                 phoNoise[nphoton] = 1;
-        phoE[nphoton] = (*_phoE)[ipho];
-        phoEt[nphoton] = (*_phoEt)[ipho];
-        phoEta[nphoton] = (*_phoEta)[ipho];
-        phoPhi[nphoton] = (*_phoPhi)[ipho];
-        phoSCE[nphoton] = (*_phoSCE)[ipho];
-        phoSCRawE[nphoton] = (*_phoSCRawE)[ipho];
-        phoESEn[nphoton] = (*_phoESEn)[ipho];
-        phoSCEta[nphoton] = (*_phoSCEta)[ipho];
-        phoSCPhi[nphoton] = (*_phoSCPhi)[ipho];
-        phoSCEtaWidth[nphoton] = (*_phoSCEtaWidth)[ipho];
-        phoSCPhiWidth[nphoton] = (*_phoSCPhiWidth)[ipho];
-        phoSCBrem[nphoton] = (*_phoSCBrem)[ipho];
-        phohasPixelSeed[nphoton] = (*_phohasPixelSeed)[ipho];
-        phoR9[nphoton] = (*_phoR9)[ipho];
-        phoHoverE[nphoton] = (*_phoHoverE)[ipho];
-        phoSigmaIEtaIEta[nphoton] = (*_phoSigmaIEtaIEta)[ipho];
-        pho_ecalClusterIsoR2[nphoton] = (*_pho_ecalClusterIsoR2)[ipho];
-        pho_ecalClusterIsoR3[nphoton] = (*_pho_ecalClusterIsoR3)[ipho];
-        pho_ecalClusterIsoR4[nphoton] = (*_pho_ecalClusterIsoR4)[ipho];
-        pho_ecalClusterIsoR5[nphoton] = (*_pho_ecalClusterIsoR5)[ipho];
-        pho_hcalRechitIsoR1[nphoton] = (*_pho_hcalRechitIsoR1)[ipho];
-        pho_hcalRechitIsoR2[nphoton] = (*_pho_hcalRechitIsoR2)[ipho];
-        pho_hcalRechitIsoR3[nphoton] = (*_pho_hcalRechitIsoR3)[ipho];
-        pho_hcalRechitIsoR4[nphoton] = (*_pho_hcalRechitIsoR4)[ipho];
-        pho_hcalRechitIsoR5[nphoton] = (*_pho_hcalRechitIsoR5)[ipho];
-        pho_trackIsoR1PtCut20[nphoton] = (*_pho_trackIsoR1PtCut20)[ipho];
-        pho_trackIsoR2PtCut20[nphoton] = (*_pho_trackIsoR2PtCut20)[ipho];
-        pho_trackIsoR3PtCut20[nphoton] = (*_pho_trackIsoR3PtCut20)[ipho];
-        pho_trackIsoR4PtCut20[nphoton] = (*_pho_trackIsoR4PtCut20)[ipho];
-        pho_trackIsoR5PtCut20[nphoton] = (*_pho_trackIsoR5PtCut20)[ipho];
-        pho_swissCrx[nphoton] = (*_pho_swissCrx)[ipho];
-        pho_seedTime[nphoton] = (*_pho_seedTime)[ipho];
-        pfcIso1[nphoton] = (*_pfcIso1)[ipho];
-        pfcIso2[nphoton] = (*_pfcIso2)[ipho];
-        pfcIso3[nphoton] = (*_pfcIso3)[ipho];
-        pfcIso4[nphoton] = (*_pfcIso4)[ipho];
-        pfcIso5[nphoton] = (*_pfcIso5)[ipho];
-        pfpIso1[nphoton] = (*_pfpIso1)[ipho];
-        pfpIso2[nphoton] = (*_pfpIso2)[ipho];
-        pfpIso3[nphoton] = (*_pfpIso3)[ipho];
-        pfpIso4[nphoton] = (*_pfpIso4)[ipho];
-        pfpIso5[nphoton] = (*_pfpIso5)[ipho];
-        pfnIso1[nphoton] = (*_pfnIso1)[ipho];
-        pfnIso2[nphoton] = (*_pfnIso2)[ipho];
-        pfnIso3[nphoton] = (*_pfnIso3)[ipho];
-        pfnIso4[nphoton] = (*_pfnIso4)[ipho];
-        pfnIso5[nphoton] = (*_pfnIso5)[ipho];
+        phoE[nphoton] = (*_phoE)[maxPhoIndex];
+        phoEt[nphoton] = (*_phoEt)[maxPhoIndex];
+        phoEta[nphoton] = (*_phoEta)[maxPhoIndex];
+        phoPhi[nphoton] = (*_phoPhi)[maxPhoIndex];
+        phoSCE[nphoton] = (*_phoSCE)[maxPhoIndex];
+        phoSCRawE[nphoton] = (*_phoSCRawE)[maxPhoIndex];
+        phoESEn[nphoton] = (*_phoESEn)[maxPhoIndex];
+        phoSCEta[nphoton] = (*_phoSCEta)[maxPhoIndex];
+        phoSCPhi[nphoton] = (*_phoSCPhi)[maxPhoIndex];
+        phoSCEtaWidth[nphoton] = (*_phoSCEtaWidth)[maxPhoIndex];
+        phoSCPhiWidth[nphoton] = (*_phoSCPhiWidth)[maxPhoIndex];
+        phoSCBrem[nphoton] = (*_phoSCBrem)[maxPhoIndex];
+        phohasPixelSeed[nphoton] = (*_phohasPixelSeed)[maxPhoIndex];
+        phoR9[nphoton] = (*_phoR9)[maxPhoIndex];
+        phoHoverE[nphoton] = (*_phoHoverE)[maxPhoIndex];
+        phoSigmaIEtaIEta[nphoton] = (*_phoSigmaIEtaIEta)[maxPhoIndex];
+        pho_ecalClusterIsoR2[nphoton] = (*_pho_ecalClusterIsoR2)[maxPhoIndex];
+        pho_ecalClusterIsoR3[nphoton] = (*_pho_ecalClusterIsoR3)[maxPhoIndex];
+        pho_ecalClusterIsoR4[nphoton] = (*_pho_ecalClusterIsoR4)[maxPhoIndex];
+        pho_ecalClusterIsoR5[nphoton] = (*_pho_ecalClusterIsoR5)[maxPhoIndex];
+        pho_hcalRechitIsoR1[nphoton] = (*_pho_hcalRechitIsoR1)[maxPhoIndex];
+        pho_hcalRechitIsoR2[nphoton] = (*_pho_hcalRechitIsoR2)[maxPhoIndex];
+        pho_hcalRechitIsoR3[nphoton] = (*_pho_hcalRechitIsoR3)[maxPhoIndex];
+        pho_hcalRechitIsoR4[nphoton] = (*_pho_hcalRechitIsoR4)[maxPhoIndex];
+        pho_hcalRechitIsoR5[nphoton] = (*_pho_hcalRechitIsoR5)[maxPhoIndex];
+        pho_trackIsoR1PtCut20[nphoton] = (*_pho_trackIsoR1PtCut20)[maxPhoIndex];
+        pho_trackIsoR2PtCut20[nphoton] = (*_pho_trackIsoR2PtCut20)[maxPhoIndex];
+        pho_trackIsoR3PtCut20[nphoton] = (*_pho_trackIsoR3PtCut20)[maxPhoIndex];
+        pho_trackIsoR4PtCut20[nphoton] = (*_pho_trackIsoR4PtCut20)[maxPhoIndex];
+        pho_trackIsoR5PtCut20[nphoton] = (*_pho_trackIsoR5PtCut20)[maxPhoIndex];
+        pho_swissCrx[nphoton] = (*_pho_swissCrx)[maxPhoIndex];
+        pho_seedTime[nphoton] = (*_pho_seedTime)[maxPhoIndex];
+        pfcIso1[nphoton] = (*_pfcIso1)[maxPhoIndex];
+        pfcIso2[nphoton] = (*_pfcIso2)[maxPhoIndex];
+        pfcIso3[nphoton] = (*_pfcIso3)[maxPhoIndex];
+        pfcIso4[nphoton] = (*_pfcIso4)[maxPhoIndex];
+        pfcIso5[nphoton] = (*_pfcIso5)[maxPhoIndex];
+        pfpIso1[nphoton] = (*_pfpIso1)[maxPhoIndex];
+        pfpIso2[nphoton] = (*_pfpIso2)[maxPhoIndex];
+        pfpIso3[nphoton] = (*_pfpIso3)[maxPhoIndex];
+        pfpIso4[nphoton] = (*_pfpIso4)[maxPhoIndex];
+        pfpIso5[nphoton] = (*_pfpIso5)[maxPhoIndex];
+        pfnIso1[nphoton] = (*_pfnIso1)[maxPhoIndex];
+        pfnIso2[nphoton] = (*_pfnIso2)[maxPhoIndex];
+        pfnIso3[nphoton] = (*_pfnIso3)[maxPhoIndex];
+        pfnIso4[nphoton] = (*_pfnIso4)[maxPhoIndex];
+        pfnIso5[nphoton] = (*_pfnIso5)[maxPhoIndex];
         nphoton++;
       }
     }
