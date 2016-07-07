@@ -295,6 +295,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  phoE5x5[100];   //_nPho
   Float_t  phoSigmaIEtaIEta_2012[100];   //_nPho
   Int_t    phoNoise[100];   //_nPho
+  Int_t    pho_genMatchedIndex[100];   //_nPho
 
   Float_t  pfcIso1[100];   //_nPho
   Float_t  pfcIso2[100];   //_nPho
@@ -315,6 +316,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	Int_t    mcPID[500];
 
 	Int_t    mcStatus[500];
+	Float_t  mcEt[500];
 	Float_t  mcPt[500];
 	Float_t  mcEta[500];
 	Float_t  mcPhi[500];
@@ -437,6 +439,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("phoE5x5",&phoE5x5,"phoE5x5[nPho]/F");
   ztree->Branch("phoSigmaIEtaIEta_2012",&phoSigmaIEtaIEta_2012,"phoSigmaIEtaIEta_2012[nPho]/F");
   ztree->Branch("phoNoise",&phoNoise,"phoNoise[nPho]/I");
+  ztree->Branch("pho_genMatchedIndex",&pho_genMatchedIndex,"pho_genMatchedIndex[nPho]/I");
 
   ztree->Branch("pfcIso1",&pfcIso1,"pfcIso1[nPho]/F");
   ztree->Branch("pfcIso2",&pfcIso2,"pfcIso2[nPho]/F");
@@ -457,6 +460,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	ztree->Branch("mcPID", &mcPID,"mcPID[nMC]/I");
 	ztree->Branch("mcStatus", &mcStatus,"mcStatus[nMC]/I");
 	ztree->Branch("mcPt", &mcPt,"mcPt[nMC]/F");
+	ztree->Branch("mcEt", &mcEt,"mcEt[nMC]/F");
 	ztree->Branch("mcEta", &mcEta,"mcEta[nMC]/F");
 	ztree->Branch("mcPhi", &mcPhi,"mcPhi[nMC]/F");
 	ztree->Branch("mcMomPt", &mcMomPt,"mcMomPt[nMC]/F");
@@ -658,6 +662,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 			mcPID[imc] = (*_mcPID)[imc];
 			mcStatus[imc] = (*_mcStatus)[imc];
 			mcPt[imc] = (*_mcPt)[imc];
+			mcEt[imc] = (*_mcEt)[imc];
 			mcEta[imc] = (*_mcEta)[imc];
 			mcPhi[imc] = (*_mcPhi)[imc];
 			mcMomPt[imc] = (*_mcMomPt)[imc];
@@ -706,6 +711,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         phoSigmaIEtaIEta_2012[nphoton] = _phoSigmaIEtaIEta_2012->at(maxPhoIndex);
         if(failedNoiseCut)   phoNoise[nphoton] = 0;
         else                 phoNoise[nphoton] = 1;
+        pho_genMatchedIndex[nphoton] = _pho_genMatchedIndex->at(maxPhoIndex);
         phoE[nphoton] = (*_phoE)[maxPhoIndex];
         phoEt[nphoton] = (*_phoEt)[maxPhoIndex];
         phoEta[nphoton] = (*_phoEta)[maxPhoIndex];

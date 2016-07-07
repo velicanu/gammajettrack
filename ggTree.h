@@ -28,7 +28,7 @@ float getDphi(float phi1, float phi2) {
   float dphi = phi1 - phi2;
   if ( dphi > pi )
     dphi = dphi - 2.*pi;
-  if ( dphi <= -pi ) 
+  if ( dphi <= -pi )
     dphi = dphi + 2.*pi;
   return dphi;
 }
@@ -147,6 +147,7 @@ float getDphi(float phi1, float phi2) {
    vector<float>   *_pho_trackIsoR5PtCut20;
    vector<float>   *_pho_swissCrx;
    vector<float>   *_pho_seedTime;
+   vector<int>     *_pho_genMatchedIndex;
    vector<float>   *_pfcIso1;
    vector<float>   *_pfcIso2;
    vector<float>   *_pfcIso3;
@@ -166,6 +167,7 @@ float getDphi(float phi1, float phi2) {
 	 vector<int>     *_mcPID;
    vector<int>     *_mcStatus;
 	 vector<float>   *_mcPt;
+	 vector<float>   *_mcEt;
    vector<float>   *_mcEta;
    vector<float>   *_mcPhi;
 	 vector<float>   *_mcMomPt;
@@ -306,6 +308,7 @@ void initggTree(TTree *tree) {
    _pho_trackIsoR5PtCut20 = 0;
    _pho_swissCrx = 0;
    _pho_seedTime = 0;
+   _pho_genMatchedIndex = 0;
    _pfcIso1 = 0;
    _pfcIso2 = 0;
    _pfcIso3 = 0;
@@ -325,6 +328,7 @@ void initggTree(TTree *tree) {
 	 _mcPID = 0;
    _mcStatus = 0;
 	 _mcPt = 0;
+	 _mcEt = 0;
    _mcEta = 0;
    _mcPhi = 0;
 	 _mcMomPt = 0;
@@ -467,6 +471,7 @@ void initggTree(TTree *tree) {
    tree->SetBranchAddress("pho_trackIsoR5PtCut20", &_pho_trackIsoR5PtCut20);
    tree->SetBranchAddress("pho_swissCrx", &_pho_swissCrx);
    tree->SetBranchAddress("pho_seedTime", &_pho_seedTime);
+   tree->SetBranchAddress("pho_genMatchedIndex", &_pho_genMatchedIndex);
    tree->SetBranchAddress("pfcIso1", &_pfcIso1);
    tree->SetBranchAddress("pfcIso2", &_pfcIso2);
    tree->SetBranchAddress("pfcIso3", &_pfcIso3);
@@ -486,6 +491,7 @@ void initggTree(TTree *tree) {
 	 tree->SetBranchAddress("mcPID", &_mcPID);
    tree->SetBranchAddress("mcStatus", &_mcStatus);
 	 tree->SetBranchAddress("mcPt", &_mcPt);
+	 tree->SetBranchAddress("mcEt", &_mcEt);
    tree->SetBranchAddress("mcEta", &_mcEta);
    tree->SetBranchAddress("mcPhi", &_mcPhi);
 	 tree->SetBranchAddress("mcMomPt", &_mcMomPt);
