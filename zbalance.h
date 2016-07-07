@@ -469,6 +469,8 @@ class ztree {
   virtual float    genrefconetrk_dr(int itrk, int ijet);
   virtual float    genjetrecotrk_dr(int itrk, int ijet);
   virtual float    genrefconerecotrk_dr(int itrk, int ijet);
+  virtual float    recojetgentrk_dr(int itrk, int ijet);
+  virtual float    recorefconegentrk_dr(int itrk, int ijet);
   // virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
   virtual void     Show(Long64_t entry = -1);
