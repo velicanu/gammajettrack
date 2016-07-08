@@ -558,8 +558,17 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   }
   initSkimTree(skimTree);
 
+  int nCentBins =
 
+  TFile * energyCorrectionFile = TFile::Open("photonEnergyCorrections.root");
 
+  for (int icent=0; icent<nCentBins; ++icent)
+  {
+    for (int ieta=0; ieta<nEtaBins; ++ieta)
+    {
+      photonEnergyCorrections[icent][ieta] = (TH1D*)energyCorrectionFile->Get(Form("photonEnergyCorr_cent%i_eta%i", icent, ieta));
+    }
+  }
   // int nEv = inggTree->GetEntries();
   int nEv = evttree->GetEntries();
 

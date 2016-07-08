@@ -53,6 +53,17 @@ class ztree {
   Int_t           matchingID[10000];   //[mult]
   Int_t           sube[10000];   //[mult]
 
+  Int_t           nMC;
+  Int_t           mcPID[392];   //[nMC]
+  Int_t           mcStatus[392];   //[nMC]
+  Float_t         mcPt[392];   //[nMC]
+  Float_t         mcEt[392];   //[nMC]
+  Float_t         mcEta[392];   //[nMC]
+  Float_t         mcPhi[392];   //[nMC]
+  Float_t         mcMomPt[392];   //[nMC]
+  Float_t         mcMomEta[392];   //[nMC]
+  Float_t         mcMomPhi[392];   //[nMC]
+  Int_t           mcMomPID[392];   //[nMC]
 
   Int_t           njet;
   Float_t         jetpt[40];   //[njet]
@@ -89,54 +100,54 @@ class ztree {
   Float_t         pfEcal[5000];   //[nTrk]
   Float_t         pfHcal[5000];   //[nTrk]
   Int_t    nPho;
-  Float_t  phoE[100];   //_nPho
-  Float_t  phoEt[100];   //_nPho
-  Float_t  phoEta[100];   //_nPho
-  Float_t  phoPhi[100];   //_nPho
-  Float_t  phoSCE[100];   //_nPho
-  Float_t  phoSCRawE[100];   //_nPho
-  Float_t  phoESEn[100];   //_nPho
-  Float_t  phoSCEta[100];   //_nPho
-  Float_t  phoSCPhi[100];   //_nPho
-  Float_t  phoSCEtaWidth[100];   //_nPho
-  Float_t  phoSCPhiWidth[100];   //_nPho
-  Float_t  phoSCBrem[100];   //_nPho
-  Int_t    phohasPixelSeed[100];   //_nPho
-  Float_t  phoR9[100];   //_nPho
-  Float_t  phoHoverE[100];   //_nPho
-  Float_t  phoSigmaIEtaIEta[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR2[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR3[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR4[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR5[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR1[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR2[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR3[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR4[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR5[100];   //_nPho
-  Float_t  pho_trackIsoR1PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR2PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR3PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR4PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR5PtCut20[100];   //_nPho
-  Float_t  pho_swissCrx[100];   //_nPho
-  Float_t  pho_seedTime[100];   //_nPho
-  Float_t  pfcIso1[100];   //_nPho
-  Float_t  pfcIso2[100];   //_nPho
-  Float_t  pfcIso3[100];   //_nPho
-  Float_t  pfcIso4[100];   //_nPho
-  Float_t  pfcIso5[100];   //_nPho
-  Float_t  pfpIso1[100];   //_nPho
-  Float_t  pfpIso2[100];   //_nPho
-  Float_t  pfpIso3[100];   //_nPho
-  Float_t  pfpIso4[100];   //_nPho
-  Float_t  pfpIso5[100];   //_nPho
-  Float_t  pfnIso1[100];   //_nPho
-  Float_t  pfnIso2[100];   //_nPho
-  Float_t  pfnIso3[100];   //_nPho
-  Float_t  pfnIso4[100];   //_nPho
-  Float_t  pfnIso5[100];   //_nPho
-
+  Float_t  phoE[1];   //_nPho
+  Float_t  phoEt[1];   //_nPho
+  Float_t  phoEta[1];   //_nPho
+  Float_t  phoPhi[1];   //_nPho
+  Float_t  phoSCE[1];   //_nPho
+  Float_t  phoSCRawE[1];   //_nPho
+  Float_t  phoESEn[1];   //_nPho
+  Float_t  phoSCEta[1];   //_nPho
+  Float_t  phoSCPhi[1];   //_nPho
+  Float_t  phoSCEtaWidth[1];   //_nPho
+  Float_t  phoSCPhiWidth[1];   //_nPho
+  Float_t  phoSCBrem[1];   //_nPho
+  Int_t    phohasPixelSeed[1];   //_nPho
+  Float_t  phoR9[1];   //_nPho
+  Float_t  phoHoverE[1];   //_nPho
+  Float_t  phoSigmaIEtaIEta[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR2[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR3[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR4[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR5[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR1[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR2[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR3[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR4[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR5[1];   //_nPho
+  Float_t  pho_trackIsoR1PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR2PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR3PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR4PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR5PtCut20[1];   //_nPho
+  Float_t  pho_swissCrx[1];   //_nPho
+  Float_t  pho_seedTime[1];   //_nPho
+  Float_t  pfcIso1[1];   //_nPho
+  Float_t  pfcIso2[1];   //_nPho
+  Float_t  pfcIso3[1];   //_nPho
+  Float_t  pfcIso4[1];   //_nPho
+  Float_t  pfcIso5[1];   //_nPho
+  Float_t  pfpIso1[1];   //_nPho
+  Float_t  pfpIso2[1];   //_nPho
+  Float_t  pfpIso3[1];   //_nPho
+  Float_t  pfpIso4[1];   //_nPho
+  Float_t  pfpIso5[1];   //_nPho
+  Float_t  pfnIso1[1];   //_nPho
+  Float_t  pfnIso2[1];   //_nPho
+  Float_t  pfnIso3[1];   //_nPho
+  Float_t  pfnIso4[1];   //_nPho
+  Float_t  pfnIso5[1];   //_nPho
+  Int_t    pho_genMatchedIndex[1];   //[nPho]
   // List of branches
   TBranch        *b_trkWeight;   //!
   TBranch        *b_run;   //!
@@ -158,22 +169,22 @@ class ztree {
   TBranch        *b_Zlepton1Phi;   //!
   TBranch        *b_Zlepton2Phi;   //!
   TBranch        *b_Zcharge;   //!
-     TBranch        *b_mult;   //!
-   TBranch        *b_pt;   //!
-   TBranch        *b_eta;   //!
-   TBranch        *b_phi;   //!
-   TBranch        *b_pdg;   //!
-   TBranch        *b_chg;   //!
-   TBranch        *b_matchingID;   //!
-   TBranch        *b_sube;   //!
+  TBranch        *b_mult;   //!
+  TBranch        *b_pt;   //!
+  TBranch        *b_eta;   //!
+  TBranch        *b_phi;   //!
+  TBranch        *b_pdg;   //!
+  TBranch        *b_chg;   //!
+  TBranch        *b_matchingID;   //!
+  TBranch        *b_sube;   //!
 
   TBranch        *b_njet;   //!
   TBranch        *b_jetpt;   //!
   TBranch        *b_jeteta;   //!
   TBranch        *b_jetphi;   //!
-   TBranch        *b_gjetpt;   //!
-   TBranch        *b_gjeteta;   //!
-   TBranch        *b_gjetphi;   //!
+  TBranch        *b_gjetpt;   //!
+  TBranch        *b_gjeteta;   //!
+  TBranch        *b_gjetphi;   //!
   TBranch        *b_jetID;   //!
   TBranch        *b_nTrk;   //!
   TBranch        *b_trkPt;   //!
@@ -236,6 +247,7 @@ class ztree {
   TBranch   *b_pho_trackIsoR5PtCut20;
   TBranch   *b_pho_swissCrx;
   TBranch   *b_pho_seedTime;
+  TBranch   *b_pho_genMatchedIndex;   //!
   TBranch   *b_pfcIso1;
   TBranch   *b_pfcIso2;
   TBranch   *b_pfcIso3;
@@ -251,7 +263,18 @@ class ztree {
   TBranch   *b_pfnIso3;
   TBranch   *b_pfnIso4;
   TBranch   *b_pfnIso5;
-
+  TBranch        *b_nMC;   //!
+  TBranch        *b_mcPID;   //!
+  TBranch        *b_mcStatus;   //!
+  TBranch        *b_mcPt;   //!
+  TBranch        *b_mcEt;   //!
+  TBranch        *b_mcEta;   //!
+  TBranch        *b_mcPhi;   //!
+  TBranch        *b_mcMomPt;   //!
+  TBranch        *b_mcMomEta;   //!
+  TBranch        *b_mcMomPhi;   //!
+  TBranch        *b_mcMomPID;   //!
+  
   Int_t           mix_run;
   Int_t           mix_event;
   Int_t           mix_lumis;
@@ -303,53 +326,53 @@ class ztree {
   Float_t         mix_pfEcal[5000];   //[nTrk]
   Float_t         mix_pfHcal[5000];   //[nTrk]
   Int_t    mix_nPho;
-  Float_t  mix_phoE[100];   //_nPho
-  Float_t  mix_phoEt[100];   //_nPho
-  Float_t  mix_phoEta[100];   //_nPho
-  Float_t  mix_phoPhi[100];   //_nPho
-  Float_t  mix_phoSCE[100];   //_nPho
-  Float_t  mix_phoSCRawE[100];   //_nPho
-  Float_t  mix_phoESEn[100];   //_nPho
-  Float_t  mix_phoSCEta[100];   //_nPho
-  Float_t  mix_phoSCPhi[100];   //_nPho
-  Float_t  mix_phoSCEtaWidth[100];   //_nPho
-  Float_t  mix_phoSCPhiWidth[100];   //_nPho
-  Float_t  mix_phoSCBrem[100];   //_nPho
-  Int_t    mix_phohasPixelSeed[100];   //_nPho
-  Float_t  mix_phoR9[100];   //_nPho
-  Float_t  mix_phoHoverE[100];   //_nPho
-  Float_t  mix_phoSigmaIEtaIEta[100];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR2[100];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR3[100];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR4[100];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR5[100];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR1[100];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR2[100];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR3[100];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR4[100];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR5[100];   //_nPho
-  Float_t  mix_pho_trackIsoR1PtCut20[100];   //_nPho
-  Float_t  mix_pho_trackIsoR2PtCut20[100];   //_nPho
-  Float_t  mix_pho_trackIsoR3PtCut20[100];   //_nPho
-  Float_t  mix_pho_trackIsoR4PtCut20[100];   //_nPho
-  Float_t  mix_pho_trackIsoR5PtCut20[100];   //_nPho
-  Float_t  mix_pho_swissCrx[100];   //_nPho
-  Float_t  mix_pho_seedTime[100];   //_nPho
-  Float_t  mix_pfcIso1[100];   //_nPho
-  Float_t  mix_pfcIso2[100];   //_nPho
-  Float_t  mix_pfcIso3[100];   //_nPho
-  Float_t  mix_pfcIso4[100];   //_nPho
-  Float_t  mix_pfcIso5[100];   //_nPho
-  Float_t  mix_pfpIso1[100];   //_nPho
-  Float_t  mix_pfpIso2[100];   //_nPho
-  Float_t  mix_pfpIso3[100];   //_nPho
-  Float_t  mix_pfpIso4[100];   //_nPho
-  Float_t  mix_pfpIso5[100];   //_nPho
-  Float_t  mix_pfnIso1[100];   //_nPho
-  Float_t  mix_pfnIso2[100];   //_nPho
-  Float_t  mix_pfnIso3[100];   //_nPho
-  Float_t  mix_pfnIso4[100];   //_nPho
-  Float_t  mix_pfnIso5[100];   //_nPho
+  Float_t  mix_phoE[1];   //_nPho
+  Float_t  mix_phoEt[1];   //_nPho
+  Float_t  mix_phoEta[1];   //_nPho
+  Float_t  mix_phoPhi[1];   //_nPho
+  Float_t  mix_phoSCE[1];   //_nPho
+  Float_t  mix_phoSCRawE[1];   //_nPho
+  Float_t  mix_phoESEn[1];   //_nPho
+  Float_t  mix_phoSCEta[1];   //_nPho
+  Float_t  mix_phoSCPhi[1];   //_nPho
+  Float_t  mix_phoSCEtaWidth[1];   //_nPho
+  Float_t  mix_phoSCPhiWidth[1];   //_nPho
+  Float_t  mix_phoSCBrem[1];   //_nPho
+  Int_t    mix_phohasPixelSeed[1];   //_nPho
+  Float_t  mix_phoR9[1];   //_nPho
+  Float_t  mix_phoHoverE[1];   //_nPho
+  Float_t  mix_phoSigmaIEtaIEta[1];   //_nPho
+  Float_t  mix_pho_ecalClusterIsoR2[1];   //_nPho
+  Float_t  mix_pho_ecalClusterIsoR3[1];   //_nPho
+  Float_t  mix_pho_ecalClusterIsoR4[1];   //_nPho
+  Float_t  mix_pho_ecalClusterIsoR5[1];   //_nPho
+  Float_t  mix_pho_hcalRechitIsoR1[1];   //_nPho
+  Float_t  mix_pho_hcalRechitIsoR2[1];   //_nPho
+  Float_t  mix_pho_hcalRechitIsoR3[1];   //_nPho
+  Float_t  mix_pho_hcalRechitIsoR4[1];   //_nPho
+  Float_t  mix_pho_hcalRechitIsoR5[1];   //_nPho
+  Float_t  mix_pho_trackIsoR1PtCut20[1];   //_nPho
+  Float_t  mix_pho_trackIsoR2PtCut20[1];   //_nPho
+  Float_t  mix_pho_trackIsoR3PtCut20[1];   //_nPho
+  Float_t  mix_pho_trackIsoR4PtCut20[1];   //_nPho
+  Float_t  mix_pho_trackIsoR5PtCut20[1];   //_nPho
+  Float_t  mix_pho_swissCrx[1];   //_nPho
+  Float_t  mix_pho_seedTime[1];   //_nPho
+  Float_t  mix_pfcIso1[1];   //_nPho
+  Float_t  mix_pfcIso2[1];   //_nPho
+  Float_t  mix_pfcIso3[1];   //_nPho
+  Float_t  mix_pfcIso4[1];   //_nPho
+  Float_t  mix_pfcIso5[1];   //_nPho
+  Float_t  mix_pfpIso1[1];   //_nPho
+  Float_t  mix_pfpIso2[1];   //_nPho
+  Float_t  mix_pfpIso3[1];   //_nPho
+  Float_t  mix_pfpIso4[1];   //_nPho
+  Float_t  mix_pfpIso5[1];   //_nPho
+  Float_t  mix_pfnIso1[1];   //_nPho
+  Float_t  mix_pfnIso2[1];   //_nPho
+  Float_t  mix_pfnIso3[1];   //_nPho
+  Float_t  mix_pfnIso4[1];   //_nPho
+  Float_t  mix_pfnIso5[1];   //_nPho
 
   // List of branches
   TBranch        *mix_b_run;   //!
@@ -562,25 +585,25 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("Zlepton1Phi", &Zlepton1Phi, &b_Zlepton1Phi);
   fChain->SetBranchAddress("Zlepton2Phi", &Zlepton2Phi, &b_Zlepton2Phi);
   fChain->SetBranchAddress("Zcharge", &Zcharge, &b_Zcharge);
-   fChain->SetBranchAddress("mult", &mult, &b_mult);
-   fChain->SetBranchAddress("pt", pt, &b_pt);
-   fChain->SetBranchAddress("eta", eta, &b_eta);
-   fChain->SetBranchAddress("phi", phi, &b_phi);
-   fChain->SetBranchAddress("pdg", pdg, &b_pdg);
-   fChain->SetBranchAddress("chg", chg, &b_chg);
-   fChain->SetBranchAddress("matchingID", matchingID, &b_matchingID);
-   fChain->SetBranchAddress("sube", sube, &b_sube);
+  fChain->SetBranchAddress("mult", &mult, &b_mult);
+  fChain->SetBranchAddress("pt", pt, &b_pt);
+  fChain->SetBranchAddress("eta", eta, &b_eta);
+  fChain->SetBranchAddress("phi", phi, &b_phi);
+  fChain->SetBranchAddress("pdg", pdg, &b_pdg);
+  fChain->SetBranchAddress("chg", chg, &b_chg);
+  fChain->SetBranchAddress("matchingID", matchingID, &b_matchingID);
+  fChain->SetBranchAddress("sube", sube, &b_sube);
 
   fChain->SetBranchAddress("njet", &njet, &b_njet);
   fChain->SetBranchAddress("jetpt", jetpt, &b_jetpt);
   fChain->SetBranchAddress("jeteta", jeteta, &b_jeteta);
   fChain->SetBranchAddress("jetphi", jetphi, &b_jetphi);
   fChain->SetBranchAddress("jetID", jetID, &b_jetID);
-   fChain->SetBranchAddress("gjetpt", gjetpt, &b_gjetpt);
-   fChain->SetBranchAddress("gjeteta", gjeteta, &b_gjeteta);
-   fChain->SetBranchAddress("gjetphi", gjetphi, &b_gjetphi);
+  fChain->SetBranchAddress("gjetpt", gjetpt, &b_gjetpt);
+  fChain->SetBranchAddress("gjeteta", gjeteta, &b_gjeteta);
+  fChain->SetBranchAddress("gjetphi", gjetphi, &b_gjetphi);
 
-   fChain->SetBranchAddress("nTrk", &nTrk, &b_nTrk);
+  fChain->SetBranchAddress("nTrk", &nTrk, &b_nTrk);
   fChain->SetBranchAddress("trkPt", trkPt, &b_trkPt);
   fChain->SetBranchAddress("trkPtError", trkPtError, &b_trkPtError);
   fChain->SetBranchAddress("trkNHit", trkNHit, &b_trkNHit);
@@ -640,6 +663,7 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("pho_trackIsoR5PtCut20", pho_trackIsoR5PtCut20, &b_pho_trackIsoR5PtCut20);
   fChain->SetBranchAddress("pho_swissCrx", pho_swissCrx, &b_pho_swissCrx);
   fChain->SetBranchAddress("pho_seedTime", pho_seedTime, &b_pho_seedTime);
+  fChain->SetBranchAddress("pho_genMatchedIndex", pho_genMatchedIndex, &b_pho_genMatchedIndex);
   fChain->SetBranchAddress("pfcIso1", pfcIso1, &b_pfcIso1);
   fChain->SetBranchAddress("pfcIso2", pfcIso2, &b_pfcIso2);
   fChain->SetBranchAddress("pfcIso3", pfcIso3, &b_pfcIso3);
@@ -655,7 +679,17 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("pfnIso3", pfnIso3, &b_pfnIso3);
   fChain->SetBranchAddress("pfnIso4", pfnIso4, &b_pfnIso4);
   fChain->SetBranchAddress("pfnIso5", pfnIso5, &b_pfnIso5);
-
+  fChain->SetBranchAddress("nMC", &nMC, &b_nMC);
+  fChain->SetBranchAddress("mcPID", mcPID, &b_mcPID);
+  fChain->SetBranchAddress("mcStatus", mcStatus, &b_mcStatus);
+  fChain->SetBranchAddress("mcPt", mcPt, &b_mcPt);
+  fChain->SetBranchAddress("mcEt", mcEt, &b_mcEt);
+  fChain->SetBranchAddress("mcEta", mcEta, &b_mcEta);
+  fChain->SetBranchAddress("mcPhi", mcPhi, &b_mcPhi);
+  fChain->SetBranchAddress("mcMomPt", mcMomPt, &b_mcMomPt);
+  fChain->SetBranchAddress("mcMomEta", mcMomEta, &b_mcMomEta);
+  fChain->SetBranchAddress("mcMomPhi", mcMomPhi, &b_mcMomPhi);
+  fChain->SetBranchAddress("mcMomPID", mcMomPID, &b_mcMomPID);
 
   Notify();
 }
