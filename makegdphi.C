@@ -5,10 +5,13 @@
 
   // g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root
   // g.pp-photonHLTFilter-v0-HiForest.root  
-  TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest.root");
-  TFile * pbpbfile = TFile::Open("/home/ursu/g.newtrkcuts.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  // TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest.root");
+  // TFile * pbpbfile = TFile::Open("/home/ursu/g.newtrkcuts.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
   // TFile * pbpbfile = TFile::Open("/home/ursu/g.noiso.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
   // TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  
+  TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root");
+  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
   
   TTree * ppztree = (TTree*) ppfile->Get("ztree");
   TTree * pbpbztree = (TTree*) pbpbfile->Get("ztree");
@@ -18,7 +21,7 @@
   int trkptcuts [ntrkcuts] = {4,8};
   float trkptmin [ntrkcuts] = {0.5,1,2,3,4,8};
   float trkptmax [ntrkcuts] = {1,2,3,4,8,1000};
-  int zptcuts   [2] = {200, 220};
+  int zptcuts   [2] = {100, 200};
   float ymins [2] = {0,0};
   float subymins [2] = {-1,-1};
   float ymaxs [2] = {6,3};

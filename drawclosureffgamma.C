@@ -54,7 +54,7 @@ void drawclosureffgamma() {
     // Raw FF pbpdata
 
 
-    // Raw FF pbmc
+    // Raw FF pbpbmc
     hgammaffxi_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hgammaffxi_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     hjetpt_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     hgammaffxi_refcone_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hgammaffxi_refcone_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
@@ -69,9 +69,12 @@ void drawclosureffgamma() {
     hgammaffxi_refcone_pbpbmc_[icent]->SetMarkerStyle(24);
     // Raw FF pbpbmc
 
+    call->cd(icent+2);
+    // hgammaffxi_pbpbmc_gen_[icent]->Draw();
+    // hgammaffxi_pbpbmc_[icent]->Draw("same");
+    // break;
 
     // Eta cone subtracted FF pbpbmc_gen and pbpbmc
-    call->cd(icent+2);
     dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
@@ -81,11 +84,12 @@ void drawclosureffgamma() {
     clone_hgammaffxi_refcone_pbpbmc_gen_[icent] = (TH1D*) hgammaffxi_refcone_pbpbmc_gen_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbmc_gen_%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_refcone_pbpbmc_gen_[icent]->Scale(-1);
     clone_hgammaffxi_pbpbmc_gen_[icent] = (TH1D*) hgammaffxi_pbpbmc_gen_[icent]->Clone(Form("clone_hgammaffxi_pbpbmc_gen_%d_%d",centmins[icent],centmaxs[icent]));
-    // clone_hgammaffxi_pbpbmc_gen_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_gen_[icent]); // no longer needed when using sube == 0
+    clone_hgammaffxi_pbpbmc_gen_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_gen_[icent]); // no longer needed when using sube == 0
 
     clone_hgammaffxi_refcone_pbpbmc_[icent] = (TH1D*) hgammaffxi_refcone_pbpbmc_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_refcone_pbpbmc_[icent]->Scale(-1);
     clone_hgammaffxi_pbpbmc_[icent] = (TH1D*) hgammaffxi_pbpbmc_[icent]->Clone(Form("clone_hgammaffxi_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
+  
     clone_hgammaffxi_pbpbmc_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_[icent]);
     clone_hgammaffxi_pbpbmc_[icent]->SetMarkerColor(kRed);
     clone_hgammaffxi_pbpbmc_gen_[icent]->SetMarkerColor(kBlue);
@@ -109,8 +113,8 @@ void drawclosureffgamma() {
     leg_ff_pbpbsub[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_gen_[icent],"gen(jet,trk) ff","p");
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"reco(jet,trk) ff","p");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_gen_[icent],"gen #gamma E_{T}","p");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"reco #gamma E_{T}","p");
     }
     else if(icent==1)
     {
@@ -189,7 +193,7 @@ void drawclosureffgamma() {
     leg_ff_pbpbsub2[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"gen(jet,trk)/reco(jet,trk) ff","p");
+      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"gen #gamma E_{T}/reco #gamma E_{T}","p");
       leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"","");
     }
     else if(icent==1)

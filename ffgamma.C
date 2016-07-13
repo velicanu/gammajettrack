@@ -63,7 +63,6 @@ float ztree::recorefconegentrk_dr(int itrk, int ijet)
   return sqrt((dphi*dphi)+(deta*deta));
 }
 
-
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, std::string gen)
 {
   string tag = outfname;
@@ -93,13 +92,14 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if(hiBin < centmin || hiBin >= centmax) continue; //centrality cut
     if(nPho!=1) continue;
-    if(phoEt[0]<phoetmin || phoEt[0]>phoetmax) continue;
+    // if(phoEt[0]<phoetmin || phoEt[0]>phoetmax) continue;
     if(weight==0)                   weight=1;
     // cout<<njet<<endl;
 
     if(gen.compare("gen")==0)
     {
       for (int ijet = 0; ijet < njet; ijet++) {
+        if(mcEt[pho_genMatchedIndex[0]]<phoetmin || mcEt[pho_genMatchedIndex[0]]>phoetmax) continue;
         if( nPho==2 ) continue;
         if( jetpt[ijet]<40 ) continue; //jet pt Cut
         if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
@@ -142,6 +142,53 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         }
       }
     }
+    else
+    {
+      for (int ijet = 0; ijet < njet; ijet++) {
+        if(phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
+        if( nPho==2 ) continue;
+        if( jetpt[ijet]<40 ) continue; //jet pt Cut
+        if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
+        if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
+        if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
+        if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+        hjetpt->Fill(jetpt[ijet]);
+        float denrecodphi = acos(cos(jetphi[ijet] - gjetphi[ijet]));
+        hjetgendphi->Fill(denrecodphi);
+        for(int igen = 0 ; igen < mult ; ++igen)
+        {
+          if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321)) continue;
+          if(sube[igen] != 0) continue;
+          float dr = genjettrk_dr(igen,ijet);
+          float dr_refcone = genrefconetrk_dr(igen,ijet);
+          if(dr<0.3)
+          {
+            float z = pt[igen]/gjetpt[ijet];
+            float zpho = pt[igen]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
+
+            hgammaff->Fill(z);
+            hgammaffxi->Fill(xi);
+            hgammaphoffxi->Fill(xipho);
+            hsubept->Fill(sube[igen],pt[igen]);
+            // cout<<jetpt[ijet]<<endl;
+          }
+          if(dr_refcone<0.3)
+          {
+            float z = pt[igen]/gjetpt[ijet];
+            float zpho = pt[igen]/phoEt[0];
+            float xi = log(1.0/z);
+            float xipho = log(1.0/zpho);
+
+            hgammaffxi_refcone->Fill(xi);
+            hgammaphoffxi_refcone->Fill(xipho);
+            hsubept_refcone->Fill(sube[igen],pt[igen]);
+          }
+        }
+      }
+    }
+    /*
     else
     {
       for (int ijet = 0; ijet < njet; ijet++) {
@@ -207,6 +254,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
       }
     }
+    */
 
 
   }

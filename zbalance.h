@@ -147,6 +147,7 @@ class ztree {
   Float_t  pfnIso3[1];   //_nPho
   Float_t  pfnIso4[1];   //_nPho
   Float_t  pfnIso5[1];   //_nPho
+  Float_t  phoCorr[1];   //_nPho
   Int_t    pho_genMatchedIndex[1];   //[nPho]
   // List of branches
   TBranch        *b_trkWeight;   //!
@@ -263,6 +264,7 @@ class ztree {
   TBranch   *b_pfnIso3;
   TBranch   *b_pfnIso4;
   TBranch   *b_pfnIso5;
+  TBranch   *b_phoCorr;
   TBranch        *b_nMC;   //!
   TBranch        *b_mcPID;   //!
   TBranch        *b_mcStatus;   //!
@@ -679,6 +681,7 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("pfnIso3", pfnIso3, &b_pfnIso3);
   fChain->SetBranchAddress("pfnIso4", pfnIso4, &b_pfnIso4);
   fChain->SetBranchAddress("pfnIso5", pfnIso5, &b_pfnIso5);
+  fChain->SetBranchAddress("phoCorr", phoCorr, &b_phoCorr);
   fChain->SetBranchAddress("nMC", &nMC, &b_nMC);
   fChain->SetBranchAddress("mcPID", mcPID, &b_mcPID);
   fChain->SetBranchAddress("mcStatus", mcStatus, &b_mcStatus);
