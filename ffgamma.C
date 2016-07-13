@@ -145,54 +145,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     else
     {
       for (int ijet = 0; ijet < njet; ijet++) {
-        if(phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
         if( nPho==2 ) continue;
-        if( jetpt[ijet]<40 ) continue; //jet pt Cut
-        if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
-        if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
-        if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
-        if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
-        hjetpt->Fill(jetpt[ijet]);
-        float denrecodphi = acos(cos(jetphi[ijet] - gjetphi[ijet]));
-        hjetgendphi->Fill(denrecodphi);
-        for(int igen = 0 ; igen < mult ; ++igen)
-        {
-          if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321)) continue;
-          if(sube[igen] != 0) continue;
-          float dr = genjettrk_dr(igen,ijet);
-          float dr_refcone = genrefconetrk_dr(igen,ijet);
-          if(dr<0.3)
-          {
-            float z = pt[igen]/gjetpt[ijet];
-            float zpho = pt[igen]/phoEt[0];
-            float xi = log(1.0/z);
-            float xipho = log(1.0/zpho);
-
-            hgammaff->Fill(z);
-            hgammaffxi->Fill(xi);
-            hgammaphoffxi->Fill(xipho);
-            hsubept->Fill(sube[igen],pt[igen]);
-            // cout<<jetpt[ijet]<<endl;
-          }
-          if(dr_refcone<0.3)
-          {
-            float z = pt[igen]/gjetpt[ijet];
-            float zpho = pt[igen]/phoEt[0];
-            float xi = log(1.0/z);
-            float xipho = log(1.0/zpho);
-
-            hgammaffxi_refcone->Fill(xi);
-            hgammaphoffxi_refcone->Fill(xipho);
-            hsubept_refcone->Fill(sube[igen],pt[igen]);
-          }
-        }
-      }
-    }
-    /*
-    else
-    {
-      for (int ijet = 0; ijet < njet; ijet++) {
-        if( nPho==2 ) continue;
+        if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
         if( jetpt[ijet]<40 ) continue; //jet pt Cut
         if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
         if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
@@ -254,6 +208,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
       }
     }
+    /*
     */
 
 
