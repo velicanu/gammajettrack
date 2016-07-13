@@ -51,6 +51,14 @@ Float_t         jtpt_corr[29];   //[hiNevtPlane]
 Float_t         jteta_corr[29];   //[hiNevtPlane]
 Float_t         jtphi_corr[29];   //[hiNevtPlane]
 
+int getCentBin(int hibin)
+{
+  if(hibin < 20)       return 0;
+  else if(hibin < 60)  return 1;
+  else if(hibin < 100) return 2;
+  else if(hibin < 140) return 3;
+  return 4;
+}
 
 bool goodJet(int i) {
   if(	_neutralSum[i]/rawpt[i] < 0.9
@@ -258,6 +266,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Int_t    nPho;
   Float_t  phoE[100];   //_nPho
   Float_t  phoEt[100];   //_nPho
+  Float_t  phoCorr[100];   //_nPho
   Float_t  phoEta[100];   //_nPho
   Float_t  phoPhi[100];   //_nPho
   Float_t  phoSCE[100];   //_nPho
@@ -402,6 +411,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("nPho",&nPho,"nPho/I");
   ztree->Branch("phoE",&phoE,"phoE[nPho]/F");
   ztree->Branch("phoEt",&phoEt,"phoEt[nPho]/F");
+  ztree->Branch("phoCorr",&phoCorr,"phoCorr[nPho]/F");
   ztree->Branch("phoEta",&phoEta,"phoEta[nPho]/F");
   ztree->Branch("phoPhi",&phoPhi,"phoPhi[nPho]/F");
   ztree->Branch("phoSCE",&phoSCE,"phoSCE[nPho]/F");
@@ -558,7 +568,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   }
   initSkimTree(skimTree);
 
-  int nCentBins =
+  int const nCentBins = 5;
+  int const nEtaBins = 1;
+  TH1D * photonEnergyCorrections[nCentBins][nEtaBins];
 
   TFile * energyCorrectionFile = TFile::Open("photonEnergyCorrections.root");
 
@@ -720,7 +732,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         phoSigmaIEtaIEta_2012[nphoton] = _phoSigmaIEtaIEta_2012->at(maxPhoIndex);
         if(failedNoiseCut)   phoNoise[nphoton] = 0;
         else                 phoNoise[nphoton] = 1;
-        pho_genMatchedIndex[nphoton] = _pho_genMatchedIndex->at(maxPhoIndex);
+        if(ismc)             pho_genMatchedIndex[nphoton] = _pho_genMatchedIndex->at(maxPhoIndex);
         phoE[nphoton] = (*_phoE)[maxPhoIndex];
         phoEt[nphoton] = (*_phoEt)[maxPhoIndex];
         phoEta[nphoton] = (*_phoEta)[maxPhoIndex];
@@ -768,6 +780,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         pfnIso3[nphoton] = (*_pfnIso3)[maxPhoIndex];
         pfnIso4[nphoton] = (*_pfnIso4)[maxPhoIndex];
         pfnIso5[nphoton] = (*_pfnIso5)[maxPhoIndex];
+
+        phoCorr[nphoton] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
+
         nphoton++;
       }
     }
