@@ -1,4 +1,6 @@
 # ROOT Specific
+TrkCorr_Mar15_Iterative_*
+corrections.tar
 *.root
 *.png
 *~
