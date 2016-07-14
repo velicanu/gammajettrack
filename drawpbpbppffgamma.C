@@ -75,7 +75,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     leg_ff_pbpbdata[icent]->AddEntry(hgammaffxi_refcone_pbpbdata_[icent],"#eta reflected cone","p");
     leg_ff_pbpbdata[icent]->AddEntry(hgammaffxi_refcone_pbpbdata_[icent],"PbPb #sqrt{s_{NN}}=5 TeV","");
     leg_ff_pbpbdata[icent]->AddEntry(hgammaffxi_refcone_pbpbdata_[icent],"trk p_{T}>1 GeV","");
-    leg_ff_pbpbdata[icent]->AddEntry(hgammaffxi_refcone_pbpbdata_[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
+    leg_ff_pbpbdata[icent]->AddEntry(hgammaffxi_refcone_pbpbdata_[icent],Form("%d<#gamma p_{T}<%d GeV",phoetmin,phoetmax),"");
     // leg_ff_pbpbdata[icent]->Draw();
     // c1_pbpbdata[icent]->SaveAs("pbpbdata_unsubffspectrum_45_gamma_100.png");
 
@@ -174,7 +174,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     {
       // leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"#eta cone sub","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"trk p_{T}>1 GeV, R < 0.3","");
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],Form("%d<#gamma p_{T}<%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
     {
@@ -278,7 +278,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     else if(icent==1)
     {
       leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"trk p_{T}>1 GeV, R < 0.3","");
-      leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
+      leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],Form("%d<#gamma p_{T}<%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
     {
