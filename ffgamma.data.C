@@ -109,6 +109,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         hjetpt->Fill(jetpt[ijet]);
         float denrecodphi = acos(cos(jetphi[ijet] - gjetphi[ijet]));
         hjetgendphi->Fill(denrecodphi);
+        TLorentzVector vjet;
+        vjet.SetPtEtaPhiM(gjetpt[ijet],gjeteta[ijet],gjetphi[ijet],0);
         for(int igen = 0 ; igen < mult ; ++igen)
         {
           if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321)) continue;
@@ -117,7 +119,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float dr_refcone = genrefconetrk_dr(igen,ijet);
           if(dr<0.3)
           {
-            float z = pt[igen]/gjetpt[ijet];
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(pt[igen],eta[igen],phi[igen],0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float z = pt[igen]*cos(angle)/gjetpt[ijet];
             float zpho = pt[igen]/phoEt[0];
             float xi = log(1.0/z);
             float xipho = log(1.0/zpho);
@@ -153,7 +158,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
         if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
         hjetpt->Fill(jetpt[ijet]);
-
+        TLorentzVector vjet;
+        vjet.SetPtEtaPhiM(jetpt[ijet],jeteta[ijet],jetphi[ijet],0);
         for (int itrk = 0; itrk < nTrk; itrk++) {
           float dr = jettrk_dr(itrk,ijet);
           // float dr = genjetrecotrk_dr(itrk,ijet);
@@ -161,7 +167,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           // float dr_refcone = genrefconerecotrk_dr(itrk,ijet);
           if(dr<0.3)
           {
-            float z = trkPt[itrk]/jetpt[ijet];
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float z = trkPt[itrk]*cos(angle)/jetpt[ijet];
             float zpho = trkPt[itrk]/phoEt[0];
             float xi = log(1.0/z);
             float xipho = log(1.0/zpho);
