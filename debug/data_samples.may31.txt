@@ -1,0 +1,11 @@
+# PbPb data
+/export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3-fixedtrksel.root
+
+# pp data
+/export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root
+
+# PbPb mc
+/export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_v13-v1_forest_v1.root
+
+# pp mc
+/export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root

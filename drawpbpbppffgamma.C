@@ -124,7 +124,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     // c1_subpbpb[icent] = new TCanvas(Form("c1_subpbpb_%d_%d",centmins[icent],centmaxs[icent]));
     // call->cd(icent+2);
     call->cd(icent+2);
-    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
+    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0.01,10*yaxismax);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
@@ -190,11 +190,13 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     leg_ff_pbpbsub[icent]->Draw();
     // c1_subpbpb[icent]->SaveAs("pbpbdata_ppdata_etaconesubtracted_45_gamma_100.png");
     // Eta cone subtracted FF pbpbdata and pbpbmc
+    gPad->SetLogy();
 
   }
   call->cd(1);
+  gPad->SetLogy();
 
-  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0,yaxismax);
+  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0.01,10*yaxismax);
   gStyle->SetFrameLineColor(0);
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
@@ -204,9 +206,15 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
 
+  
   TLatex * laxis[yaxismax];
-  for (int ilatex = 0; ilatex < yaxismax; ilatex++) {
-    laxis[ilatex] = new TLatex(3.,ilatex-0.1,Form("%d",ilatex));
+  string powers[] = {"0.1"," 1","10"};
+  float values[] = {0.1*0.9,1*0.9,10*0.9};
+  for (int ilatex = 0; ilatex < 3; ilatex++) {
+    if(ilatex==1)
+      laxis[ilatex] = new TLatex(2.,values[ilatex],Form("%s",powers[ilatex].data()));
+    else
+      laxis[ilatex] = new TLatex(1.,values[ilatex],Form("%s",powers[ilatex].data()));
     laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
     laxis[ilatex]->Draw();
   }
@@ -329,5 +337,5 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     call_ppsub->SaveAs(Form("centffgamma-pbpb-ratio-pp-phoet_%d_%d.pdf",phoetmin,phoetmax));
     call_ppsub->SaveAs(Form("centffgamma-pbpb-ratio-pp-phoet_%d_%d.png",phoetmin,phoetmax));
   }
-  gROOT->ProcessLine(".q");
+  // gROOT->ProcessLine(".q");
 }

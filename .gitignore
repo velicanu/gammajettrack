@@ -3,7 +3,9 @@ TrkCorr_Mar15_Iterative_*
 corrections.tar
 *.root
 *.png
+*.pdf
 *~
+*.tgz
 
 # Compiled Object files
 *.slo
