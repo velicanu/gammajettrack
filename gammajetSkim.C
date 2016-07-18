@@ -162,7 +162,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
-  if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
+  // if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
+  if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Jun7_Iterative_PbPb_etaLT2p4/");
   else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
   cout<<trkCorr<<endl;
   L2L3Residual * jetcorr = new L2L3Residual(3);

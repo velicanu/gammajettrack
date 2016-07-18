@@ -129,7 +129,7 @@ void simpleskim(TString infilename="HiForest.root", TString outfilename="Zevents
     for(int i = 0 ; i < nTrk_ ; ++i)
     {
       if((trkMVA_[i]<0.5 && trkMVA_[i]!=-99) || (int)trkNHit_[i]<8 || trkPtError_[i]/trkPt_[i]>0.3 || fabs(trkDz1_[i])/trkDzError1_[i]>3 || fabs(trkDxy1_[i])/trkDxyError1_[i]>3) continue;
-      if(trkPt_[i]<0.5 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
+      if(trkPt_[i]<1 || trkPt_[i]>300 || fabs(trkEta_[i])>2.4 ) continue;
       float trkweight = 0;
       if(is_pp) trkweight=getTrkWeight(trkCorr,i,0,j);
       else trkweight=getTrkWeight(trkCorr,i,hiBin,j);
