@@ -6,6 +6,7 @@ corrections.tar
 *.pdf
 *~
 *.tgz
+.sync-config.cson
 
 # Compiled Object files
 *.slo
