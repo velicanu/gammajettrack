@@ -17,7 +17,7 @@
 
 wait
 # pp data
- ./gammajetSkim.exe /mnt/hadoop/cms/store/user/luck/2015-Data-promptRECO-photonSkims/pp-photonHLTFilter-v0-HiForest/0.root /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ak3PFJetAnalyzer 1 &
+# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/luck/2015-Data-promptRECO-photonSkims/pp-photonHLTFilter-v0-HiForest/0.root /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ak3PFJetAnalyzer 1 &
 
 # PbPb data
 # done via condor
