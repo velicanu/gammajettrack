@@ -51,6 +51,12 @@ Float_t         jtpt_corr[29];   //[hiNevtPlane]
 Float_t         jteta_corr[29];   //[hiNevtPlane]
 Float_t         jtphi_corr[29];   //[hiNevtPlane]
 
+double getAngleToEP(double angle) {
+    angle = (angle > TMath::Pi()) ? 2 * TMath::Pi() - angle : angle;
+    return (angle > TMath::Pi()/2) ? TMath::Pi() - angle : angle;
+}
+
+
 int getCentBin(int hibin)
 {
   if(hibin < 20)       return 0;
@@ -574,6 +580,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TH1D * photonEnergyCorrections[nCentBins][nEtaBins];
 
   TFile * energyCorrectionFile = TFile::Open("photonEnergyCorrections.root");
+  TFile* sumIsoCorrectionFile;
+  if(ismc) sumIsoCorrectionFile = TFile::Open("sumIsoCorrections_MC.root");
+  else     sumIsoCorrectionFile = TFile::Open("sumIsoCorrections_Data.root");
+
+
+  TH1D* sumIsoCorrections = (TH1D*)sumIsoCorrectionFile->Get("sumIsoCorrections");
 
   for (int icent=0; icent<nCentBins; ++icent)
   {
@@ -721,7 +733,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
                               (_phoE2x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) > 2./3.-0.03 &&
                               _phoE2x5->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) < 2./3.+0.03));
       // Isolation cone cut
-      if((*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex]>1) passed = false;
+      // if((*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex]>1) passed = false;
+
+      float sumIso = (*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex] ;
+      float pho_sumIsoCorrected = sumIso - sumIsoCorrections->GetBinContent(sumIsoCorrections->FindBin(getAngleToEP(fabs((*pho_event.phoPhi)[j] - hiEvtPlanes[8])))));
+
+      if( pho_sumIsoCorrected>1 ) passed = false;
       if(_phoHoverE->at(maxPhoIndex)>0.1) passed = false;
       if(_phoSigmaIEtaIEta_2012->at(maxPhoIndex) > 0.0170 ) passed = false;
       if(passed)
