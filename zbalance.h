@@ -23,7 +23,18 @@ class ztree {
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
   // Declaration of leaf types
-  Float_t         trkWeight[5000];   //[nTrk]
+   Int_t           nlooped;
+   Int_t           nmix;
+   Float_t         dvz_mix[10];   //[nmix]
+   Int_t           dhiBin_mix[10];   //[nmix]
+   Float_t         dhiEvtPlanes_mix[10];   //[nmix]
+   Int_t           nTrk_mix;
+   Float_t         trkPt_mix[1000];   //[nTrk_mix]
+   Float_t         trkPhi_mix[1000];   //[nTrk_mix]
+   Float_t         trkEta_mix[1000];   //[nTrk_mix]
+   Float_t         trkWeight_mix[1000];   //[nTrk_mix]
+
+   Float_t         trkWeight[5000];   //[nTrk]
   Int_t           run;
   Int_t           event;
   Int_t           lumis;
@@ -149,7 +160,20 @@ class ztree {
   Float_t  pfnIso5[1];   //_nPho
   Float_t  phoCorr[1];   //_nPho
   Int_t    pho_genMatchedIndex[1];   //[nPho]
+  Float_t  phoSigmaIEtaIEta_2012[1];   //[nPho]
+   Int_t           phoNoise[1];   //[nPho]
+
   // List of branches
+   TBranch        *b_nlooped;   //!
+   TBranch        *b_nmix;   //!
+   TBranch        *b_dvz_mix;   //!
+   TBranch        *b_dhiBin_mix;   //!
+   TBranch        *b_dhiEvtPlanes_mix;   //!
+   TBranch        *b_nTrk_mix;   //!
+   TBranch        *b_trkPt_mix;   //!
+   TBranch        *b_trkPhi_mix;   //!
+   TBranch        *b_trkEta_mix;   //!
+   TBranch        *b_trkWeight_mix;   //!
   TBranch        *b_trkWeight;   //!
   TBranch        *b_run;   //!
   TBranch        *b_event;   //!
@@ -213,6 +237,8 @@ class ztree {
   TBranch        *b_pfCandPt;   //!
   TBranch        *b_pfEcal;   //!
   TBranch        *b_pfHcal;   //!
+   TBranch        *b_phoSigmaIEtaIEta_2012;   //!
+   TBranch        *b_phoNoise;   //!
 
 
   TBranch   *b_nPho;
@@ -276,206 +302,6 @@ class ztree {
   TBranch        *b_mcMomEta;   //!
   TBranch        *b_mcMomPhi;   //!
   TBranch        *b_mcMomPID;   //!
-  
-  Int_t           mix_run;
-  Int_t           mix_event;
-  Int_t           mix_lumis;
-  Int_t           mix_hiBin;
-  Float_t         mix_vz;
-  Int_t           mix_Ztype;
-  Float_t         mix_Zmass;
-  Float_t         mix_weight;
-  Float_t         mix_Zpt;
-  Float_t         mix_Zeta;
-  Float_t         mix_Zphi;
-  Float_t         mix_Zrapidity;
-  Float_t         mix_Zlepton1Pt;
-  Float_t         mix_Zlepton2Pt;
-  Float_t         mix_Zlepton1Eta;
-  Float_t         mix_Zlepton2Eta;
-  Float_t         mix_Zlepton1Phi;
-  Float_t         mix_Zlepton2Phi;
-  Int_t           mix_Zcharge;
-  Int_t           mix_njet;
-  Float_t         mix_jetpt[11];   //[njet]
-  Float_t         mix_jeteta[11];   //[njet]
-  Float_t         mix_jetphi[11];   //[njet]
-  Int_t           mix_jetID[11];   //[njet]
-  Int_t           mix_nTrk;
-  Float_t         mix_trkPt[5000];   //[nTrk]
-  Float_t         mix_trkPtError[5000];   //[nTrk]
-  UChar_t         mix_trkNHit[5000];   //[nTrk]
-  UChar_t         mix_trkNlayer[5000];   //[nTrk]
-  Float_t         mix_trkEta[5000];   //[nTrk]
-  Float_t         mix_trkPhi[5000];   //[nTrk]
-  Int_t           mix_trkCharge[5000];   //[nTrk]
-  UChar_t         mix_trkNVtx[5000];   //[nTrk]
-  Bool_t          mix_highPurity[5000];   //[nTrk]
-  Bool_t          mix_tight[5000];   //[nTrk]
-  Bool_t          mix_loose[5000];   //[nTrk]
-  Float_t         mix_trkChi2[5000];   //[nTrk]
-  UChar_t         mix_trkNdof[5000];   //[nTrk]
-  Float_t         mix_trkDxy1[5000];   //[nTrk]
-  Float_t         mix_trkDxyError1[5000];   //[nTrk]
-  Float_t         mix_trkDz1[5000];   //[nTrk]
-  Float_t         mix_trkDzError1[5000];   //[nTrk]
-  Bool_t          mix_trkFake[5000];   //[nTrk]
-  UChar_t         mix_trkAlgo[5000];   //[nTrk]
-  UChar_t         mix_trkOriginalAlgo[5000];   //[nTrk]
-  Float_t         mix_trkMVA[5000];   //[nTrk]
-  Int_t           mix_pfType[5000];   //[nTrk]
-  Float_t         mix_pfCandPt[5000];   //[nTrk]
-  Float_t         mix_pfEcal[5000];   //[nTrk]
-  Float_t         mix_pfHcal[5000];   //[nTrk]
-  Int_t    mix_nPho;
-  Float_t  mix_phoE[1];   //_nPho
-  Float_t  mix_phoEt[1];   //_nPho
-  Float_t  mix_phoEta[1];   //_nPho
-  Float_t  mix_phoPhi[1];   //_nPho
-  Float_t  mix_phoSCE[1];   //_nPho
-  Float_t  mix_phoSCRawE[1];   //_nPho
-  Float_t  mix_phoESEn[1];   //_nPho
-  Float_t  mix_phoSCEta[1];   //_nPho
-  Float_t  mix_phoSCPhi[1];   //_nPho
-  Float_t  mix_phoSCEtaWidth[1];   //_nPho
-  Float_t  mix_phoSCPhiWidth[1];   //_nPho
-  Float_t  mix_phoSCBrem[1];   //_nPho
-  Int_t    mix_phohasPixelSeed[1];   //_nPho
-  Float_t  mix_phoR9[1];   //_nPho
-  Float_t  mix_phoHoverE[1];   //_nPho
-  Float_t  mix_phoSigmaIEtaIEta[1];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR2[1];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR3[1];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR4[1];   //_nPho
-  Float_t  mix_pho_ecalClusterIsoR5[1];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR1[1];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR2[1];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR3[1];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR4[1];   //_nPho
-  Float_t  mix_pho_hcalRechitIsoR5[1];   //_nPho
-  Float_t  mix_pho_trackIsoR1PtCut20[1];   //_nPho
-  Float_t  mix_pho_trackIsoR2PtCut20[1];   //_nPho
-  Float_t  mix_pho_trackIsoR3PtCut20[1];   //_nPho
-  Float_t  mix_pho_trackIsoR4PtCut20[1];   //_nPho
-  Float_t  mix_pho_trackIsoR5PtCut20[1];   //_nPho
-  Float_t  mix_pho_swissCrx[1];   //_nPho
-  Float_t  mix_pho_seedTime[1];   //_nPho
-  Float_t  mix_pfcIso1[1];   //_nPho
-  Float_t  mix_pfcIso2[1];   //_nPho
-  Float_t  mix_pfcIso3[1];   //_nPho
-  Float_t  mix_pfcIso4[1];   //_nPho
-  Float_t  mix_pfcIso5[1];   //_nPho
-  Float_t  mix_pfpIso1[1];   //_nPho
-  Float_t  mix_pfpIso2[1];   //_nPho
-  Float_t  mix_pfpIso3[1];   //_nPho
-  Float_t  mix_pfpIso4[1];   //_nPho
-  Float_t  mix_pfpIso5[1];   //_nPho
-  Float_t  mix_pfnIso1[1];   //_nPho
-  Float_t  mix_pfnIso2[1];   //_nPho
-  Float_t  mix_pfnIso3[1];   //_nPho
-  Float_t  mix_pfnIso4[1];   //_nPho
-  Float_t  mix_pfnIso5[1];   //_nPho
-
-  // List of branches
-  TBranch        *mix_b_run;   //!
-  TBranch        *mix_b_event;   //!
-  TBranch        *mix_b_lumis;   //!
-  TBranch        *mix_b_hiBin;   //!
-  TBranch        *mix_b_vz;   //!
-  TBranch        *mix_b_Ztype;   //!
-  TBranch        *mix_b_Zmass;   //!
-  TBranch        *mix_b_weight;   //!
-  TBranch        *mix_b_Zpt;   //!
-  TBranch        *mix_b_Zeta;   //!
-  TBranch        *mix_b_Zphi;   //!
-  TBranch        *mix_b_Zrapidity;   //!
-  TBranch        *mix_b_Zlepton1Pt;   //!
-  TBranch        *mix_b_Zlepton2Pt;   //!
-  TBranch        *mix_b_Zlepton1Eta;   //!
-  TBranch        *mix_b_Zlepton2Eta;   //!
-  TBranch        *mix_b_Zlepton1Phi;   //!
-  TBranch        *mix_b_Zlepton2Phi;   //!
-  TBranch        *mix_b_Zcharge;   //!
-  TBranch        *mix_b_njet;   //!
-  TBranch        *mix_b_jetpt;   //!
-  TBranch        *mix_b_jeteta;   //!
-  TBranch        *mix_b_jetphi;   //!
-  TBranch        *mix_b_jetID;   //!
-  TBranch        *mix_b_nTrk;   //!
-  TBranch        *mix_b_trkPt;   //!
-  TBranch        *mix_b_trkPtError;   //!
-  TBranch        *mix_b_trkNHit;   //!
-  TBranch        *mix_b_trkNlayer;   //!
-  TBranch        *mix_b_trkEta;   //!
-  TBranch        *mix_b_trkPhi;   //!
-  TBranch        *mix_b_trkCharge;   //!
-  TBranch        *mix_b_trkNVtx;   //!
-  TBranch        *mix_b_highPurity;   //!
-  TBranch        *mix_b_tight;   //!
-  TBranch        *mix_b_loose;   //!
-  TBranch        *mix_b_trkChi2;   //!
-  TBranch        *mix_b_trkNdof;   //!
-  TBranch        *mix_b_trkDxy1;   //!
-  TBranch        *mix_b_trkDxyError1;   //!
-  TBranch        *mix_b_trkDz1;   //!
-  TBranch        *mix_b_trkDzError1;   //!
-  TBranch        *mix_b_trkFake;   //!
-  TBranch        *mix_b_trkAlgo;   //!
-  TBranch        *mix_b_trkOriginalAlgo;   //!
-  TBranch        *mix_b_trkMVA;   //!
-  TBranch        *mix_b_pfType;   //!
-  TBranch        *mix_b_pfCandPt;   //!
-  TBranch        *mix_b_pfEcal;   //!
-  TBranch        *mix_b_pfHcal;   //!
-
-  TBranch   *mix_b_nPho;
-  TBranch   *mix_b_phoE;
-  TBranch   *mix_b_phoEt;
-  TBranch   *mix_b_phoEta;
-  TBranch   *mix_b_phoPhi;
-  TBranch   *mix_b_phoSCE;
-  TBranch   *mix_b_phoSCRawE;
-  TBranch   *mix_b_phoESEn;
-  TBranch   *mix_b_phoSCEta;
-  TBranch   *mix_b_phoSCPhi;
-  TBranch   *mix_b_phoSCEtaWidth;
-  TBranch   *mix_b_phoSCPhiWidth;
-  TBranch   *mix_b_phoSCBrem;
-  TBranch   *mix_b_phohasPixelSeed;
-  TBranch   *mix_b_phoR9;
-  TBranch   *mix_b_phoHoverE;
-  TBranch   *mix_b_phoSigmaIEtaIEta;
-  TBranch   *mix_b_pho_ecalClusterIsoR2;
-  TBranch   *mix_b_pho_ecalClusterIsoR3;
-  TBranch   *mix_b_pho_ecalClusterIsoR4;
-  TBranch   *mix_b_pho_ecalClusterIsoR5;
-  TBranch   *mix_b_pho_hcalRechitIsoR1;
-  TBranch   *mix_b_pho_hcalRechitIsoR2;
-  TBranch   *mix_b_pho_hcalRechitIsoR3;
-  TBranch   *mix_b_pho_hcalRechitIsoR4;
-  TBranch   *mix_b_pho_hcalRechitIsoR5;
-  TBranch   *mix_b_pho_trackIsoR1PtCut20;
-  TBranch   *mix_b_pho_trackIsoR2PtCut20;
-  TBranch   *mix_b_pho_trackIsoR3PtCut20;
-  TBranch   *mix_b_pho_trackIsoR4PtCut20;
-  TBranch   *mix_b_pho_trackIsoR5PtCut20;
-  TBranch   *mix_b_pho_swissCrx;
-  TBranch   *mix_b_pho_seedTime;
-  TBranch   *mix_b_pfcIso1;
-  TBranch   *mix_b_pfcIso2;
-  TBranch   *mix_b_pfcIso3;
-  TBranch   *mix_b_pfcIso4;
-  TBranch   *mix_b_pfcIso5;
-  TBranch   *mix_b_pfpIso1;
-  TBranch   *mix_b_pfpIso2;
-  TBranch   *mix_b_pfpIso3;
-  TBranch   *mix_b_pfpIso4;
-  TBranch   *mix_b_pfpIso5;
-  TBranch   *mix_b_pfnIso1;
-  TBranch   *mix_b_pfnIso2;
-  TBranch   *mix_b_pfnIso3;
-  TBranch   *mix_b_pfnIso4;
-  TBranch   *mix_b_pfnIso5;
 
 
 
@@ -486,7 +312,6 @@ class ztree {
   virtual Long64_t LoadTree(Long64_t entry);
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
-  virtual void     InitMix(TTree *tree);
   virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, std::string gen="");
   virtual float    jettrk_dr(int itrk, int ijet);
   virtual float    refconetrk_dr(int itrk, int ijet);
@@ -567,6 +392,16 @@ void ztree::Init(TTree *tree)
   fCurrent = -1;
   fChain->SetMakeClass(1);
 
+   fChain->SetBranchAddress("nlooped", &nlooped, &b_nlooped);
+   fChain->SetBranchAddress("nmix", &nmix, &b_nmix);
+   fChain->SetBranchAddress("dvz_mix", dvz_mix, &b_dvz_mix);
+   fChain->SetBranchAddress("dhiBin_mix", dhiBin_mix, &b_dhiBin_mix);
+   fChain->SetBranchAddress("dhiEvtPlanes_mix", dhiEvtPlanes_mix, &b_dhiEvtPlanes_mix);
+   fChain->SetBranchAddress("nTrk_mix", &nTrk_mix, &b_nTrk_mix);
+   fChain->SetBranchAddress("trkPt_mix", trkPt_mix, &b_trkPt_mix);
+   fChain->SetBranchAddress("trkPhi_mix", trkPhi_mix, &b_trkPhi_mix);
+   fChain->SetBranchAddress("trkEta_mix", trkEta_mix, &b_trkEta_mix);
+   fChain->SetBranchAddress("trkWeight_mix", trkWeight_mix, &b_trkWeight_mix);
   fChain->SetBranchAddress("trkWeight", trkWeight, &b_trkWeight);
   fChain->SetBranchAddress("run", &run, &b_run);
   fChain->SetBranchAddress("event", &event, &b_event);
@@ -649,6 +484,9 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("phoR9", phoR9, &b_phoR9);
   fChain->SetBranchAddress("phoHoverE", phoHoverE, &b_phoHoverE);
   fChain->SetBranchAddress("phoSigmaIEtaIEta", phoSigmaIEtaIEta, &b_phoSigmaIEtaIEta);
+  fChain->SetBranchAddress("phoSigmaIEtaIEta_2012", phoSigmaIEtaIEta_2012, &b_phoSigmaIEtaIEta_2012);
+  fChain->SetBranchAddress("phoNoise", phoNoise, &b_phoNoise);
+
   fChain->SetBranchAddress("pho_ecalClusterIsoR2", pho_ecalClusterIsoR2, &b_pho_ecalClusterIsoR2);
   fChain->SetBranchAddress("pho_ecalClusterIsoR3", pho_ecalClusterIsoR3, &b_pho_ecalClusterIsoR3);
   fChain->SetBranchAddress("pho_ecalClusterIsoR4", pho_ecalClusterIsoR4, &b_pho_ecalClusterIsoR4);
@@ -693,116 +531,6 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("mcMomEta", mcMomEta, &b_mcMomEta);
   fChain->SetBranchAddress("mcMomPhi", mcMomPhi, &b_mcMomPhi);
   fChain->SetBranchAddress("mcMomPID", mcMomPID, &b_mcMomPID);
-
-  Notify();
-}
-void ztree::InitMix(TTree *tree)
-{
-  if (!tree) return;
-  mix_fChain = tree;
-  fCurrent = -1;
-  mix_fChain->SetMakeClass(1);
-
-  mix_fChain->SetBranchAddress("run", &mix_run, &mix_b_run);
-  mix_fChain->SetBranchAddress("event", &mix_event, &mix_b_event);
-  mix_fChain->SetBranchAddress("lumis", &mix_lumis, &mix_b_lumis);
-  mix_fChain->SetBranchAddress("hiBin", &mix_hiBin, &mix_b_hiBin);
-  mix_fChain->SetBranchAddress("vz", &mix_vz, &mix_b_vz);
-  mix_fChain->SetBranchAddress("Ztype", &mix_Ztype, &mix_b_Ztype);
-  mix_fChain->SetBranchAddress("Zmass", &mix_Zmass, &mix_b_Zmass);
-  mix_fChain->SetBranchAddress("weight", &mix_weight, &mix_b_weight);
-  mix_fChain->SetBranchAddress("Zpt", &mix_Zpt, &mix_b_Zpt);
-  mix_fChain->SetBranchAddress("Zeta", &mix_Zeta, &mix_b_Zeta);
-  mix_fChain->SetBranchAddress("Zphi", &mix_Zphi, &mix_b_Zphi);
-  mix_fChain->SetBranchAddress("Zrapidity", &mix_Zrapidity, &mix_b_Zrapidity);
-  mix_fChain->SetBranchAddress("Zlepton1Pt", &mix_Zlepton1Pt, &mix_b_Zlepton1Pt);
-  mix_fChain->SetBranchAddress("Zlepton2Pt", &mix_Zlepton2Pt, &mix_b_Zlepton2Pt);
-  mix_fChain->SetBranchAddress("Zlepton1Eta", &mix_Zlepton1Eta, &mix_b_Zlepton1Eta);
-  mix_fChain->SetBranchAddress("Zlepton2Eta", &mix_Zlepton2Eta, &mix_b_Zlepton2Eta);
-  mix_fChain->SetBranchAddress("Zlepton1Phi", &mix_Zlepton1Phi, &mix_b_Zlepton1Phi);
-  mix_fChain->SetBranchAddress("Zlepton2Phi", &mix_Zlepton2Phi, &mix_b_Zlepton2Phi);
-  mix_fChain->SetBranchAddress("Zcharge", &mix_Zcharge, &mix_b_Zcharge);
-  mix_fChain->SetBranchAddress("njet", &mix_njet, &mix_b_njet);
-  mix_fChain->SetBranchAddress("jetpt", mix_jetpt, &mix_b_jetpt);
-  mix_fChain->SetBranchAddress("jeteta", mix_jeteta, &mix_b_jeteta);
-  mix_fChain->SetBranchAddress("jetphi", mix_jetphi, &mix_b_jetphi);
-  mix_fChain->SetBranchAddress("jetID", mix_jetID, &mix_b_jetID);
-  mix_fChain->SetBranchAddress("nTrk", &mix_nTrk, &mix_b_nTrk);
-  mix_fChain->SetBranchAddress("trkPt", mix_trkPt, &mix_b_trkPt);
-  mix_fChain->SetBranchAddress("trkPtError", mix_trkPtError, &mix_b_trkPtError);
-  mix_fChain->SetBranchAddress("trkNHit", mix_trkNHit, &mix_b_trkNHit);
-  mix_fChain->SetBranchAddress("trkNlayer", mix_trkNlayer, &mix_b_trkNlayer);
-  mix_fChain->SetBranchAddress("trkEta", mix_trkEta, &mix_b_trkEta);
-  mix_fChain->SetBranchAddress("trkPhi", mix_trkPhi, &mix_b_trkPhi);
-  mix_fChain->SetBranchAddress("trkCharge", mix_trkCharge, &mix_b_trkCharge);
-  mix_fChain->SetBranchAddress("trkNVtx", mix_trkNVtx, &mix_b_trkNVtx);
-  mix_fChain->SetBranchAddress("highPurity", mix_highPurity, &mix_b_highPurity);
-  mix_fChain->SetBranchAddress("tight", mix_tight, &mix_b_tight);
-  mix_fChain->SetBranchAddress("loose", mix_loose, &mix_b_loose);
-  mix_fChain->SetBranchAddress("trkChi2", mix_trkChi2, &mix_b_trkChi2);
-  mix_fChain->SetBranchAddress("trkNdof", mix_trkNdof, &mix_b_trkNdof);
-  mix_fChain->SetBranchAddress("trkDxy1", mix_trkDxy1, &mix_b_trkDxy1);
-  mix_fChain->SetBranchAddress("trkDxyError1", mix_trkDxyError1, &mix_b_trkDxyError1);
-  mix_fChain->SetBranchAddress("trkDz1", mix_trkDz1, &mix_b_trkDz1);
-  mix_fChain->SetBranchAddress("trkDzError1", mix_trkDzError1, &mix_b_trkDzError1);
-  mix_fChain->SetBranchAddress("trkFake", mix_trkFake, &mix_b_trkFake);
-  mix_fChain->SetBranchAddress("trkAlgo", mix_trkAlgo, &mix_b_trkAlgo);
-  mix_fChain->SetBranchAddress("trkOriginalAlgo", mix_trkOriginalAlgo, &mix_b_trkOriginalAlgo);
-  mix_fChain->SetBranchAddress("trkMVA", mix_trkMVA, &mix_b_trkMVA);
-  mix_fChain->SetBranchAddress("pfType", mix_pfType, &mix_b_pfType);
-  mix_fChain->SetBranchAddress("pfCandPt", mix_pfCandPt, &mix_b_pfCandPt);
-  mix_fChain->SetBranchAddress("pfEcal", mix_pfEcal, &mix_b_pfEcal);
-  mix_fChain->SetBranchAddress("pfHcal", mix_pfHcal, &mix_b_pfHcal);
-
-  mix_fChain->SetBranchAddress("nPho", &mix_nPho, &mix_b_nPho);
-  mix_fChain->SetBranchAddress("phoE", mix_phoE, &mix_b_phoE);
-  mix_fChain->SetBranchAddress("phoEt", mix_phoEt, &mix_b_phoEt);
-  mix_fChain->SetBranchAddress("phoEta", mix_phoEta, &mix_b_phoEta);
-  mix_fChain->SetBranchAddress("phoPhi", mix_phoPhi, &mix_b_phoPhi);
-  mix_fChain->SetBranchAddress("phoSCE", mix_phoSCE, &mix_b_phoSCE);
-  mix_fChain->SetBranchAddress("phoSCRawE", mix_phoSCRawE, &mix_b_phoSCRawE);
-  mix_fChain->SetBranchAddress("phoESEn", mix_phoESEn, &mix_b_phoESEn);
-  mix_fChain->SetBranchAddress("phoSCEta", mix_phoSCEta, &mix_b_phoSCEta);
-  mix_fChain->SetBranchAddress("phoSCPhi", mix_phoSCPhi, &mix_b_phoSCPhi);
-  mix_fChain->SetBranchAddress("phoSCEtaWidth", mix_phoSCEtaWidth, &mix_b_phoSCEtaWidth);
-  mix_fChain->SetBranchAddress("phoSCPhiWidth", mix_phoSCPhiWidth, &mix_b_phoSCPhiWidth);
-  mix_fChain->SetBranchAddress("phoSCBrem", mix_phoSCBrem, &mix_b_phoSCBrem);
-  mix_fChain->SetBranchAddress("phohasPixelSeed", mix_phohasPixelSeed, &mix_b_phohasPixelSeed);
-  mix_fChain->SetBranchAddress("phoR9", mix_phoR9, &mix_b_phoR9);
-  mix_fChain->SetBranchAddress("phoHoverE", mix_phoHoverE, &mix_b_phoHoverE);
-  mix_fChain->SetBranchAddress("phoSigmaIEtaIEta", mix_phoSigmaIEtaIEta, &mix_b_phoSigmaIEtaIEta);
-  mix_fChain->SetBranchAddress("pho_ecalClusterIsoR2", mix_pho_ecalClusterIsoR2, &mix_b_pho_ecalClusterIsoR2);
-  mix_fChain->SetBranchAddress("pho_ecalClusterIsoR3", mix_pho_ecalClusterIsoR3, &mix_b_pho_ecalClusterIsoR3);
-  mix_fChain->SetBranchAddress("pho_ecalClusterIsoR4", mix_pho_ecalClusterIsoR4, &mix_b_pho_ecalClusterIsoR4);
-  mix_fChain->SetBranchAddress("pho_ecalClusterIsoR5", mix_pho_ecalClusterIsoR5, &mix_b_pho_ecalClusterIsoR5);
-  mix_fChain->SetBranchAddress("pho_hcalRechitIsoR1", mix_pho_hcalRechitIsoR1, &mix_b_pho_hcalRechitIsoR1);
-  mix_fChain->SetBranchAddress("pho_hcalRechitIsoR2", mix_pho_hcalRechitIsoR2, &mix_b_pho_hcalRechitIsoR2);
-  mix_fChain->SetBranchAddress("pho_hcalRechitIsoR3", mix_pho_hcalRechitIsoR3, &mix_b_pho_hcalRechitIsoR3);
-  mix_fChain->SetBranchAddress("pho_hcalRechitIsoR4", mix_pho_hcalRechitIsoR4, &mix_b_pho_hcalRechitIsoR4);
-  mix_fChain->SetBranchAddress("pho_hcalRechitIsoR5", mix_pho_hcalRechitIsoR5, &mix_b_pho_hcalRechitIsoR5);
-  mix_fChain->SetBranchAddress("pho_trackIsoR1PtCut20", mix_pho_trackIsoR1PtCut20, &mix_b_pho_trackIsoR1PtCut20);
-  mix_fChain->SetBranchAddress("pho_trackIsoR2PtCut20", mix_pho_trackIsoR2PtCut20, &mix_b_pho_trackIsoR2PtCut20);
-  mix_fChain->SetBranchAddress("pho_trackIsoR3PtCut20", mix_pho_trackIsoR3PtCut20, &mix_b_pho_trackIsoR3PtCut20);
-  mix_fChain->SetBranchAddress("pho_trackIsoR4PtCut20", mix_pho_trackIsoR4PtCut20, &mix_b_pho_trackIsoR4PtCut20);
-  mix_fChain->SetBranchAddress("pho_trackIsoR5PtCut20", mix_pho_trackIsoR5PtCut20, &mix_b_pho_trackIsoR5PtCut20);
-  mix_fChain->SetBranchAddress("pho_swissCrx", mix_pho_swissCrx, &mix_b_pho_swissCrx);
-  mix_fChain->SetBranchAddress("pho_seedTime", mix_pho_seedTime, &mix_b_pho_seedTime);
-  mix_fChain->SetBranchAddress("pfcIso1", mix_pfcIso1, &mix_b_pfcIso1);
-  mix_fChain->SetBranchAddress("pfcIso2", mix_pfcIso2, &mix_b_pfcIso2);
-  mix_fChain->SetBranchAddress("pfcIso3", mix_pfcIso3, &mix_b_pfcIso3);
-  mix_fChain->SetBranchAddress("pfcIso4", mix_pfcIso4, &mix_b_pfcIso4);
-  mix_fChain->SetBranchAddress("pfcIso5", mix_pfcIso5, &mix_b_pfcIso5);
-  mix_fChain->SetBranchAddress("pfpIso1", mix_pfpIso1, &mix_b_pfpIso1);
-  mix_fChain->SetBranchAddress("pfpIso2", mix_pfpIso2, &mix_b_pfpIso2);
-  mix_fChain->SetBranchAddress("pfpIso3", mix_pfpIso3, &mix_b_pfpIso3);
-  mix_fChain->SetBranchAddress("pfpIso4", mix_pfpIso4, &mix_b_pfpIso4);
-  mix_fChain->SetBranchAddress("pfpIso5", mix_pfpIso5, &mix_b_pfpIso5);
-  mix_fChain->SetBranchAddress("pfnIso1", mix_pfnIso1, &mix_b_pfnIso1);
-  mix_fChain->SetBranchAddress("pfnIso2", mix_pfnIso2, &mix_b_pfnIso2);
-  mix_fChain->SetBranchAddress("pfnIso3", mix_pfnIso3, &mix_b_pfnIso3);
-  mix_fChain->SetBranchAddress("pfnIso4", mix_pfnIso4, &mix_b_pfnIso4);
-  mix_fChain->SetBranchAddress("pfnIso5", mix_pfnIso5, &mix_b_pfnIso5);
-
 
   Notify();
 }

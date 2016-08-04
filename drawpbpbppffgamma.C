@@ -1,4 +1,26 @@
 #include "makeMultiPanelCanvas.C"
+// histogram.photon.bins_pt_gt = {40, 60, 40, 50, 60, 80, 80, 100};
+// histogram.photon.bins_pt_lt = {9999, 9999, 50, 60, 80, 9999, 100, 9999};
+// histogram.event.bins_hiBin_gt = {0,   0,  60, 0, 20, 60, 100}   # the current centrality bin is greater or equal to these centrality bins
+// histogram.event.bins_hiBin_lt = {200, 60, 200, 20, 60, 100, 200}  # the current centrality bin is less than these centrality bins
+float allpuritypbpb[] = {0.725758, 0.720249, 0.753094, 0.703853, 0.730487, 0.756007, 0.741809, 0.737945, 0.725995, 0.786819, 0.704426, 0.743147, 0.775786, 0.827101, 0.715906, 0.710863, 0.739059, 0.687001, 0.719965, 0.743805, 0.720358, 0.724734, 0.719121, 0.758637, 0.699659, 0.73539, 0.76691, 0.731031, 0.730948, 0.717619, 0.786722, 0.695959, 0.733827, 0.771255, 0.836782, 0.749695, 0.739283, 0.788322, 0.711966, 0.763817, 0.786493, 0.816522, 0.733207, 0.719114, 0.785248, 0.705784, 0.734519, 0.769831, 0.84767, 0.772594, 0.766181, 0.802428, 0.720997, 0.80606, 0.822834, 0.774406};
+float allpuritypp[] = {0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244};
+
+float getpurity(float phoetmin, float hibinmin, bool ispp)
+{
+  int row = -1;
+  int col = -1;
+  if(phoetmin==40)  row = 0;
+  if(phoetmin==60)  row = 1;
+  if(phoetmin==100) row = 7;
+  if(hibinmin==0)   col = 3;
+  if(hibinmin==20)  col = 4;
+  if(hibinmin==60)  col = 5;
+  if(hibinmin==100) col = 6;
+  if(row>-1 && col > -1 && ispp) return allpuritypp[row*7+col];
+  if(row>-1 && col > -1 && !ispp) return allpuritypbpb[row*7+col];
+  return 1; //no purity applied
+}
 
 void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
   TFile *_file0 = TFile::Open(Form("all_%d_%d.root",phoetmin,phoetmax));
@@ -14,9 +36,13 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
   string cents[] = {"0-10%","10-30%","30-50%","50-100%","70-100%"};
   TCanvas * c1_pbpbdata[ncentbins]; // ncentbins
   TH1D * hgammaffxi_pbpbdata_[ncentbins];
-  TH1D * hjetpt_pbpbdata_[ncentbins];
   TH1D * hgammaffxi_refcone_pbpbdata_[ncentbins];
+  TH1D * hgammaffxisideband_pbpbdata_[ncentbins];
+  TH1D * hgammaffxisideband_refcone_pbpbdata_[ncentbins];
+  TH1D * hjetpt_pbpbdata_[ncentbins];
   float njets_pbpbdata[ncentbins];
+  TH1D * hjetptsideband_pbpbdata_[ncentbins];
+  float njetssideband_pbpbdata[ncentbins];
   TLegend * leg_ff_pbpbdata[ncentbins];
 
   TCanvas * c1_ppdata[ncentbins];
@@ -27,18 +53,35 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
   TH1D * hjetpt_ppdata__[ncentbins];
   TH1D * hgammaffxi_refcone_ppdata__[ncentbins];
   float njets_ppdata[ncentbins];
+  TH1D * hgammaffxisideband_ppdata_[ncentbins];
+  TH1D * hjetptsideband_ppdata_[ncentbins];
+  TH1D * hgammaffxisideband_refcone_ppdata_[ncentbins];
+  TH1D * hgammaffxisideband_ppdata__[ncentbins];
+  TH1D * hjetptsideband_ppdata__[ncentbins];
+  TH1D * hgammaffxisideband_refcone_ppdata__[ncentbins];
+  float njetssideband_ppdata[ncentbins];
   TLegend * leg_ff_ppdata[ncentbins];
 
   TCanvas * c1_subpbpb[ncentbins];
   TH2D * dummy_pbpbsub[ncentbins];
   TH2D * dummy_pbpbsub_ppsub[ncentbins];
+  
   TH1D * clone_hgammaffxi_refcone_pbpbdata_[ncentbins];
   TH1D * clone_hgammaffxi_pbpbdata_[ncentbins];
   TH1D * clone_hgammaffxi_refcone_ppdata_[ncentbins];
   TH1D * clone_hgammaffxi_ppdata_[ncentbins];
-
   TH1D * clone_hgammaffxi_refcone_pbpbdata_ppsub_[ncentbins];
   TH1D * clone_hgammaffxi_ppdata_ppsub_[ncentbins];
+  
+  TH1D * clone2_hgammaffxi_pbpbdata_[ncentbins];
+  TH1D * clone2_hgammaffxi_ppdata_[ncentbins];
+  
+  TH1D * clone_hgammaffxisideband_refcone_pbpbdata_[ncentbins];
+  TH1D * clone_hgammaffxisideband_pbpbdata_[ncentbins];
+  TH1D * clone_hgammaffxisideband_refcone_ppdata_[ncentbins];
+  TH1D * clone_hgammaffxisideband_ppdata_[ncentbins];
+  TH1D * clone_hgammaffxisideband_refcone_pbpbdata_ppsub_[ncentbins];
+  TH1D * clone_hgammaffxisideband_ppdata_ppsub_[ncentbins];
 
   TLegend * leg_ff_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub_ppsub[ncentbins];
@@ -63,6 +106,19 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     hgammaffxi_pbpbdata_[icent]->SetYTitle("dN/d#xi");
     hgammaffxi_pbpbdata_[icent]->GetYaxis()->CenterTitle();
     // hgammaffxi_pbpbdata_[icent]->Draw();
+    
+    hgammaffxisideband_pbpbdata_[icent] = (TH1D*) _file0->Get(Form("hgammaffxisideband_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptsideband_pbpbdata_[icent] = (TH1D*) _file0->Get(Form("hjetptsideband_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    hgammaffxisideband_refcone_pbpbdata_[icent] = (TH1D*) _file0->Get(Form("hgammaffxisideband_refcone_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    njetssideband_pbpbdata[icent] = hjetptsideband_pbpbdata_[icent]->Integral();
+    hgammaffxisideband_pbpbdata_[icent]->Sumw2();
+    hgammaffxisideband_refcone_pbpbdata_[icent]->Sumw2();
+    hgammaffxisideband_pbpbdata_[icent]->Scale(1.0/njetssideband_pbpbdata[icent]/binwidth);
+    hgammaffxisideband_refcone_pbpbdata_[icent]->Scale(1.0/njetssideband_pbpbdata[icent]/binwidth);
+    hgammaffxisideband_pbpbdata_[icent]->GetXaxis()->CenterTitle();
+    hgammaffxisideband_pbpbdata_[icent]->SetYTitle("dN/d#xi");
+    hgammaffxisideband_pbpbdata_[icent]->GetYaxis()->CenterTitle();
+    // hgammaffxisideband_pbpbdata_[icent]->Draw();
 
     hgammaffxi_refcone_pbpbdata_[icent]->SetMarkerStyle(24);
     // hgammaffxi_refcone_pbpbdata_[icent]->Draw("same");
@@ -102,7 +158,25 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     hgammaffxi_ppdata_[icent]->GetYaxis()->CenterTitle();
     // hgammaffxi_ppdata_[icent]->Draw();
 
-    hgammaffxi_refcone_ppdata_[icent]->SetMarkerStyle(24);
+    hgammaffxisideband_ppdata__[icent] = (TH1D*) _file0->Get(Form("hgammaffxisideband_ppdata__1_200"));
+    hjetptsideband_ppdata__[icent] = (TH1D*) _file0->Get(Form("hjetptsideband_ppdata__1_200"));
+    hgammaffxisideband_refcone_ppdata__[icent] = (TH1D*) _file0->Get(Form("hgammaffxisideband_refcone_ppdata__1_200"));
+
+    hgammaffxisideband_ppdata_[icent] = (TH1D*) hgammaffxisideband_ppdata__[icent]->Clone(Form("hgammaffxisideband_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptsideband_ppdata_[icent] = (TH1D*) hjetpt_ppdata__[icent]->Clone(Form("hjetptsideband_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+    hgammaffxisideband_refcone_ppdata_[icent] = (TH1D*) hgammaffxisideband_refcone_ppdata__[icent]->Clone(Form("hgammaffxisideband_refcone_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+
+    njetssideband_ppdata[icent] = hjetptsideband_ppdata_[icent]->Integral();
+    hgammaffxisideband_ppdata_[icent]->Sumw2();
+    hgammaffxisideband_refcone_ppdata_[icent]->Sumw2();
+    hgammaffxisideband_ppdata_[icent]->Scale(1.0/njetssideband_ppdata[icent]/binwidth);
+    hgammaffxisideband_refcone_ppdata_[icent]->Scale(1.0/njetssideband_ppdata[icent]/binwidth);
+    hgammaffxisideband_ppdata_[icent]->GetXaxis()->CenterTitle();
+    hgammaffxisideband_ppdata_[icent]->SetYTitle("dN/d#xi");
+    hgammaffxisideband_ppdata_[icent]->GetYaxis()->CenterTitle();
+    // hgammaffxisideband_ppdata_[icent]->Draw();
+
+    hgammaffxisideband_refcone_ppdata_[icent]->SetMarkerStyle(24);
     // hgammaffxi_refcone_pclone_hgammaffxi_refcone_pbpbdata_bpbmc_[icent]->Draw("same");
 
     leg_ff_ppdata[icent] = new TLegend(0.22,0.59,0.49,0.92);
@@ -142,14 +216,68 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     clone_hgammaffxi_refcone_ppdata_[icent]->Scale(-1);
     clone_hgammaffxi_ppdata_[icent] = (TH1D*) hgammaffxi_ppdata_[icent]->Clone(Form("clone_hgammaffxi_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_ppdata_[icent]->Add(clone_hgammaffxi_refcone_ppdata_[icent]);
+    
+    clone_hgammaffxisideband_refcone_pbpbdata_[icent] = (TH1D*) hgammaffxisideband_refcone_pbpbdata_[icent]->Clone(Form("clone_hgammaffxisideband_refcone_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    clone_hgammaffxisideband_refcone_pbpbdata_[icent]->Scale(-1);
+    clone_hgammaffxisideband_pbpbdata_[icent] = (TH1D*) hgammaffxisideband_pbpbdata_[icent]->Clone(Form("clone_hgammaffxisideband_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    clone_hgammaffxisideband_pbpbdata_[icent]->Add(clone_hgammaffxisideband_refcone_pbpbdata_[icent]);
+
+    clone_hgammaffxisideband_refcone_ppdata_[icent] = (TH1D*) hgammaffxisideband_refcone_ppdata_[icent]->Clone(Form("clone_hgammaffxisideband_refcone_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+    clone_hgammaffxisideband_refcone_ppdata_[icent]->Scale(-1);
+    clone_hgammaffxisideband_ppdata_[icent] = (TH1D*) hgammaffxisideband_ppdata_[icent]->Clone(Form("clone_hgammaffxisideband_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+    clone_hgammaffxisideband_ppdata_[icent]->Add(clone_hgammaffxisideband_refcone_ppdata_[icent]);
+
+    
+    float purity   = getpurity(phoetmin,centmins[icent],false);
+    float pppurity = getpurity(phoetmin,centmins[icent],true);
+    clone2_hgammaffxi_pbpbdata_[icent] = (TH1D*) clone_hgammaffxi_pbpbdata_[icent]->Clone(Form("clone2_hgammaffxi_pbpbdata__%d_%d",centmins[icent],centmaxs[icent]));
+    clone2_hgammaffxi_ppdata_[icent] = (TH1D*) clone_hgammaffxi_ppdata_[icent]->Clone(Form("clone2_hgammaffxi_ppdata__%d_%d",centmins[icent],centmaxs[icent]));
+    
+    clone_hgammaffxisideband_pbpbdata_[icent]->Scale((1.0-purity)/purity);
+    clone_hgammaffxisideband_ppdata_[icent]->Scale((1.0-pppurity)/pppurity);
+    clone_hgammaffxisideband_pbpbdata_[icent]->Scale(-1);
+    clone_hgammaffxisideband_ppdata_[icent]->Scale(-1);
+    
+    // top doesnt use sideband in ppsub bottom uses
+    // clone2_hgammaffxi_pbpbdata_[icent]->Scale(1.0/purity);
+    // clone2_hgammaffxi_ppdata_[icent]->Scale(1.0/pppurity);
+    // clone2_hgammaffxi_pbpbdata_[icent]->Add(clone_hgammaffxisideband_pbpbdata_[icent]);
+    // clone2_hgammaffxi_ppdata_[icent]->Add(clone_hgammaffxisideband_ppdata_[icent]);
+    clone_hgammaffxi_pbpbdata_[icent]->Scale(1.0/purity);
+    clone_hgammaffxi_ppdata_[icent]->Scale(1.0/pppurity);
+    clone_hgammaffxi_pbpbdata_[icent]->Add(clone_hgammaffxisideband_pbpbdata_[icent]);
+    clone_hgammaffxi_ppdata_[icent]->Add(clone_hgammaffxisideband_ppdata_[icent]);
+    
+    
+    
     // clone_hgammaffxi_ppdata_[icent]->SetMarkerColor(kRed);
+    clone_hgammaffxisideband_ppdata_[icent]->SetMarkerStyle(24);
+    clone_hgammaffxisideband_ppdata_[icent]->SetMarkerColor(kRed);
+    clone_hgammaffxisideband_pbpbdata_[icent]->SetMarkerColor(kRed);
+    clone2_hgammaffxi_ppdata_[icent]->SetMarkerStyle(24);
     clone_hgammaffxi_ppdata_[icent]->SetMarkerStyle(24);
     // fixedFontHist(dummy_pbpbsub[icent]);
     dummy_pbpbsub[icent]->Draw();
-    clone_hgammaffxi_pbpbdata_[icent]->Draw("same");
     // hgammaffxi_ppdata_[icent]->Draw("same");
     // hgammaffxi_refcone_ppdata_[icent]->Draw("same");
+
+    // clone2_hgammaffxi_pbpbdata_[icent]->Draw("same");
+    // clone_hgammaffxisideband_pbpbdata_[icent]->Draw("same");
+    
+    // clone_hgammaffxisideband_ppdata_[icent]->Draw("same");
+    // clone2_hgammaffxi_ppdata_[icent]->Draw("same");
+
+    
+    // sideband subtracted
+    // clone2_hgammaffxi_pbpbdata_[icent]->SetMarkerColor(kBlue);
+    // clone2_hgammaffxi_pbpbdata_[icent]->Draw("same");
+    // clone2_hgammaffxi_ppdata_[icent]->SetMarkerColor(kBlue);
+    // clone2_hgammaffxi_ppdata_[icent]->Draw("same");
+
+    // no sideband subtraction
+    clone_hgammaffxi_pbpbdata_[icent]->Draw("same");
     clone_hgammaffxi_ppdata_[icent]->Draw("same");
+
     if(icent==0)
     {
       // leg_ff_pbpbsub[icent] = new TLegend(0.25,0.697,0.875,0.92);
@@ -219,8 +347,8 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     laxis[ilatex]->Draw();
   }
   ldndxi->Draw();
-  call->SaveAs(Form("centffgamma-pbpbpp-phoet_%d_%d.pdf",phoetmin,phoetmax));
-  call->SaveAs(Form("centffgamma-pbpbpp-phoet_%d_%d.png",phoetmin,phoetmax));
+  // call->SaveAs(Form("centffgamma-pbpbpp-phoet_%d_%d.pdf",phoetmin,phoetmax));
+  call->SaveAs(Form("sideband_centffgamma-pbpbpp-phoet_%d_%d.png",phoetmin,phoetmax));
 
   if(sub!=1)
   {
@@ -249,6 +377,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     }
 
     dummy_pbpbsub_ppsub[icent]->Draw();
+    // clone_hgammaffxi_refcone_pbpbdata_ppsub_[icent]->SetMarkerStyle(24);
     clone_hgammaffxi_refcone_pbpbdata_ppsub_[icent]->Draw("same");
 
     TLine * lzero = new TLine(0,0,4.99,0);
@@ -332,7 +461,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
   if(sub==1)
   {
     call_ppsub->SaveAs(Form("centffgamma-pbpb-minus-pp-phoet_%d_%d.pdf",phoetmin,phoetmax));
-    call_ppsub->SaveAs(Form("centffgamma-pbpb-minus-pp-phoet_%d_%d.png",phoetmin,phoetmax));
+    call_ppsub->SaveAs(Form("sideband-centffgamma-pbpb-minus-pp-phoet_%d_%d.png",phoetmin,phoetmax));
   } else {
     call_ppsub->SaveAs(Form("centffgamma-pbpb-ratio-pp-phoet_%d_%d.pdf",phoetmin,phoetmax));
     call_ppsub->SaveAs(Form("centffgamma-pbpb-ratio-pp-phoet_%d_%d.png",phoetmin,phoetmax));

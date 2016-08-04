@@ -46,7 +46,8 @@ void drawclosureffgamma() {
     hgammaffxi_pbpbmc_gen_[icent]->Sumw2();
     hgammaffxi_refcone_pbpbmc_gen_[icent]->Sumw2();
     hgammaffxi_pbpbmc_gen_[icent]->Scale(1.0/njets_pbpbmc_gen[icent]/binwidth);
-    hgammaffxi_refcone_pbpbmc_gen_[icent]->Scale(1.0/njets_pbpbmc_gen[icent]/binwidth);
+    hgammaffxi_refcone_pbpbmc_gen_[icent]->Scale(1.0/njets_pbpbmc_gen[icent]/binwidth*1.5);
+    // cout<<njets_pbpbmc_gen[icent]<<endl;
     hgammaffxi_pbpbmc_gen_[icent]->GetXaxis()->CenterTitle();
     hgammaffxi_pbpbmc_gen_[icent]->SetYTitle("dN/d#xi");
     hgammaffxi_pbpbmc_gen_[icent]->GetYaxis()->CenterTitle();
@@ -54,7 +55,7 @@ void drawclosureffgamma() {
     // Raw FF pbpdata
 
 
-    // Raw FF pbpbmc
+    // Raw FF pbmc
     hgammaffxi_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hgammaffxi_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     hjetpt_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     hgammaffxi_refcone_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hgammaffxi_refcone_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
@@ -69,13 +70,10 @@ void drawclosureffgamma() {
     hgammaffxi_refcone_pbpbmc_[icent]->SetMarkerStyle(24);
     // Raw FF pbpbmc
 
-    call->cd(icent+2);
-    // hgammaffxi_pbpbmc_gen_[icent]->Draw();
-    // hgammaffxi_pbpbmc_[icent]->Draw("same");
-    // break;
 
     // Eta cone subtracted FF pbpbmc_gen and pbpbmc
-    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0.8,1.4);
+    call->cd(icent+2);
+    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
@@ -84,12 +82,11 @@ void drawclosureffgamma() {
     clone_hgammaffxi_refcone_pbpbmc_gen_[icent] = (TH1D*) hgammaffxi_refcone_pbpbmc_gen_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbmc_gen_%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_refcone_pbpbmc_gen_[icent]->Scale(-1);
     clone_hgammaffxi_pbpbmc_gen_[icent] = (TH1D*) hgammaffxi_pbpbmc_gen_[icent]->Clone(Form("clone_hgammaffxi_pbpbmc_gen_%d_%d",centmins[icent],centmaxs[icent]));
-    // clone_hgammaffxi_pbpbmc_gen_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_gen_[icent]); // no longer needed when using sube == 0
+    clone_hgammaffxi_pbpbmc_gen_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_gen_[icent]); // no longer needed when using sube == 0
 
     clone_hgammaffxi_refcone_pbpbmc_[icent] = (TH1D*) hgammaffxi_refcone_pbpbmc_[icent]->Clone(Form("clone_hgammaffxi_refcone_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
     clone_hgammaffxi_refcone_pbpbmc_[icent]->Scale(-1);
     clone_hgammaffxi_pbpbmc_[icent] = (TH1D*) hgammaffxi_pbpbmc_[icent]->Clone(Form("clone_hgammaffxi_pbpbmc__%d_%d",centmins[icent],centmaxs[icent]));
-  
     clone_hgammaffxi_pbpbmc_[icent]->Add(clone_hgammaffxi_refcone_pbpbmc_[icent]);
     clone_hgammaffxi_pbpbmc_[icent]->SetMarkerColor(kRed);
     clone_hgammaffxi_pbpbmc_gen_[icent]->SetMarkerColor(kBlue);
@@ -113,8 +110,8 @@ void drawclosureffgamma() {
     leg_ff_pbpbsub[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_gen_[icent],"no refcone sub","p");
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"refcone sub","p");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_gen_[icent],"Mixed event","p");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"Reflected cone","p");
     }
     else if(icent==1)
     {
@@ -140,7 +137,7 @@ void drawclosureffgamma() {
   }
   call->cd(1);
 
-  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0.8,1.4);
+  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0,yaxismax);
   gStyle->SetFrameLineColor(0);
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
@@ -166,7 +163,7 @@ void drawclosureffgamma() {
     clone2_hgammaffxi_pbpbmc_[icent] = (TH2D*) clone_hgammaffxi_pbpbmc_[icent]->Clone(Form("clone2_hgammaffxi_pbpbmc_%d_%d",centmins[icent],centmaxs[icent]));
     clone2_hgammaffxi_pbpbmc_gen_[icent]->Divide(clone2_hgammaffxi_pbpbmc_[icent]);
 
-    dummy2_pbpbsub[icent] = new TH2D(Form("dummy2_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0.8,1.4);
+    dummy2_pbpbsub[icent] = new TH2D(Form("dummy2_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax2);
     dummy2_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy2_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy2_pbpbsub[icent]->GetYaxis()->CenterTitle();
@@ -193,7 +190,7 @@ void drawclosureffgamma() {
     leg_ff_pbpbsub2[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"true/refcone sub","p");
+      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"gen(jet,trk)/reco(jet,trk) ff","p");
       leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"","");
     }
     else if(icent==1)
@@ -218,7 +215,7 @@ void drawclosureffgamma() {
   }
   callratio->cd(1);
 
-  TH2D * axis_dummy_ratio = new TH2D("axis_dummy_ratio","",1,0.01,4.99,1,0.8,1.4);
+  TH2D * axis_dummy_ratio = new TH2D("axis_dummy_ratio","",1,0.01,4.99,1,0,yaxismax2);
   gStyle->SetFrameLineColor(0);
   axis_dummy_ratio->UseCurrentStyle();
   axis_dummy_ratio->Draw("FB BB A");
@@ -230,7 +227,7 @@ void drawclosureffgamma() {
 
   TLatex * laxis2[yaxismax2];
   for (int ilatex = 0; ilatex < yaxismax2; ilatex++) {
-    laxis2[ilatex] = new TLatex(3.,ilatex-0.1,Form("%2.1f",(0.8+ilatex*0.2)));
+    laxis2[ilatex] = new TLatex(3.,ilatex-0.1,Form("%d",ilatex));
     laxis2[ilatex]->SetTextSize(laxis2[ilatex]->GetTextSize()*1.2);
     laxis2[ilatex]->Draw();
   }
