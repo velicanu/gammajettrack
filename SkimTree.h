@@ -50,12 +50,49 @@
    TBranch        *b_superFilterPath;   //!
    TBranch        *b_pcollisionEventSelection;   //!
 
+   Int_t           ana_step_mix;
+   Int_t           pHBHENoiseFilterResultProducer_mix;
+   Int_t           HBHENoiseFilterResult_mix;
+   Int_t           HBHENoiseFilterResultRun1_mix;
+   Int_t           HBHENoiseFilterResultRun2Loose_mix;
+   Int_t           HBHENoiseFilterResultRun2Tight_mix;
+   Int_t           HBHEIsoNoiseFilterResult_mix;
+   Int_t           pPAprimaryVertexFilter_mix;
+   Int_t           pBeamScrapingFilter_mix;
+   Int_t           pVertexFilterCutG_mix;
+   Int_t           pVertexFilterCutGloose_mix;
+   Int_t           pVertexFilterCutGtight_mix;
+   Int_t           pVertexFilterCutGplus_mix;
+   Int_t           pVertexFilterCutE_mix;
+   Int_t           pVertexFilterCutEandG_mix;
+   Int_t           superFilterPath_mix;
+   Int_t           pcollisionEventSelection_mix;
+
+   // List of branches
+   TBranch        *b_ana_step_mix;   //!
+   TBranch        *b_pHBHENoiseFilterResultProducer_mix;   //!
+   TBranch        *b_HBHENoiseFilterResult_mix;   //!
+   TBranch        *b_HBHENoiseFilterResultRun1_mix;   //!
+   TBranch        *b_HBHENoiseFilterResultRun2Loose_mix;   //!
+   TBranch        *b_HBHENoiseFilterResultRun2Tight_mix;   //!
+   TBranch        *b_HBHEIsoNoiseFilterResult_mix;   //!
+   TBranch        *b_pPAprimaryVertexFilter_mix;   //!
+   TBranch        *b_pBeamScrapingFilter_mix;   //!
+   TBranch        *b_pVertexFilterCutG_mix;   //!
+   TBranch        *b_pVertexFilterCutGloose_mix;   //!
+   TBranch        *b_pVertexFilterCutGtight_mix;   //!
+   TBranch        *b_pVertexFilterCutGplus_mix;   //!
+   TBranch        *b_pVertexFilterCutE_mix;   //!
+   TBranch        *b_pVertexFilterCutEandG_mix;   //!
+   TBranch        *b_superFilterPath_mix;   //!
+   TBranch        *b_pcollisionEventSelection_mix;   //!
+
 #endif
 
 
 void initSkimTree(TTree *tree)
 {
-   b_ana_step = 0;
+   b_ana_step_mix = 0;
    b_pHBHENoiseFilterResultProducer = 0;
    b_HBHENoiseFilterResult = 0;
    b_HBHENoiseFilterResultRun1 = 0;
@@ -89,4 +126,42 @@ void initSkimTree(TTree *tree)
    tree->SetBranchAddress("pVertexFilterCutEandG", &pVertexFilterCutEandG, &b_pVertexFilterCutEandG);
    tree->SetBranchAddress("superFilterPath", &superFilterPath, &b_superFilterPath);
    tree->SetBranchAddress("pcollisionEventSelection", &pcollisionEventSelection, &b_pcollisionEventSelection);
+}
+
+void initSkimTreeMix(TTree *tree)
+{
+   b_ana_step = 0;
+   b_pHBHENoiseFilterResultProducer_mix = 0;
+   b_HBHENoiseFilterResult_mix = 0;
+   b_HBHENoiseFilterResultRun1_mix = 0;
+   b_HBHENoiseFilterResultRun2Loose_mix = 0;
+   b_HBHENoiseFilterResultRun2Tight_mix = 0;
+   b_HBHEIsoNoiseFilterResult_mix = 0;
+   b_pPAprimaryVertexFilter_mix = 0;
+   b_pBeamScrapingFilter_mix = 0;
+   b_pVertexFilterCutG_mix = 0;
+   b_pVertexFilterCutGloose_mix = 0;
+   b_pVertexFilterCutGtight_mix = 0;
+   b_pVertexFilterCutGplus_mix = 0;
+   b_pVertexFilterCutE_mix = 0;
+   b_pVertexFilterCutEandG_mix = 0;
+   b_superFilterPath_mix = 0;
+   b_pcollisionEventSelection_mix = 0;
+   tree->SetBranchAddress("ana_step", &ana_step_mix, &b_ana_step_mix);
+   tree->SetBranchAddress("pHBHENoiseFilterResultProducer", &pHBHENoiseFilterResultProducer_mix, &b_pHBHENoiseFilterResultProducer_mix);
+   tree->SetBranchAddress("HBHENoiseFilterResult", &HBHENoiseFilterResult_mix, &b_HBHENoiseFilterResult_mix);
+   tree->SetBranchAddress("HBHENoiseFilterResultRun1", &HBHENoiseFilterResultRun1_mix, &b_HBHENoiseFilterResultRun1_mix);
+   tree->SetBranchAddress("HBHENoiseFilterResultRun2Loose", &HBHENoiseFilterResultRun2Loose_mix, &b_HBHENoiseFilterResultRun2Loose_mix);
+   tree->SetBranchAddress("HBHENoiseFilterResultRun2Tight", &HBHENoiseFilterResultRun2Tight_mix, &b_HBHENoiseFilterResultRun2Tight_mix);
+   tree->SetBranchAddress("HBHEIsoNoiseFilterResult", &HBHEIsoNoiseFilterResult_mix, &b_HBHEIsoNoiseFilterResult_mix);
+   tree->SetBranchAddress("pPAprimaryVertexFilter", &pPAprimaryVertexFilter_mix, &b_pPAprimaryVertexFilter_mix);
+   tree->SetBranchAddress("pBeamScrapingFilter", &pBeamScrapingFilter_mix, &b_pBeamScrapingFilter_mix);
+   tree->SetBranchAddress("pVertexFilterCutG", &pVertexFilterCutG_mix, &b_pVertexFilterCutG_mix);
+   tree->SetBranchAddress("pVertexFilterCutGloose", &pVertexFilterCutGloose_mix, &b_pVertexFilterCutGloose_mix);
+   tree->SetBranchAddress("pVertexFilterCutGtight", &pVertexFilterCutGtight_mix, &b_pVertexFilterCutGtight_mix);
+   tree->SetBranchAddress("pVertexFilterCutGplus", &pVertexFilterCutGplus_mix, &b_pVertexFilterCutGplus_mix);
+   tree->SetBranchAddress("pVertexFilterCutE", &pVertexFilterCutE_mix, &b_pVertexFilterCutE_mix);
+   tree->SetBranchAddress("pVertexFilterCutEandG", &pVertexFilterCutEandG_mix, &b_pVertexFilterCutEandG_mix);
+   tree->SetBranchAddress("superFilterPath", &superFilterPath_mix, &b_superFilterPath_mix);
+   tree->SetBranchAddress("pcollisionEventSelection", &pcollisionEventSelection_mix, &b_pcollisionEventSelection_mix);
 }

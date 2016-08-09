@@ -45,11 +45,19 @@ int cut_type_pbpb = 1;
 int cut_type_pp = 2;
 
 Int_t           nref_corr;
-Float_t         chargedSum_corr[29];   //[hiNevtPlane]
-Float_t         rawpt_corr[29];   //[hiNevtPlane]
-Float_t         jtpt_corr[29];   //[hiNevtPlane]
-Float_t         jteta_corr[29];   //[hiNevtPlane]
-Float_t         jtphi_corr[29];   //[hiNevtPlane]
+Float_t         chargedSum_corr[100];   //[nref_corr]
+Float_t         rawpt_corr[100];   //[nref_corr]
+Float_t         jtpt_corr[100];   //[nref_corr]
+Float_t         jteta_corr[100];   //[nref_corr]
+Float_t         jtphi_corr[100];   //[nref_corr]
+
+
+Int_t           nref_corr_mix;
+Float_t         chargedSum_corr_mix[100];   //[nref_corr_mix]
+Float_t         rawpt_corr_mix[100];   //[nref_corr_mix]
+Float_t         jtpt_corr_mix[100];   //[nref_corr_mix]
+Float_t         jteta_corr_mix[100];   //[nref_corr_mix]
+Float_t         jtphi_corr_mix[100];   //[nref_corr_mix]
 
 double getAngleToEP(double angle) {
     angle = (angle > TMath::Pi()) ? 2 * TMath::Pi() - angle : angle;
@@ -90,6 +98,20 @@ float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin)
     if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
   }
   return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
+}
+
+float getTrkWeightMix(TrkCorr * trkCorr, int itrk, int hiBin)
+{
+  float rmin = 999;
+  for(int k = 0; k<nref_corr_mix; k++)
+  {
+    if(jtpt_corr_mix[k]<50) break;
+    // if(!goodJet(k)) continue;
+    if((TMath::Abs(chargedSum_corr_mix[k]/rawpt_corr_mix[k])<0.01) || (TMath::Abs(jteta_corr_mix[k]>2))) continue;//jet quality cut
+    float R = TMath::Power(jteta_corr_mix[k]-trkEta_mix_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi_corr_mix[k]-trkPhi_mix_[itrk])),2);
+    if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
+  }
+  return trkCorr->getTrkCorr(trkPt_mix_[itrk],trkEta_mix_[itrk],trkPhi_mix_[itrk],hiBin,rmin);
 }
 
 
@@ -164,7 +186,7 @@ bool goodElectron(int i, bool is_pp) {
 }
 
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, int startindex = 0, int endindex = -1) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1) {
 
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
@@ -180,18 +202,26 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   TH1::SetDefaultSumw2();
 
+  int minbiasstart = 0;
+
 
   int Ztype; //type 1 muon, type 2 electron
   float Zmass, Zpt, Zeta, Zrapidity, Zphi;
   float Zlepton1Pt, Zlepton2Pt, Zlepton1Eta, Zlepton2Eta, Zlepton1Phi, Zlepton2Phi;
   float weight = 0 , vz = -99;
+  float vz_mix = -99;
   int hiBin = -99;
+  int hiBin_mix = -99;
   int HLT_HISinglePhoton40_Eta1p5_v1 = -99;
   int HLT_HISinglePhoton40_Eta1p5_v2 = -99;
   int HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 = -99;
   int Zcharge;
   float leptonptcut = 10;
 
+  //mixvar decleration
+  float dvz_mix[10];
+  int dhiBin_mix[10];
+  float dhiEvtPlanes_mix[10];
 
   int njet;
   float jetpt[200], jeteta[200], jetphi[200];
@@ -239,17 +269,22 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   Int_t           hiNevtPlane;
   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
+  Float_t         hiEvtPlanes_mix[29];   //[hiNevtPlane]
 
   Int_t           nTrk;
+  Int_t           nTrk_mix;
   Int_t           run;
   Int_t           event;
   Int_t           lumis;
   Float_t         trkPt[100000];   //[nTrk]
+  Float_t         trkPt_mix[100000];   //[nTrk]
   Float_t         trkPtError[100000];   //[nTrk]
   UChar_t         trkNHit[100000];   //[nTrk]
   UChar_t         trkNlayer[100000];   //[nTrk]
   Float_t         trkEta[100000];   //[nTrk]
+  Float_t         trkEta_mix[100000];   //[nTrk]
   Float_t         trkPhi[100000];   //[nTrk]
+  Float_t         trkPhi_mix[100000];   //[nTrk]
   Int_t           trkCharge[100000];   //[nTrk]
   UChar_t         trkNVtx[100000];   //[nTrk]
   Bool_t          highPurity[100000];   //[nTrk]
@@ -270,6 +305,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t         pfEcal[100000];   //[nTrk]
   Float_t         pfHcal[100000];   //[nTrk]
   Float_t         trkWeight[100000];   //[nTrk]
+  Float_t         trkWeight_mix[100000];   //[nTrk]
   Int_t    nPho;
   Float_t  phoE[100];   //_nPho
   Float_t  phoEt[100];   //_nPho
@@ -340,6 +376,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	Float_t  mcMomEta[500];
 	Float_t  mcMomPhi[500];
 	Int_t    mcMomPID[500];
+  int nmix = 0, nlooped = 0;
 
   TTree *ztree = new TTree("ztree","Jet track tree");
 
@@ -348,6 +385,17 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("lumis",  &lumis, "lumis/I");
   ztree->Branch("hiBin", &hiBin, "hiBin/I");
   ztree->Branch("vz", &vz, "vz/F");
+
+  ztree->Branch("nlooped", &nlooped, "nlooped/I");
+  ztree->Branch("nmix", &nmix, "nmix/I");
+  ztree->Branch("dvz_mix", dvz_mix, "dvz_mix[nmix]/F");
+  ztree->Branch("dhiBin_mix", dhiBin_mix, "dhiBin_mix[nmix]/I");
+  ztree->Branch("dhiEvtPlanes_mix", dhiEvtPlanes_mix, "dhiEvtPlanes_mix[nmix]/F");
+  ztree->Branch("nTrk_mix",	&nTrk_mix,	"nTrk_mix/I");
+  ztree->Branch("trkPt_mix",	&trkPt_mix,	"trkPt_mix[nTrk_mix]/F");
+  ztree->Branch("trkPhi_mix", &trkPhi_mix,"trkPhi_mix[nTrk_mix]/F");
+  ztree->Branch("trkEta_mix", &trkEta_mix,"trkEta_mix[nTrk_mix]/F");
+  ztree->Branch("trkWeight_mix", &trkWeight_mix,"trkWeight_mix[nTrk_mix]/F");
 
   ztree->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
   ztree->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
@@ -386,6 +434,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
   ztree->Branch("neutralSum",	&neutralSum,	"neutralSum[njet]/F");
   ztree->Branch("eSum",	&eSum,	"eSum[njet]/F");
+
+
   ztree->Branch("nTrk",	&nTrk,	"nTrk/I");
   ztree->Branch("trkPt",	&trkPt,	"trkPt[nTrk]/F");
   ztree->Branch("trkPtError", &trkPtError,"trkPtError[nTrk]/F");
@@ -596,6 +646,98 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   }
   // int nEv = inggTree->GetEntries();
   int nEv = evttree->GetEntries();
+  TFile * fminbias = 0;
+  TTree *evttree_mix = 0;
+  TTree * tracktree_mix = 0;
+  TTree * skimTree_mix = 0;
+  TTree *injetTreeFORTRKCORR_mix = 0;
+  vector<float> vmix_vz;
+  vector<int> vmix_hiBin;
+  vector<float> vmix_hiEvtPlanes;
+  vector<int> vmix_pcollisionEventSelection;
+  vector<int> vmix_HBHENoiseFilterResultRun2Loose;
+  vector<int> vmix_pPAprimaryVertexFilter;
+  vector<int> vmix_pBeamScrapingFilter;
+  vector<int> vmix_index;
+
+  if(!minbias.empty())
+  {
+    fminbias = TFile::Open(minbias.data());
+
+    evttree_mix = (TTree*)fminbias->Get("hiEvtAnalyzer/HiTree");
+    if(!evttree_mix){
+      cout<<"Could not access mix event tree!"<<endl;
+      return;
+    }
+    evttree_mix->SetBranchAddress("hiBin", &hiBin_mix);
+    evttree_mix->SetBranchAddress("vz", &vz_mix);
+    evttree_mix->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes_mix);
+
+    tracktree_mix                     = (TTree*) fminbias->Get("anaTrack/trackTree");
+    if( tracktree_mix == 0 ) tracktree_        = (TTree*) fminbias->Get("ppTrack/trackTree");
+    if(!tracktree_mix){
+      cout<<"Could not access mix track tree!"<<endl;
+      return;
+    }
+    initTrackTreeMix(tracktree_mix);
+
+    skimTree_mix                     = (TTree*) fminbias->Get("skimanalysis/HltTree");
+    if( skimTree_mix == 0 )
+    {
+      cout<<"Could not access mix skim tree!"<<endl;
+      return;
+    }
+    initSkimTreeMix(skimTree_mix);
+
+    if(!is_pp) injetTreeFORTRKCORR_mix = (TTree*)fminbias->Get(Form("akPu4CaloJetAnalyzer/t"));
+    else       injetTreeFORTRKCORR_mix = (TTree*)fminbias->Get(Form("ak4CaloJetAnalyzer/t"));
+    if(!injetTreeFORTRKCORR_mix){
+      cout<<"Could not access mix akPu4Calo tree!"<<endl;
+      return;
+    }
+    injetTreeFORTRKCORR_mix->SetBranchAddress("nref", &nref_corr_mix);
+    injetTreeFORTRKCORR_mix->SetBranchAddress("chargedSum", &chargedSum_corr_mix);
+    injetTreeFORTRKCORR_mix->SetBranchAddress("rawpt", &rawpt_corr_mix);
+    injetTreeFORTRKCORR_mix->SetBranchAddress("jtpt", &jtpt_corr_mix);
+    injetTreeFORTRKCORR_mix->SetBranchAddress("jteta", &jteta_corr_mix);
+    injetTreeFORTRKCORR_mix->SetBranchAddress("jtphi", &jtphi_corr_mix);
+
+
+    const int nevmix = evttree_mix->GetEntries();
+    cout<<"indexing minbias for mixing... ";
+    for(int iminbias = 0 ; iminbias < nevmix ; ++ iminbias )
+    {
+      skimTree_mix->GetEntry(iminbias);
+      evttree_mix->GetEntry(iminbias);
+      if(fabs(vz_mix)>15) continue;
+      skimTree_mix->GetEntry(iminbias);
+      if (!is_pp) // HI event selection
+      {
+        if ((pcollisionEventSelection_mix < 1))  continue;
+        if(!ismc)
+        {
+          if (HBHENoiseFilterResultRun2Loose_mix < 1) continue; // re-use config value...
+        }
+      }
+      else // pp event selection
+      {
+        if (pPAprimaryVertexFilter_mix < 1 || pBeamScrapingFilter_mix < 1)  continue;
+      }
+      vmix_vz.push_back(vz_mix);
+      vmix_hiBin.push_back(hiBin_mix);
+      vmix_hiEvtPlanes.push_back(hiEvtPlanes_mix[8]);
+      vmix_pcollisionEventSelection.push_back(pcollisionEventSelection_mix);
+      vmix_HBHENoiseFilterResultRun2Loose.push_back(HBHENoiseFilterResultRun2Loose_mix);
+      vmix_pPAprimaryVertexFilter.push_back(pPAprimaryVertexFilter_mix);
+      vmix_pBeamScrapingFilter.push_back(pBeamScrapingFilter_mix);
+      vmix_index.push_back(iminbias);
+    }
+    cout<<"done indexing minbias"<<endl;
+
+  } else {
+    cout<<"WARNING: Minbias file not provided, no mixing will be done"<<endl;
+  }
+
 
   for (int j=startindex; j<nEv; j++) {
     Zlepton1Pt=-99;
@@ -634,12 +776,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     }
     hlttree->GetEntry(j);
-    if(j%1000 == 0) { cout << "Processing event: " << j << endl; }
+    if(j%100 == 0) { cout << "Processing event: " << j << endl; }
+    // if(j%1 == 0) { cout << "Processing event: " << j << endl; }
+    // if(j%1000 == 0) { cout << "Processing event: " << j << endl; }
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
     if(fabs(vz)>15) continue;
     if( !( HLT_HISinglePhoton40_Eta1p5_v1 == 1 || HLT_HISinglePhoton40_Eta1p5_v2 == 1 || HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 == 1 ) ) continue; // photon 40 trigger cut for pbpb+pp data, pbpb mc, pp mc
-
-    skimTree->GetEntry(j);
+    // skimTree->GetEntry(j);
+    // cout<<"here "<<pcollisionEventSelection<<endl;
     if (!is_pp) // HI event selection
     {
       if ((pcollisionEventSelection < 1))  continue;
@@ -652,38 +796,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     {
       if (pPAprimaryVertexFilter < 1 || pBeamScrapingFilter < 1)  continue;
     }
-    injetTree->GetEntry(j);
-    // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
-    // cout<<"event: "<<j<<endl;
-    njet = 0;
 
-    float maxJetPt = -999;
-    for(int k = 0; k<nref_corr; k++)
-    {
-      if(TMath::Abs(jteta_corr[k])>2) continue;
-      if(jtpt_corr[k]>maxJetPt) maxJetPt=jtpt_corr[k];
-    }
-
-    for(int ij=0; ij<nref; ij++) {
-      if(jtpt[ij]>1 && goodJet(ij) && fabs(jeteta[ij])<2)
-      {
-        //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
-        //        cout<<jetpt[njet]<<endl;
-       	jetpt[njet] = jtpt[ij];
-        jeteta[njet] = jteta[ij];
-        jetphi[njet] = jtphi[ij];
-       	gjetpt[njet] = refpt[ij];
-        gjeteta[njet] = refeta[ij];
-        gjetphi[njet] = refphi[ij];
-        jetID[njet] = goodJet(ij);
-        subid[njet] = _subid[ij];
-        chargedSum[njet] = _chargedSum[ij];
-        neutralSum[njet] = _neutralSum[ij];
-        eSum[njet] = _eSum[ij];
-        njet++;
-      }
-    } //end of jet loop
-    //if(njet==0) continue;
     // cout<<"end of jet loop "<<njet<<endl;
     //cout<<"before: "<<jetpt[0]<<endl;
 
@@ -736,77 +849,225 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       // if((*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex]>1) passed = false;
 
       float sumIso = (*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex] ;
-      float pho_sumIsoCorrected = sumIso - sumIsoCorrections->GetBinContent(sumIsoCorrections->FindBin(getAngleToEP(fabs((*pho_event.phoPhi)[j] - hiEvtPlanes[8])))));
+      float pho_sumIsoCorrected = sumIso - sumIsoCorrections->GetBinContent(sumIsoCorrections->FindBin(getAngleToEP(fabs( (*_phoPhi)[maxPhoIndex] - hiEvtPlanes[8]))));
 
-      if( pho_sumIsoCorrected>1 ) passed = false;
+      if(is_pp) //sumiso correction only in pbpb
+      {
+        if( sumIso>1 ) passed = false;
+      } else {
+        if( pho_sumIsoCorrected>1 ) passed = false;
+      }
       if(_phoHoverE->at(maxPhoIndex)>0.1) passed = false;
       if(_phoSigmaIEtaIEta_2012->at(maxPhoIndex) > 0.0170 ) passed = false;
       if(passed)
       {
-        phoE3x3[nphoton] = _phoE3x3->at(maxPhoIndex);
-        phoE1x5[nphoton] = _phoE1x5->at(maxPhoIndex);
-        phoE2x5[nphoton] = _phoE2x5->at(maxPhoIndex);
-        phoE5x5[nphoton] = _phoE5x5->at(maxPhoIndex);
-        phoSigmaIEtaIEta_2012[nphoton] = _phoSigmaIEtaIEta_2012->at(maxPhoIndex);
-        if(failedNoiseCut)   phoNoise[nphoton] = 0;
-        else                 phoNoise[nphoton] = 1;
-        if(ismc)             pho_genMatchedIndex[nphoton] = _pho_genMatchedIndex->at(maxPhoIndex);
-        phoE[nphoton] = (*_phoE)[maxPhoIndex];
-        phoEt[nphoton] = (*_phoEt)[maxPhoIndex];
-        phoEta[nphoton] = (*_phoEta)[maxPhoIndex];
-        phoPhi[nphoton] = (*_phoPhi)[maxPhoIndex];
-        phoSCE[nphoton] = (*_phoSCE)[maxPhoIndex];
-        phoSCRawE[nphoton] = (*_phoSCRawE)[maxPhoIndex];
-        phoESEn[nphoton] = (*_phoESEn)[maxPhoIndex];
-        phoSCEta[nphoton] = (*_phoSCEta)[maxPhoIndex];
-        phoSCPhi[nphoton] = (*_phoSCPhi)[maxPhoIndex];
-        phoSCEtaWidth[nphoton] = (*_phoSCEtaWidth)[maxPhoIndex];
-        phoSCPhiWidth[nphoton] = (*_phoSCPhiWidth)[maxPhoIndex];
-        phoSCBrem[nphoton] = (*_phoSCBrem)[maxPhoIndex];
-        phohasPixelSeed[nphoton] = (*_phohasPixelSeed)[maxPhoIndex];
-        phoR9[nphoton] = (*_phoR9)[maxPhoIndex];
-        phoHoverE[nphoton] = (*_phoHoverE)[maxPhoIndex];
-        phoSigmaIEtaIEta[nphoton] = (*_phoSigmaIEtaIEta)[maxPhoIndex];
-        pho_ecalClusterIsoR2[nphoton] = (*_pho_ecalClusterIsoR2)[maxPhoIndex];
-        pho_ecalClusterIsoR3[nphoton] = (*_pho_ecalClusterIsoR3)[maxPhoIndex];
-        pho_ecalClusterIsoR4[nphoton] = (*_pho_ecalClusterIsoR4)[maxPhoIndex];
-        pho_ecalClusterIsoR5[nphoton] = (*_pho_ecalClusterIsoR5)[maxPhoIndex];
-        pho_hcalRechitIsoR1[nphoton] = (*_pho_hcalRechitIsoR1)[maxPhoIndex];
-        pho_hcalRechitIsoR2[nphoton] = (*_pho_hcalRechitIsoR2)[maxPhoIndex];
-        pho_hcalRechitIsoR3[nphoton] = (*_pho_hcalRechitIsoR3)[maxPhoIndex];
-        pho_hcalRechitIsoR4[nphoton] = (*_pho_hcalRechitIsoR4)[maxPhoIndex];
-        pho_hcalRechitIsoR5[nphoton] = (*_pho_hcalRechitIsoR5)[maxPhoIndex];
-        pho_trackIsoR1PtCut20[nphoton] = (*_pho_trackIsoR1PtCut20)[maxPhoIndex];
-        pho_trackIsoR2PtCut20[nphoton] = (*_pho_trackIsoR2PtCut20)[maxPhoIndex];
-        pho_trackIsoR3PtCut20[nphoton] = (*_pho_trackIsoR3PtCut20)[maxPhoIndex];
-        pho_trackIsoR4PtCut20[nphoton] = (*_pho_trackIsoR4PtCut20)[maxPhoIndex];
-        pho_trackIsoR5PtCut20[nphoton] = (*_pho_trackIsoR5PtCut20)[maxPhoIndex];
-        pho_swissCrx[nphoton] = (*_pho_swissCrx)[maxPhoIndex];
-        pho_seedTime[nphoton] = (*_pho_seedTime)[maxPhoIndex];
-        pfcIso1[nphoton] = (*_pfcIso1)[maxPhoIndex];
-        pfcIso2[nphoton] = (*_pfcIso2)[maxPhoIndex];
-        pfcIso3[nphoton] = (*_pfcIso3)[maxPhoIndex];
-        pfcIso4[nphoton] = (*_pfcIso4)[maxPhoIndex];
-        pfcIso5[nphoton] = (*_pfcIso5)[maxPhoIndex];
-        pfpIso1[nphoton] = (*_pfpIso1)[maxPhoIndex];
-        pfpIso2[nphoton] = (*_pfpIso2)[maxPhoIndex];
-        pfpIso3[nphoton] = (*_pfpIso3)[maxPhoIndex];
-        pfpIso4[nphoton] = (*_pfpIso4)[maxPhoIndex];
-        pfpIso5[nphoton] = (*_pfpIso5)[maxPhoIndex];
-        pfnIso1[nphoton] = (*_pfnIso1)[maxPhoIndex];
-        pfnIso2[nphoton] = (*_pfnIso2)[maxPhoIndex];
-        pfnIso3[nphoton] = (*_pfnIso3)[maxPhoIndex];
-        pfnIso4[nphoton] = (*_pfnIso4)[maxPhoIndex];
-        pfnIso5[nphoton] = (*_pfnIso5)[maxPhoIndex];
+        phoE3x3[0] = _phoE3x3->at(maxPhoIndex);
+        phoE1x5[0] = _phoE1x5->at(maxPhoIndex);
+        phoE2x5[0] = _phoE2x5->at(maxPhoIndex);
+        phoE5x5[0] = _phoE5x5->at(maxPhoIndex);
+        phoSigmaIEtaIEta_2012[0] = _phoSigmaIEtaIEta_2012->at(maxPhoIndex);
+        if(failedNoiseCut)   phoNoise[0] = 0;
+        else                 phoNoise[0] = 1;
+        if(ismc)             pho_genMatchedIndex[0] = _pho_genMatchedIndex->at(maxPhoIndex);
+        phoE[0] = (*_phoE)[maxPhoIndex];
+        phoEt[0] = (*_phoEt)[maxPhoIndex];
+        phoEta[0] = (*_phoEta)[maxPhoIndex];
+        phoPhi[0] = (*_phoPhi)[maxPhoIndex];
+        phoSCE[0] = (*_phoSCE)[maxPhoIndex];
+        phoSCRawE[0] = (*_phoSCRawE)[maxPhoIndex];
+        phoESEn[0] = (*_phoESEn)[maxPhoIndex];
+        phoSCEta[0] = (*_phoSCEta)[maxPhoIndex];
+        phoSCPhi[0] = (*_phoSCPhi)[maxPhoIndex];
+        phoSCEtaWidth[0] = (*_phoSCEtaWidth)[maxPhoIndex];
+        phoSCPhiWidth[0] = (*_phoSCPhiWidth)[maxPhoIndex];
+        phoSCBrem[0] = (*_phoSCBrem)[maxPhoIndex];
+        phohasPixelSeed[0] = (*_phohasPixelSeed)[maxPhoIndex];
+        phoR9[0] = (*_phoR9)[maxPhoIndex];
+        phoHoverE[0] = (*_phoHoverE)[maxPhoIndex];
+        phoSigmaIEtaIEta[0] = (*_phoSigmaIEtaIEta)[maxPhoIndex];
+        pho_ecalClusterIsoR2[0] = (*_pho_ecalClusterIsoR2)[maxPhoIndex];
+        pho_ecalClusterIsoR3[0] = (*_pho_ecalClusterIsoR3)[maxPhoIndex];
+        pho_ecalClusterIsoR4[0] = (*_pho_ecalClusterIsoR4)[maxPhoIndex];
+        pho_ecalClusterIsoR5[0] = (*_pho_ecalClusterIsoR5)[maxPhoIndex];
+        pho_hcalRechitIsoR1[0] = (*_pho_hcalRechitIsoR1)[maxPhoIndex];
+        pho_hcalRechitIsoR2[0] = (*_pho_hcalRechitIsoR2)[maxPhoIndex];
+        pho_hcalRechitIsoR3[0] = (*_pho_hcalRechitIsoR3)[maxPhoIndex];
+        pho_hcalRechitIsoR4[0] = (*_pho_hcalRechitIsoR4)[maxPhoIndex];
+        pho_hcalRechitIsoR5[0] = (*_pho_hcalRechitIsoR5)[maxPhoIndex];
+        pho_trackIsoR1PtCut20[0] = (*_pho_trackIsoR1PtCut20)[maxPhoIndex];
+        pho_trackIsoR2PtCut20[0] = (*_pho_trackIsoR2PtCut20)[maxPhoIndex];
+        pho_trackIsoR3PtCut20[0] = (*_pho_trackIsoR3PtCut20)[maxPhoIndex];
+        pho_trackIsoR4PtCut20[0] = (*_pho_trackIsoR4PtCut20)[maxPhoIndex];
+        pho_trackIsoR5PtCut20[0] = (*_pho_trackIsoR5PtCut20)[maxPhoIndex];
+        pho_swissCrx[0] = (*_pho_swissCrx)[maxPhoIndex];
+        pho_seedTime[0] = (*_pho_seedTime)[maxPhoIndex];
+        pfcIso1[0] = (*_pfcIso1)[maxPhoIndex];
+        pfcIso2[0] = (*_pfcIso2)[maxPhoIndex];
+        pfcIso3[0] = (*_pfcIso3)[maxPhoIndex];
+        pfcIso4[0] = (*_pfcIso4)[maxPhoIndex];
+        pfcIso5[0] = (*_pfcIso5)[maxPhoIndex];
+        pfpIso1[0] = (*_pfpIso1)[maxPhoIndex];
+        pfpIso2[0] = (*_pfpIso2)[maxPhoIndex];
+        pfpIso3[0] = (*_pfpIso3)[maxPhoIndex];
+        pfpIso4[0] = (*_pfpIso4)[maxPhoIndex];
+        pfpIso5[0] = (*_pfpIso5)[maxPhoIndex];
+        pfnIso1[0] = (*_pfnIso1)[maxPhoIndex];
+        pfnIso2[0] = (*_pfnIso2)[maxPhoIndex];
+        pfnIso3[0] = (*_pfnIso3)[maxPhoIndex];
+        pfnIso4[0] = (*_pfnIso4)[maxPhoIndex];
+        pfnIso5[0] = (*_pfnIso5)[maxPhoIndex];
 
-        phoCorr[nphoton] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
-
-        nphoton++;
+        phoCorr[0] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
+        nphoton = 1;
       }
     }
     nPho = nphoton;
     // cout<<"end photon loop "<<nphoton<<endl;
     if(nphoton==0) continue;
+
+    injetTree->GetEntry(j);
+    injetTreeFORTRKCORR->GetEntry(j);
+    // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
+    // cout<<"event: "<<j<<endl;
+    njet = 0;
+
+    float maxJetPt = -999;
+    for(int k = 0; k<nref_corr; k++)
+    {
+      if(TMath::Abs(jteta_corr[k])>2) continue;
+      if(jtpt_corr[k]>maxJetPt) maxJetPt=jtpt_corr[k];
+    }
+
+    for(int ij=0; ij<nref; ij++) {
+      if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
+      {
+        //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
+        //        cout<<jetpt[njet]<<endl;
+       	jetpt[njet] = jtpt[ij];
+        jeteta[njet] = jteta[ij];
+        jetphi[njet] = jtphi[ij];
+       	gjetpt[njet] = refpt[ij];
+        gjeteta[njet] = refeta[ij];
+        gjetphi[njet] = refphi[ij];
+        jetID[njet] = goodJet(ij);
+        subid[njet] = _subid[ij];
+        chargedSum[njet] = _chargedSum[ij];
+        neutralSum[njet] = _neutralSum[ij];
+        eSum[njet] = _eSum[ij];
+        njet++;
+      }
+    } //end of jet loop
+    if(njet==0) continue;
+
+    // if(false && !minbias.empty()) //mix things up
+    // cout<<"start mixing: "<<vz<<" "<<hiBin<<" "<<hiEvtPlanes[8]<<" "<<njet<<endl;
+    if(!minbias.empty()) //mix things up
+    {
+      int minbiasend = minbiasstart;
+      nmix = 0;
+      bool wraparound = false;
+      nlooped = 0;
+      int ntracks_mix = 0;
+      for(int iminbias = minbiasstart ; iminbias <= (int)vmix_index.size() ; ++ iminbias )
+      {
+        if(iminbias == (int)vmix_index.size()) {
+          wraparound = true;
+          iminbias = 0;
+        }
+        if(wraparound && iminbias == minbiasstart) break; //came back to start, done mixing
+        nlooped++;
+        // skimTree_mix->GetEntry(iminbias);
+        // evttree_mix->GetEntry(iminbias);
+
+        if(abs(hiBin - vmix_hiBin[iminbias])>5) continue;
+        if(fabs(vz - vmix_vz[iminbias])>5) continue;
+        float dphi_evplane = fabs(hiEvtPlanes[8] - vmix_hiEvtPlanes[iminbias]);
+        if(dphi_evplane > TMath::Pi()/2.0) dphi_evplane = TMath::Pi()-dphi_evplane;
+        if(dphi_evplane > TMath::Pi()/16.0) continue;
+        // now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
+
+        // skimTree_mix->GetEntry(j);
+        if (!is_pp) // HI event selection
+        {
+          if ((vmix_pcollisionEventSelection[iminbias] < 1))  continue;
+          if(!ismc)
+          {
+            if (vmix_HBHENoiseFilterResultRun2Loose[iminbias] < 1) continue; // re-use config value...
+          }
+        }
+        else // pp event selection
+        {
+          if (vmix_pPAprimaryVertexFilter[iminbias] < 1 || vmix_pBeamScrapingFilter[iminbias] < 1)  continue;
+        }
+        // cout<<"getentry: "<<nmix<<" of "<<nlooped<<endl;
+        injetTreeFORTRKCORR_mix->GetEntry(vmix_index[iminbias]);
+
+        float maxJetPt_mix = -999;
+        for(int k = 0; k<nref_corr_mix; k++)
+        {
+          if(TMath::Abs(jteta_corr_mix[k])>2) continue;
+          if(jtpt_corr_mix[k]>maxJetPt_mix) maxJetPt_mix=jtpt_corr_mix[k];
+        }
+
+        tracktree_mix->GetEntry(vmix_index[iminbias]);
+        // bool atleastonetrack = false;
+        for (int ijet = 0; ijet < njet; ijet++) {
+          // cout<<jetpt[ijet]<<" "<<jeteta[ijet]<<" "<< acos(cos(jetphi[ijet] - phoPhi[0]))<<endl;
+          if( jetpt[ijet]<40 ) continue; //jet pt Cut
+          if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
+          if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
+          if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+
+          // cout<<"foundajet: "<<jetpt[ijet]<<endl;
+          for(int itrkmix = 0 ; itrkmix < nTrk_mix_ ; ++itrkmix)
+          {
+            if(trkPt_mix_[itrkmix]<1 || trkPt_mix_[itrkmix]>300 || fabs(trkEta_mix_[itrkmix])>2.4 ) continue;
+
+            float dphi = acos( cos(jetphi[ijet] - trkPhi_mix_[itrkmix]));
+            float deta = fabs( jeteta[ijet] - trkEta_mix_[itrkmix ]);
+            float dr = sqrt((dphi*dphi)+(deta*deta));
+            if(dr>0.3) continue; // only save mix tracks around jet cone
+
+            if(highPurity_mix_[itrkmix]!=1) continue;
+            if(trkPtError_mix_[itrkmix]/trkPt_mix_[itrkmix]>0.1 || TMath::Abs(trkDz1_mix_[itrkmix]/trkDzError1_mix_[itrkmix])>3 || TMath::Abs(trkDxy1_mix_[itrkmix]/trkDxyError1_mix_[itrkmix])>3) continue;
+            if(trkChi2_mix_[itrkmix]/(float)trkNdof_mix_[itrkmix]/(float)trkNlayer_mix_[itrkmix]>0.15) continue;
+            if(trkNHit_mix_[itrkmix]<11 && trkPt_mix_[itrkmix]>0.7) continue;
+            if((maxJetPt_mix>50 && trkPt_mix_[itrkmix]>maxJetPt_mix) || (maxJetPt_mix<50 && trkPt_mix_[itrkmix]>50)) continue;
+
+            float Et = (pfHcal_mix_[itrkmix]+pfEcal_mix_[itrkmix])/TMath::CosH(trkEta_mix_[itrkmix]);
+            if(!(trkPt_mix_[itrkmix]<20 || (Et>0.5*trkPt_mix_[itrkmix]))) continue;
+
+
+            float trkweight_mix = 0;
+            if(is_pp) trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,0);
+            else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,vmix_hiBin[iminbias]);
+            trkPt_mix[ntracks_mix] = trkPt_mix_[itrkmix];   //[nTrk_mix]
+            trkEta_mix[ntracks_mix] = trkEta_mix_[itrkmix];   //[nTrk_mix]
+            trkPhi_mix[ntracks_mix] = trkPhi_mix_[itrkmix];   //[nTrk_mix]
+            trkWeight_mix[ntracks_mix] = trkweight_mix;
+            ntracks_mix++;
+            // atleastonetrack = true;
+          }
+        }
+        evttree_mix->GetEntry(vmix_index[iminbias]);
+        dvz_mix[nmix] = fabs(vz - vz_mix);
+        dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
+        dhiEvtPlanes_mix[nmix] = dphi_evplane;
+        // if(atleastonetrack)
+        nmix++;
+        // if(atleastonetrack) nmix++;
+        minbiasend = iminbias;
+        if(nmix >= 10) break; // done mixing
+      }
+      minbiasstart = minbiasend;
+      nTrk_mix = ntracks_mix;
+    }
+    cout<<nTrk_mix<<endl;
+    if(nTrk_mix==0)
+    {
+      // cout<<"here"<<endl;
+      // break;
+    }
     //cout<<"after: "<<jetpt[0]<<endl;
 
     bool flagMu = 0; bool flagEle = 0;
@@ -925,10 +1186,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(trkPtError_[itrk]/trkPt_[itrk]>0.1 || TMath::Abs(trkDz1_[itrk]/trkDzError1_[itrk])>3 || TMath::Abs(trkDxy1_[itrk]/trkDxyError1_[itrk])>3) continue;
       if(trkChi2_[itrk]/(float)trkNdof_[itrk]/(float)trkNlayer_[itrk]>0.15) continue;
       if(trkNHit_[itrk]<11 && trkPt_[itrk]>0.7) continue;
-      if((maxJetPt>50 && trkPt[itrk]>maxJetPt) || (maxJetPt<50 && trkPt[itrk]>50)) continue;
+      if((maxJetPt>50 && trkPt_[itrk]>maxJetPt) || (maxJetPt<50 && trkPt_[itrk]>50)) continue;
 
-      float Et = (pfHcal[itrk]+pfEcal[itrk])/TMath::CosH(trkEta[itrk]);
-      if(!(trkPt[itrk]<20 || (Et>0.5*trkPt[itrk]))) continue;
+      float Et = (pfHcal_[itrk]+pfEcal_[itrk])/TMath::CosH(trkEta_[itrk]);
+      if(!(trkPt_[itrk]<20 || (Et>0.5*trkPt_[itrk]))) continue;
       // cout<<"itrk "<<itrk<<endl;
 
       float trkweight = 0;
@@ -990,7 +1251,8 @@ int main(int argc, char *argv[])
   if(argc==4)  gammajetSkim(argv[1], argv[2], argv[3]); //add jet name
   if(argc==5)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4])); //add is_pp
   if(argc==6)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5])); //add custom mcweight
-  if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),std::atoi(argv[6])); //add startindex
-  if(argc==8)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),std::atoi(argv[6]),std::atoi(argv[7])); //add endindex
+  if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6]); //add minbias mix
+  if(argc==8)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7])); //add startindex
+  if(argc==9)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7]),std::atoi(argv[8])); //add endindex
   return 0;
 }
