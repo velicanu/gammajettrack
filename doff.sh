@@ -20,10 +20,10 @@ fi
 # pp data
 ./ffgamma.exe ../g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata -1 200 $1 $2 &
 # pbpb data
-./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root pbpbdata 0 20 $1 $2  &
-./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root pbpbdata 20 60 $1 $2  &
-./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root pbpbdata 60 100 $1 $2  &
-./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root pbpbdata 100 200 $1 $2  &
+./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root.mix pbpbdata 0 20 $1 $2  &
+./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root.mix pbpbdata 20 60 $1 $2  &
+./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root.mix pbpbdata 60 100 $1 $2  &
+./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root.mix pbpbdata 100 200 $1 $2  &
 # ./ffgamma.exe ../g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root pbpbdata 140 200 $1 $2  &
 wait
 hadd -f all_${1}_${2}.root p*data_p*data__*_*.root p*mc_p*mc__*_*.root
