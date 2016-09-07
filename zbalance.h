@@ -40,20 +40,20 @@ class ztree {
   Int_t           lumis;
   Int_t           hiBin;
   Float_t         vz;
-  Int_t           Ztype;
-  Float_t         Zmass;
+  // Int_t           Ztype;
+  // Float_t         Zmass;
   Float_t         weight;
-  Float_t         Zpt;
-  Float_t         Zeta;
-  Float_t         Zphi;
-  Float_t         Zrapidity;
-  Float_t         Zlepton1Pt;
-  Float_t         Zlepton2Pt;
-  Float_t         Zlepton1Eta;
-  Float_t         Zlepton2Eta;
-  Float_t         Zlepton1Phi;
-  Float_t         Zlepton2Phi;
-  Int_t           Zcharge;
+  // Float_t         Zpt;
+  // Float_t         Zeta;
+  // Float_t         Zphi;
+  // Float_t         Zrapidity;
+  // Float_t         Zlepton1Pt;
+  // Float_t         Zlepton2Pt;
+  // Float_t         Zlepton1Eta;
+  // Float_t         Zlepton2Eta;
+  // Float_t         Zlepton1Phi;
+  // Float_t         Zlepton2Phi;
+  // Int_t           Zcharge;
 
   Int_t           mult;
   Float_t         pt[10000];   //[mult]
@@ -63,6 +63,13 @@ class ztree {
   Int_t           chg[10000];   //[mult]
   Int_t           matchingID[10000];   //[mult]
   Int_t           sube[10000];   //[mult]
+
+  Int_t           mult_mix;
+  Float_t         pt_mix[10000];   //[mult]
+  Float_t         eta_mix[10000];   //[mult]
+  Float_t         phi_mix[10000];   //[mult]
+  Int_t           pdg_mix[10000];   //[mult]
+  Int_t           chg_mix[10000];   //[mult]
 
   Int_t           nMC;
   Int_t           mcPID[392];   //[nMC]
@@ -84,6 +91,25 @@ class ztree {
   Float_t         gjetpt[40];   //[njet]
   Float_t         gjeteta[40];   //[njet]
   Float_t         gjetphi[40];   //[njet]
+
+  Int_t           njet_mix;
+  Float_t         rawpt_mix[41];   //[njet_mix]
+  Float_t         jetpt_mix[41];   //[njet_mix]
+  Float_t         jeteta_mix[41];   //[njet_mix]
+  Float_t         jetphi_mix[41];   //[njet_mix]
+  Int_t           nmixEv_mix[41];   //[njet_mix]
+  Int_t           jetID_mix[41];   //[njet_mix]
+  Float_t         neutralSum_mix[41];   //[njet_mix]
+  Float_t         chargedSum_mix[41];   //[njet_mix]
+  Int_t           chargedN_mix[41];   //[njet_mix]
+  Int_t           photonN_mix[41];   //[njet_mix]
+  Int_t           neutralN_mix[41];   //[njet_mix]
+  Int_t           eN_mix[41];   //[njet_mix]
+  Int_t           muN_mix[41];   //[njet_mix]
+  Float_t         chargedMax_mix[41];   //[njet_mix]
+  Float_t         photonSum_mix[41];   //[njet_mix]
+  Float_t         eSum_mix[41];   //[njet_mix]
+
   Int_t           nTrk;
   Float_t         trkPt[5000];   //[nTrk]
   Float_t         trkPtError[5000];   //[nTrk]
@@ -180,20 +206,20 @@ class ztree {
   TBranch        *b_lumis;   //!
   TBranch        *b_hiBin;   //!
   TBranch        *b_vz;   //!
-  TBranch        *b_Ztype;   //!
-  TBranch        *b_Zmass;   //!
+  // TBranch        *b_Ztype;   //!
+  // TBranch        *b_Zmass;   //!
   TBranch        *b_weight;   //!
-  TBranch        *b_Zpt;   //!
-  TBranch        *b_Zeta;   //!
-  TBranch        *b_Zphi;   //!
-  TBranch        *b_Zrapidity;   //!
-  TBranch        *b_Zlepton1Pt;   //!
-  TBranch        *b_Zlepton2Pt;   //!
-  TBranch        *b_Zlepton1Eta;   //!
-  TBranch        *b_Zlepton2Eta;   //!
-  TBranch        *b_Zlepton1Phi;   //!
-  TBranch        *b_Zlepton2Phi;   //!
-  TBranch        *b_Zcharge;   //!
+  // TBranch        *b_Zpt;   //!
+  // TBranch        *b_Zeta;   //!
+  // TBranch        *b_Zphi;   //!
+  // TBranch        *b_Zrapidity;   //!
+  // TBranch        *b_Zlepton1Pt;   //!
+  // TBranch        *b_Zlepton2Pt;   //!
+  // TBranch        *b_Zlepton1Eta;   //!
+  // TBranch        *b_Zlepton2Eta;   //!
+  // TBranch        *b_Zlepton1Phi;   //!
+  // TBranch        *b_Zlepton2Phi;   //!
+  // TBranch        *b_Zcharge;   //!
   TBranch        *b_mult;   //!
   TBranch        *b_pt;   //!
   TBranch        *b_eta;   //!
@@ -202,6 +228,12 @@ class ztree {
   TBranch        *b_chg;   //!
   TBranch        *b_matchingID;   //!
   TBranch        *b_sube;   //!
+  TBranch        *b_mult_mix;   //!
+  TBranch        *b_pt_mix;   //!
+  TBranch        *b_eta_mix;   //!
+  TBranch        *b_phi_mix;   //!
+  TBranch        *b_pdg_mix;   //!
+  TBranch        *b_chg_mix;   //!
 
   TBranch        *b_njet;   //!
   TBranch        *b_jetpt;   //!
@@ -211,6 +243,25 @@ class ztree {
   TBranch        *b_gjeteta;   //!
   TBranch        *b_gjetphi;   //!
   TBranch        *b_jetID;   //!
+
+  TBranch        *b_njet_mix;   //!
+  TBranch        *b_rawpt_mix;   //!
+  TBranch        *b_jetpt_mix;   //!
+  TBranch        *b_jeteta_mix;   //!
+  TBranch        *b_jetphi_mix;   //!
+  TBranch        *b_nmixEv_mix;   //!
+  TBranch        *b_jetID_mix;   //!
+  TBranch        *b_neutralSum_mix;   //!
+  TBranch        *b_chargedSum_mix;   //!
+  TBranch        *b_chargedN_mix;   //!
+  TBranch        *b_photonN_mix;   //!
+  TBranch        *b_neutralN_mix;   //!
+  TBranch        *b_eN_mix;   //!
+  TBranch        *b_muN_mix;   //!
+  TBranch        *b_chargedMax_mix;   //!
+  TBranch        *b_photonSum_mix;   //!
+  TBranch        *b_eSum_mix;   //!
+
   TBranch        *b_nTrk;   //!
   TBranch        *b_trkPt;   //!
   TBranch        *b_trkPtError;   //!
@@ -408,20 +459,20 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("lumis", &lumis, &b_lumis);
   fChain->SetBranchAddress("hiBin", &hiBin, &b_hiBin);
   fChain->SetBranchAddress("vz", &vz, &b_vz);
-  fChain->SetBranchAddress("Ztype", &Ztype, &b_Ztype);
-  fChain->SetBranchAddress("Zmass", &Zmass, &b_Zmass);
+  // fChain->SetBranchAddress("Ztype", &Ztype, &b_Ztype);
+  // fChain->SetBranchAddress("Zmass", &Zmass, &b_Zmass);
   fChain->SetBranchAddress("weight", &weight, &b_weight);
-  fChain->SetBranchAddress("Zpt", &Zpt, &b_Zpt);
-  fChain->SetBranchAddress("Zeta", &Zeta, &b_Zeta);
-  fChain->SetBranchAddress("Zphi", &Zphi, &b_Zphi);
-  fChain->SetBranchAddress("Zrapidity", &Zrapidity, &b_Zrapidity);
-  fChain->SetBranchAddress("Zlepton1Pt", &Zlepton1Pt, &b_Zlepton1Pt);
-  fChain->SetBranchAddress("Zlepton2Pt", &Zlepton2Pt, &b_Zlepton2Pt);
-  fChain->SetBranchAddress("Zlepton1Eta", &Zlepton1Eta, &b_Zlepton1Eta);
-  fChain->SetBranchAddress("Zlepton2Eta", &Zlepton2Eta, &b_Zlepton2Eta);
-  fChain->SetBranchAddress("Zlepton1Phi", &Zlepton1Phi, &b_Zlepton1Phi);
-  fChain->SetBranchAddress("Zlepton2Phi", &Zlepton2Phi, &b_Zlepton2Phi);
-  fChain->SetBranchAddress("Zcharge", &Zcharge, &b_Zcharge);
+  // fChain->SetBranchAddress("Zpt", &Zpt, &b_Zpt);
+  // fChain->SetBranchAddress("Zeta", &Zeta, &b_Zeta);
+  // fChain->SetBranchAddress("Zphi", &Zphi, &b_Zphi);
+  // fChain->SetBranchAddress("Zrapidity", &Zrapidity, &b_Zrapidity);
+  // fChain->SetBranchAddress("Zlepton1Pt", &Zlepton1Pt, &b_Zlepton1Pt);
+  // fChain->SetBranchAddress("Zlepton2Pt", &Zlepton2Pt, &b_Zlepton2Pt);
+  // fChain->SetBranchAddress("Zlepton1Eta", &Zlepton1Eta, &b_Zlepton1Eta);
+  // fChain->SetBranchAddress("Zlepton2Eta", &Zlepton2Eta, &b_Zlepton2Eta);
+  // fChain->SetBranchAddress("Zlepton1Phi", &Zlepton1Phi, &b_Zlepton1Phi);
+  // fChain->SetBranchAddress("Zlepton2Phi", &Zlepton2Phi, &b_Zlepton2Phi);
+  // fChain->SetBranchAddress("Zcharge", &Zcharge, &b_Zcharge);
   fChain->SetBranchAddress("mult", &mult, &b_mult);
   fChain->SetBranchAddress("pt", pt, &b_pt);
   fChain->SetBranchAddress("eta", eta, &b_eta);
@@ -430,6 +481,12 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("chg", chg, &b_chg);
   fChain->SetBranchAddress("matchingID", matchingID, &b_matchingID);
   fChain->SetBranchAddress("sube", sube, &b_sube);
+  fChain->SetBranchAddress("mult_mix", &mult_mix, &b_mult_mix);
+  fChain->SetBranchAddress("pt_mix", pt_mix, &b_pt_mix);
+  fChain->SetBranchAddress("eta_mix", eta_mix, &b_eta_mix);
+  fChain->SetBranchAddress("phi_mix", phi_mix, &b_phi_mix);
+  fChain->SetBranchAddress("pdg_mix", pdg_mix, &b_pdg_mix);
+  fChain->SetBranchAddress("chg_mix", chg_mix, &b_chg_mix);
 
   fChain->SetBranchAddress("njet", &njet, &b_njet);
   fChain->SetBranchAddress("jetpt", jetpt, &b_jetpt);
@@ -439,6 +496,24 @@ void ztree::Init(TTree *tree)
   fChain->SetBranchAddress("gjetpt", gjetpt, &b_gjetpt);
   fChain->SetBranchAddress("gjeteta", gjeteta, &b_gjeteta);
   fChain->SetBranchAddress("gjetphi", gjetphi, &b_gjetphi);
+
+  fChain->SetBranchAddress("njet_mix", &njet_mix, &b_njet_mix);
+  fChain->SetBranchAddress("rawpt_mix", rawpt_mix, &b_rawpt_mix);
+  fChain->SetBranchAddress("jetpt_mix", jetpt_mix, &b_jetpt_mix);
+  fChain->SetBranchAddress("jeteta_mix", jeteta_mix, &b_jeteta_mix);
+  fChain->SetBranchAddress("jetphi_mix", jetphi_mix, &b_jetphi_mix);
+  fChain->SetBranchAddress("nmixEv_mix", nmixEv_mix, &b_nmixEv_mix);
+  fChain->SetBranchAddress("jetID_mix", jetID_mix, &b_jetID_mix);
+  fChain->SetBranchAddress("neutralSum_mix", neutralSum_mix, &b_neutralSum_mix);
+  fChain->SetBranchAddress("chargedSum_mix", chargedSum_mix, &b_chargedSum_mix);
+  fChain->SetBranchAddress("chargedN_mix", chargedN_mix, &b_chargedN_mix);
+  fChain->SetBranchAddress("photonN_mix", photonN_mix, &b_photonN_mix);
+  fChain->SetBranchAddress("neutralN_mix", neutralN_mix, &b_neutralN_mix);
+  fChain->SetBranchAddress("eN_mix", eN_mix, &b_eN_mix);
+  fChain->SetBranchAddress("muN_mix", muN_mix, &b_muN_mix);
+  fChain->SetBranchAddress("chargedMax_mix", chargedMax_mix, &b_chargedMax_mix);
+  fChain->SetBranchAddress("photonSum_mix", photonSum_mix, &b_photonSum_mix);
+  fChain->SetBranchAddress("eSum_mix", eSum_mix, &b_eSum_mix);
 
   fChain->SetBranchAddress("nTrk", &nTrk, &b_nTrk);
   fChain->SetBranchAddress("trkPt", trkPt, &b_trkPt);
