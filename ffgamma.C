@@ -7,64 +7,6 @@
 #include "ggTree.h"
 #include <algorithm>
 
-// const int jetptcut = 30;
-
-float ztree::jettrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( jeteta[ijet] - trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::refconetrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( jeteta[ijet] + trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genjettrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
-  float deta = fabs( gjeteta[ijet] - eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genrefconetrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
-  float deta = fabs( gjeteta[ijet] + eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genjetrecotrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( gjeteta[ijet] - trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genrefconerecotrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( gjeteta[ijet] + trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::recojetgentrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - phi[itrk]));
-  float deta = fabs( jeteta[ijet] - eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::recorefconegentrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - phi[itrk]));
-  float deta = fabs( jeteta[ijet] + eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen)
 {
   string tag = outfname;
@@ -72,9 +14,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
-
-  // TH2D * hsubept = new TH2D(Form("hsubept_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-0.5,99.5,100,0,100);
-  // TH2D * hsubept_refcone = new TH2D(Form("hsubept_refcone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-0.5,99.5,100,0,100);
 
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
@@ -94,16 +33,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * hmultinmix = new TH1D(Form("hmultinmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-50,50); // Raw FF after cuts (1.0)
 
-
-  // TH1D * hntrkincone = new TH1D(Form("hntrkincone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),101,-0.5,100.5);
-  // TH1D * hntrkinrefcone = new TH1D(Form("hntrkinrefcone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),101,-0.5,100.5);
-  int nin = 0 , nmix_in = 0;
-
-
-  // int ntottrk = 0;
-  // int ntotmix = 0;
-  // int ntotmultijet = 0;
-  // int ntotsinglejet = 0;
   Long64_t nbytes = 0, nb = 0;
   cout<<phoetmin<<" "<<phoetmax<<endl;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -191,8 +120,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
               {
 
               }
-              nin++;
-              mult_in++;
             }
             // hsubept->Fill(sube[igen],pt[igen]);
             // if(signal) {
@@ -240,7 +167,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       else if(gen.compare("reco")==0)
       {
         for (int itrk = 0; itrk < nTrk; itrk++) {
-          float dr = jettrk_dr(itrk,ijet);
+
+          float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
+          float deta = fabs( jeteta[ijet] - trkEta[itrk]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+
           // float dr = genjetrecotrk_dr(itrk,ijet);
           // float dr_refcone = genrefconerecotrk_dr(itrk,ijet);
           if(dr<0.3)
@@ -432,12 +363,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     }
 
 
-    /*
-    */
-
 
   }
-  cout<<nin<<" "<<nmix_in<<endl;
 
   fout->Write();
   fout->Close();
