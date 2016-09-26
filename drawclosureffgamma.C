@@ -1,9 +1,9 @@
 #include "makeMultiPanelCanvas.C"
 
-void drawclosureffgamma() {
+void drawclosureffgamma(int phoetmin, int phoetmax) {
   const int yaxismax = 4;
   const int yaxismax2 = 3;
-  TFile *_file0 = TFile::Open("closure.root");
+  TFile *_file0 = TFile::Open(Form("closure_%d_%d.root",phoetmin,phoetmax));
   int save = 1;
   const static int ncentbins = 5;
   float binwidth = 5.000000e-01;
@@ -73,7 +73,7 @@ void drawclosureffgamma() {
 
     // Eta cone subtracted FF pbpbmc_gen and pbpbmc
     call->cd(icent+2);
-    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,-5,yaxismax);
+    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
@@ -117,7 +117,7 @@ void drawclosureffgamma() {
     {
       // leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"#eta cone sub","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"trk p_{T}>1 GeV, R < 0.3","");
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"100>#gamma p_{T}>300 GeV","");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
     {
@@ -126,7 +126,7 @@ void drawclosureffgamma() {
     }
     else
     {
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"","");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"Pythia+Hydjet","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"","");
     }
     leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],Form("%s",cents[icent].data()),"");
@@ -137,7 +137,7 @@ void drawclosureffgamma() {
   }
   call->cd(1);
 
-  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,-5,yaxismax);
+  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0,yaxismax);
   gStyle->SetFrameLineColor(0);
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
@@ -197,7 +197,7 @@ void drawclosureffgamma() {
     {
       // leg_ff_pbpbsub2[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"#eta cone sub","");
       leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"trk p_{T}>1 GeV, R < 0.3","");
-      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"100>#gamma p_{T}>300 GeV","");
+      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
     {
@@ -206,7 +206,7 @@ void drawclosureffgamma() {
     }
     else
     {
-      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"","");
+      leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"Pythia+Hydjet","");
       leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],"","");
     }
     leg_ff_pbpbsub2[icent]->AddEntry(clone2_hgammaffxi_pbpbmc_gen_[icent],Form("%s",cents[icent].data()),"");
@@ -233,5 +233,6 @@ void drawclosureffgamma() {
   }
   ldndxi2->Draw();
 
-
+  call->SaveAs(Form("mixed_event_closure_mc_%d_%d.png",phoetmin,phoetmax));
+  callratio->SaveAs(Form("mixed_event_ratio_mc_%d_%d.png",phoetmin,phoetmax));
 }

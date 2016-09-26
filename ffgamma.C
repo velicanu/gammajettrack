@@ -7,7 +7,7 @@
 #include "ggTree.h"
 #include <algorithm>
 
-const int jetptcut = 40;
+// const int jetptcut = 30;
 
 float ztree::jettrk_dr(int itrk, int ijet)
 {
@@ -65,7 +65,7 @@ float ztree::recorefconegentrk_dr(int itrk, int ijet)
   return sqrt((dphi*dphi)+(deta*deta));
 }
 
-void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, std::string gen)
+void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen)
 {
   string tag = outfname;
   string s_alpha = gen;
@@ -167,7 +167,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrack;
             vtrack.SetPtEtaPhiM(pt[igen],eta[igen],phi[igen],0);
             float angle = vjet.Angle(vtrack.Vect());
-            float z = pt[igen]*cos(angle)/gjetpt[ijet];
+            float z = pt[igen]*cos(angle)/jetpt[ijet];
             float xi = log(1.0/z);
 
             if(sube[igen] == 0)
@@ -308,9 +308,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
       if(gen.compare("gen")==0)
       {
-        // int ntrkmixcone = 0;
-        // int ntrkcone = 0;
-        // cout<<nTrk_mix<<" "<<nTrk<<endl;
         for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
         {
           float dphi = acos( cos(jetphi_mix[ijet_mix] - trkPhi_mix[itrk_mix]));
@@ -318,32 +315,16 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float dr = sqrt((dphi*dphi)+(deta*deta));
           if(dr<0.3)
           {
-            // TLorentzVector vtrackmix;
-            // vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
-            // float angle = vjet.Angle(vtrackmix.Vect());
-            // cout<<"            "<<cos(angle)<<endl;
-            // float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
-            // float xi = log(1.0/z);
-            // cout<<"xitrk_mix "<<xi<<endl;
-
             if(signal) {
-              // hgammaffxigenmix->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
-              // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // hgammaffxi_refcone->Fill(xi);
-              // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // ntrkmixcone++;
-              // ntotmix++;
-
             }
             if(sideband) {
-              // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);
             }
           }
         }
       } else if(gen.compare("reco")==0) {
         for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
         {
+          if(nmixEv_mix[ijet_mix]!=trkFromEv_mix[itrk_mix]) continue;
           float dphi = acos( cos(jetphi_mix[ijet_mix] - trkPhi_mix[itrk_mix]));
           float deta = fabs( jeteta_mix[ijet_mix] - trkEta_mix[itrk_mix]);
           float dr = sqrt((dphi*dphi)+(deta*deta));
@@ -376,6 +357,79 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         }
       }
     }
+    else if(gen.compare("mixgen")==0)
+    {
+      for (int igenjet = 0; igenjet < njet_mix; igenjet++) {
+        if( nPho==2 ) continue;
+        if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
+        if( jetpt_mix[ijet_mix]<jetptcut ) continue; //jet pt Cut
+        if( fabs(jeteta_mix[ijet_mix]) > 1.6) continue; //jeteta_mix Cut
+        if( fabs(jeteta_mix[ijet_mix]) < 0.3) continue; //jeteta_mix Cut for reflected cone
+        if( jetID_mix[ijet_mix]==0 ) continue; //redundant in this skim (all true)
+        if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+        if(signal) {
+          hjetptjetmix->Fill(jetpt_mix[ijet_mix]/(float)nmix);
+          hnmixsignal->Fill(1,nmix);
+        }
+        if(sideband) {
+          hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix]/(float)nmix);
+          hnmixsideband->Fill(1,nmix);
+        }
+        // hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
+        TLorentzVector vjet;
+        vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
+        if(gen.compare("gen")==0)
+        {
+          for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
+          {
+            float dphi = acos( cos(jetphi_mix[ijet_mix] - trkPhi_mix[itrk_mix]));
+            float deta = fabs( jeteta_mix[ijet_mix] - trkEta_mix[itrk_mix]);
+            float dr = sqrt((dphi*dphi)+(deta*deta));
+            if(dr<0.3)
+            {
+              if(signal) {
+              }
+              if(sideband) {
+              }
+            }
+          }
+        } else if(gen.compare("reco")==0) {
+          for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
+          {
+            if(nmixEv_mix[ijet_mix]!=trkFromEv_mix[itrk_mix]) continue;
+            float dphi = acos( cos(jetphi_mix[ijet_mix] - trkPhi_mix[itrk_mix]));
+            float deta = fabs( jeteta_mix[ijet_mix] - trkEta_mix[itrk_mix]);
+            float dr = sqrt((dphi*dphi)+(deta*deta));
+            if(dr<0.3)
+            {
+              TLorentzVector vtrackmix;
+              vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
+              float angle = vjet.Angle(vtrackmix.Vect());
+              // cout<<"            "<<cos(angle)<<endl;
+              float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
+              float xi = log(1.0/z);
+              // cout<<"xitrk_mix "<<xi<<endl;
+
+              if(signal) {
+                hgammaffxijetmix->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+                // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
+                // hgammaffxi_refcone->Fill(xi);
+                // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
+                // ntrkmixcone++;
+                // ntotmix++;
+
+              }
+              if(sideband) {
+                hgammaffxijetmixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+                // hgammaffximixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+                // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
+                // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);
+              }
+            }
+          }
+        }
+      }
+    }
 
 
     /*
@@ -395,7 +449,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
 int main(int argc, char *argv[])
 {
-  if(argc != 3 && argc != 5 && argc != 6 && argc != 7 && argc != 8 )
+  if(argc != 3 && argc != 5 && argc != 6 && argc != 7 && argc != 8 && argc != 9 )
   {
     std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen]"<<std::endl;
     exit(1);
@@ -414,7 +468,10 @@ int main(int argc, char *argv[])
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]));
   }
   if (argc==8) {
-    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),argv[7]);
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]));
+  }
+  if (argc==9) {
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8]);
   }
 
   return 0;

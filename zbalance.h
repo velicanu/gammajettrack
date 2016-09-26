@@ -33,6 +33,7 @@ class ztree {
    Float_t         trkPhi_mix[1000];   //[nTrk_mix]
    Float_t         trkEta_mix[1000];   //[nTrk_mix]
    Float_t         trkWeight_mix[1000];   //[nTrk_mix]
+   Float_t         trkFromEv_mix[1000];   //[nTrk_mix]
 
    Float_t         trkWeight[5000];   //[nTrk]
   Int_t           run;
@@ -200,6 +201,7 @@ class ztree {
    TBranch        *b_trkPhi_mix;   //!
    TBranch        *b_trkEta_mix;   //!
    TBranch        *b_trkWeight_mix;   //!
+   TBranch        *b_trkFromEv_mix;   //!
   TBranch        *b_trkWeight;   //!
   TBranch        *b_run;   //!
   TBranch        *b_event;   //!
@@ -363,7 +365,7 @@ class ztree {
   virtual Long64_t LoadTree(Long64_t entry);
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
-  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, std::string gen="");
+  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut=30, std::string gen="");
   virtual float    jettrk_dr(int itrk, int ijet);
   virtual float    refconetrk_dr(int itrk, int ijet);
   virtual float    genjettrk_dr(int itrk, int ijet);
@@ -453,6 +455,7 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("trkPhi_mix", trkPhi_mix, &b_trkPhi_mix);
    fChain->SetBranchAddress("trkEta_mix", trkEta_mix, &b_trkEta_mix);
    fChain->SetBranchAddress("trkWeight_mix", trkWeight_mix, &b_trkWeight_mix);
+   fChain->SetBranchAddress("trkFromEv_mix", trkFromEv_mix, &b_trkFromEv_mix);
   fChain->SetBranchAddress("trkWeight", trkWeight, &b_trkWeight);
   fChain->SetBranchAddress("run", &run, &b_run);
   fChain->SetBranchAddress("event", &event, &b_event);

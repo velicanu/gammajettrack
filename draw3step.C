@@ -17,8 +17,8 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
   return 1; //no purity applied
 }
 
-void draw3step(int phoetmin, int phoetmax) {
-  TFile *_file0 = TFile::Open(Form("closure_%d_%d.root",phoetmin,phoetmax));
+void draw3step(int phoetmin, int phoetmax, int jetptmin = 30) {
+  TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   const static int ncentbins = 5;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -131,7 +131,7 @@ void draw3step(int phoetmin, int phoetmax) {
     else if(icent==2)
     {
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"0.3 < |#eta^{jet}| < 1.6","");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"p_{T}^{jet} > 30 GeV","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)
     {
@@ -162,5 +162,5 @@ void draw3step(int phoetmin, int phoetmax) {
     laxis[ilatex]->Draw();
   }
   ldndxi->Draw();
-  call->SaveAs("rawminusjetueff_signalsideband_jetpt30_pbpbmc_reco.png");
+  call->SaveAs(Form("rawminusjetueff_%d_%d_signalsideband_jetpt%d_pbpbmc_reco.png",phoetmin,phoetmax,jetptmin));
 }

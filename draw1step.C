@@ -1,7 +1,7 @@
 #include "makeMultiPanelCanvas.C"
 
-void drawsteps(int phoetmin, int phoetmax) {
-  TFile *_file0 = TFile::Open(Form("closure_%d_%d.root",phoetmin,phoetmax));
+void draw1step(int phoetmin, int phoetmax, int jetptmin = 30) {
+  TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   const static int ncentbins = 5;
   const int yaxismax = 8000;
   float binwidth = 5.000000e-01;
@@ -56,7 +56,7 @@ void drawsteps(int phoetmin, int phoetmax) {
     else if(icent==2)
     {
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"0.3 < |#eta^{jet}| < 1.6","");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"p_{T}^{jet} > 30 GeV","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)
     {
@@ -80,7 +80,6 @@ void drawsteps(int phoetmin, int phoetmax) {
 
   int labelspace = yaxismax / 4;
   const int nlabels = yaxismax/labelspace;
-cout<<nlabels<<endl;
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     laxis[ilatex] = new TLatex(2.,ilatex*labelspace-0.1,Form("%d",ilatex*labelspace));
@@ -88,5 +87,5 @@ cout<<nlabels<<endl;
     laxis[ilatex]->Draw();
   }
   ldndxi->Draw();
-  // call->SaveAs("rawff_jetmixff_jetpt30_pbpbmc_reco.png");
+  call->SaveAs(Form("rawff_%d_%d_jetmixff_jetpt%d_pbpbmc_reco.png",phoetmin,phoetmax,jetptmin));
 }
