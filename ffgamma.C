@@ -357,9 +357,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         }
       }
     }
-    else if(gen.compare("mixgen")==0)
+    if(gen.compare("mixgen")==0)
     {
-      for (int igenjet = 0; igenjet < njet_mix; igenjet++) {
+      for (int ijet_mix = 0; ijet_mix < njet_mix; ijet_mix++) {
         if( nPho==2 ) continue;
         if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
         if( jetpt_mix[ijet_mix]<jetptcut ) continue; //jet pt Cut
