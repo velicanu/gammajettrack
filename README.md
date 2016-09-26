@@ -5,10 +5,17 @@ Code base for gamma-jet-track analysis. Primary component is gammajetSkim.C whic
 ## compiling
 ```bash
 g++ gammajetSkim.C $(root-config --cflags --libs)  -Werror -Wall -O2 -o gammajetSkim.exe
+g++ ffgamma.C $(root-config --cflags --libs)  -Werror -Wall -O2 -o ffgamma.exe
 ```
-## running
+## running skim
 The skim code can be run with several parameters listed below, and as an example.
 ```bash
 # /gammajetSkim.exe <inputfile> <outfile> [jetname] [is_pp] [mcweight] [startindex] [endindex] /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root 147000 147010
 /gammajetSkim.exe /mnt/hadoop/cms/store/user/velicanu/Merged/Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1/0.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.test akPu3PFJetAnalyzer 0 0.0434138 /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root 147000 147010
+```
+
+## running ff analysis
+```bash
+# ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen]
+./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.mix pbpbmc 140 200  100 300 40 reco
 ```
