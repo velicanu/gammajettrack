@@ -16,6 +16,6 @@ The skim code can be run with several parameters listed below, and as an example
 
 ## running ff analysis
 ```bash
-# ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen]
+# ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [jetptmin] [gen]
 ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.mix pbpbmc 140 200  100 300 40 reco
 ```
