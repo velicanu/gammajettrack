@@ -4,6 +4,8 @@
 #include "SkimTree.h"
 #include "L2L3ResidualWFits.h"
 #include "getTrkCorr.h"
+#include <stdlib.h>     /* srand, rand */
+#include <functional>   /* hash */
 
 //! cuts defined here , {veto, loose, medium, tight}
 float cuts_barrel_pbpb_eleSigmaIEtaIEta_2012[4] = {0.0111,0.0108,0.0106,0.0097};
@@ -52,6 +54,7 @@ Float_t         jteta_corr[100];   //[nref_corr]
 Float_t         jtphi_corr[100];   //[nref_corr]
 
 
+
 Int_t           nref_corr_mix;
 Float_t         chargedSum_corr_mix[100];   //[nref_corr_mix]
 Float_t         rawpt_corr_mix[100];   //[nref_corr_mix]
@@ -81,6 +84,17 @@ bool goodJet(int i) {
       && chargedMax[i]/rawpt[i] < 0.99
       && photonSum[i]/rawpt[i] < 0.99
       && _eSum[i]/rawpt[i] < 0.99
+      ) return true;
+  else return false;
+}
+
+bool goodJet_ak3pupf(int i) {
+  if(	neutralSum_ak3pupf[i]/rawpt_ak3pupf[i] < 0.9
+      && chargedSum_ak3pupf[i]/rawpt_ak3pupf[i] > 0.01
+      && chargedN_ak3pupf[i]+photonN_ak3pupf[i]+neutralN_ak3pupf[i]+eN_ak3pupf[i]+muN_ak3pupf[i] > 0
+      && chargedMax_ak3pupf[i]/rawpt_ak3pupf[i] < 0.99
+      && photonSum_ak3pupf[i]/rawpt_ak3pupf[i] < 0.99
+      && eSum_ak3pupf[i]/rawpt_ak3pupf[i] < 0.99
       ) return true;
   else return false;
 }
@@ -188,6 +202,9 @@ bool goodElectron(int i, bool is_pp) {
 
 void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1) {
 
+  unsigned int filehash = std::hash<std::string>()(infilename.Data()) % 2147483647;
+  srand(filehash); // seed with filehash to always mix consistently and randomly
+  int minbiasstart = 0;
   bool is_pp = (i_is_pp == 1) ;
   TrkCorr* trkCorr;
   // if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_PbPb/");
@@ -202,12 +219,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   TH1::SetDefaultSumw2();
 
-  int minbiasstart = 0;
 
 
-  int Ztype; //type 1 muon, type 2 electron
-  float Zmass, Zpt, Zeta, Zrapidity, Zphi;
-  float Zlepton1Pt, Zlepton2Pt, Zlepton1Eta, Zlepton2Eta, Zlepton1Phi, Zlepton2Phi;
   float weight = 0 , vz = -99;
   float vz_mix = -99;
   int hiBin = -99;
@@ -215,8 +228,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int HLT_HISinglePhoton40_Eta1p5_v1 = -99;
   int HLT_HISinglePhoton40_Eta1p5_v2 = -99;
   int HLT_HISinglePhoton40_Eta1p5ForPPRef_v1 = -99;
-  int Zcharge;
-  float leptonptcut = 10;
+
 
   //mixvar decleration
   float dvz_mix[10];
@@ -229,6 +241,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float chargedSum[200], neutralSum[200], eSum[200];
   int jetID[200], subid[200];
 
+
+  Int_t           ngen;
+  Int_t           genmatchindex[500];   //[ngen]
+  Float_t         genpt[500];   //[ngen]
+  Float_t         geneta[500];   //[ngen]
+  Float_t         genphi[500];   //[ngen]
+  Int_t           gensubid[500];   //[ngen]
+
   int _mult;
   vector<float> *_pt;
   vector<float> *_eta;
@@ -237,6 +257,22 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> *_chg;
   vector<int> *_matchingID;
   vector<int> *_sube;
+
+  int _mult_mix;
+  vector<float> *_pt_mix;
+  vector<float> *_eta_mix;
+  vector<float> *_phi_mix;
+  vector<int> *_pdg_mix;
+  vector<int> *_chg_mix;
+  int mult_mix;
+  float pt_mix[10000];
+  float eta_mix[10000];
+  float phi_mix[10000];
+  int pdg_mix[10000];
+  int chg_mix[10000];
+  int nev_mix[10000];
+
+
   int mult;
   float pt[10000];
   float eta[10000];
@@ -246,26 +282,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int matchingID[10000];
   int sube[10000];
 
-  const int nPtBins = 13;
-  const double PtBins[nPtBins+1]={0,2.5,5.0,7.5,10.0,12.5,15.0,20,30,40,50,70,100,150};
-  const int nYBins = 13;
 
-  TH1F *mmMass = new TH1F("mmMass",";m^{#mu#mu} (GeV/c^{2});Events",30,60,120);
-  TH1F *mmMassSS = new TH1F("mmMassSS",";m^{#mu#mu} (GeV/c^{2});Events",30,60,120);
-
-  TH1F *mmPt = new TH1F("mmPt",";p_{T}^{#mu#mu} (GeV/c);dN/dp_{T}",nPtBins,PtBins);
-  TH1F *mmY = new TH1F("mmY",";y^{#mu#mu};Events",nYBins,-2.6,2.6);
-  TH1F *mmPhi = new TH1F("mmPhi",";#phi^{#mu#mu};Events",20,-pi,pi);
-
-  TH1F *eeMass = new TH1F("eeMass",";m^{ee} (GeV/c^{2});Events",30,60,120);
-  TH1F *eeMassSS = new TH1F("eeMassSS",";m^{ee} (GeV/c^{2});Events",30,60,120);
-
-  TH1F *eePt = new TH1F("eePt",";p_{T}^{ee} (GeV/c);dN/dp_{T}",nPtBins,PtBins);
-  TH1F *eeY = new TH1F("eeY",";y^{ee};Events",nYBins,-2.6,2.6);
-  TH1F *eePhi = new TH1F("eePhi",";#phi^{ee};Events",20,-pi,pi);
-
-  int nMuPair = 0;
-  int nElPair = 0;
 
   Int_t           hiNevtPlane;
   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
@@ -273,11 +290,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   Int_t           nTrk;
   Int_t           nTrk_mix;
+  // Int_t           nJetSignal_mix;
+  // Int_t           nJetSideband_mix;
   Int_t           run;
   Int_t           event;
   Int_t           lumis;
   Float_t         trkPt[100000];   //[nTrk]
   Float_t         trkPt_mix[100000];   //[nTrk]
+  Float_t         trkFromEv_mix[100000];   //[nTrk]
   Float_t         trkPtError[100000];   //[nTrk]
   UChar_t         trkNHit[100000];   //[nTrk]
   UChar_t         trkNlayer[100000];   //[nTrk]
@@ -378,6 +398,25 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 	Int_t    mcMomPID[500];
   int nmix = 0, nlooped = 0;
 
+  Int_t           nref_ak3pupf_out;
+  Float_t         * rawpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * jtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * jteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * jtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * neutralSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * chargedSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * nmixEv_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * jetID_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * chargedN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * photonN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * neutralN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * eN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Int_t         * muN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * chargedMax_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * photonSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * eSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+
+
   TTree *ztree = new TTree("ztree","Jet track tree");
 
   ztree->Branch("run",  &run, "run/I");
@@ -392,6 +431,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("dhiBin_mix", dhiBin_mix, "dhiBin_mix[nmix]/I");
   ztree->Branch("dhiEvtPlanes_mix", dhiEvtPlanes_mix, "dhiEvtPlanes_mix[nmix]/F");
   ztree->Branch("nTrk_mix",	&nTrk_mix,	"nTrk_mix/I");
+  ztree->Branch("trkFromEv_mix",	&trkFromEv_mix,	"trkFromEv_mix[nTrk_mix]/F");
   ztree->Branch("trkPt_mix",	&trkPt_mix,	"trkPt_mix[nTrk_mix]/F");
   ztree->Branch("trkPhi_mix", &trkPhi_mix,"trkPhi_mix[nTrk_mix]/F");
   ztree->Branch("trkEta_mix", &trkEta_mix,"trkEta_mix[nTrk_mix]/F");
@@ -409,19 +449,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("matchingID", matchingID, "matchingID[mult]/I");
   ztree->Branch("sube", sube, "sube[mult]/I");
 
-  ztree->Branch("Ztype",	&Ztype,	"Ztype/I");
-  ztree->Branch("Zmass",	&Zmass,	"Zmass/F");
-  ztree->Branch("Zpt",	&Zpt,	"Zpt/F");
-  ztree->Branch("Zeta",	&Zeta,	"Zeta/F");
-  ztree->Branch("Zphi",	&Zphi,	"Zphi/F");
-  ztree->Branch("Zrapidity",	&Zrapidity,	"Zrapidity/F");
-  ztree->Branch("Zlepton1Pt",	&Zlepton1Pt,	"Zlepton1Pt/F");
-  ztree->Branch("Zlepton2Pt",	&Zlepton2Pt,	"Zlepton2Pt/F");
-  ztree->Branch("Zlepton1Eta",	&Zlepton1Eta,	"Zlepton1Eta/F");
-  ztree->Branch("Zlepton2Eta",	&Zlepton2Eta,	"Zlepton2Eta/F");
-  ztree->Branch("Zlepton1Phi",	&Zlepton1Phi,	"Zlepton1Phi/F");
-  ztree->Branch("Zlepton2Phi",	&Zlepton2Phi,	"Zlepton2Phi/F");
-  ztree->Branch("Zcharge",	&Zcharge,	"Zcharge/I");
+  ztree->Branch("mult_mix", &mult_mix, "mult_mix/I");
+  ztree->Branch("pt_mix", pt_mix, "pt_mix[mult_mix]/F");
+  ztree->Branch("eta_mix", eta_mix, "eta_mix[mult_mix]/F");
+  ztree->Branch("phi_mix", phi_mix, "phi_mix[mult_mix]/F");
+  ztree->Branch("pdg_mix", pdg_mix, "pdg_mix[mult_mix]/I");
+  ztree->Branch("chg_mix", chg_mix, "chg_mix[mult_mix]/I");
+  ztree->Branch("nev_mix", nev_mix, "nev_mix[mult_mix]/I");
+
   ztree->Branch("njet",	&njet,	"njet/I");
   ztree->Branch("jetpt",	&jetpt,	"jetpt[njet]/F");
   ztree->Branch("jeteta",	&jeteta,	"jeteta[njet]/F");
@@ -434,6 +469,32 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
   ztree->Branch("neutralSum",	&neutralSum,	"neutralSum[njet]/F");
   ztree->Branch("eSum",	&eSum,	"eSum[njet]/F");
+
+  ztree->Branch("ngen",	&ngen,	"ngen/I");
+  ztree->Branch("genmatchindex",	&genmatchindex,	"genmatchindex[ngen]/I");
+  ztree->Branch("genpt",	&genpt,	"genpt[ngen]/F");
+  ztree->Branch("geneta",	&geneta,	"geneta[ngen]/F");
+  ztree->Branch("genphi",	&genphi,	"genphi[ngen]/F");
+  ztree->Branch("gensubid",	&gensubid,	"gensubid[ngen]/I");
+
+
+  ztree->Branch("njet_mix", &nref_ak3pupf_out, "njet_mix/I");
+  ztree->Branch("rawpt_mix", rawpt_ak3pupf_out, "rawpt_mix[njet_mix]/F");
+  ztree->Branch("jetpt_mix", jtpt_ak3pupf_out, "jetpt_mix[njet_mix]/F");
+  ztree->Branch("jeteta_mix", jteta_ak3pupf_out, "jeteta_mix[njet_mix]/F");
+  ztree->Branch("jetphi_mix", jtphi_ak3pupf_out, "jetphi_mix[njet_mix]/F");
+  ztree->Branch("nmixEv_mix", nmixEv_ak3pupf_out, "nmixEv_mix[njet_mix]/I");
+  ztree->Branch("jetID_mix", jetID_ak3pupf_out, "jetID_mix[njet_mix]/I");
+  ztree->Branch("neutralSum_mix", neutralSum_ak3pupf_out, "neutralSum_mix[njet_mix]/F");
+  ztree->Branch("chargedSum_mix", chargedSum_ak3pupf_out, "chargedSum_mix[njet_mix]/F");
+  ztree->Branch("chargedN_mix", chargedN_ak3pupf_out, "chargedN_mix[njet_mix]/I");
+  ztree->Branch("photonN_mix", photonN_ak3pupf_out, "photonN_mix[njet_mix]/I");
+  ztree->Branch("neutralN_mix", neutralN_ak3pupf_out, "neutralN_mix[njet_mix]/I");
+  ztree->Branch("eN_mix", eN_ak3pupf_out, "eN_mix[njet_mix]/I");
+  ztree->Branch("muN_mix", muN_ak3pupf_out, "muN_mix[njet_mix]/I");
+  ztree->Branch("chargedMax_mix", chargedMax_ak3pupf_out, "chargedMax_mix[njet_mix]/F");
+  ztree->Branch("photonSum_mix", photonSum_ak3pupf_out, "photonSum_mix[njet_mix]/F");
+  ztree->Branch("eSum_mix", eSum_ak3pupf_out, "eSum_mix[njet_mix]/F");
 
 
   ztree->Branch("nTrk",	&nTrk,	"nTrk/I");
@@ -553,6 +614,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     return;
   }
   initjetTree(injetTree);
+  injetTree->SetBranchAddress("ngen", &ngen);
+  injetTree->SetBranchAddress("genmatchindex", &genmatchindex);
+  injetTree->SetBranchAddress("genpt", &genpt);
+  injetTree->SetBranchAddress("geneta", &geneta);
+  injetTree->SetBranchAddress("genphi", &genphi);
+  injetTree->SetBranchAddress("gensubid", &gensubid);
 
   TTree *injetTreeFORTRKCORR;
   if(!is_pp) injetTreeFORTRKCORR = (TTree*)fin->Get(Form("akPu4CaloJetAnalyzer/t"));
@@ -567,7 +634,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   injetTreeFORTRKCORR->SetBranchAddress("jtpt", &jtpt_corr);
   injetTreeFORTRKCORR->SetBranchAddress("jteta", &jteta_corr);
   injetTreeFORTRKCORR->SetBranchAddress("jtphi", &jtphi_corr);
-
 
 
 
@@ -649,8 +715,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TFile * fminbias = 0;
   TTree *evttree_mix = 0;
   TTree * tracktree_mix = 0;
+  TTree *genptree_mix = 0;
   TTree * skimTree_mix = 0;
   TTree *injetTreeFORTRKCORR_mix = 0;
+  TTree * jettree_ak3pupf   = 0;
+
   vector<float> vmix_vz;
   vector<int> vmix_hiBin;
   vector<float> vmix_hiEvtPlanes;
@@ -674,12 +743,20 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     evttree_mix->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes_mix);
 
     tracktree_mix                     = (TTree*) fminbias->Get("anaTrack/trackTree");
-    if( tracktree_mix == 0 ) tracktree_        = (TTree*) fminbias->Get("ppTrack/trackTree");
+    if( tracktree_mix == 0 ) tracktree_mix        = (TTree*) fminbias->Get("ppTrack/trackTree");
     if(!tracktree_mix){
       cout<<"Could not access mix track tree!"<<endl;
       return;
     }
     initTrackTreeMix(tracktree_mix);
+
+    jettree_ak3pupf   = (TTree*) fminbias->Get("akPu3PFJetAnalyzer/t");
+    if(!jettree_ak3pupf){
+      cout<<"Could not access mix jet tree!"<<endl;
+      return;
+    }
+    initjetTree_ak3pupf(jettree_ak3pupf);
+
 
     skimTree_mix                     = (TTree*) fminbias->Get("skimanalysis/HltTree");
     if( skimTree_mix == 0 )
@@ -702,9 +779,20 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     injetTreeFORTRKCORR_mix->SetBranchAddress("jteta", &jteta_corr_mix);
     injetTreeFORTRKCORR_mix->SetBranchAddress("jtphi", &jtphi_corr_mix);
 
+    genptree_mix = (TTree*)fminbias->Get("HiGenParticleAna/hi");
+    if(ismc)
+    {
+      genptree_mix->SetBranchAddress("mult", &_mult_mix);
+      genptree_mix->SetBranchAddress("pt", &_pt_mix);
+      genptree_mix->SetBranchAddress("eta", &_eta_mix);
+      genptree_mix->SetBranchAddress("phi", &_phi_mix);
+      genptree_mix->SetBranchAddress("pdg", &_pdg_mix);
+      genptree_mix->SetBranchAddress("chg", &_chg_mix);
+    }
 
     const int nevmix = evttree_mix->GetEntries();
-    cout<<"indexing minbias for mixing... ";
+    minbiasstart = rand() % nevmix; // here we pick a random start event to protect from condor jobs always starting at 0
+    cout<<"indexing minbias for mixing... Start event is: "<<minbiasstart<<"  ";
     for(int iminbias = 0 ; iminbias < nevmix ; ++ iminbias )
     {
       skimTree_mix->GetEntry(iminbias);
@@ -740,20 +828,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   for (int j=startindex; j<nEv; j++) {
-    Zlepton1Pt=-99;
-    Zlepton2Pt=-99;
-    Zlepton1Eta=-99;
-    Zlepton2Eta=-99;
-    Zlepton1Phi=-99;
-    Zlepton2Phi=-99;
-
-    Zlepton1Pt=-99;
-    Zlepton2Pt=-99;
-    Zlepton1Eta=-99;
-    Zlepton2Eta=-99;
-    Zlepton1Phi=-99;
-    Zlepton2Phi=-99;
-
     skimTree->GetEntry(j);
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
@@ -925,6 +999,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     // cout<<"end photon loop "<<nphoton<<endl;
     if(nphoton==0) continue;
 
+    // bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
+    // bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017
+
+    // nJetSignal_mix = 0;
+    // nJetSideband_mix = 0;
+
+
     injetTree->GetEntry(j);
     injetTreeFORTRKCORR->GetEntry(j);
     // if(j>10000 ) { cout << "Processing event: " << j << endl; break; }
@@ -939,7 +1020,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
 
     for(int ij=0; ij<nref; ij++) {
-      if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
+      // if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
+      // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
+      if(jtpt[ij]>30 && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       {
         //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
         //        cout<<jetpt[njet]<<endl;
@@ -964,10 +1047,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(!minbias.empty()) //mix things up
     {
       int minbiasend = minbiasstart;
+      mult_mix = 0;
       nmix = 0;
       bool wraparound = false;
       nlooped = 0;
       int ntracks_mix = 0;
+      int njets_mix = 0;
       for(int iminbias = minbiasstart ; iminbias <= (int)vmix_index.size() ; ++ iminbias )
       {
         if(iminbias == (int)vmix_index.size()) {
@@ -979,8 +1064,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         // skimTree_mix->GetEntry(iminbias);
         // evttree_mix->GetEntry(iminbias);
 
-        if(abs(hiBin - vmix_hiBin[iminbias])>5) continue;
-        if(fabs(vz - vmix_vz[iminbias])>5) continue;
+        if(abs(hiBin - vmix_hiBin[iminbias])>0) continue;
+        if(fabs(vz - vmix_vz[iminbias])>1) continue;
         float dphi_evplane = fabs(hiEvtPlanes[8] - vmix_hiEvtPlanes[iminbias]);
         if(dphi_evplane > TMath::Pi()/2.0) dphi_evplane = TMath::Pi()-dphi_evplane;
         if(dphi_evplane > TMath::Pi()/16.0) continue;
@@ -1009,46 +1094,165 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           if(jtpt_corr_mix[k]>maxJetPt_mix) maxJetPt_mix=jtpt_corr_mix[k];
         }
 
+        // cout<<"here"<<endl;
+        // return;
+        vector<int> mixjet_idx;
+        vector<int> uejet_idx;
+
+
+        jettree_ak3pupf->GetEntry(vmix_index[iminbias]);
+        for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix)
+        {
+          if( jtpt_ak3pupf[ijetmix]<30 ) continue; //jet pt Cut
+          if( fabs(jteta_ak3pupf[ijetmix]) > 1.6) continue; //jeteta Cut
+          if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+          // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
+          // if( jetID[ijet]==0 ) continue;
+          rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
+          jtpt_ak3pupf_out[njets_mix] = jtpt_ak3pupf[ijetmix];
+          jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
+          jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
+          neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
+          chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
+          nmixEv_ak3pupf_out[njets_mix] = nmix;
+          jetID_ak3pupf_out[njets_mix] = goodJet_ak3pupf(ijetmix);
+          chargedN_ak3pupf_out[njets_mix] = chargedN_ak3pupf[ijetmix];
+          photonN_ak3pupf_out[njets_mix] = photonN_ak3pupf[ijetmix];
+          neutralN_ak3pupf_out[njets_mix] = neutralN_ak3pupf[ijetmix];
+          eN_ak3pupf_out[njets_mix] = eN_ak3pupf[ijetmix];
+          muN_ak3pupf_out[njets_mix] = muN_ak3pupf[ijetmix];
+          chargedMax_ak3pupf_out[njets_mix] = chargedMax_ak3pupf[ijetmix];
+          photonSum_ak3pupf_out[njets_mix] = photonSum_ak3pupf[ijetmix];
+          eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
+          njets_mix++;
+          mixjet_idx.push_back(ijetmix);
+        }
+        // return;
         tracktree_mix->GetEntry(vmix_index[iminbias]);
         // bool atleastonetrack = false;
         for (int ijet = 0; ijet < njet; ijet++) {
           // cout<<jetpt[ijet]<<" "<<jeteta[ijet]<<" "<< acos(cos(jetphi[ijet] - phoPhi[0]))<<endl;
-          if( jetpt[ijet]<40 ) continue; //jet pt Cut
+          if( jetpt[ijet]<30 ) continue; //jet pt Cut
           if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
-          if( jetID[ijet]==0 ) continue; //redundant in this skim (all true)
+          // if( jetID[ijet]==0 ) continue;
           if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+          uejet_idx.push_back(ijet);
+        }
 
-          // cout<<"foundajet: "<<jetpt[ijet]<<endl;
-          for(int itrkmix = 0 ; itrkmix < nTrk_mix_ ; ++itrkmix)
+        int ntotjets = uejet_idx.size() + mixjet_idx.size();
+        // cout<<"foundajet: "<<jetpt[ijet]<<endl;
+        for(int itrkmix = 0 ; itrkmix < nTrk_mix_ ; ++itrkmix)
+        {
+          if(trkPt_mix_[itrkmix]<1 || trkPt_mix_[itrkmix]>300 || fabs(trkEta_mix_[itrkmix])>2.4 ) continue;
+
+
+          if(highPurity_mix_[itrkmix]!=1) continue;
+          if(trkPtError_mix_[itrkmix]/trkPt_mix_[itrkmix]>0.1 || TMath::Abs(trkDz1_mix_[itrkmix]/trkDzError1_mix_[itrkmix])>3 || TMath::Abs(trkDxy1_mix_[itrkmix]/trkDxyError1_mix_[itrkmix])>3) continue;
+          if(trkChi2_mix_[itrkmix]/(float)trkNdof_mix_[itrkmix]/(float)trkNlayer_mix_[itrkmix]>0.15) continue;
+          if(trkNHit_mix_[itrkmix]<11 && trkPt_mix_[itrkmix]>0.7) continue;
+          if((maxJetPt_mix>50 && trkPt_mix_[itrkmix]>maxJetPt_mix) || (maxJetPt_mix<50 && trkPt_mix_[itrkmix]>50)) continue;
+
+          float Et = (pfHcal_mix_[itrkmix]+pfEcal_mix_[itrkmix])/TMath::CosH(trkEta_mix_[itrkmix]);
+          if(!(trkPt_mix_[itrkmix]<20 || (Et>0.5*trkPt_mix_[itrkmix]))) continue;
+
+          bool inacone = false;
+          for(int ijetcand = 0 ; ijetcand < ntotjets ; ijetcand++)
           {
-            if(trkPt_mix_[itrkmix]<1 || trkPt_mix_[itrkmix]>300 || fabs(trkEta_mix_[itrkmix])>2.4 ) continue;
+            if(ijetcand<(int)uejet_idx.size())
+            {
+              float dphi = acos( cos(jetphi[uejet_idx[ijetcand]] - trkPhi_mix_[itrkmix]));
+              float deta = fabs( jeteta[uejet_idx[ijetcand]] - trkEta_mix_[itrkmix]);
+              float dr = sqrt((dphi*dphi)+(deta*deta));
+              if(dr<0.3)
+              {
+                inacone = true;
+                break;
+              }
+            } else {
+              float dphi = acos( cos(jtphi_ak3pupf[mixjet_idx[ijetcand-uejet_idx.size()]] - trkPhi_mix_[itrkmix]));
+              float deta = fabs( jteta_ak3pupf[mixjet_idx[ijetcand-uejet_idx.size()]] - trkEta_mix_[itrkmix]);
+              float dr = sqrt((dphi*dphi)+(deta*deta));
+              if(dr<0.3)
+              {
+                inacone = true;
+                break;
+              }
+            }
+          }
 
-            float dphi = acos( cos(jetphi[ijet] - trkPhi_mix_[itrkmix]));
-            float deta = fabs( jeteta[ijet] - trkEta_mix_[itrkmix ]);
-            float dr = sqrt((dphi*dphi)+(deta*deta));
-            if(dr>0.3) continue; // only save mix tracks around jet cone
+          if(!inacone) continue;
+          float trkweight_mix = 0;
+          if(is_pp) trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,0);
+          else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,vmix_hiBin[iminbias]);
+          trkFromEv_mix[ntracks_mix] = nmix;   //[nTrk_mix]
+          trkPt_mix[ntracks_mix] = trkPt_mix_[itrkmix];   //[nTrk_mix]
+          trkEta_mix[ntracks_mix] = trkEta_mix_[itrkmix];   //[nTrk_mix]
+          trkPhi_mix[ntracks_mix] = trkPhi_mix_[itrkmix];   //[nTrk_mix]
+          trkWeight_mix[ntracks_mix] = trkweight_mix;
+          ntracks_mix++;
+          // atleastonetrack = true;
+        }
+        if(ismc)
+        {
+          genptree_mix->GetEntry(vmix_index[iminbias]);
 
-            if(highPurity_mix_[itrkmix]!=1) continue;
-            if(trkPtError_mix_[itrkmix]/trkPt_mix_[itrkmix]>0.1 || TMath::Abs(trkDz1_mix_[itrkmix]/trkDzError1_mix_[itrkmix])>3 || TMath::Abs(trkDxy1_mix_[itrkmix]/trkDxyError1_mix_[itrkmix])>3) continue;
-            if(trkChi2_mix_[itrkmix]/(float)trkNdof_mix_[itrkmix]/(float)trkNlayer_mix_[itrkmix]>0.15) continue;
-            if(trkNHit_mix_[itrkmix]<11 && trkPt_mix_[itrkmix]>0.7) continue;
-            if((maxJetPt_mix>50 && trkPt_mix_[itrkmix]>maxJetPt_mix) || (maxJetPt_mix<50 && trkPt_mix_[itrkmix]>50)) continue;
+          for(int igenp = 0 ; igenp < _mult_mix ; ++igenp)
+          {
+            if(_pt_mix->at(igenp)<1 || _pt_mix->at(igenp)>300 || fabs(_eta_mix->at(igenp))>2.4 ) continue;
 
-            float Et = (pfHcal_mix_[itrkmix]+pfEcal_mix_[itrkmix])/TMath::CosH(trkEta_mix_[itrkmix]);
-            if(!(trkPt_mix_[itrkmix]<20 || (Et>0.5*trkPt_mix_[itrkmix]))) continue;
+            bool inacone = false;
+            for(int ijetcand = 0 ; ijetcand < ntotjets ; ijetcand++)
+            {
+              if(ijetcand<(int)uejet_idx.size())
+              {
+                float dphi = acos( cos(jetphi[uejet_idx[ijetcand]] - _phi_mix->at(igenp)));
+                float deta = fabs( jeteta[uejet_idx[ijetcand]] - _eta_mix->at(igenp));
+                float dr = sqrt((dphi*dphi)+(deta*deta));
+                if(dr<0.3)
+                {
+                  inacone = true;
+                  break;
+                }
+              } else {
+                float dphi = acos( cos(jtphi_ak3pupf[mixjet_idx[ijetcand-uejet_idx.size()]] - _phi_mix->at(igenp)));
+                float deta = fabs( jteta_ak3pupf[mixjet_idx[ijetcand-uejet_idx.size()]] - _eta_mix->at(igenp));
+                float dr = sqrt((dphi*dphi)+(deta*deta));
+                if(dr<0.3)
+                {
+                  inacone = true;
+                  break;
+                }
+              }
+            }
+            if(!inacone)
+            {
+              for(int igenjetcand = 0 ; igenjetcand < ngen ; ++igenjetcand)
+              {
+                if(genpt[igenjetcand]<30) continue;
+                float dphi = acos( cos( genphi[igenjetcand] - _phi_mix->at(igenp)));
+                float deta = fabs( geneta[igenjetcand] - _eta_mix->at(igenp));
+                float dr = sqrt((dphi*dphi)+(deta*deta));
+                if(dr<0.3)
+                {
+                  inacone = true;
+                  break;
+                }
+              }
+            }
+            if(!inacone) continue;
 
-
-            float trkweight_mix = 0;
-            if(is_pp) trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,0);
-            else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,vmix_hiBin[iminbias]);
-            trkPt_mix[ntracks_mix] = trkPt_mix_[itrkmix];   //[nTrk_mix]
-            trkEta_mix[ntracks_mix] = trkEta_mix_[itrkmix];   //[nTrk_mix]
-            trkPhi_mix[ntracks_mix] = trkPhi_mix_[itrkmix];   //[nTrk_mix]
-            trkWeight_mix[ntracks_mix] = trkweight_mix;
-            ntracks_mix++;
-            // atleastonetrack = true;
+            pt_mix[mult_mix] = _pt_mix->at(igenp);
+            eta_mix[mult_mix] = _eta_mix->at(igenp);
+            phi_mix[mult_mix] = _phi_mix->at(igenp);
+            pdg_mix[mult_mix] = _pdg_mix->at(igenp);
+            chg_mix[mult_mix] = _chg_mix->at(igenp);
+            // cout<<mult<<" "<<_mult_mix<<" "<<mult_mix<<" "<<nmix<<endl;
+            nev_mix[mult_mix] = nmix;
+            // cout<<mult_mix<<" "<<nmix<<" "<<mult_mix<<" "<<nev_mix[mult_mix]<<endl;
+            mult_mix++;
           }
         }
+
         evttree_mix->GetEntry(vmix_index[iminbias]);
         dvz_mix[nmix] = fabs(vz - vz_mix);
         dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
@@ -1061,113 +1265,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
       minbiasstart = minbiasend;
       nTrk_mix = ntracks_mix;
-    }
-    cout<<nTrk_mix<<endl;
-    if(nTrk_mix==0)
-    {
-      // cout<<"here"<<endl;
-      // break;
-    }
-    //cout<<"after: "<<jetpt[0]<<endl;
-
-    bool flagMu = 0; bool flagEle = 0;
-    if(flagMu || flagEle) cout<<"nothing"<<endl;
-
-    TLorentzVector muon1, muon2;
-    TLorentzVector ele1, ele2;
-
-    for(int i1 = 0; i1 < _nMu; i1++) {
-
-      if(_muPt->at(i1)>leptonptcut && fabs(_muEta->at(i1))<2.4 && goodMuon(i1)) {
-
-        for(int i2 = i1+1; i2 < _nMu; i2++) {
-
-          if(_muPt->at(i2)>leptonptcut && fabs(_muEta->at(i2))<2.4 && goodMuon(i2)) {
-
-            muon1.SetPtEtaPhiM(_muPt->at(i1), _muEta->at(i1), _muPhi->at(i1), 0.105658);
-            muon2.SetPtEtaPhiM(_muPt->at(i2), _muEta->at(i2), _muPhi->at(i2), 0.105658);
-            TLorentzVector pair = muon1 + muon2;
-
-            if(pair.M()>60 && pair.M()<120) {
-
-              Ztype = 1;
-              Zmass = pair.M();
-              Zpt = pair.Pt();
-              Zrapidity = pair.Rapidity();
-              Zeta = pair.Eta();
-              Zphi = pair.Phi();
-              Zcharge = _muCharge->at(i1) + _muCharge->at(i2);
-              flagMu = 1;
-              Zlepton1Pt = muon1.Pt();
-              Zlepton2Pt = muon2.Pt();
-              Zlepton1Eta = muon1.Eta();
-              Zlepton2Eta = muon2.Eta();
-              Zlepton1Phi = muon1.Phi();
-              Zlepton2Phi = muon2.Phi();
-              if(_muCharge->at(i1) != _muCharge->at(i2)) {
-                mmMass->Fill(pair.M());
-                mmPt->Fill(pair.Pt());
-                mmY->Fill(pair.Rapidity());
-                mmPhi->Fill(pair.Phi());
-                nMuPair++;
-              }
-              else {
-                mmMassSS->Fill(pair.M());
-              }
-
-            }
-          }
-        }
+      nref_ak3pupf_out = njets_mix;
+      if(nTrk_mix==0)
+      {
+        cout<<nTrk_mix<<" "<<j<<endl;
+        // cout<<"here"<<endl;
+        // break;
       }
-    } //end of muon loop
+    }
 
-    for(int i1 = 0; i1 < _nEle; i1++) {
-
-      if(_elePt->at(i1)>leptonptcut && fabs(_eleSCEta->at(i1))<2.5 && goodElectron(i1,is_pp) && (fabs(_eleSCEta->at(i1))<1.4442 || fabs(_eleSCEta->at(i1))>1.566)) {
-
-        for(int i2 = i1+1; i2 < _nEle; i2++) {
-
-          if(_elePt->at(i2)>leptonptcut && fabs(_eleSCEta->at(i2))<2.5 && goodElectron(i2,is_pp) && (fabs(_eleSCEta->at(i2))<1.4442 || fabs(_eleSCEta->at(i2))>1.566)) {
-
-            ele1.SetPtEtaPhiM(_elePt->at(i1), _eleEta->at(i1), _elePhi->at(i1), 0.000511);
-            ele2.SetPtEtaPhiM(_elePt->at(i2), _eleEta->at(i2), _elePhi->at(i2), 0.000511);
-            TLorentzVector pair = ele1 + ele2;
-
-            if(pair.M()>60 && pair.M()<120) {
-
-              Ztype = 2;
-              Zmass = pair.M();
-              Zpt = pair.Pt();
-              Zrapidity = pair.Rapidity();
-              Zeta = pair.Eta();
-              Zphi = pair.Phi();
-              Zcharge = _eleCharge->at(i1) + _eleCharge->at(i2);
-              flagEle = 1;
-              Zlepton1Pt = ele1.Pt();
-              Zlepton2Pt = ele2.Pt();
-              Zlepton1Eta = ele1.Eta();
-              Zlepton2Eta = ele2.Eta();
-              Zlepton1Phi = ele1.Phi();
-              Zlepton2Phi = ele2.Phi();
-
-              if(_eleCharge->at(i1) != _eleCharge->at(i2)) {
-                eeMass->Fill(pair.M());
-                eePt->Fill(pair.Pt());
-                eeY->Fill(pair.Rapidity());
-                eePhi->Fill(pair.Phi());
-                nElPair++;
-              }
-              else {
-                eeMassSS->Fill(pair.M());
-              }
-
-            }
-          }
-        }
-      }
-    } //end of electron loop
-    // cout<<"end z loop "<<_nEle<<" "<<_nMu<<endl;
-    // if( flagEle==0 && flagMu==0 ) continue;
 
     tracktree_->GetEntry(j);
 

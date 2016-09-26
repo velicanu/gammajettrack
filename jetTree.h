@@ -88,6 +88,26 @@
    Float_t         * muptrel = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Int_t           * muchg = (Int_t*) malloc(sizeof(Int_t)*300);   //[nref]
 
+   
+   
+     Int_t           nref_ak3pupf;
+  Float_t         * rawpt_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * jtpt_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * jteta_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * jtphi_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * neutralSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * chargedSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Int_t         * chargedN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Int_t         * photonN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Int_t         * neutralN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Int_t         * eN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Int_t         * muN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * chargedMax_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * photonSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * eSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+
+  
+  
 void initjetTree(TTree *tree) {
 
    tree->SetBranchAddress("evt", &evt);
@@ -180,4 +200,23 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("muptrel", muptrel);
    tree->SetBranchAddress("muchg", muchg);
 
+}
+
+  
+void initjetTree_ak3pupf(TTree *jettree_ak3pupf) {
+  jettree_ak3pupf->SetBranchAddress("nref", &nref_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("rawpt", rawpt_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("jtpt", jtpt_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("jteta", jteta_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("jtphi", jtphi_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("neutralSum", neutralSum_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("chargedSum", chargedSum_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("chargedN", chargedN_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("photonN", photonN_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("neutralN", neutralN_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("eN", eN_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("muN", muN_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("chargedMax", chargedMax_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("photonSum", photonSum_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("eSum", eSum_ak3pupf);
 }
