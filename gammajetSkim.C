@@ -670,7 +670,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> vmix_pBeamScrapingFilter;
   vector<int> vmix_index;
 
-  int nEventsToMix = 10;
+  int nEventsToMix = 20;
   if(!minbias.empty())
   {
     fminbias = TFile::Open(minbias.data());
