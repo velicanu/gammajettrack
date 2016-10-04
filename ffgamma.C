@@ -217,7 +217,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igen_mix]*cos(angle)/gjetpt[ijet];
             float xi = log(1.0/z);
-            hgammaffxiuemixgen->Fill(xi,1.0/(float)nmix);
+            hgammaffxiuemixgen->Fill(xi,2.0/(float)nmix);
             nmix_in++;
             mult_mix_in++;
             // hsubept->Fill(sube[igen_mix],pt[igen_mix]);
@@ -263,25 +263,25 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             // cout<<jetpt[ijet]<<endl;
           }
         }
-        for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
+        for(int itrk_cone = 0 ; itrk_cone < nTrk_cone ; ++itrk_cone)
         {
-          float dphi = acos( cos(jetphi[ijet] - trkPhi_mix[itrk_mix]));
-          float deta = fabs( jeteta[ijet] - trkEta_mix[itrk_mix]);
+          float dphi = acos( cos(jetphi[ijet] - trkPhi_cone[itrk_cone]));
+          float deta = fabs( jeteta[ijet] - trkEta_cone[itrk_cone]);
           float dr = sqrt((dphi*dphi)+(deta*deta));
           if(dr<0.3)
           {
             TLorentzVector vtrackmix;
-            vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
+            vtrackmix.SetPtEtaPhiM(trkPt_cone[itrk_cone],trkEta_cone[itrk_cone],trkPhi_cone[itrk_cone],0);
             float angle = vjet.Angle(vtrackmix.Vect());
-            float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt[ijet];
+            float z = trkPt_cone[itrk_cone]*cos(angle)/jetpt[ijet];
             float xi = log(1.0/z);
 
             if(signal) {
-              hgammaffxiuemix->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+              hgammaffxiuemix->Fill(xi,2*trkWeight[itrk_cone]/(float)nmix);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+              hgammaffxiuemixsideband->Fill(xi,2*trkWeight[itrk_cone]/(float)nmix);
             }
           }
         }
@@ -296,12 +296,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( jetID_mix[ijet_mix]==0 ) continue; //redundant in this skim (all true)
       if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
       if(signal) {
-        hjetptjetmix->Fill(jetpt_mix[ijet_mix]/(float)nmix);
-        hnmixsignal->Fill(1,nmix);
+        hjetptjetmix->Fill(2*jetpt_mix[ijet_mix]/(float)nmix);
+        hnmixsignal->Fill(1,nmix/2.);
       }
       if(sideband) {
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix]/(float)nmix);
-        hnmixsideband->Fill(1,nmix);
+        hnmixsideband->Fill(1,nmix/2.);
       }
       // hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
       TLorentzVector vjet;
@@ -339,7 +339,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             // cout<<"xitrk_mix "<<xi<<endl;
 
             if(signal) {
-              hgammaffxijetmix->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+              hgammaffxijetmix->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
               // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
               // hgammaffxi_refcone->Fill(xi);
               // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
@@ -348,7 +348,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
             }
             if(sideband) {
-              hgammaffxijetmixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+              hgammaffxijetmixsideband->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
               // hgammaffximixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
               // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
               // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);
@@ -368,12 +368,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if( jetID_mix[ijet_mix]==0 ) continue; //redundant in this skim (all true)
         if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
         if(signal) {
-          hjetptjetmix->Fill(jetpt_mix[ijet_mix]/(float)nmix);
-          hnmixsignal->Fill(1,nmix);
+          hjetptjetmix->Fill(2*jetpt_mix[ijet_mix]/(float)nmix);
+          hnmixsignal->Fill(1,nmix/2.);
         }
         if(sideband) {
-          hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix]/(float)nmix);
-          hnmixsideband->Fill(1,nmix);
+          hjetptjetmixsideband->Fill(2*jetpt_mix[ijet_mix]/(float)nmix);
+          hnmixsideband->Fill(1,nmix/2.);
         }
         // hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
         TLorentzVector vjet;
@@ -411,7 +411,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
               // cout<<"xitrk_mix "<<xi<<endl;
 
               if(signal) {
-                hgammaffxijetmix->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+                hgammaffxijetmix->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
                 // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
                 // hgammaffxi_refcone->Fill(xi);
                 // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
@@ -420,7 +420,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
               }
               if(sideband) {
-                hgammaffxijetmixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
+                hgammaffxijetmixsideband->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
                 // hgammaffximixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
                 // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
                 // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);

@@ -56,6 +56,21 @@ class ztree {
   // Float_t         Zlepton2Phi;
   // Int_t           Zcharge;
 
+  Int_t           nTrk_cone;
+  Float_t         trkFromEv_cone[1000];   //[nTrk_cone]
+  Float_t         trkPt_cone[1000];   //[nTrk_cone]
+  Float_t         trkPhi_cone[1000];   //[nTrk_cone]
+  Float_t         trkEta_cone[1000];   //[nTrk_cone]
+  Float_t         trkWeight_cone[1000];   //[nTrk_cone]
+  Int_t           mult_cone;
+  Float_t         pt_cone[11154];   //[mult_cone]
+  Float_t         eta_cone[11154];   //[mult_cone]
+  Float_t         phi_cone[11154];   //[mult_cone]
+  Int_t           pdg_cone[11154];   //[mult_cone]
+  Int_t           chg_cone[11154];   //[mult_cone]
+  Int_t           nev_cone[11154];   //[mult_cone]
+
+  
   Int_t           mult;
   Float_t         pt[10000];   //[mult]
   Float_t         eta[10000];   //[mult]
@@ -191,6 +206,23 @@ class ztree {
    Int_t           phoNoise[1];   //[nPho]
 
   // List of branches
+  
+     TBranch        *b_nTrk_cone;   //!
+   TBranch        *b_trkFromEv_cone;   //!
+   TBranch        *b_trkPt_cone;   //!
+   TBranch        *b_trkPhi_cone;   //!
+   TBranch        *b_trkEta_cone;   //!
+   TBranch        *b_trkWeight_cone;   //!
+
+      TBranch        *b_mult_cone;   //!
+   TBranch        *b_pt_cone;   //!
+   TBranch        *b_eta_cone;   //!
+   TBranch        *b_phi_cone;   //!
+   TBranch        *b_pdg_cone;   //!
+   TBranch        *b_chg_cone;   //!
+   TBranch        *b_nev_cone;   //!
+
+   
    TBranch        *b_nlooped;   //!
    TBranch        *b_nmix;   //!
    TBranch        *b_dvz_mix;   //!
@@ -445,6 +477,23 @@ void ztree::Init(TTree *tree)
   fCurrent = -1;
   fChain->SetMakeClass(1);
 
+  
+     fChain->SetBranchAddress("nTrk_cone", &nTrk_cone, &b_nTrk_cone);
+   fChain->SetBranchAddress("trkFromEv_cone", trkFromEv_cone, &b_trkFromEv_cone);
+   fChain->SetBranchAddress("trkPt_cone", trkPt_cone, &b_trkPt_cone);
+   fChain->SetBranchAddress("trkPhi_cone", trkPhi_cone, &b_trkPhi_cone);
+   fChain->SetBranchAddress("trkEta_cone", trkEta_cone, &b_trkEta_cone);
+   fChain->SetBranchAddress("trkWeight_cone", trkWeight_cone, &b_trkWeight_cone);
+
+      fChain->SetBranchAddress("mult_cone", &mult_cone, &b_mult_cone);
+   fChain->SetBranchAddress("pt_cone", pt_cone, &b_pt_cone);
+   fChain->SetBranchAddress("eta_cone", eta_cone, &b_eta_cone);
+   fChain->SetBranchAddress("phi_cone", phi_cone, &b_phi_cone);
+   fChain->SetBranchAddress("pdg_cone", pdg_cone, &b_pdg_cone);
+   fChain->SetBranchAddress("chg_cone", chg_cone, &b_chg_cone);
+   fChain->SetBranchAddress("nev_cone", nev_cone, &b_nev_cone);
+
+   
    fChain->SetBranchAddress("nlooped", &nlooped, &b_nlooped);
    fChain->SetBranchAddress("nmix", &nmix, &b_nmix);
    fChain->SetBranchAddress("dvz_mix", dvz_mix, &b_dvz_mix);

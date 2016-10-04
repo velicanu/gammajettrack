@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Aug 22 11:00:39 2016 by ROOT version 6.00/02
+// Tue Oct  4 01:58:40 2016 by ROOT version 6.00/02
 // from TTree ztree/Jet track tree
 // found on file: ../g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.mix
 //////////////////////////////////////////////////////////
@@ -33,11 +33,17 @@ public :
    Int_t           dhiBin_mix[10];   //[nmix]
    Float_t         dhiEvtPlanes_mix[10];   //[nmix]
    Int_t           nTrk_mix;
-   Float_t         trkFromEv_mix[898];   //[nTrk_mix]
-   Float_t         trkPt_mix[898];   //[nTrk_mix]
-   Float_t         trkPhi_mix[898];   //[nTrk_mix]
-   Float_t         trkEta_mix[898];   //[nTrk_mix]
-   Float_t         trkWeight_mix[898];   //[nTrk_mix]
+   Float_t         trkFromEv_mix[191];   //[nTrk_mix]
+   Float_t         trkPt_mix[191];   //[nTrk_mix]
+   Float_t         trkPhi_mix[191];   //[nTrk_mix]
+   Float_t         trkEta_mix[191];   //[nTrk_mix]
+   Float_t         trkWeight_mix[191];   //[nTrk_mix]
+   Int_t           nTrk_cone;
+   Float_t         trkFromEv_cone[412];   //[nTrk_cone]
+   Float_t         trkPt_cone[412];   //[nTrk_cone]
+   Float_t         trkPhi_cone[412];   //[nTrk_cone]
+   Float_t         trkEta_cone[412];   //[nTrk_cone]
+   Float_t         trkWeight_cone[412];   //[nTrk_cone]
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           mult;
@@ -49,11 +55,19 @@ public :
    Int_t           matchingID[8577];   //[mult]
    Int_t           sube[8577];   //[mult]
    Int_t           mult_mix;
-   Float_t         pt_mix[7];   //[mult_mix]
-   Float_t         eta_mix[7];   //[mult_mix]
-   Float_t         phi_mix[7];   //[mult_mix]
-   Int_t           pdg_mix[7];   //[mult_mix]
-   Int_t           chg_mix[7];   //[mult_mix]
+   Float_t         pt_mix[1076];   //[mult_mix]
+   Float_t         eta_mix[1076];   //[mult_mix]
+   Float_t         phi_mix[1076];   //[mult_mix]
+   Int_t           pdg_mix[1076];   //[mult_mix]
+   Int_t           chg_mix[1076];   //[mult_mix]
+   Int_t           nev_mix[1076];   //[mult_mix]
+   Int_t           mult_cone;
+   Float_t         pt_cone[11154];   //[mult_cone]
+   Float_t         eta_cone[11154];   //[mult_cone]
+   Float_t         phi_cone[11154];   //[mult_cone]
+   Int_t           pdg_cone[11154];   //[mult_cone]
+   Int_t           chg_cone[11154];   //[mult_cone]
+   Int_t           nev_cone[11154];   //[mult_cone]
    Int_t           njet;
    Float_t         jetpt[6];   //[njet]
    Float_t         jeteta[6];   //[njet]
@@ -66,6 +80,12 @@ public :
    Float_t         chargedSum[6];   //[njet]
    Float_t         neutralSum[6];   //[njet]
    Float_t         eSum[6];   //[njet]
+   Int_t           ngen;
+   Int_t           genmatchindex[164];   //[ngen]
+   Float_t         genpt[164];   //[ngen]
+   Float_t         geneta[164];   //[ngen]
+   Float_t         genphi[164];   //[ngen]
+   Int_t           gensubid[164];   //[ngen]
    Int_t           njet_mix;
    Float_t         rawpt_mix[15];   //[njet_mix]
    Float_t         jetpt_mix[15];   //[njet_mix]
@@ -196,6 +216,12 @@ public :
    TBranch        *b_trkPhi_mix;   //!
    TBranch        *b_trkEta_mix;   //!
    TBranch        *b_trkWeight_mix;   //!
+   TBranch        *b_nTrk_cone;   //!
+   TBranch        *b_trkFromEv_cone;   //!
+   TBranch        *b_trkPt_cone;   //!
+   TBranch        *b_trkPhi_cone;   //!
+   TBranch        *b_trkEta_cone;   //!
+   TBranch        *b_trkWeight_cone;   //!
    TBranch        *b_hiNevtPlane;   //!
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_mult;   //!
@@ -212,6 +238,14 @@ public :
    TBranch        *b_phi_mix;   //!
    TBranch        *b_pdg_mix;   //!
    TBranch        *b_chg_mix;   //!
+   TBranch        *b_nev_mix;   //!
+   TBranch        *b_mult_cone;   //!
+   TBranch        *b_pt_cone;   //!
+   TBranch        *b_eta_cone;   //!
+   TBranch        *b_phi_cone;   //!
+   TBranch        *b_pdg_cone;   //!
+   TBranch        *b_chg_cone;   //!
+   TBranch        *b_nev_cone;   //!
    TBranch        *b_njet;   //!
    TBranch        *b_jetpt;   //!
    TBranch        *b_jeteta;   //!
@@ -224,6 +258,12 @@ public :
    TBranch        *b_chargedSum;   //!
    TBranch        *b_neutralSum;   //!
    TBranch        *b_eSum;   //!
+   TBranch        *b_ngen;   //!
+   TBranch        *b_genmatchindex;   //!
+   TBranch        *b_genpt;   //!
+   TBranch        *b_geneta;   //!
+   TBranch        *b_genphi;   //!
+   TBranch        *b_gensubid;   //!
    TBranch        *b_njet_mix;   //!
    TBranch        *b_rawpt_mix;   //!
    TBranch        *b_jetpt_mix;   //!
@@ -423,6 +463,12 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("trkPhi_mix", trkPhi_mix, &b_trkPhi_mix);
    fChain->SetBranchAddress("trkEta_mix", trkEta_mix, &b_trkEta_mix);
    fChain->SetBranchAddress("trkWeight_mix", trkWeight_mix, &b_trkWeight_mix);
+   fChain->SetBranchAddress("nTrk_cone", &nTrk_cone, &b_nTrk_cone);
+   fChain->SetBranchAddress("trkFromEv_cone", trkFromEv_cone, &b_trkFromEv_cone);
+   fChain->SetBranchAddress("trkPt_cone", trkPt_cone, &b_trkPt_cone);
+   fChain->SetBranchAddress("trkPhi_cone", trkPhi_cone, &b_trkPhi_cone);
+   fChain->SetBranchAddress("trkEta_cone", trkEta_cone, &b_trkEta_cone);
+   fChain->SetBranchAddress("trkWeight_cone", trkWeight_cone, &b_trkWeight_cone);
    fChain->SetBranchAddress("hiNevtPlane", &hiNevtPlane, &b_hiNevtPlane);
    fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("mult", &mult, &b_mult);
@@ -439,6 +485,14 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("phi_mix", phi_mix, &b_phi_mix);
    fChain->SetBranchAddress("pdg_mix", pdg_mix, &b_pdg_mix);
    fChain->SetBranchAddress("chg_mix", chg_mix, &b_chg_mix);
+   fChain->SetBranchAddress("nev_mix", nev_mix, &b_nev_mix);
+   fChain->SetBranchAddress("mult_cone", &mult_cone, &b_mult_cone);
+   fChain->SetBranchAddress("pt_cone", pt_cone, &b_pt_cone);
+   fChain->SetBranchAddress("eta_cone", eta_cone, &b_eta_cone);
+   fChain->SetBranchAddress("phi_cone", phi_cone, &b_phi_cone);
+   fChain->SetBranchAddress("pdg_cone", pdg_cone, &b_pdg_cone);
+   fChain->SetBranchAddress("chg_cone", chg_cone, &b_chg_cone);
+   fChain->SetBranchAddress("nev_cone", nev_cone, &b_nev_cone);
    fChain->SetBranchAddress("njet", &njet, &b_njet);
    fChain->SetBranchAddress("jetpt", jetpt, &b_jetpt);
    fChain->SetBranchAddress("jeteta", jeteta, &b_jeteta);
@@ -451,6 +505,12 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("chargedSum", chargedSum, &b_chargedSum);
    fChain->SetBranchAddress("neutralSum", neutralSum, &b_neutralSum);
    fChain->SetBranchAddress("eSum", eSum, &b_eSum);
+   fChain->SetBranchAddress("ngen", &ngen, &b_ngen);
+   fChain->SetBranchAddress("genmatchindex", genmatchindex, &b_genmatchindex);
+   fChain->SetBranchAddress("genpt", genpt, &b_genpt);
+   fChain->SetBranchAddress("geneta", geneta, &b_geneta);
+   fChain->SetBranchAddress("genphi", genphi, &b_genphi);
+   fChain->SetBranchAddress("gensubid", gensubid, &b_gensubid);
    fChain->SetBranchAddress("njet_mix", &njet_mix, &b_njet_mix);
    fChain->SetBranchAddress("rawpt_mix", rawpt_mix, &b_rawpt_mix);
    fChain->SetBranchAddress("jetpt_mix", jetpt_mix, &b_jetpt_mix);
