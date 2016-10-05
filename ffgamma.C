@@ -69,7 +69,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 {
   string tag = outfname;
   string s_alpha = gen;
-cout<<"here"<<endl;
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
