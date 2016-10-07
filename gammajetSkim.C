@@ -186,30 +186,30 @@ float getSigmaRelPhi(int hiBin, float jetpt)
 {
   if(hiBin<20)
     return TMath::Sqrt(
-                  (CSN_phi_HI_cent0010.at(0)*CSN_phi_HI_cent0010.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
-                  (CSN_phi_HI_cent0010.at(1)*CSN_phi_HI_cent0010.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
-                  (CSN_phi_HI_cent0010.at(2)*CSN_phi_HI_cent0010.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                  (CSN_phi_HI_cent0010.at(0)*CSN_phi_HI_cent0010.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent0010.at(1)*CSN_phi_HI_cent0010.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent0010.at(2)*CSN_phi_HI_cent0010.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
                           );
 
   else if(20<=hiBin && hiBin<60)
     return TMath::Sqrt(
-                  (CSN_phi_HI_cent1030.at(0)*CSN_phi_HI_cent1030.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
-                  (CSN_phi_HI_cent1030.at(1)*CSN_phi_HI_cent1030.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
-                  (CSN_phi_HI_cent1030.at(2)*CSN_phi_HI_cent1030.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                  (CSN_phi_HI_cent1030.at(0)*CSN_phi_HI_cent1030.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent1030.at(1)*CSN_phi_HI_cent1030.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent1030.at(2)*CSN_phi_HI_cent1030.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
                           );
 
   else if(60<=hiBin && hiBin<100)
     return TMath::Sqrt(
-                  (CSN_phi_HI_cent3050.at(0)*CSN_phi_HI_cent3050.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
-                  (CSN_phi_HI_cent3050.at(1)*CSN_phi_HI_cent3050.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
-                  (CSN_phi_HI_cent3050.at(2)*CSN_phi_HI_cent3050.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                  (CSN_phi_HI_cent3050.at(0)*CSN_phi_HI_cent3050.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent3050.at(1)*CSN_phi_HI_cent3050.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent3050.at(2)*CSN_phi_HI_cent3050.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
                           );
 
   else
     return TMath::Sqrt(
-                  (CSN_phi_HI_cent50100.at(0)*CSN_phi_HI_cent50100.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
-                  (CSN_phi_HI_cent50100.at(1)*CSN_phi_HI_cent50100.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
-                  (CSN_phi_HI_cent50100.at(2)*CSN_phi_HI_cent50100.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                  (CSN_phi_HI_cent50100.at(0)*CSN_phi_HI_cent50100.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent50100.at(1)*CSN_phi_HI_cent50100.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent50100.at(2)*CSN_phi_HI_cent50100.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
                           );
 }
 
@@ -260,11 +260,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float dhiEvtPlanes_mix[10];
 
   int njet_smeared;
-  float jetpt_smeared[20000], jeteta_smeared[20000], jetphi_smeared[20000];
+  float jetpt_smeared0020[2000], jeteta_smeared0020[2000], jetphi_smeared0020[2000];
+  float jetpt_smeared2060[2000], jeteta_smeared2060[2000], jetphi_smeared2060[2000];
+  float jetpt_smeared60100[2000], jeteta_smeared60100[2000], jetphi_smeared60100[2000];
+  float jetpt_smeared100200[2000], jeteta_smeared100200[2000], jetphi_smeared100200[2000];
   int njet;
   float jetpt[200], jeteta[200], jetphi[200];
   float gjetpt[200], gjeteta[200], gjetphi[200];
   float chargedSum[200], neutralSum[200], eSum[200];
+  float jetptsigma0020[200], jetphisigma0020[200];
+  float jetptsigma2060[200], jetphisigma2060[200];
+  float jetptsigma60100[200], jetphisigma60100[200];
+  float jetptsigma100200[200], jetphisigma100200[200];
   int jetID[200], subid[200];
 
 
@@ -512,9 +519,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("nev_cone", nev_cone, "nev_cone[mult_cone]/I");
 
   ztree->Branch("njet_smeared",	&njet_smeared,	"njet_smeared/I");
-  ztree->Branch("jetpt_smeared",	&jetpt_smeared,	"jetpt_smeared[njet_smeared]/F");
-  ztree->Branch("jeteta_smeared",	&jeteta_smeared,	"jeteta_smeared[njet_smeared]/F");
-  ztree->Branch("jetphi_smeared",	&jetphi_smeared,	"jetphi_smeared[njet_smeared]/F");
+  ztree->Branch("jetpt_smeared0020",	&jetpt_smeared0020,	"jetpt_smeared0020[njet_smeared]/F");
+  ztree->Branch("jeteta_smeared0020",	&jeteta_smeared0020,	"jeteta_smeared0020[njet_smeared]/F");
+  ztree->Branch("jetphi_smeared0020",	&jetphi_smeared0020,	"jetphi_smeared0020[njet_smeared]/F");
+  ztree->Branch("jetpt_smeared2060",	&jetpt_smeared2060,	"jetpt_smeared2060[njet_smeared]/F");
+  ztree->Branch("jeteta_smeared2060",	&jeteta_smeared2060,	"jeteta_smeared2060[njet_smeared]/F");
+  ztree->Branch("jetphi_smeared2060",	&jetphi_smeared2060,	"jetphi_smeared2060[njet_smeared]/F");
+  ztree->Branch("jetpt_smeared60100",	&jetpt_smeared60100,	"jetpt_smeared60100[njet_smeared]/F");
+  ztree->Branch("jeteta_smeared60100",	&jeteta_smeared60100,	"jeteta_smeared60100[njet_smeared]/F");
+  ztree->Branch("jetphi_smeared60100",	&jetphi_smeared60100,	"jetphi_smeared60100[njet_smeared]/F");
+  ztree->Branch("jetpt_smeared100200",	&jetpt_smeared100200,	"jetpt_smeared100200[njet_smeared]/F");
+  ztree->Branch("jeteta_smeared100200",	&jeteta_smeared100200,	"jeteta_smeared100200[njet_smeared]/F");
+  ztree->Branch("jetphi_smeared100200",	&jetphi_smeared100200,	"jetphi_smeared100200[njet_smeared]/F");
 
   ztree->Branch("njet",	&njet,	"njet/I");
   ztree->Branch("jetpt",	&jetpt,	"jetpt[njet]/F");
@@ -528,6 +544,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
   ztree->Branch("neutralSum",	&neutralSum,	"neutralSum[njet]/F");
   ztree->Branch("eSum",	&eSum,	"eSum[njet]/F");
+  ztree->Branch("jetptsigma0020",	&jetptsigma0020,	"jetptsigma0020[njet]/F");
+  ztree->Branch("jetphisigma0020",	&jetphisigma0020,	"jetphisigma0020[njet]/F");
+  ztree->Branch("jetptsigma2060",	&jetptsigma2060,	"jetptsigma2060[njet]/F");
+  ztree->Branch("jetphisigma2060",	&jetphisigma2060,	"jetphisigma2060[njet]/F");
+  ztree->Branch("jetptsigma60100",	&jetptsigma60100,	"jetptsigma60100[njet]/F");
+  ztree->Branch("jetphisigma60100",	&jetphisigma60100,	"jetphisigma60100[njet]/F");
+  ztree->Branch("jetptsigma100200",	&jetptsigma100200,	"jetptsigma100200[njet]/F");
+  ztree->Branch("jetphisigma100200",	&jetphisigma100200,	"jetphisigma100200[njet]/F");
 
   ztree->Branch("ngen",	&ngen,	"ngen/I");
   ztree->Branch("genmatchindex",	&genmatchindex,	"genmatchindex[ngen]/I");
@@ -771,7 +795,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> vmix_index;
 
   int nEventsToMix = 20;
-  if(!minbias.empty())
+  if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
 
@@ -1073,7 +1097,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(TMath::Abs(jteta_corr[k])>2) continue;
       if(jtpt_corr[k]>maxJetPt) maxJetPt=jtpt_corr[k];
     }
-
+    njet_smeared = 0;
     for(int ij=0; ij<nref; ij++) {
       // if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
@@ -1092,16 +1116,56 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         chargedSum[njet] = _chargedSum[ij];
         neutralSum[njet] = _neutralSum[ij];
         eSum[njet] = _eSum[ij];
-        njet++;
+        if(njet>19) {
+          cout<<"need bigger smearing arrays"<<endl;
+          exit(1);
+        }
         if(is_pp) //do smearing
         {
-          float sigmapt = getSigmaRelPt(hiBin,jtpt[ij]);
-          // float sigmaphi = getSigmaRelPhi(hiBin,jtpt[ij]);
-          for (int ijetsmear = 0; ijetsmear < 100; ijetsmear++) {
-            cout<<randSmearing.Gaus(1,sigmapt)<<endl;
+          int smearcents[] = {5,25,65,105};
+          for(int ismearcent = 0 ; ismearcent < 4 ; ++ismearcent)
+          {
+            float sigmapt = getSigmaRelPt(smearcents[ismearcent],jtpt[ij]);
+            float sigmaphi = getSigmaRelPhi(smearcents[ismearcent],jtpt[ij]);
+            
+            if(ismearcent==0)
+            {
+              jetptsigma0020[njet] = sigmapt;
+              jetphisigma0020[njet] = sigmaphi;
+              for (int ijetsmear = 0; ijetsmear < 100; ijetsmear++) {
+                jetpt_smeared0020[njet*100+ijetsmear]=jetpt[njet]*randSmearing.Gaus(1,sigmapt);
+                jeteta_smeared0020[njet*100+ijetsmear]=jeteta[njet];
+                jetphi_smeared0020[njet*100+ijetsmear]=jetphi[njet]+randSmearing.Gaus(0,sigmaphi);
+              }
+            } else if(ismearcent==1) {
+              jetptsigma2060[njet] = sigmapt;
+              jetphisigma2060[njet] = sigmaphi;
+              for (int ijetsmear = 0; ijetsmear < 100; ijetsmear++) {
+                jetpt_smeared2060[njet*100+ijetsmear]=jetpt[njet]*randSmearing.Gaus(1,sigmapt);
+                jeteta_smeared2060[njet*100+ijetsmear]=jeteta[njet];
+                jetphi_smeared2060[njet*100+ijetsmear]=jetphi[njet]+randSmearing.Gaus(0,sigmaphi);
+              }
+            } else if(ismearcent==2) {
+              jetptsigma60100[njet] = sigmapt;
+              jetphisigma60100[njet] = sigmaphi;
+              for (int ijetsmear = 0; ijetsmear < 100; ijetsmear++) {
+                jetpt_smeared60100[njet*100+ijetsmear]=jetpt[njet]*randSmearing.Gaus(1,sigmapt);
+                jeteta_smeared60100[njet*100+ijetsmear]=jeteta[njet];
+                jetphi_smeared60100[njet*100+ijetsmear]=jetphi[njet]+randSmearing.Gaus(0,sigmaphi);
+              }
+            } else if(ismearcent==3) {
+              jetptsigma100200[njet] = sigmapt;
+              jetphisigma100200[njet] = sigmaphi;
+              for (int ijetsmear = 0; ijetsmear < 100; ijetsmear++) {
+                jetpt_smeared100200[njet*100+ijetsmear]=jetpt[njet]*randSmearing.Gaus(1,sigmapt);
+                jeteta_smeared100200[njet*100+ijetsmear]=jeteta[njet];
+                jetphi_smeared100200[njet*100+ijetsmear]=jetphi[njet]+randSmearing.Gaus(0,sigmaphi);
+              }
+            }
           }
-          return;
+          njet_smeared=(njet+1)*100;
         }
+        njet++;
       }
     } //end of jet loop
     if(njet==0) continue;
@@ -1165,7 +1229,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! End track selection
 
 //! (2.5) Begin minbias mixing criteria machinery
-    if(!minbias.empty()) //mix things up
+    if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
     {
       int minbiasend = minbiasstart;
       mult_mix = 0;
