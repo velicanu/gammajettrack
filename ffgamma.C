@@ -96,6 +96,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * xjgmixsignal = new TH1D(Form("xjgmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
   TH1D * xjgsideband = new TH1D(Form("xjgsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
   TH1D * xjgmixsideband = new TH1D(Form("xjgmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
+  TH1D * phoetsignal = new TH1D(Form("phoetsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#gamma E_{T};"),50,0,500); // xjg crosscheck
+  TH1D * phoetsideband = new TH1D(Form("phoetsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#gamma E_{T};"),50,0,500); // xjg crosscheck
 
 
   // TH1D * hntrkincone = new TH1D(Form("hntrkincone_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),101,-0.5,100.5);
@@ -122,8 +124,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     if(weight==0)                   weight=1;
     bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017);
-
-
+    if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
+    if(signal) {
+      phoetsignal->Fill(phoEt[0]);
+    } 
+    if(sideband) {
+      phoetsideband->Fill(phoEt[0]);
+    }
     // for(int imix = 0 ; imix < nmix ; ++imix)
     // {
       // hnmix->Fill(1);
@@ -132,8 +139,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       // int npassingjets = 0;
     for (int ijet = 0; ijet < njet; ijet++) {
 
-      if( nPho==2 ) continue;
-      if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
       if( jetpt[ijet]<jetptcut ) continue; //jet pt Cut
       if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
       // if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone, no longer needed
@@ -298,8 +303,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
     }
     for (int ijet_mix = 0; ijet_mix < njet_mix; ijet_mix++) {
-      if( nPho==2 ) continue;
-      if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
       if( jetpt_mix[ijet_mix]<jetptcut ) continue; //jet pt Cut
       if( fabs(jeteta_mix[ijet_mix]) > 1.6) continue; //jeteta_mix Cut
       // if( fabs(jeteta_mix[ijet_mix]) < 0.3) continue; //jeteta_mix Cut for reflected cone
@@ -311,12 +314,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(signal) {
         hjetptjetmix->Fill(2*jetpt_mix[ijet_mix]/(float)nmix); // TODO: double check this
         hnmixsignal->Fill(1,nmix/2.);
-        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0]);
+        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0],2./(float)nmix);
       }
       if(sideband) {
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix]/(float)nmix);
         hnmixsideband->Fill(1,nmix/2.);
-        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0]);
+        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0],2./(float)nmix);
       }
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
@@ -352,8 +355,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     if(gen.compare("mixgen")==0) // test background subtraction at gen level
     {
       for (int ijet_mix = 0; ijet_mix < njet_mix; ijet_mix++) {
-        if( nPho==2 ) continue;
-        if( phoEt[0]*phoCorr[0]<phoetmin || phoEt[0]*phoCorr[0]>phoetmax) continue;
         if( jetpt_mix[ijet_mix]<jetptcut ) continue; //jet pt Cut
         if( fabs(jeteta_mix[ijet_mix]) > 1.6) continue; //jeteta_mix Cut
         if( fabs(jeteta_mix[ijet_mix]) < 0.3) continue; //jeteta_mix Cut for reflected cone
@@ -413,11 +414,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
 int main(int argc, char *argv[])
 {
-  // if(argc > 11 || argc < 3 )
-  // {
-    // std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen]"<<std::endl;
-    // exit(1);
-  // }
+  if(argc > 11 || argc < 3 )
+  {
+    std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen] [checkjetid] [trkptmin]"<<std::endl;
+    exit(1);
+  }
   ztree * t = new ztree(argv[1]);
   if (argc==3) {
     t->ffgammajet(argv[2]);
