@@ -1230,6 +1230,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! (2.5) Begin minbias mixing criteria machinery
     if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
+    // if(false) //mix things up
     {
       int minbiasend = minbiasstart;
       mult_mix = 0;
@@ -1471,8 +1472,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     }
 //! End minbias mixing
-
+    // cout<<j<<" before fill"<<endl;
     ztree->Fill();
+    // cout<<j<<" after fill"<<endl;
 
   } //end of loop over events
 
