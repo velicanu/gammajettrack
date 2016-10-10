@@ -135,7 +135,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( fabs(jeteta[ijet]) < 0.3) continue; //jeteta Cut for reflected cone
       if(checkjetid==1)
       {
-        if( jetID[ijet]==0 ) continue; 
+        if( jetID[ijet]==0 ) continue;
       }
       if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
       if(signal) {
@@ -299,7 +299,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( fabs(jeteta_mix[ijet_mix]) < 0.3) continue; //jeteta_mix Cut for reflected cone
       if(checkjetid==1)
       {
-        if( jetID_mix[ijet_mix]==0 ) continue; 
+        if( jetID_mix[ijet_mix]==0 ) continue;
       }
       if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
       if(signal) {
@@ -310,12 +310,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix]/(float)nmix);
         hnmixsideband->Fill(1,nmix/2.);
       }
-      // hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
       if(gen.compare("gen")==0)
       {
-        // nothing
+        // no jet mixing in gen ff
       } else if(gen.compare("reco")==0) {
         for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
         {
@@ -329,31 +328,20 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrackmix;
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
-            // cout<<"            "<<cos(angle)<<endl;
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
             float xi = log(1.0/z);
-            // cout<<"xitrk_mix "<<xi<<endl;
 
             if(signal) {
               hgammaffxijetmix->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
-              // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // hgammaffxi_refcone->Fill(xi);
-              // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // ntrkmixcone++;
-              // ntotmix++;
-
             }
             if(sideband) {
               hgammaffxijetmixsideband->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
-              // hgammaffximixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
-              // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-              // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);
             }
           }
         }
       }
     }
-    if(gen.compare("mixgen")==0)
+    if(gen.compare("mixgen")==0) // test background subtraction at gen level
     {
       for (int ijet_mix = 0; ijet_mix < njet_mix; ijet_mix++) {
         if( nPho==2 ) continue;
@@ -363,7 +351,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if( fabs(jeteta_mix[ijet_mix]) < 0.3) continue; //jeteta_mix Cut for reflected cone
         if(checkjetid==1)
         {
-          if( jetID_mix[ijet_mix]==0 ) continue; 
+          if( jetID_mix[ijet_mix]==0 ) continue;
         }
         if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
         if(signal) {
@@ -374,7 +362,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           hjetptjetmixsideband->Fill(2*jetpt_mix[ijet_mix]/(float)nmix);
           hnmixsideband->Fill(1,nmix/2.);
         }
-        // hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
         TLorentzVector vjet;
         vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
         if(gen.compare("gen")==0)
@@ -393,44 +380,25 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
               TLorentzVector vtrackmix;
               vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
               float angle = vjet.Angle(vtrackmix.Vect());
-              // cout<<"            "<<cos(angle)<<endl;
               float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
               float xi = log(1.0/z);
-              // cout<<"xitrk_mix "<<xi<<endl;
 
               if(signal) {
                 hgammaffxijetmix->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
-                // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-                // hgammaffxi_refcone->Fill(xi);
-                // hgammaffxi_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-                // ntrkmixcone++;
-                // ntotmix++;
 
               }
               if(sideband) {
                 hgammaffxijetmixsideband->Fill(xi,2*trkWeight[itrk_mix]/(float)nmix);
-                // hgammaffximixsideband->Fill(xi,trkWeight[itrk_mix]/(float)nmix);
-                // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]/(float)nmix);
-                // hgammaffxisideband_refcone->Fill(xi,trkWeight_mix[itrk_mix]);
               }
             }
           }
         }
       }
     }
-
-
-    /*
-    */
-
-
   }
   cout<<nin<<" "<<nmix_in<<endl;
-
   fout->Write();
   fout->Close();
-  // cout<<ntottrk<<" "<<ntotmix<<endl;
-  // cout<<ntotmultijet<<"/"<<(ntotsinglejet+ntotmultijet)<<" = "<<ntotmultijet/(float)(ntotsinglejet+ntotmultijet)<<endl;
 }
 
 
