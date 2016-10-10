@@ -87,7 +87,7 @@ wait
 # PbPb MC
 # hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_v10.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_*
 
-hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.* /export/d00/scratch/dav2105/ztrees/merged.Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root
+hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.* /export/d00/scratch/dav2105/ztrees/merged.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root
 
 # pp MC
 # hadd -f /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.mix /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
