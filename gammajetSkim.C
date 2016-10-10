@@ -217,7 +217,7 @@ float getSigmaRelPhi(int hiBin, float jetpt)
 
 //! End helper functions
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1, int do_jet_skim = 1) {
 
   // next two lines are for event mixing for data with condor so each photon file starts
   // at a different index in the minbias mix tree that is random but deterministic
@@ -1168,10 +1168,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         njet++;
       }
     } //end of jet loop
-    if(njet==0) continue;
+    if(do_jet_skim && njet==0) continue;
 //! End jet selection
 
-
+    float maxTrkPt = -999;
 //! (2.4) Begin track cuts and selection
     tracktree_->GetEntry(j);
 
@@ -1186,14 +1186,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(trkPt_[itrk]<1 || trkPt_[itrk]>300 || fabs(trkEta_[itrk])>2.4 ) continue;
       if(highPurity_[itrk]!=1) continue;
       if(trkPtError_[itrk]/trkPt_[itrk]>0.1 || TMath::Abs(trkDz1_[itrk]/trkDzError1_[itrk])>3 || TMath::Abs(trkDxy1_[itrk]/trkDxyError1_[itrk])>3) continue;
-      if(trkChi2_[itrk]/(float)trkNdof_[itrk]/(float)trkNlayer_[itrk]>0.15) continue;
-      if(trkNHit_[itrk]<11 && trkPt_[itrk]>0.7) continue;
-      if((maxJetPt>50 && trkPt_[itrk]>maxJetPt) || (maxJetPt<50 && trkPt_[itrk]>50)) continue;
+      if(!is_pp && trkChi2_[itrk]/(float)trkNdof_[itrk]/(float)trkNlayer_[itrk]>0.15) continue;
+      if(!is_pp && trkNHit_[itrk]<11) continue;
+      
+      //if((maxJetPt>50 && trkPt_[itrk]>maxJetPt) || (maxJetPt<50 && trkPt_[itrk]>50)) continue;
 
       float Et = (pfHcal_[itrk]+pfEcal_[itrk])/TMath::CosH(trkEta_[itrk]);
       if(!(trkPt_[itrk]<20 || (Et>0.5*trkPt_[itrk]))) continue;
       // cout<<"itrk "<<itrk<<endl;
-
+      if(trkPt_[itrk] < maxTrkPt) maxTrkPt = trkPt_[itrk];
       float trkweight = 0;
       if(is_pp) trkweight = getTrkWeight(trkCorr,itrk,0);
       else trkweight = getTrkWeight(trkCorr,itrk,hiBin);
@@ -1227,7 +1228,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
     nTrk=ntracks;
 //! End track selection
-
+    if(!do_jet_skim && maxTrkPt < 8) continue;
 //! (2.5) Begin minbias mixing criteria machinery
     if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
     // if(false) //mix things up
@@ -1457,7 +1458,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         // if(atleastonetrack)
         nmix++;
         // if(atleastonetrack) nmix++;
-        minbiasend = iminbias;
+       minbiasend = iminbias;
         if(nmix >= nEventsToMix) break; // done mixing
       }
       minbiasstart = minbiasend;
@@ -1468,7 +1469,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       {
         cout<<nTrk_mix<<" "<<j<<endl;
         // cout<<"here"<<endl;
-        // break;
+       // break;
       }
     }
 //! End minbias mixing
