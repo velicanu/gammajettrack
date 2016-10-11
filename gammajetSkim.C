@@ -227,6 +227,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   bool is_pp = (i_is_pp == 1) ;
+  int isPP = i_is_pp;
 
   // tracking correction initialized here
   TrkCorr* trkCorr;
@@ -466,6 +467,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! (1.3) Begin output skim and branch definitions
   TTree *ztree = new TTree("ztree","Jet track tree");
 
+  ztree->Branch("isPP",  &isPP, "isPP/I");
   ztree->Branch("run",  &run, "run/I");
   ztree->Branch("event",  &event, "event/I");
   ztree->Branch("lumis",  &lumis, "lumis/I");
@@ -1127,7 +1129,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           {
             float sigmapt = getSigmaRelPt(smearcents[ismearcent],jtpt[ij]);
             float sigmaphi = getSigmaRelPhi(smearcents[ismearcent],jtpt[ij]);
-            
+
             if(ismearcent==0)
             {
               jetptsigma0020[njet] = sigmapt;
@@ -1188,7 +1190,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(trkPtError_[itrk]/trkPt_[itrk]>0.1 || TMath::Abs(trkDz1_[itrk]/trkDzError1_[itrk])>3 || TMath::Abs(trkDxy1_[itrk]/trkDxyError1_[itrk])>3) continue;
       if(!is_pp && trkChi2_[itrk]/(float)trkNdof_[itrk]/(float)trkNlayer_[itrk]>0.15) continue;
       if(!is_pp && trkNHit_[itrk]<11) continue;
-      
+
       //if((maxJetPt>50 && trkPt_[itrk]>maxJetPt) || (maxJetPt<50 && trkPt_[itrk]>50)) continue;
 
       float Et = (pfHcal_[itrk]+pfEcal_[itrk])/TMath::CosH(trkEta_[itrk]);
