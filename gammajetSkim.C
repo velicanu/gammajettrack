@@ -944,7 +944,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       }
     }
     hlttree->GetEntry(j);
-    if(j%100 == 0) { cout << "Processing event: " << j << endl; }
+    if(j%1000 == 0) { cout << "Processing event: " << j << "/" << endindex << endl; }
 
 //! (2.1) Begin event and trigger cuts
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
