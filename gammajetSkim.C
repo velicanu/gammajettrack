@@ -217,7 +217,7 @@ float getSigmaRelPhi(int hiBin, float jetpt)
 
 //! End helper functions
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1, int do_jet_skim = 1) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1, int do_jet_skim = 1, int jetptmin = 30) {
 
   // next two lines are for event mixing for data with condor so each photon file starts
   // at a different index in the minbias mix tree that is random but deterministic
@@ -1103,7 +1103,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     for(int ij=0; ij<nref; ij++) {
       // if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
-      if(jtpt[ij]>30 && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
+      if(jtpt[ij]>jetptmin && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       {
         //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
         //        cout<<jetpt[njet]<<endl;
@@ -1196,7 +1196,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       float Et = (pfHcal_[itrk]+pfEcal_[itrk])/TMath::CosH(trkEta_[itrk]);
       if(!(trkPt_[itrk]<20 || (Et>0.5*trkPt_[itrk]))) continue;
       // cout<<"itrk "<<itrk<<endl;
-      if(trkPt_[itrk] < maxTrkPt) maxTrkPt = trkPt_[itrk];
+      if(trkPt_[itrk] > maxTrkPt) maxTrkPt = trkPt_[itrk];
       float trkweight = 0;
       if(is_pp) trkweight = getTrkWeight(trkCorr,itrk,0);
       else trkweight = getTrkWeight(trkCorr,itrk,hiBin);
@@ -1493,7 +1493,7 @@ int main(int argc, char *argv[])
 {
   if((argc < 3))
   {
-    std::cout << "Usage: ./gammajetSkim.exe <inputfile> <outputfile> [jetname] [is_pp] [mcweight] [startindex] [endindex]" << std::endl;
+    std::cout << "Usage: ./gammajetSkim.exe <inputfile> <outputfile> [jetname] [is_pp] [mcweight] [startindex] [endindex] [dojetskim] [jetptmin]" << std::endl;
     return 1;
   }
   if(argc==3)  gammajetSkim(argv[1], argv[2]); //basic input output files
@@ -1503,5 +1503,7 @@ int main(int argc, char *argv[])
   if(argc==7)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6]); //add minbias mix
   if(argc==8)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7])); //add startindex
   if(argc==9)  gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7]),std::atoi(argv[8])); //add endindex
+  if(argc==10) gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7]),std::atoi(argv[8]),std::atoi(argv[9])); //add do_jet_skim
+  if(argc==11) gammajetSkim(argv[1], argv[2], argv[3], std::atoi(argv[4]),std::atof(argv[5]),argv[6],std::atoi(argv[7]),std::atoi(argv[8]),std::atoi(argv[9]),std::atoi(argv[10])); // add jetptmin
   return 0;
 }
