@@ -7,7 +7,7 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
 
   const static int nCentBins = 4;
 
-  float yaxismax = 0.1;
+  float yaxismax = 4;
 
   TH1D * xjgsignal_pbpbdata_reco[nCentBins];
   TH1D * xjgmixsignal_pbpbdata_reco[nCentBins];
@@ -51,15 +51,15 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     dummy[icent]->GetXaxis()->SetTitleSize(dummy[icent]->GetXaxis()->GetTitleSize()*1.4);
     dummy[icent]->Draw();
 
-    xjgsignal_pbpbdata_reco[icent]->Scale(binwidth/nphosignal);
-    xjgmixsignal_pbpbdata_reco[icent]->Scale(binwidth/nphosignal);
+    xjgsignal_pbpbdata_reco[icent]->Scale(1/binwidth/nphosignal);
+    xjgmixsignal_pbpbdata_reco[icent]->Scale(1/binwidth/nphosignal);
     xjgsignal_pbpbdata_reco[icent]->Draw("same");
     xjgmixsignal_pbpbdata_reco[icent]->SetMarkerColor(kBlue);
     xjgmixsignal_pbpbdata_reco[icent]->Draw("same");
 
     if(icent==0)
     {
-      leg[icent] = new TLegend(0.03,0.697,0.3,0.92);
+      leg[icent] = new TLegend(0.63,0.697,0.9,0.92);
     }
     else
     {
@@ -108,8 +108,8 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
 
   // float labelspace = yaxismax / 4.0;
   const int nlabels = 5;
-  float fylabels[] = {0,0.02,0.04,0.06,0.08};
-  string sylabels[] = {"0.0",".02",".04",".06",".08"};
+  float fylabels[] = {0,1,2,3,4};
+  string sylabels[] = {"0","1","2","3","4"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     laxis[ilatex] = new TLatex(.8,fylabels[ilatex]-0.001,Form("%s",sylabels[ilatex].data()));
