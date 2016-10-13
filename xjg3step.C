@@ -25,7 +25,7 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
 
   const static int nCentBins = 4;
 
-  float yaxismax = 4;
+  float yaxismax = 2;
 
   TH1D * xjgsignal_pbpbdata_reco[nCentBins];
   TH1D * xjgmixsignal_pbpbdata_reco[nCentBins];
@@ -146,11 +146,11 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
 
   // float labelspace = yaxismax / 4.0;
   const int nlabels = 5;
-  float fylabels[] = {0,1,2,3,4};
-  string sylabels[] = {"0","1","2","3","4"};
+  float fylabels[] = {0,0.5,1,1.5,2};
+  string sylabels[] = {"0",".5","1","1.5","2"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
-    laxis[ilatex] = new TLatex(1.2,fylabels[ilatex]-0.1,Form("%s",sylabels[ilatex].data()));
+    laxis[ilatex] = new TLatex(0.9,fylabels[ilatex]-0.1,Form("%s",sylabels[ilatex].data()));
     laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
     laxis[ilatex]->Draw();
   }
