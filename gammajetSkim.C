@@ -344,9 +344,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t         trkWeight_cone[100000];   //[nTrk]
 
   Int_t           nTrk;
-  Int_t           run;
-  Int_t           event;
-  Int_t           lumis;
+  UInt_t          run;
+  ULong64_t       evt;
+  UInt_t          lumi;
   Float_t         trkPt[100000];   //[nTrk]
   Float_t         trkPtError[100000];   //[nTrk]
   UChar_t         trkNHit[100000];   //[nTrk]
@@ -374,63 +374,66 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t         pfHcal[100000];   //[nTrk]
   Float_t         trkWeight[100000];   //[nTrk]
   Int_t    nPho;
-  Float_t  phoE[100];   //_nPho
-  Float_t  phoEt[100];   //_nPho
-  Float_t  phoCorr[100];   //_nPho
-  Float_t  phoEta[100];   //_nPho
-  Float_t  phoPhi[100];   //_nPho
-  Float_t  phoSCE[100];   //_nPho
-  Float_t  phoSCRawE[100];   //_nPho
-  Float_t  phoESEn[100];   //_nPho
-  Float_t  phoSCEta[100];   //_nPho
-  Float_t  phoSCPhi[100];   //_nPho
-  Float_t  phoSCEtaWidth[100];   //_nPho
-  Float_t  phoSCPhiWidth[100];   //_nPho
-  Float_t  phoSCBrem[100];   //_nPho
-  Int_t    phohasPixelSeed[100];   //_nPho
-  Float_t  phoR9[100];   //_nPho
-  Float_t  phoHoverE[100];   //_nPho
-  Float_t  phoSigmaIEtaIEta[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR2[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR3[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR4[100];   //_nPho
-  Float_t  pho_ecalClusterIsoR5[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR1[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR2[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR3[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR4[100];   //_nPho
-  Float_t  pho_hcalRechitIsoR5[100];   //_nPho
-  Float_t  pho_trackIsoR1PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR2PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR3PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR4PtCut20[100];   //_nPho
-  Float_t  pho_trackIsoR5PtCut20[100];   //_nPho
-  Float_t  pho_swissCrx[100];   //_nPho
-  Float_t  pho_seedTime[100];   //_nPho
+  Float_t  phoE[1];   //_nPho
+  Float_t  phoEt[1];   //_nPho
+  Float_t  phoEtCorrected[1];   //_nPho
+  Float_t  pho_sumIso[1];   //_nPho
+  Float_t  pho_sumIsoCorrected[1];   //_nPho
+  Float_t  phoCorr[1];   //_nPho
+  Float_t  phoEta[1];   //_nPho
+  Float_t  phoPhi[1];   //_nPho
+  Float_t  phoSCE[1];   //_nPho
+  Float_t  phoSCRawE[1];   //_nPho
+  Float_t  phoESEn[1];   //_nPho
+  Float_t  phoSCEta[1];   //_nPho
+  Float_t  phoSCPhi[1];   //_nPho
+  Float_t  phoSCEtaWidth[1];   //_nPho
+  Float_t  phoSCPhiWidth[1];   //_nPho
+  Float_t  phoSCBrem[1];   //_nPho
+  Int_t    phohasPixelSeed[1];   //_nPho
+  Float_t  phoR9[1];   //_nPho
+  Float_t  phoHoverE[1];   //_nPho
+  Float_t  phoSigmaIEtaIEta[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR2[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR3[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR4[1];   //_nPho
+  Float_t  pho_ecalClusterIsoR5[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR1[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR2[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR3[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR4[1];   //_nPho
+  Float_t  pho_hcalRechitIsoR5[1];   //_nPho
+  Float_t  pho_trackIsoR1PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR2PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR3PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR4PtCut20[1];   //_nPho
+  Float_t  pho_trackIsoR5PtCut20[1];   //_nPho
+  Float_t  pho_swissCrx[1];   //_nPho
+  Float_t  pho_seedTime[1];   //_nPho
 
-  Float_t  phoE3x3[100];   //_nPho
-  Float_t  phoE1x5[100];   //_nPho
-  Float_t  phoE2x5[100];   //_nPho
-  Float_t  phoE5x5[100];   //_nPho
-  Float_t  phoSigmaIEtaIEta_2012[100];   //_nPho
-  Int_t    phoNoise[100];   //_nPho
-  Int_t    pho_genMatchedIndex[100];   //_nPho
+  Float_t  phoE3x3[1];   //_nPho
+  Float_t  phoE1x5[1];   //_nPho
+  Float_t  phoE2x5[1];   //_nPho
+  Float_t  phoE5x5[1];   //_nPho
+  Float_t  phoSigmaIEtaIEta_2012[1];   //_nPho
+  Int_t    phoNoise[1];   //_nPho
+  Int_t    pho_genMatchedIndex[1];   //_nPho
 
-  Float_t  pfcIso1[100];   //_nPho
-  Float_t  pfcIso2[100];   //_nPho
-  Float_t  pfcIso3[100];   //_nPho
-  Float_t  pfcIso4[100];   //_nPho
-  Float_t  pfcIso5[100];   //_nPho
-  Float_t  pfpIso1[100];   //_nPho
-  Float_t  pfpIso2[100];   //_nPho
-  Float_t  pfpIso3[100];   //_nPho
-  Float_t  pfpIso4[100];   //_nPho
-  Float_t  pfpIso5[100];   //_nPho
-  Float_t  pfnIso1[100];   //_nPho
-  Float_t  pfnIso2[100];   //_nPho
-  Float_t  pfnIso3[100];   //_nPho
-  Float_t  pfnIso4[100];   //_nPho
-  Float_t  pfnIso5[100];   //_nPho
+  Float_t  pfcIso1[1];   //_nPho
+  Float_t  pfcIso2[1];   //_nPho
+  Float_t  pfcIso3[1];   //_nPho
+  Float_t  pfcIso4[1];   //_nPho
+  Float_t  pfcIso5[1];   //_nPho
+  Float_t  pfpIso1[1];   //_nPho
+  Float_t  pfpIso2[1];   //_nPho
+  Float_t  pfpIso3[1];   //_nPho
+  Float_t  pfpIso4[1];   //_nPho
+  Float_t  pfpIso5[1];   //_nPho
+  Float_t  pfnIso1[1];   //_nPho
+  Float_t  pfnIso2[1];   //_nPho
+  Float_t  pfnIso3[1];   //_nPho
+  Float_t  pfnIso4[1];   //_nPho
+  Float_t  pfnIso5[1];   //_nPho
 	Int_t    nMC;
 	Int_t    mcPID[500];
 
@@ -468,11 +471,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TTree *ztree = new TTree("ztree","Jet track tree");
 
   ztree->Branch("isPP",  &isPP, "isPP/I");
-  ztree->Branch("run",  &run, "run/I");
-  ztree->Branch("event",  &event, "event/I");
-  ztree->Branch("lumis",  &lumis, "lumis/I");
+  ztree->Branch("run",  &run, "run/i");
+  ztree->Branch("evt",  &evt, "evt/l");
+  ztree->Branch("lumi",  &lumi, "lumi/i");
   ztree->Branch("hiBin", &hiBin, "hiBin/I");
   ztree->Branch("vz", &vz, "vz/F");
+  ztree->Branch("pcollisionEventSelection", &pcollisionEventSelection, "pcollisionEventSelection/F");
+  ztree->Branch("HLT_HISinglePhoton40_Eta1p5_v1", &HLT_HISinglePhoton40_Eta1p5_v1, "HLT_HISinglePhoton40_Eta1p5_v1/F");
+  ztree->Branch("HBHENoiseFilterResultRun2Loose", &HBHENoiseFilterResultRun2Loose, "HBHENoiseFilterResultRun2Loose/F");
 
   ztree->Branch("nlooped", &nlooped, "nlooped/I");
   ztree->Branch("nmix", &nmix, "nmix/I");
@@ -614,6 +620,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("nPho",&nPho,"nPho/I");
   ztree->Branch("phoE",&phoE,"phoE[nPho]/F");
   ztree->Branch("phoEt",&phoEt,"phoEt[nPho]/F");
+  ztree->Branch("phoEtCorrected",&phoEtCorrected,"phoEtCorrected[nPho]/F");
+  ztree->Branch("pho_sumIso",&pho_sumIso,"pho_sumIso[nPho]/F");
+  ztree->Branch("pho_sumIsoCorrected",&pho_sumIsoCorrected,"pho_sumIsoCorrected[nPho]/F");
   ztree->Branch("phoCorr",&phoCorr,"phoCorr[nPho]/F");
   ztree->Branch("phoEta",&phoEta,"phoEta[nPho]/F");
   ztree->Branch("phoPhi",&phoPhi,"phoPhi[nPho]/F");
@@ -732,6 +741,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   evttree->SetBranchAddress("vz", &vz);
   evttree->SetBranchAddress("hiNevtPlane", &hiNevtPlane);
   evttree->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes);
+  evttree->SetBranchAddress("evt", &evt);
+  evttree->SetBranchAddress("lumi", &lumi);
+  evttree->SetBranchAddress("run", &run);
 
 
   bool ismc = true; // ismc is defined by the existance of the genparticle tree
@@ -990,8 +1002,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     {
       if(_phoEt->at(ipho)<35 ) continue;
       if(fabs(_phoEta->at(ipho))>1.44) continue;
+
+      // spike rejection:
+      if(_phoSigmaIEtaIEta->at(ipho) < 0.002) continue;
       if(fabs(_pho_seedTime->at(ipho)) > 3.0) continue;
       if(_pho_swissCrx->at(ipho) > 0.9) continue;
+
       if(_phoEt->at(ipho) > maxPhoEt)
       {
         maxPhoEt = _phoEt->at(ipho);
@@ -1012,16 +1028,32 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       // if((*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex]>1) passed = false;
 
       float sumIso = (*_pho_ecalClusterIsoR4)[maxPhoIndex]+(*_pho_hcalRechitIsoR4)[maxPhoIndex]+(*_pho_trackIsoR4PtCut20)[maxPhoIndex] ;
-      float pho_sumIsoCorrected = sumIso - sumIsoCorrections->GetBinContent(sumIsoCorrections->FindBin(getAngleToEP(fabs( (*_phoPhi)[maxPhoIndex] - hiEvtPlanes[8]))));
+      float sumIsoCorrected = sumIso - sumIsoCorrections->GetBinContent(sumIsoCorrections->FindBin(getAngleToEP(fabs( (*_phoPhi)[maxPhoIndex] - hiEvtPlanes[8]))));
 
       if(is_pp) //sumiso correction only in pbpb
       {
         if( sumIso>1 ) passed = false;
       } else {
-        if( pho_sumIsoCorrected>1 ) passed = false;
+        if( sumIsoCorrected>1 ) passed = false;
       }
       if(_phoHoverE->at(maxPhoIndex)>0.1) passed = false;
       if(_phoSigmaIEtaIEta_2012->at(maxPhoIndex) > 0.0170 ) passed = false;
+
+      float eleEpTemp = 100.0;
+      for (int ie=0; ie<_nEle; ++ie) {
+        if (_elePt->at(ie) < 10)
+          continue;
+        if (abs(_eleEta->at(ie) - _phoEta->at(maxPhoIndex)) > 0.03) // deta
+          continue;
+        if (abs(acos(cos(_eleEta->at(ie) - _phoEta->at(maxPhoIndex)))) > 0.03) // dphi
+          continue;
+        if (eleEpTemp < _eleEoverP->at(ie))
+          continue;
+
+        passed = false;
+        break;
+      }
+
       if(passed)
       {
         phoE3x3[0] = _phoE3x3->at(maxPhoIndex);
@@ -1081,6 +1113,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         pfnIso5[0] = (*_pfnIso5)[maxPhoIndex];
 
         phoCorr[0] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
+        phoEtCorrected[0] = (*_phoEt)[maxPhoIndex]/phoCorr[0];
+        pho_sumIso[0] = sumIso;
+        pho_sumIsoCorrected[0] = sumIsoCorrected;
+
         nphoton = 1;
       }
     }
@@ -1170,7 +1206,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         njet++;
       }
     } //end of jet loop
-    if(do_jet_skim && njet==0) continue;
+    // if(do_jet_skim && njet==0) continue;
 //! End jet selection
 
     float maxTrkPt = -999;
