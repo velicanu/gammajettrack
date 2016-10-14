@@ -227,6 +227,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   bool is_pp = (i_is_pp == 1) ;
+  bool isHI = !is_pp;
   int isPP = i_is_pp;
 
   // tracking correction initialized here
@@ -238,6 +239,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   // the L2L3Residual correction is currently not being used, but can be turned on
   L2L3Residual * jetcorr = new L2L3Residual(3);
   cout<<jetcorr<<endl;
+
+  TF1 *jetResidualFunction[4];
+  if (isHI) {
+    TFile *jetResidualFile = TFile::Open("merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
+    jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
+    jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
+    jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
+    jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
+    //jetResidualFile->Close();
+  } else {
+    jetResidualFunction[0] = new TF1("f1_p","(1+.5/x)",5,300);
+  }
 
 
   TFile *fin = TFile::Open(infilename);
@@ -266,6 +279,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float jetpt_smeared60100[2000], jeteta_smeared60100[2000], jetphi_smeared60100[2000];
   float jetpt_smeared100200[2000], jeteta_smeared100200[2000], jetphi_smeared100200[2000];
   int njet;
+  float jetptCorr[200];
   float jetpt[200], jeteta[200], jetphi[200];
   float gjetpt[200], gjeteta[200], gjetphi[200];
   float chargedSum[200], neutralSum[200], eSum[200];
@@ -542,6 +556,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   ztree->Branch("njet",	&njet,	"njet/I");
   ztree->Branch("jetpt",	&jetpt,	"jetpt[njet]/F");
+  ztree->Branch("jetptCorr",	&jetptCorr,	"jetptCorr[njet]/F");
   ztree->Branch("jeteta",	&jeteta,	"jeteta[njet]/F");
   ztree->Branch("jetphi",	&jetphi,	"jetphi[njet]/F");
   ztree->Branch("gjetpt",	&gjetpt,	"gjetpt[njet]/F");
@@ -1154,6 +1169,26 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         chargedSum[njet] = _chargedSum[ij];
         neutralSum[njet] = _neutralSum[ij];
         eSum[njet] = _eSum[ij];
+
+        // jet energy correction
+        int centBin = 0;
+        if (isHI) {
+          if (hiBin >= 100)
+            centBin = 3;
+          else if (hiBin >= 60)
+            centBin = 2;
+          else if (hiBin >= 20)
+            centBin = 1;
+          else
+            centBin = 0;
+        }
+        double xmin, xmax;
+        jetResidualFunction[centBin]->GetRange(xmin,xmax);
+        if(jetpt[njet]>xmin && jetpt[njet]<xmax) {
+          jetptCorr[njet] = jetpt[njet]/jetResidualFunction[centBin]->Eval(jetpt[njet]);
+        } else {
+          jetptCorr[njet] = -1; // indicate correction wasn't applied
+        }
         if(njet>19) {
           cout<<"need bigger smearing arrays"<<endl;
           exit(1);
