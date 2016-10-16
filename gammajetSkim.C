@@ -1414,7 +1414,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           if(!(trkPt_mix_[itrkmix]<20 || (Et>0.5*trkPt_mix_[itrkmix]))) continue;
 
           bool inacone = false;
-          if(nmix<nEventsToMix/2) // use first half of mixed events for ue mixing and the second for jet mixing
+          if(nmix%2==0) // use half of mixed events for UE mixing and the second for jet mixing
           {
             for(int ijetcand = 0 ; ijetcand < nuejets ; ijetcand++)
             {
@@ -1445,7 +1445,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           float trkweight_mix = 0;
           if(is_pp) trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,0);
           else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,vmix_hiBin[iminbias]);
-          if(nmix<nEventsToMix/2) // use first half of mixed events for ue mixing and the second for jet mixing
+          if(nmix%2==0) // use half of mixed events for ue mixing and the second for jet mixing
           {
             trkFromEv_cone[ntracks_cone] = nmix;   //[nTrk_mix]
             trkPt_cone[ntracks_cone] = trkPt_mix_[itrkmix];   //[nTrk_mix]
@@ -1473,7 +1473,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
             bool inacone = false;
 
-            if(nmix<nEventsToMix/2) // use first half of mixed events for ue mixing and the second for jet mixing
+            if(nmix%2==0) // use half of mixed events for ue mixing and the second for jet mixing
             {
               for(int ijetcand = 0 ; ijetcand < nuejets ; ijetcand++)
               {
@@ -1501,7 +1501,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             }
 
             if(!inacone) continue;
-            if(nmix<nEventsToMix/2) // use first half of mixed events for ue mixing and the second for jet mixing
+            if(nmix%2==0) // use first half of mixed events for ue mixing and the second for jet mixing
             {
               pt_mix[mult_mix] = _pt_mix->at(igenp);
               eta_mix[mult_mix] = _eta_mix->at(igenp);
