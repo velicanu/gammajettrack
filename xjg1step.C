@@ -4,6 +4,7 @@
 void xjg1step(int phoetmin, int phoetmax, int jetptmin)
 {
   TFile * _file0 = TFile::Open(Form("all_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+  TFile * _fran = TFile::Open("/home/ursu/PbPb_Data_gammaJetHistogramArithmetic.root");
 
   const static int nCentBins = 4;
 
@@ -15,6 +16,8 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
   TH1D * xjgsideband_pbpbdata_reco[nCentBins];
   TH1D * xjgmixsideband_pbpbdata_reco[nCentBins];
   TH1D * phoetsideband_pbpbdata_reco[nCentBins];
+
+  TH1D * h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[nCentBins];
 
 
   TH2D * dummy[nCentBins];
@@ -30,7 +33,7 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
   makeMultiPanelCanvas(c1,5,1,0.02,0.0,-6,0.2,0.04);
 
 
-  for (size_t icent = 0; icent < nCentBins; icent++) {
+  for (int icent = 0; icent < nCentBins; icent++) {
     c1->cd(2+icent);
     xjgsignal_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgsignal_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
     xjgmixsignal_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgmixsignal_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
@@ -38,6 +41,7 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     xjgsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
     xjgmixsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgmixsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
     phoetsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("phoetsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[icent] = (TH1D*) _fran->Get(Form("HI/h1D_xjg_ptBin1_hiBin%d_phoRAW_jetRAW_final_norm",icent+3));
 
 
     float nphosignal = phoetsignal_pbpbdata_reco[icent]->Integral();
@@ -56,6 +60,9 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     xjgsignal_pbpbdata_reco[icent]->Draw("same");
     xjgmixsignal_pbpbdata_reco[icent]->SetMarkerColor(kBlue);
     xjgmixsignal_pbpbdata_reco[icent]->Draw("same");
+    h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[icent]->SetMarkerColor(kRed);
+    h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[icent]->SetMarkerStyle(24);
+    h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[icent]->Draw("same");
 
     if(icent==0)
     {
@@ -72,7 +79,8 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     if(icent==0)
     {
       leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"Raw x_{J#gamma}","p");
-      leg[icent]->AddEntry(xjgmixsignal_pbpbdata_reco[icent],"Mix x_{J#gamma}","p");
+      // leg[icent]->AddEntry(xjgmixsignal_pbpbdata_reco[icent],"Mix x_{J#gamma}","p");
+      leg[icent]->AddEntry(h1D_xjg_ptBin1_hiBin_phoRAW_jetSIG_final_norm[icent],"HIN-16-002","p");
     }
     else if(icent==1)
     {
