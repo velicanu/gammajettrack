@@ -12,19 +12,19 @@
   // TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
 
   TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root");
-  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
+  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v8.root");
 
   TTree * ppztree = (TTree*) ppfile->Get("ztree");
   TTree * pbpbztree = (TTree*) pbpbfile->Get("ztree");
 
   const int ntrkcuts = 6;
 
-  int trkptcuts [ntrkcuts] = {4,8};
-  // float trkptmin [ntrkcuts] = {0.5,1,2,3,4,8};
-  // float trkptmax [ntrkcuts] = {1,2,3,4,8,1000};
-  float trkptmin [ntrkcuts] = {0.5,1,2,3,8,20};
-  float trkptmax [ntrkcuts] = {1,2,3,4,20,1000};
-  int zptcuts   [2] = {100, 200};
+  // int trkptcuts [ntrkcuts] = {4,8};
+  float trkptmin [ntrkcuts] = {0.5,1,2,3,4,8};
+  float trkptmax [ntrkcuts] = {1,2,3,4,8,1000};
+  // float trkptmin [ntrkcuts] = {0.5,1,2,3,8,20};
+  // float trkptmax [ntrkcuts] = {1,2,3,4,20,1000};
+  int zptcuts   [2] = {100, 60};
   float ymins [2] = {0,0};
   float subymins [2] = {-1,-1};
   float ymaxs [2] = {6,3};
@@ -47,8 +47,9 @@
   TCanvas * stackedcanvasepbpb [2];
   THStack * hspp[2];
   THStack * hspbpb[2];
-  int itrkstart = 1;
-  for(int izcut = 0 ; izcut < 2 ; ++izcut)
+  TH2D * dummydphi[2];
+  int itrkstart = 4;
+  for(int izcut = 1 ; izcut < 2 ; ++izcut)
   {
     for(int itrkcut = itrkstart ; itrkcut < ntrkcuts ; ++itrkcut)
     {
@@ -224,7 +225,13 @@
     // leg->AddEntry(hppzdphi[izcut][itrkstart],Form("80<Zmass<110 GeV"),"");
 
     // hspp[izcut]->GetXaxis()->SetTitle("Z-trk #Delta#phi");
-    hspp[izcut]->Draw("hist");
+    dummydphi[izcut] = new TH2D("dummydphi",";#gamma-trk #Delta#phi;#frac{1}{N_{#gamma}} #frac{dN}{d#Delta#phi}",1,0,3.1415,1,-10,110);
+    dummydphi[izcut]->GetXaxis()->CenterTitle();
+    dummydphi[izcut]->GetYaxis()->CenterTitle();
+    dummydphi[izcut]->GetYaxis()->SetTitleOffset(1.25);
+
+    dummydphi[izcut]->Draw();
+    hspp[izcut]->Draw("hist same");
     hspp[izcut]->Draw("pe same");
     lint->Draw();
     leg->Draw();
@@ -252,7 +259,8 @@
     legpbpb->AddEntry(hpbpbzdphi[izcut][itrkstart],Form("#gamma p_{T}>%d GeV",zptcuts[izcut]),"");
     //legpbpb->AddEntry(hpbpbzdphi[izcut][itrkstart],Form("80<Zmass<110 GeV"),"");
 
-    hspbpb[izcut]->Draw("hist");
+    dummydphi[izcut]->Draw();
+    hspbpb[izcut]->Draw("hist same");
     hspbpb[izcut]->Draw("pe same");
     lint->Draw();
     legpbpb->Draw();
