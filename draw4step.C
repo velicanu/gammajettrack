@@ -21,7 +21,7 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
   TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   // return;
   const static int ncentbins = 4;
-  const int yaxismax = 4;
+  const int yaxismax = 2;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
@@ -29,6 +29,7 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
   TH1D * rawff_pbpbmc_reco[ncentbins];
   TH1D * rawff_pbpbmc_gen[ncentbins];
   TH1D * rawffjetmix_pbpbmc_reco[ncentbins];
+  TH1D * hgenjetpt_pbpbmc_gen[ncentbins];
   TH1D * hjetpt_pbpbmc_reco[ncentbins];
   TH1D * hjetptjetmix_pbpbmc_reco[ncentbins];
   TH1D * hnmixsignal_pbpbmc_reco[ncentbins];
@@ -132,9 +133,12 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
 
 
 
-    rawff_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_gen_%d_%d",centmins[icent],centmaxs[icent]));
-    nrawjets = hjetpt_pbpbmc_reco[icent]->Integral();
-    rawff_pbpbmc_gen[icent]->Scale(1.0/nrawjets);
+    rawff_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    hgenjetpt_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgenjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    float ngengets = hgenjetpt_pbpbmc_gen[icent]->Integral();
+    // ngenjets = hjetpt_pbpbmc_reco[icent]->Integral();
+    // rawff_pbpbmc_gen[icent]->Scale(1.0/nrawjets);
+    rawff_pbpbmc_gen[icent]->Scale(1.0/ngengets);
 
 
     rawff_pbpbmc_reco[icent]->Draw("same");
@@ -155,7 +159,7 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     if(icent==0)
     {
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"Final FF reco","p");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gen[icent],"Gen FF","l");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gen[icent],"GenGen FF","l");
     }
     else if(icent==1)
     {

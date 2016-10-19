@@ -1,13 +1,13 @@
 #include "makeMultiPanelCanvas.C"
 
-void draw2step(int phoetmin, int phoetmax, int jetptmin = 30) {
+void draw2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) {
   TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
-  const static int ncentbins = 5;
+  const static int ncentbins = 4;
   const int yaxismax = 8;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
-  int centmaxs[] = {20,60,100,140,200};
-  string cents[] = {"0-10%","10-30%","30-50%","50-70%","70-100%"};
+  int centmaxs[] = {20,60,100,200,200};
+  string cents[] = {"0-10%","10-30%","30-50%","50-100%","70-100%"};
   TH1D * rawff_pbpbmc_reco[ncentbins];
   TH1D * rawffjetmix_pbpbmc_reco[ncentbins];
   TH1D * hjetpt_pbpbmc_reco[ncentbins];
@@ -18,9 +18,9 @@ void draw2step(int phoetmin, int phoetmax, int jetptmin = 30) {
   TLegend * leg_ff_pbpbsub[ncentbins];
 
   TCanvas * call = new TCanvas("call","",1600,500);
-  makeMultiPanelCanvas(call,6,1,0.02,0.0,-6,0.2,0.04);
+  makeMultiPanelCanvas(call,ncentbins+1,1,0.02,0.0,-6,0.2,0.04);
 
-  for (int icent = 0; icent < 5; icent++) {
+  for (int icent = 0; icent < ncentbins; icent++) {
     call->cd(2+icent);
     dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
@@ -70,7 +70,7 @@ void draw2step(int phoetmin, int phoetmax, int jetptmin = 30) {
     }
     else if(icent==1)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"trk p_{T}>1 GeV, R < 0.3","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("trk p_{T}>%d GeV, R < 0.3",trkptcut),"");
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
