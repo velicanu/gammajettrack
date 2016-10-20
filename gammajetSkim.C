@@ -326,29 +326,29 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> *_pdg_mix;
   vector<int> *_chg_mix;
   int mult_mix;
-  float pt_mix[10000];
-  float eta_mix[10000];
-  float phi_mix[10000];
-  int pdg_mix[10000];
-  int chg_mix[10000];
-  int nev_mix[10000];
+  float * pt_mix = (float*) malloc(sizeof(float)*100000);
+  float * eta_mix = (float*) malloc(sizeof(float)*100000);
+  float * phi_mix = (float*) malloc(sizeof(float)*100000);
+  int * pdg_mix = (int*) malloc(sizeof(int)*100000);
+  int * chg_mix = (int*) malloc(sizeof(int)*100000);
+  int * nev_mix = (int*) malloc(sizeof(int)*100000);
   int mult_cone;
-  float pt_cone[10000];
-  float eta_cone[10000];
-  float phi_cone[10000];
-  int pdg_cone[10000];
-  int chg_cone[10000];
-  int nev_cone[10000];
+  float * pt_cone = (float*) malloc(sizeof(float)*100000);
+  float * eta_cone = (float*) malloc(sizeof(float)*100000);
+  float * phi_cone = (float*) malloc(sizeof(float)*100000);
+  int * pdg_cone = (int*) malloc(sizeof(int)*100000);
+  int * chg_cone = (int*) malloc(sizeof(int)*100000);
+  int * nev_cone = (int*) malloc(sizeof(int)*100000);
 
 
   int mult;
-  float pt[10000];
-  float eta[10000];
-  float phi[10000];
-  int pdg[10000];
-  int chg[10000];
-  int matchingID[10000];
-  int sube[10000];
+  float * pt = (float*) malloc(sizeof(float)*100000);
+  float * eta = (float*) malloc(sizeof(float)*100000);
+  float * phi = (float*) malloc(sizeof(float)*100000);
+  int * pdg = (int*) malloc(sizeof(int)*100000);
+  int * chg = (int*) malloc(sizeof(int)*100000);
+  int * matchingID = (int*) malloc(sizeof(int)*100000);
+  int * sube = (int*) malloc(sizeof(int)*100000);
 
 
 
@@ -1332,6 +1332,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     {
       int minbiasend = minbiasstart;
       mult_mix = 0;
+      mult_cone = 0;
       nmix = 0;
       bool wraparound = false;
       nlooped = 0;
@@ -1382,45 +1383,48 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! (2.52) Jets from mixed events
         vector<int> mixjet_idx;
         jettree_ak3pupf->GetEntry(vmix_index[iminbias]);
-        for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix)
+        if(nmix%2==1) // odd events have the mix jets
         {
-          if( jtpt_ak3pupf[ijetmix]<30 ) continue; //jet pt Cut
-          if( fabs(jteta_ak3pupf[ijetmix]) > 1.6) continue; //jeteta Cut
-          if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-          // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
-          // if( jetID[ijet]==0 ) continue;
-          rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
-          jtpt_ak3pupf_out[njets_mix] = jtpt_ak3pupf[ijetmix];
-          jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
-          jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
-          neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
-          chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
-          nmixEv_ak3pupf_out[njets_mix] = nmix;
-          jetID_ak3pupf_out[njets_mix] = goodJet_ak3pupf(ijetmix);
-          chargedN_ak3pupf_out[njets_mix] = chargedN_ak3pupf[ijetmix];
-          photonN_ak3pupf_out[njets_mix] = photonN_ak3pupf[ijetmix];
-          neutralN_ak3pupf_out[njets_mix] = neutralN_ak3pupf[ijetmix];
-          eN_ak3pupf_out[njets_mix] = eN_ak3pupf[ijetmix];
-          muN_ak3pupf_out[njets_mix] = muN_ak3pupf[ijetmix];
-          chargedMax_ak3pupf_out[njets_mix] = chargedMax_ak3pupf[ijetmix];
-          photonSum_ak3pupf_out[njets_mix] = photonSum_ak3pupf[ijetmix];
-          eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
-          njets_mix++;
-          mixjet_idx.push_back(ijetmix);
-        }
-        if(ismc)
-        {
-          for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
-            if(_genpt_mix[igenj_mix] < 30) continue;
-            if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
-            // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
-            // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-            genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
-            geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
-            genphi_mix[ngen_mix] = _genphi_mix[igenj_mix];
-            gensubid_mix[ngen_mix] = _gensubid_mix[igenj_mix];
-            genev_mix[ngen_mix] = nmix;
-            ngen_mix++;
+          for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix)
+          {
+            if( jtpt_ak3pupf[ijetmix]<30 ) continue; //jet pt Cut
+            if( fabs(jteta_ak3pupf[ijetmix]) > 1.6) continue; //jeteta Cut
+            if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+            // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
+            // if( jetID[ijet]==0 ) continue;
+            rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
+            jtpt_ak3pupf_out[njets_mix] = jtpt_ak3pupf[ijetmix];
+            jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
+            jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
+            neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
+            chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
+            nmixEv_ak3pupf_out[njets_mix] = nmix;
+            jetID_ak3pupf_out[njets_mix] = goodJet_ak3pupf(ijetmix);
+            chargedN_ak3pupf_out[njets_mix] = chargedN_ak3pupf[ijetmix];
+            photonN_ak3pupf_out[njets_mix] = photonN_ak3pupf[ijetmix];
+            neutralN_ak3pupf_out[njets_mix] = neutralN_ak3pupf[ijetmix];
+            eN_ak3pupf_out[njets_mix] = eN_ak3pupf[ijetmix];
+            muN_ak3pupf_out[njets_mix] = muN_ak3pupf[ijetmix];
+            chargedMax_ak3pupf_out[njets_mix] = chargedMax_ak3pupf[ijetmix];
+            photonSum_ak3pupf_out[njets_mix] = photonSum_ak3pupf[ijetmix];
+            eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
+            njets_mix++;
+            mixjet_idx.push_back(ijetmix);
+          }
+          if(ismc)
+          {
+            for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
+              if(_genpt_mix[igenj_mix] < 30) continue;
+              if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
+              // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
+              // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+              genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
+              geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
+              genphi_mix[ngen_mix] = _genphi_mix[igenj_mix];
+              gensubid_mix[ngen_mix] = _gensubid_mix[igenj_mix];
+              genev_mix[ngen_mix] = nmix;
+              ngen_mix++;
+            }
           }
         }
         // return;
@@ -1453,7 +1457,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           if(!(trkPt_mix_[itrkmix]<20 || (Et>0.5*trkPt_mix_[itrkmix]))) continue;
 
           bool inacone = false;
-          if(nmix%2==0) // use half of mixed events for UE mixing and the second for jet mixing
+          if(nmix%2==0) // even mix events have the UE cones
           {
             for(int ijetcand = 0 ; ijetcand < nuejets ; ijetcand++)
             {
@@ -1466,7 +1470,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
                 break;
               }
             }
-          } else {
+          } else { // odd mix events have the mix jets 
             for(int ijetcand = 0 ; ijetcand < nmixjets ; ijetcand++)
             {
               float dphi = acos( cos(jtphi_ak3pupf[mixjet_idx[ijetcand]] - trkPhi_mix_[itrkmix]));
@@ -1539,23 +1543,44 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
                 }
               }
             }
-            for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
-              if(_genpt_mix[igenj_mix] < 30) continue;
-              if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
-              // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-              float dphi = acos( cos(_genphi_mix[igenj_mix] - _phi_mix->at(igenp)));
-              float deta = fabs( _geneta_mix[igenj_mix] - _eta_mix->at(igenp));
-              float dr = sqrt((dphi*dphi)+(deta*deta));
-              if(dr<0.3)
-              {
-                inacone = true;
-                break;
+            if(nmix%2==0)
+            {
+
+              for (int igenj = 0; igenj < ngen; igenj++) {
+                if(genpt[igenj] < 30) continue;
+                if(fabs(geneta[igenj])>1.6) continue;
+                // cout<<igenp<<" "<<_mult_mix<<" "<<_phi_mix->size()<<endl;
+                float dphi = acos( cos(genphi[igenj] - _phi_mix->at(igenp)));
+                float deta = fabs( geneta[igenj] - _eta_mix->at(igenp));
+                float dr = sqrt((dphi*dphi)+(deta*deta));
+                if(dr<0.3)
+                {
+                  inacone = true;
+                  break;
+                }
+              }
+            } else {
+              for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
+                if(_genpt_mix[igenj_mix] < 30) continue;
+                if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
+                // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+                float dphi = acos( cos(_genphi_mix[igenj_mix] - _phi_mix->at(igenp)));
+                float deta = fabs( _geneta_mix[igenj_mix] - _eta_mix->at(igenp));
+                float dr = sqrt((dphi*dphi)+(deta*deta));
+                if(dr<0.3)
+                {
+                  inacone = true;
+                  break;
+                }
               }
             }
 
             if(!inacone) continue;
             if(nmix%2==0) // use first half of mixed events for ue mixing and the second for jet mixing
             {
+              if(!(abs(_pdg_mix->at(igenp))==11 || abs(_pdg_mix->at(igenp))==13 || abs(_pdg_mix->at(igenp))==211 || abs(_pdg_mix->at(igenp))==2212 || abs(_pdg_mix->at(igenp))==321) ) continue;
+              if(_pt_mix->at(igenp)<1) continue;
+
               pt_mix[mult_mix] = _pt_mix->at(igenp);
               eta_mix[mult_mix] = _eta_mix->at(igenp);
               phi_mix[mult_mix] = _phi_mix->at(igenp);
@@ -1566,6 +1591,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
               // cout<<mult_mix<<" "<<nmix<<" "<<mult_mix<<" "<<nev_mix[mult_mix]<<endl;
               mult_mix++;
             } else {
+              if(!(abs(_pdg_mix->at(igenp))==11 || abs(_pdg_mix->at(igenp))==13 || abs(_pdg_mix->at(igenp))==211 || abs(_pdg_mix->at(igenp))==2212 || abs(_pdg_mix->at(igenp))==321) ) continue;
+              if(_pt_mix->at(igenp)<1) continue;
               pt_cone[mult_cone] = _pt_mix->at(igenp);
               eta_cone[mult_cone] = _eta_mix->at(igenp);
               phi_cone[mult_cone] = _phi_mix->at(igenp);
@@ -1576,6 +1603,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             }
           }
         }
+        
 
         evttree_mix->GetEntry(vmix_index[iminbias]);
         dvz_mix[nmix] = fabs(vz - vz_mix);
@@ -1600,6 +1628,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
 //! End minbias mixing
     // cout<<j<<" before fill"<<endl;
+    cout<<mult_cone<<endl;
     ztree->Fill();
     // cout<<j<<" after fill"<<endl;
 
