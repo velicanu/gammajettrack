@@ -225,7 +225,7 @@
     // leg->AddEntry(hppzdphi[izcut][itrkstart],Form("80<Zmass<110 GeV"),"");
 
     // hspp[izcut]->GetXaxis()->SetTitle("Z-trk #Delta#phi");
-    dummydphi[izcut] = new TH2D("dummydphi",";#gamma-trk #Delta#phi;#frac{1}{N_{#gamma}} #frac{dN}{d#Delta#phi}",1,0,3.1415,1,-10,110);
+    dummydphi[izcut] = new TH2D("dummydphi",";#gamma-trk #Delta#phi;#frac{1}{N_{#gamma}} #frac{dN}{d#Delta#phi}",1,0,3.1415,1,-10,160);
     dummydphi[izcut]->GetXaxis()->CenterTitle();
     dummydphi[izcut]->GetYaxis()->CenterTitle();
     dummydphi[izcut]->GetYaxis()->SetTitleOffset(1.25);
@@ -236,7 +236,7 @@
     lint->Draw();
     leg->Draw();
     lztype->Draw();
-    stackedcanvasepp[izcut]->SaveAs(Form("sub_gtrkdphi_stacked_pp_%d.png",zptcuts[izcut]));
+    stackedcanvasepp[izcut]->SaveAs(Form("sub_gtrkdphi_stacked_pp_%d_data.png",zptcuts[izcut]));
 
     stackedcanvasepbpb[izcut] = new TCanvas();
 
@@ -265,7 +265,7 @@
     lint->Draw();
     legpbpb->Draw();
     lztypepbpb->Draw();
-    stackedcanvasepbpb[izcut]->SaveAs(Form("sub_gtrkdphi_stacked_pbpb_%d.png",zptcuts[izcut]));
+    stackedcanvasepbpb[izcut]->SaveAs(Form("sub_gtrkdphi_stacked_pbpb_%d_data.png",zptcuts[izcut]));
     // break;
   }
 }

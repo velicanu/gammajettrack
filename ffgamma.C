@@ -7,64 +7,6 @@
 #include "ggTree.h"
 #include <algorithm>
 
-// const int jetptcut = 30;
-
-float ztree::jettrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( jeteta[ijet] - trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::refconetrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( jeteta[ijet] + trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genjettrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
-  float deta = fabs( gjeteta[ijet] - eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genrefconetrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - phi[itrk]));
-  float deta = fabs( gjeteta[ijet] + eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genjetrecotrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( gjeteta[ijet] - trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::genrefconerecotrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(gjetphi[ijet] - trkPhi[itrk]));
-  float deta = fabs( gjeteta[ijet] + trkEta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::recojetgentrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - phi[itrk]));
-  float deta = fabs( jeteta[ijet] - eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
-float ztree::recorefconegentrk_dr(int itrk, int ijet)
-{
-  float dphi = acos( cos(jetphi[ijet] - phi[itrk]));
-  float deta = fabs( jeteta[ijet] + eta[itrk]);
-  return sqrt((dphi*dphi)+(deta*deta));
-}
-
 float ztree::getSmearedPt(int jetindex,int centindex)
 {
   if(centindex == 0)
@@ -354,7 +296,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         
         for (int itrk = 0; itrk < nTrk; itrk++) {
           if(trkPt[itrk]<trkptmin) continue;
-          float dr = jettrk_dr(itrk,ijet);
+          float dphi = acos( cos(jetphi[ijet] - trkPhi[itrk]));
+          float deta = fabs( jeteta[ijet] - trkEta[itrk]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+          
           // float dr = genjetrecotrk_dr(itrk,ijet);
           // float dr_refcone = genrefconerecotrk_dr(itrk,ijet);
           if(dr<0.3)
