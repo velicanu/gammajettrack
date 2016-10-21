@@ -21,7 +21,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   TFile *_file0 = TFile::Open(Form("all_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   // return;
   const static int ncentbins = 4;
-  const int yaxismax = 4;
+  const int yaxismax = 2;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
@@ -192,15 +192,16 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
+  ldndxi->Draw();
 
-  int labelspace = yaxismax / 4;
-  const int nlabels = yaxismax/labelspace;
+  const int nlabels = 5;
+  float fylabels[] = {0,0.5,1,1.5,2};
+  string sylabels[] = {"0",".5","1","1.5","2"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
-    laxis[ilatex] = new TLatex(2.,ilatex*labelspace-0.1,Form("%d",ilatex*labelspace));
-    laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.2);
+    laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+    // laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
     laxis[ilatex]->Draw();
   }
-  ldndxi->Draw();
   call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_pbpbdata_reco.png",phoetmin,phoetmax,jetptmin,trkptcut));
 }

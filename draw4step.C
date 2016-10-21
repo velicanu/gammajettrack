@@ -186,19 +186,21 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
 
-  TLatex * ldndxi = new TLatex(0.4,0.5,"dN/d#xi 1/nJet purity");
+  TLatex * ldndxi = new TLatex(0.4,0.4,"dN/d#xi 1/nJet");
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
+  ldndxi->Draw();
 
-  int labelspace = yaxismax / 4;
-  const int nlabels = yaxismax/labelspace;
+  const int nlabels = 5;
+  float fylabels[] = {0,0.5,1,1.5,2};
+  string sylabels[] = {"0",".5","1","1.5","2"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
-    laxis[ilatex] = new TLatex(2.,ilatex*labelspace-0.1,Form("%d",ilatex*labelspace));
-    laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.2);
+    laxis[ilatex] = new TLatex(1.,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+    // laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
     laxis[ilatex]->Draw();
   }
-  ldndxi->Draw();
+
   call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_pbpbmc_reco.png",phoetmin,phoetmax,jetptmin,trkptcut));
 }

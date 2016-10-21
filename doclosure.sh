@@ -16,5 +16,5 @@ wait
 done
 
 
-hadd -f closure_${1}_${2}_${3}.root pbpbmc_pbpbmc_*_*.root
+hadd -f closure_pbpb_${1}_${2}_${3}.root pbpbmc_pbpbmc_*_*.root
 rm pbpbmc_pbpbmc_*_*.root
