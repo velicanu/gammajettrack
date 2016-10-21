@@ -102,7 +102,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * hnjetpermixevt = new TH1D(Form("hnjetpermixevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per mixed event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
   TH1D * hnmixsignal = new TH1D(Form("hnmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
-  TH1D * hmultinmix = new TH1D(Form("hmultinmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),100,-50,50); // Raw FF after cuts (1.0)
   TH1D * xjgsignal = new TH1D(Form("xjgsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
   TH1D * xjgmixsignal = new TH1D(Form("xjgmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
   TH1D * xjgsideband = new TH1D(Form("xjgsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
@@ -115,7 +114,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
 
 //! (2) Loop
-  int nin = 0 , nmix_in = 0;
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     if(jentry%10000==0) { cout<<jentry<<"/"<<nentries<<endl; }
@@ -180,7 +178,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
       if(gen.compare("gen")==0)
       {
-        int mult_in = 0;
         for(int igen = 0 ; igen < mult ; ++igen)
         {
           if(!(abs(pdg[igen])==11 || abs(pdg[igen])==13 || abs(pdg[igen])==211 || abs(pdg[igen])==2212 || abs(pdg[igen])==321) || pt[igen]<trkptmin) continue;
@@ -216,12 +213,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
               {
 
               }
-              nin++;
-              mult_in++;
             }
           }
         }
-        int mult_mix_in = 0;
         for(int igen_mix = 0 ; igen_mix < mult_mix ; ++igen_mix)
         {
           if(!(abs(pdg_mix[igen_mix])==11 || abs(pdg_mix[igen_mix])==13 || abs(pdg_mix[igen_mix])==211 || abs(pdg_mix[igen_mix])==2212 || abs(pdg_mix[igen_mix])==321) || pt_mix[igen_mix]<trkptmin) continue;
@@ -236,12 +230,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float z = pt_mix[igen_mix]*cos(angle)/tmpjetpt;
             float xi = log(1.0/z);
             hgammaffxiuemixgen->Fill(xi,2.0/(float)nmix);
-            nmix_in++;
-            mult_mix_in++;
           }
         }
-        hmultinmix->Fill(mult_in-mult_mix_in);
-
       }
       else if(gen.compare("reco")==0)
       {
@@ -423,8 +413,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     hnjetpermixevt->Fill(njets_permixevent);
     
   }
-  cout<<"here"<<endl;
-  cout<<nin<<" "<<nmix_in<<endl;
   fout->Write();
   fout->Close();
 }
