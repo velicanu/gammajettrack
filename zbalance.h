@@ -23,6 +23,14 @@ class ztree {
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
    // Declaration of leaf types
+   Int_t           ngen_mix;
+   Float_t         genpt_mix[8];   //[ngen_mix]
+   Float_t         geneta_mix[8];   //[ngen_mix]
+   Float_t         genphi_mix[8];   //[ngen_mix]
+   Int_t           gensubid_mix[8];   //[ngen_mix]
+   Int_t           genev_mix[8];   //[ngen_mix]
+
+
    Int_t           isPP;
    UInt_t          run;
    ULong64_t       evt;
@@ -230,6 +238,13 @@ class ztree {
    Int_t           mcMomPID[1000];   //[nMC]
 
    // List of branches
+   TBranch        *b_ngen_mix;   //!
+   TBranch        *b_genpt_mix;   //!
+   TBranch        *b_geneta_mix;   //!
+   TBranch        *b_genphi_mix;   //!
+   TBranch        *b_gensubid_mix;   //!
+   TBranch        *b_genev_mix;   //!
+   
    TBranch        *b_isPP;   //!
    TBranch        *b_run;   //!
    TBranch        *b_evt;   //!
@@ -520,7 +535,13 @@ void ztree::Init(TTree *tree)
   fCurrent = -1;
   fChain->SetMakeClass(1);
 
-  
+  fChain->SetBranchAddress("ngen_mix", &ngen_mix, &b_ngen_mix);
+  fChain->SetBranchAddress("genpt_mix", genpt_mix, &b_genpt_mix);
+  fChain->SetBranchAddress("geneta_mix", geneta_mix, &b_geneta_mix);
+  fChain->SetBranchAddress("genphi_mix", genphi_mix, &b_genphi_mix);
+  fChain->SetBranchAddress("gensubid_mix", gensubid_mix, &b_gensubid_mix);
+  fChain->SetBranchAddress("genev_mix", genev_mix, &b_genev_mix);
+
    fChain->SetBranchAddress("isPP", &isPP, &b_isPP);
    fChain->SetBranchAddress("run", &run, &b_run);
    fChain->SetBranchAddress("evt", &evt, &b_evt);
