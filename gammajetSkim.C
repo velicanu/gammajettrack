@@ -1578,7 +1578,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             if(!inacone) continue;
             if(nmix%2==0) // use first half of mixed events for ue mixing and the second for jet mixing
             {
-              if(!(abs(_pdg_mix->at(igenp))==11 || abs(_pdg_mix->at(igenp))==13 || abs(_pdg_mix->at(igenp))==211 || abs(_pdg_mix->at(igenp))==2212 || abs(_pdg_mix->at(igenp))==321) ) continue;
+              if(_chg_mix->at(igenp)==0) continue;
               if(_pt_mix->at(igenp)<1) continue;
 
               pt_mix[mult_mix] = _pt_mix->at(igenp);
@@ -1586,12 +1586,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
               phi_mix[mult_mix] = _phi_mix->at(igenp);
               pdg_mix[mult_mix] = _pdg_mix->at(igenp);
               chg_mix[mult_mix] = _chg_mix->at(igenp);
-              // cout<<mult<<" "<<_mult_mix<<" "<<mult_mix<<" "<<nmix<<endl;
               nev_mix[mult_mix] = nmix;
-              // cout<<mult_mix<<" "<<nmix<<" "<<mult_mix<<" "<<nev_mix[mult_mix]<<endl;
               mult_mix++;
             } else {
-              if(!(abs(_pdg_mix->at(igenp))==11 || abs(_pdg_mix->at(igenp))==13 || abs(_pdg_mix->at(igenp))==211 || abs(_pdg_mix->at(igenp))==2212 || abs(_pdg_mix->at(igenp))==321) ) continue;
+              if(_chg_mix->at(igenp)==0) continue;
               if(_pt_mix->at(igenp)<1) continue;
               pt_cone[mult_cone] = _pt_mix->at(igenp);
               eta_cone[mult_cone] = _eta_mix->at(igenp);
