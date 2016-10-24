@@ -27,12 +27,12 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
 
   float yaxismax = 2;
 
-  TH1D * xjgsignal_pbpbdata_reco[nCentBins];
-  TH1D * xjgmixsignal_pbpbdata_reco[nCentBins];
-  TH1D * phoetsignal_pbpbdata_reco[nCentBins];
-  TH1D * xjgsideband_pbpbdata_reco[nCentBins];
-  TH1D * xjgmixsideband_pbpbdata_reco[nCentBins];
-  TH1D * phoetsideband_pbpbdata_reco[nCentBins];
+  TH1D * xjgsignal_pbpbdata_recoreco[nCentBins];
+  TH1D * xjgmixsignal_pbpbdata_recoreco[nCentBins];
+  TH1D * phoetsignal_pbpbdata_recoreco[nCentBins];
+  TH1D * xjgsideband_pbpbdata_recoreco[nCentBins];
+  TH1D * xjgmixsideband_pbpbdata_recoreco[nCentBins];
+  TH1D * phoetsideband_pbpbdata_recoreco[nCentBins];
 
   TH1D * h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[nCentBins];
 
@@ -51,22 +51,22 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
 
   for (int icent = 0; icent < nCentBins; icent++) {
     c1->cd(2+icent);
-    xjgsignal_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgsignal_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    xjgmixsignal_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgmixsignal_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    phoetsignal_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("phoetsignal_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    xjgsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    xjgmixsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("xjgmixsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    phoetsideband_pbpbdata_reco[icent] = (TH1D*) _file0->Get(Form("phoetsideband_pbpbdata_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    xjgsignal_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("xjgsignal_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    xjgmixsignal_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("xjgmixsignal_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    phoetsignal_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("phoetsignal_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    xjgsideband_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("xjgsideband_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    xjgmixsideband_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("xjgmixsideband_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    phoetsideband_pbpbdata_recoreco[icent] = (TH1D*) _file0->Get(Form("phoetsideband_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent] = (TH1D*) _fran->Get(Form("HI/h1D_xjg_ptBin1_hiBin%d_phoSIG_jetSIG_final_norm",icent+3));
 
-    xjgsignal_pbpbdata_reco[icent]->Sumw2();
-    xjgmixsignal_pbpbdata_reco[icent]->Sumw2();
-    xjgsideband_pbpbdata_reco[icent]->Sumw2();
-    xjgmixsideband_pbpbdata_reco[icent]->Sumw2();
+    xjgsignal_pbpbdata_recoreco[icent]->Sumw2();
+    xjgmixsignal_pbpbdata_recoreco[icent]->Sumw2();
+    xjgsideband_pbpbdata_recoreco[icent]->Sumw2();
+    xjgmixsideband_pbpbdata_recoreco[icent]->Sumw2();
 
-    float nphosignal = phoetsignal_pbpbdata_reco[icent]->Integral();
-    float nphosideband = phoetsideband_pbpbdata_reco[icent]->Integral();
-    float binwidth = xjgsignal_pbpbdata_reco[icent]->GetBinWidth(1);
+    float nphosignal = phoetsignal_pbpbdata_recoreco[icent]->Integral();
+    float nphosideband = phoetsideband_pbpbdata_recoreco[icent]->Integral();
+    float binwidth = xjgsignal_pbpbdata_recoreco[icent]->GetBinWidth(1);
 
     dummy[icent] = new TH2D(Form("dummy_%d_%d",centmins[icent],centmaxs[icent]),";x_{J#gamma};1/N#gamma dN/dx_{J#gamma}",1,0.01,1.99,1,0,yaxismax);
     dummy[icent]->GetXaxis()->SetTitleOffset(0.8);
@@ -75,26 +75,26 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
     dummy[icent]->GetXaxis()->SetTitleSize(dummy[icent]->GetXaxis()->GetTitleSize()*1.4);
     dummy[icent]->Draw();
 
-    xjgsignal_pbpbdata_reco[icent]->Scale(1.0/(binwidth*nphosignal));
-    xjgmixsignal_pbpbdata_reco[icent]->Scale(1.0/(binwidth*nphosignal));
-    xjgmixsignal_pbpbdata_reco[icent]->Scale(-1);
-    xjgsignal_pbpbdata_reco[icent]->Add(xjgmixsignal_pbpbdata_reco[icent]);
+    xjgsignal_pbpbdata_recoreco[icent]->Scale(1.0/(binwidth*nphosignal));
+    xjgmixsignal_pbpbdata_recoreco[icent]->Scale(1.0/(binwidth*nphosignal));
+    xjgmixsignal_pbpbdata_recoreco[icent]->Scale(-1);
+    xjgsignal_pbpbdata_recoreco[icent]->Add(xjgmixsignal_pbpbdata_recoreco[icent]);
 
-    xjgsideband_pbpbdata_reco[icent]->Scale(1.0/(binwidth*nphosideband));
-    xjgmixsideband_pbpbdata_reco[icent]->Scale(1.0/(binwidth*nphosideband));
-    xjgmixsideband_pbpbdata_reco[icent]->Scale(-1);
-    xjgsideband_pbpbdata_reco[icent]->Add(xjgmixsideband_pbpbdata_reco[icent]);
+    xjgsideband_pbpbdata_recoreco[icent]->Scale(1.0/(binwidth*nphosideband));
+    xjgmixsideband_pbpbdata_recoreco[icent]->Scale(1.0/(binwidth*nphosideband));
+    xjgmixsideband_pbpbdata_recoreco[icent]->Scale(-1);
+    xjgsideband_pbpbdata_recoreco[icent]->Add(xjgmixsideband_pbpbdata_recoreco[icent]);
 
-    xjgsideband_pbpbdata_reco[icent]->SetMarkerColor(kGreen);
+    xjgsideband_pbpbdata_recoreco[icent]->SetMarkerColor(kGreen);
 
     float purity   = getpurity(phoetmin,centmins[icent],false);
     float pppurity = getpurity(phoetmin,centmins[icent],true);
 
     cout<<purity<<endl;
-    xjgsignal_pbpbdata_reco[icent]->Scale(1.0/purity);
-    xjgsideband_pbpbdata_reco[icent]->Scale(-1.0*(1.0-purity)/purity);
-    xjgsignal_pbpbdata_reco[icent]->Add(xjgsideband_pbpbdata_reco[icent]);
-    xjgsignal_pbpbdata_reco[icent]->Draw("same");
+    xjgsignal_pbpbdata_recoreco[icent]->Scale(1.0/purity);
+    xjgsideband_pbpbdata_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
+    xjgsignal_pbpbdata_recoreco[icent]->Add(xjgsideband_pbpbdata_recoreco[icent]);
+    xjgsignal_pbpbdata_recoreco[icent]->Draw("same");
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerColor(kRed);
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerStyle(24);
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->Draw("same");
@@ -114,25 +114,25 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
     leg[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"PbPb #sqrt{s_{NN}}=5 TeV","p");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"PbPb #sqrt{s_{NN}}=5 TeV","p");
       leg[icent]->AddEntry(h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent],"HIN-16-002","p");
     }
     else if(icent==1)
     {
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"","");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"","");
     }
     else if(icent==2)
     {
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"|#eta^{jet}| < 1.6","");
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"|#eta^{jet}| < 1.6","");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)
     {
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"","");
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],"","");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"","");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"","");
     }
-    leg[icent]->AddEntry(xjgsignal_pbpbdata_reco[icent],Form("%s",cents[icent].data()),"");
+    leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],Form("%s",cents[icent].data()),"");
 
     leg[icent]->Draw();
   }
