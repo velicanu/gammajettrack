@@ -18,10 +18,10 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
 }
 
 void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) {
-  TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   // return;
   const static int ncentbins = 4;
-  const int yaxismax = 2;
+  const int yaxismax = 3;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
@@ -55,27 +55,17 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.4);
     dummy_pbpbsub[icent]->Draw();
 
-    rawff_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    rawffjetmix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawff_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmix_pbpbmc_reco[icent]->Scale(-1);
     rawff_pbpbmc_reco[icent]->Add(rawffjetmix_pbpbmc_reco[icent]);
-    hjetpt_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetpt_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hjetptjetmix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmix_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hnmixsignal_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hnmixsignal_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetpt_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetpt_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptjetmix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hnmixsignal_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hnmixsignal_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     float nrawjets = hjetpt_pbpbmc_reco[icent]->Integral();
     float nmixjets = hjetptjetmix_pbpbmc_reco[icent]->Integral();
-    float nmixtot = hnmixsignal_pbpbmc_reco[icent]->Integral();
-    float avgnmix = nmixtot/nmixjets;
-    float denominator;
-    if(avgnmix!=0 && nmixjets!=0)
-    {
-      denominator = nrawjets - nmixjets/avgnmix;
-    }
-    else
-    {
-      denominator = nrawjets;
-    }
-    hgammaffxiuemix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemix_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    float denominator = nrawjets - nmixjets;
+    hgammaffxiuemix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     if(nrawjets!=0)
     {
       hgammaffxiuemix_pbpbmc_reco[icent]->Scale(-1.0/nrawjets);
@@ -87,23 +77,21 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     }
     rawff_pbpbmc_reco[icent]->Add(hgammaffxiuemix_pbpbmc_reco[icent]);
 
-    rawffsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxisideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    rawffjetmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixsideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxisideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixsideband_pbpbmc_reco[icent]->Scale(-1);
     rawffsideband_pbpbmc_reco[icent]->Add(rawffjetmixsideband_pbpbmc_reco[icent]);
-    hjetptsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptsideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hjetptjetmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmixsideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hnmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hnmixsideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptjetmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmixsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hnmixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hnmixsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     nrawjets = hjetptsideband_pbpbmc_reco[icent]->Integral();
     nmixjets = hjetptjetmixsideband_pbpbmc_reco[icent]->Integral();
-    nmixtot = hnmixsideband_pbpbmc_reco[icent]->Integral();
-    avgnmix = nmixtot/nmixjets;
-    denominator = nrawjets - nmixjets/avgnmix;
-    if(denominator!=0 && nmixjets!=0 && avgnmix!=0)
+    denominator = nrawjets - nmixjets;
+    if(denominator!=0)
     {
       rawffsideband_pbpbmc_reco[icent]->Scale(1.0/denominator);
     }
-    hgammaffxiuemixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemixsideband_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    hgammaffxiuemixsideband_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemixsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     if(nrawjets!=0)
     {
       hgammaffxiuemixsideband_pbpbmc_reco[icent]->Scale(-1.0/nrawjets);
@@ -122,7 +110,7 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
       rawff_pbpbmc_reco[icent]->Scale(1.0/purity);
       rawffsideband_pbpbmc_reco[icent]->Scale(-1.0*(1.0-purity)/purity);
     }
-    if(denominator!=0 && nmixjets!=0 && avgnmix!=0)
+    if(denominator!=0)
     {
       rawff_pbpbmc_reco[icent]->Add(rawffsideband_pbpbmc_reco[icent]);
     }
@@ -136,9 +124,10 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     rawff_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     hgenjetpt_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgenjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     float ngengets = hgenjetpt_pbpbmc_gen[icent]->Integral();
-    // ngenjets = hjetpt_pbpbmc_reco[icent]->Integral();
-    // rawff_pbpbmc_gen[icent]->Scale(1.0/nrawjets);
     rawff_pbpbmc_gen[icent]->Scale(1.0/ngengets);
+    // rawff_pbpbmc_gen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_recogen_%d_%d",centmins[icent],centmaxs[icent]));
+    // nrawjets = hjetpt_pbpbmc_reco[icent]->Integral();
+    // rawff_pbpbmc_gen[icent]->Scale(1.0/nrawjets);
 
 
     rawff_pbpbmc_reco[icent]->Draw("same");
@@ -160,6 +149,7 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     {
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"Final FF reco","p");
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gen[icent],"GenGen FF","l");
+      // leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gen[icent],"RecoGen FF","l");
     }
     else if(icent==1)
     {
@@ -192,9 +182,9 @@ void draw4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
   ldndxi->SetTextAngle(90);
   ldndxi->Draw();
 
-  const int nlabels = 5;
-  float fylabels[] = {0,0.5,1,1.5,2};
-  string sylabels[] = {"0",".5","1","1.5","2"};
+  const int nlabels = 4;
+  float fylabels[] = {0,1,2,3};
+  string sylabels[] = {"0","1","2","3"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     laxis[ilatex] = new TLatex(1.,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
