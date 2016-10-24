@@ -52,7 +52,7 @@ void drawmcjetspectra(int phoetmin, int phoetmax) {
     hjetpt_pbpbmc_gengen[icent]->Scale(1/bw/nphopbpb);
 
 
-    dummy[icent] = new TH2D(Form("dummy_%d_%d",centmins[icent],centmaxs[icent]),";Jet p_{T};1/N_{#gamma} dn/dp_{T}",1,0,500,1,1e-6,yaxismax);
+    dummy[icent] = new TH2D(Form("dummy_%d_%d",centmins[icent],centmaxs[icent]),";Jet p_{T};1/N_{#gamma} dn/dp_{T}",1,1,499,1,1e-6,yaxismax);
     dummy[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy[icent]->GetXaxis()->CenterTitle();
     dummy[icent]->GetYaxis()->CenterTitle();
@@ -78,6 +78,10 @@ void drawmcjetspectra(int phoetmin, int phoetmax) {
     } else if (icent==1 ){
       leg_ff_ppmc[icent]->AddEntry(hjetpt_ppmc_gengen[icent],"Pythia","l");
       leg_ff_ppmc[icent]->AddEntry(hjetpt_pbpbmc_gengen[icent],"Pythia+Hydjet","l");
+      leg_ff_ppmc[icent]->AddEntry(hjetpt_pbpbmc_[icent],"","");
+    } else {
+      leg_ff_ppmc[icent]->AddEntry(hjetpt_pbpbmc_[icent],"","");
+      leg_ff_ppmc[icent]->AddEntry(hjetpt_pbpbmc_[icent],"","");
       leg_ff_ppmc[icent]->AddEntry(hjetpt_pbpbmc_[icent],"","");
     }
     leg_ff_ppmc[icent]->AddEntry(hjetpt_ppmc_[icent],Form("%s",cents[icent].data()),"");
