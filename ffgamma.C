@@ -185,11 +185,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(signal) {
         hjetpt->Fill(tmpjetpt);
         njets_perevent++;
-        xjgsignal->Fill(jetptCorr[ijet]/phoEt[0]); //no pp smearing here
+        if(jetptCorr[ijet]!=-1) { xjgsignal->Fill(jetptCorr[ijet]/phoEt[0]*phoCorr[0]); }
+        else                    { xjgsignal->Fill(jetpt[ijet]/phoEt[0]*phoCorr[0]); }
       }
       if(sideband) {
         hjetptsideband->Fill(tmpjetpt);
-        xjgsideband->Fill(jetptCorr[ijet]/phoEt[0]); //no pp smearing here
+        if(jetptCorr[ijet]!=-1) { xjgsideband->Fill(jetptCorr[ijet]/phoEt[0]*phoCorr[0]); }
+        else                    { xjgsideband->Fill(jetpt[ijet]/phoEt[0]*phoCorr[0]); }
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
       TLorentzVector vjet;
@@ -385,12 +387,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         hjetptjetmix->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
-        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0],1/nmixedjetevents);
+        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
       }
       if(sideband && nmixEv_mix[ijet_mix]%2==1) {
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents);
         hnmixsideband->Fill(1);
-        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0],1/nmixedjetevents);
+        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
       }
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
