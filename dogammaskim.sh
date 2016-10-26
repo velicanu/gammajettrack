@@ -65,7 +65,7 @@ wait
 ./gammajetSkim.exe /mnt/hadoop/cms/store/user/velicanu/Merged/Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.8 akPu3PFJetAnalyzer 0 0.00211448 /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root 147000 168000 &
 
 
-wait
+# wait
 # pp data
 ./gammajetSkim.exe /mnt/hadoop/cms/store/user/luck/2015-Data-promptRECO-photonSkims/pp-photonHLTFilter-v0-HiForest/0.root /export/d00/scratch/${USER}/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ak3PFJetAnalyzer 1 1 null &
 
@@ -73,7 +73,7 @@ wait
 # done via condor
 
 # PbPb MC
-hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
+# hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
 
 # pp MC
 hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root
