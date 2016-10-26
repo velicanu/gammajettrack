@@ -96,7 +96,7 @@ bool goodJet_ak3pupf(int i) {
   else return false;
 }
 
-float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin)
+float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin, Float_t * trkRmin, int trkindex)
 {
   float rmin = 999;
   for(int k = 0; k<nref_corr; k++)
@@ -107,7 +107,26 @@ float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin)
     float R = TMath::Power(jteta_corr[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi_corr[k]-trkPhi_[itrk])),2);
     if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
   }
+  trkRmin[trkindex] = rmin;
   return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
+}
+
+void getTrkRmin2(int itrk, float jetptmin, Float_t * trkRmin2, Float_t * trkRmin2jetpt, int trkindex)
+{
+  float rmin = 999, rmin2jetpt = -999;
+  for(int k = 0; k<nref; k++)
+  {
+    if(jtpt[k]<jetptmin) break;
+    // if(!goodJet(k)) continue;
+    if( TMath::Abs(jteta[k])>1.6 ) continue;//jet eta cut
+    float R = TMath::Power(jteta[k]-trkEta_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi[k]-trkPhi_[itrk])),2);
+    if(rmin*rmin>R) {
+      rmin=TMath::Power(R,0.5);
+      rmin2jetpt = jtpt[k];
+    }
+  }
+  trkRmin2[trkindex] = rmin;
+  trkRmin2jetpt[trkindex] = rmin2jetpt;
 }
 
 float getTrkWeightMix(TrkCorr * trkCorr, int itrk, int hiBin)
@@ -217,7 +236,7 @@ float getSigmaRelPhi(int hiBin, float jetpt)
 
 //! End helper functions
 
-void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1, int do_jet_skim = 1, int jetptmin = 30) {
+void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zevents.root", string jetname="ak4PFJetAnalyzer", int i_is_pp = 0 , float mcweight = 1, string minbias = "", int startindex = 0, int endindex = -1, int do_jet_skim = 1, int jetptmin = 10) {
 
   // next two lines are for event mixing for data with condor so each photon file starts
   // at a different index in the minbias mix tree that is random but deterministic
@@ -232,17 +251,18 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   // tracking correction initialized here
   TrkCorr* trkCorr;
-  if(!is_pp) trkCorr = new TrkCorr("TrkCorr_Jun7_Iterative_PbPb_etaLT2p4/");
-  else trkCorr = new TrkCorr("TrkCorr_Mar15_Iterative_pp/");
+  if(!is_pp) trkCorr = new TrkCorr("Corrections/TrkCorr_Jun7_Iterative_PbPb_etaLT2p4/");
+  else trkCorr = new TrkCorr("Corrections/TrkCorr_July22_Iterative_pp_eta2p4/");
   cout<<trkCorr<<endl;
 
   // the L2L3Residual correction is currently not being used, but can be turned on
-  L2L3Residual * jetcorr = new L2L3Residual(3);
+  L2L3ResidualWFits * jetcorr = new L2L3ResidualWFits();
+  jetcorr->setL2L3Residual();
   cout<<jetcorr<<endl;
 
   TF1 *jetResidualFunction[4];
   if (isHI) {
-    TFile *jetResidualFile = TFile::Open("merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
+    TFile *jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
     jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
     jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
     jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
@@ -259,7 +279,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! (1.2) Begin list of input/output variables
 
-  float weight = 0 , vz = -99;
+  float weight = 0 , weightCent = 1, vz = -99;
   float vz_mix = -99;
   int hiBin = -99;
   int hiBin_mix = -99;
@@ -291,24 +311,24 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   Int_t           ngen;
-  Int_t           genmatchindex[500];   //[ngen]
-  Float_t         genpt[500];   //[ngen]
-  Float_t         geneta[500];   //[ngen]
-  Float_t         genphi[500];   //[ngen]
-  Int_t           gensubid[500];   //[ngen]
+  Int_t           genmatchindex[5000];   //[ngen]
+  Float_t         genpt[5000];   //[ngen]
+  Float_t         geneta[5000];   //[ngen]
+  Float_t         genphi[5000];   //[ngen]
+  Int_t           gensubid[5000];   //[ngen]
 
   Int_t           ngen_mix;
-  Float_t         genpt_mix[500];   //[ngen]
-  Float_t         geneta_mix[500];   //[ngen]
-  Float_t         genphi_mix[500];   //[ngen]
-  Int_t           gensubid_mix[500];   //[ngen]
-  Int_t           genev_mix[500];   //[ngen]
+  Float_t         genpt_mix[5000];   //[ngen]
+  Float_t         geneta_mix[5000];   //[ngen]
+  Float_t         genphi_mix[5000];   //[ngen]
+  Int_t           gensubid_mix[5000];   //[ngen]
+  Int_t           genev_mix[5000];   //[ngen]
 
   Int_t           _ngen_mix;
-  Float_t         _genpt_mix[500];   //[ngen]
-  Float_t         _geneta_mix[500];   //[ngen]
-  Float_t         _genphi_mix[500];   //[ngen]
-  Int_t           _gensubid_mix[500];   //[ngen]
+  Float_t         _genpt_mix[5000];   //[ngen]
+  Float_t         _geneta_mix[5000];   //[ngen]
+  Float_t         _genphi_mix[5000];   //[ngen]
+  Int_t           _gensubid_mix[5000];   //[ngen]
 
   int _mult;
   vector<float> *_pt;
@@ -357,49 +377,52 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t         hiEvtPlanes_mix[29];   //[hiNevtPlane]
 
   Int_t           nTrk_mix;
-  Float_t         trkPt_mix[100000];   //[nTrk]
-  Float_t         trkFromEv_mix[100000];   //[nTrk]
-  Float_t         trkEta_mix[100000];   //[nTrk]
-  Float_t         trkPhi_mix[100000];   //[nTrk]
-  Float_t         trkWeight_mix[100000];   //[nTrk]
+  Float_t         trkPt_mix[10000];   //[nTrk]
+  Float_t         trkFromEv_mix[10000];   //[nTrk]
+  Float_t         trkEta_mix[10000];   //[nTrk]
+  Float_t         trkPhi_mix[10000];   //[nTrk]
+  Float_t         trkWeight_mix[10000];   //[nTrk]
 
   Int_t           nTrk_cone;
-  Float_t         trkPt_cone[100000];   //[nTrk]
-  Float_t         trkFromEv_cone[100000];   //[nTrk]
-  Float_t         trkEta_cone[100000];   //[nTrk]
-  Float_t         trkPhi_cone[100000];   //[nTrk]
-  Float_t         trkWeight_cone[100000];   //[nTrk]
+  Float_t         trkPt_cone[10000];   //[nTrk]
+  Float_t         trkFromEv_cone[10000];   //[nTrk]
+  Float_t         trkEta_cone[10000];   //[nTrk]
+  Float_t         trkPhi_cone[10000];   //[nTrk]
+  Float_t         trkWeight_cone[10000];   //[nTrk]
 
   Int_t           nTrk;
   UInt_t          run;
   ULong64_t       evt;
   UInt_t          lumi;
-  Float_t         trkPt[100000];   //[nTrk]
-  Float_t         trkPtError[100000];   //[nTrk]
-  UChar_t         trkNHit[100000];   //[nTrk]
-  UChar_t         trkNlayer[100000];   //[nTrk]
-  Float_t         trkEta[100000];   //[nTrk]
-  Float_t         trkPhi[100000];   //[nTrk]
-  Int_t           trkCharge[100000];   //[nTrk]
-  UChar_t         trkNVtx[100000];   //[nTrk]
-  Bool_t          highPurity[100000];   //[nTrk]
-  Bool_t          tight[100000];   //[nTrk]
-  Bool_t          loose[100000];   //[nTrk]
-  Float_t         trkChi2[100000];   //[nTrk]
-  UChar_t         trkNdof[100000];   //[nTrk]
-  Float_t         trkDxy1[100000];   //[nTrk]
-  Float_t         trkDxyError1[100000];   //[nTrk]
-  Float_t         trkDz1[100000];   //[nTrk]
-  Float_t         trkDzError1[100000];   //[nTrk]
-  Bool_t          trkFake[100000];   //[nTrk]
-  UChar_t         trkAlgo[100000];   //[nTrk]
-  UChar_t         trkOriginalAlgo[100000];   //[nTrk]
-  Float_t         trkMVA[100000];   //[nTrk]
-  Int_t           pfType[100000];   //[nTrk]
-  Float_t         pfCandPt[100000];   //[nTrk]
-  Float_t         pfEcal[100000];   //[nTrk]
-  Float_t         pfHcal[100000];   //[nTrk]
-  Float_t         trkWeight[100000];   //[nTrk]
+  Float_t         trkPt[50000];   //[nTrk]
+  Float_t         trkPtError[50000];   //[nTrk]
+  UChar_t         trkNHit[50000];   //[nTrk]
+  UChar_t         trkNlayer[50000];   //[nTrk]
+  Float_t         trkEta[50000];   //[nTrk]
+  Float_t         trkPhi[50000];   //[nTrk]
+  Int_t           trkCharge[50000];   //[nTrk]
+  UChar_t         trkNVtx[50000];   //[nTrk]
+  Bool_t          highPurity[50000];   //[nTrk]
+  Bool_t          tight[50000];   //[nTrk]
+  Bool_t          loose[50000];   //[nTrk]
+  Float_t         trkChi2[50000];   //[nTrk]
+  UChar_t         trkNdof[50000];   //[nTrk]
+  Float_t         trkDxy1[50000];   //[nTrk]
+  Float_t         trkDxyError1[50000];   //[nTrk]
+  Float_t         trkDz1[50000];   //[nTrk]
+  Float_t         trkDzError1[50000];   //[nTrk]
+  Bool_t          trkFake[50000];   //[nTrk]
+  UChar_t         trkAlgo[50000];   //[nTrk]
+  UChar_t         trkOriginalAlgo[50000];   //[nTrk]
+  Float_t         trkMVA[50000];   //[nTrk]
+  Int_t           pfType[50000];   //[nTrk]
+  Float_t         pfCandPt[50000];   //[nTrk]
+  Float_t         pfEcal[50000];   //[nTrk]
+  Float_t         pfHcal[50000];   //[nTrk]
+  Float_t         trkWeight[50000];   //[nTrk]
+  Float_t         trkRmin[50000];   //[nTrk]
+  Float_t         trkRmin2[50000];   //[nTrk]
+  Float_t         trkRmin2jetpt[50000];   //[nTrk]
   Int_t    nPho;
   Float_t  phoE[1];   //_nPho
   Float_t  phoEt[1];   //_nPho
@@ -650,7 +673,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pfEcal", &pfEcal,"pfEcal[nTrk]/F");
   ztree->Branch("pfHcal", &pfHcal,"pfHcal[nTrk]/F");
   ztree->Branch("trkWeight", &trkWeight,"trkWeight[nTrk]/F");
+  ztree->Branch("trkRmin", &trkRmin,"trkRmin[nTrk]/F");
+  ztree->Branch("trkRmin2", &trkRmin2,"trkRmin2[nTrk]/F");
+  ztree->Branch("trkRmin2jetpt", &trkRmin2jetpt,"trkRmin2jetpt[nTrk]/F");
   ztree->Branch("weight", &weight,"weight/F");
+  ztree->Branch("weightCent", &weightCent,"weightCent/F");
 
   ztree->Branch("nPho",&nPho,"nPho/I");
   ztree->Branch("phoE",&phoE,"phoE[nPho]/F");
@@ -954,10 +981,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int const nEtaBins = 1;
   TH1D * photonEnergyCorrections[nCentBins][nEtaBins];
 
-  TFile * energyCorrectionFile = TFile::Open("photonEnergyCorrections.root");
+  TFile * energyCorrectionFile = TFile::Open("Corrections/photonEnergyCorrections.root");
   TFile* sumIsoCorrectionFile;
-  if(ismc) sumIsoCorrectionFile = TFile::Open("sumIsoCorrections_MC.root");
-  else     sumIsoCorrectionFile = TFile::Open("sumIsoCorrections_Data.root");
+  if(ismc) sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_MC.root");
+  else     sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_Data.root");
 
   TH1D* sumIsoCorrections = (TH1D*)sumIsoCorrectionFile->Get("sumIsoCorrections");
   for (int icent=0; icent<nCentBins; ++icent)
@@ -969,6 +996,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   }
 
 //! End photon energy correction setup
+
+  
+  TF1 *fcentweight = new TF1("fcentweight","gaus(0)",0,200);
+  fcentweight->SetParameters(4.70614e+00,-3.38547e+01,5.60064e+01);
 
 //! (2) Begin Loop
   int nEv = evttree->GetEntries();
@@ -996,7 +1027,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
     hlttree->GetEntry(j);
     if(j%1000 == 0) { cout << "Processing event: " << j << "/" << endindex << endl; }
-
 //! (2.1) Begin event and trigger cuts
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
     if(fabs(vz)>15) continue;
@@ -1178,7 +1208,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     for(int ij=0; ij<nref; ij++) {
       // if(jtpt[ij]>40 && goodJet(ij) && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
-      if(jtpt[ij]>jetptmin && fabs(jteta[ij])<1.6 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
+      if(jtpt[ij]>jetptmin && fabs(jteta[ij])<2 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       {
         //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
         //        cout<<jetpt[njet]<<endl;
@@ -1210,6 +1240,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         jetResidualFunction[centBin]->GetRange(xmin,xmax);
         if(jetpt[njet]>xmin && jetpt[njet]<xmax) {
           jetptCorr[njet] = jetpt[njet]/jetResidualFunction[centBin]->Eval(jetpt[njet]);
+          jetptCorr[njet] = jetcorr->get_corrected_pt(jetptCorr[njet],jeteta[njet]);
         } else {
           jetptCorr[njet] = -1; // indicate correction wasn't applied
         }
@@ -1292,9 +1323,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       if(!(trkPt_[itrk]<20 || (Et>0.5*trkPt_[itrk]))) continue;
       // cout<<"itrk "<<itrk<<endl;
       if(trkPt_[itrk] > maxTrkPt) maxTrkPt = trkPt_[itrk];
-      float trkweight = 0;
-      if(is_pp) trkweight = getTrkWeight(trkCorr,itrk,0);
-      else trkweight = getTrkWeight(trkCorr,itrk,hiBin);
+      if(is_pp) trkWeight[ntracks] = getTrkWeight(trkCorr,itrk,0,trkRmin,ntracks);
+      else trkWeight[ntracks] = getTrkWeight(trkCorr,itrk,hiBin,trkRmin,ntracks);
+      getTrkRmin2(itrk, jetptmin, trkRmin2, trkRmin2jetpt, ntracks);
       trkPt[ntracks] = trkPt_[itrk];   //[nTrk]
       trkPtError[ntracks] = trkPtError_[itrk];   //[nTrk]
       trkNHit[ntracks] = trkNHit_[itrk];   //[nTrk]
@@ -1320,7 +1351,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       pfCandPt[ntracks] = pfCandPt_[itrk];   //[nTrk]
       pfEcal[ntracks] = pfEcal_[itrk];   //[nTrk]
       pfHcal[ntracks] = pfHcal_[itrk];   //[nTrk]
-      trkWeight[ntracks] = trkweight;
       ntracks++;
     }
     nTrk=ntracks;
@@ -1387,8 +1417,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         {
           for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix)
           {
-            if( jtpt_ak3pupf[ijetmix]<30 ) continue; //jet pt Cut
-            if( fabs(jteta_ak3pupf[ijetmix]) > 1.6) continue; //jeteta Cut
+            if( jtpt_ak3pupf[ijetmix]<jetptmin ) continue; //jet pt Cut
+            if( fabs(jteta_ak3pupf[ijetmix]) > 2) continue; //jeteta Cut
             if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
             // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
             // if( jetID[ijet]==0 ) continue;
@@ -1432,8 +1462,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! (2.53) Cones in mixed events (i.e. real jets in signal event)
         vector<int> uejet_idx;
         for (int ijet = 0; ijet < njet; ijet++) {
-          if( jetpt[ijet]<30 ) continue; //jet pt Cut
-          if( fabs(jeteta[ijet]) > 1.6) continue; //jeteta Cut
+          if( jetpt[ijet]<jetptmin ) continue; //jet pt Cut
+          if( fabs(jeteta[ijet]) > 2) continue; //jeteta Cut
           if( acos(cos(jetphi[ijet] - phoPhi[0])) < 7 * pi / 8 ) continue;
           uejet_idx.push_back(ijet);
         }
@@ -1619,14 +1649,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       nref_ak3pupf_out = njets_mix;
       if(nTrk_mix==0)
       {
-        cout<<nTrk_mix<<" "<<j<<endl;
+        // cout<<nTrk_mix<<" "<<j<<endl;
         // cout<<"here"<<endl;
        // break;
       }
     }
 //! End minbias mixing
     // cout<<j<<" before fill"<<endl;
-    cout<<mult_cone<<endl;
+    // cout<<mult_cone<<endl;
+    if(ismc) { weightCent = fcentweight->Eval(hiBin); }
     ztree->Fill();
     // cout<<j<<" after fill"<<endl;
 
