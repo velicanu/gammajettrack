@@ -65,7 +65,7 @@
   // gSystem->Load("libDataFormatsPatCandidates.so");
   
   // gInterpreter->ExecuteMacro("~davidlw/useful_macros/MITStyle.C");
-  gInterpreter->ExecuteMacro("/home/ursu/MITStyle.C");
+  gInterpreter->ExecuteMacro("stylemacros/MITStyle.C");
   // return;
   gROOT->ForceStyle();
 }
