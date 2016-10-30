@@ -1,15 +1,15 @@
 #include "makeMultiPanelCanvas.C"
 
 void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) {
-  TFile *_file0 = TFile::Open(Form("closure_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
   const static int ncentbins = 4;
-  const int yaxismax = 8000;
+  const int yaxismax = 20000;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
   string cents[] = {"0-10%","10-30%","30-50%","50-100%","70-100%"};
-  TH1D * rawff_pbpbmc_reco[ncentbins];
-  TH1D * rawffjetmix_pbpbmc_reco[ncentbins];
+  TH1D * rawff_pbpbmc_recoreco[ncentbins];
+  TH1D * rawffjetmix_pbpbmc_recoreco[ncentbins];
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
 
@@ -24,11 +24,11 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.4);
     dummy_pbpbsub[icent]->Draw();
-    rawff_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    rawff_pbpbmc_reco[icent]->Draw("same");
-    rawffjetmix_pbpbmc_reco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    rawffjetmix_pbpbmc_reco[icent]->SetMarkerColor(kBlue);
-    rawffjetmix_pbpbmc_reco[icent]->Draw("same");
+    rawff_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawff_pbpbmc_recoreco[icent]->Draw("same");
+    rawffjetmix_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmix_pbpbmc_recoreco[icent]->SetMarkerColor(kBlue);
+    rawffjetmix_pbpbmc_recoreco[icent]->Draw("same");
 
 
     if(icent==0)
@@ -45,25 +45,25 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     leg_ff_pbpbsub[icent]->SetTextFont(42);
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"Raw FF","p");
-      leg_ff_pbpbsub[icent]->AddEntry(rawffjetmix_pbpbmc_reco[icent],"Jet Mix FF","p");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"Raw FF","p");
+      leg_ff_pbpbsub[icent]->AddEntry(rawffjetmix_pbpbmc_recoreco[icent],"Jet Mix FF","p");
     }
     else if(icent==1)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("trk p_{T}>%d GeV, R < 0.3",trkptcut),"");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],Form("trk p_{T}>%d GeV, R < 0.3",trkptcut),"");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"0.3 < |#eta^{jet}| < 1.6","");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"Pythia+Hydjet","");
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],"#sigma_{i#eta#eta}<0.10","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"Pythia+Hydjet","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"#sigma_{i#eta#eta}<0.10","");
     }
-    leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_reco[icent],Form("%s",cents[icent].data()),"");
+    leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],Form("%s",cents[icent].data()),"");
     leg_ff_pbpbsub[icent]->Draw();
   }
 
@@ -87,5 +87,5 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     laxis[ilatex]->Draw();
   }
   ldndxi->Draw();
-  call->SaveAs(Form("rawff_%d_%d_jetmixff_jetpt%d_pbpbmc_reco.png",phoetmin,phoetmax,jetptmin));
+  call->SaveAs(Form("rawff_%d_%d_jetmixff_jetpt%d_pbpbmc_recoreco.png",phoetmin,phoetmax,jetptmin));
 }

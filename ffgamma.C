@@ -144,16 +144,16 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(hiBin < centmin || hiBin >= centmax) continue; //centrality cut
     }
     if(nPho!=1) continue;
-    if(phoNoise==0) continue;
+    if(phoNoise[0]==0) continue;
     if(weight==0)                   weight=1;
     bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017);
     if( phoEt[0]/phoCorr[0]<phoetmin || phoEt[0]/phoCorr[0]>phoetmax) continue;
     if(signal) {
-      phoetsignal->Fill(phoEt[0]);
+      phoetsignal->Fill(phoEt[0]/phoCorr[0]);
     }
     if(sideband) {
-      phoetsideband->Fill(phoEt[0]);
+      phoetsideband->Fill(phoEt[0]/phoCorr[0]);
     }
 
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
@@ -164,7 +164,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (2.2) Reco jet loop
     int njetloop = njet;
     for (int ijet = 0; ijet < njetloop; ijet++) {
-      float tmpjetpt = jetpt[ijet];
+      float tmpjetpt = jetptCorr[ijet];
       float tmpjeteta = jeteta[ijet];
       float tmpjetphi = jetphi[ijet];
 //! apply smearing if pp
@@ -266,6 +266,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             }
           }
         }
+        float nmixedUEevents = (nmix+1)/2;
         for(int itrk_cone = 0 ; itrk_cone < nTrk_cone ; ++itrk_cone) { // reco jet UE track
           if(trkPt_cone[itrk_cone]<trkptmin) continue;
           float dphi = acos( cos(tmpjetphi - trkPhi_cone[itrk_cone]));
@@ -280,11 +281,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
 //! 1-3: rjet rtrk_cone
             if(signal) {
-              hgammaffxiuemix->Fill(xi,trkWeight[itrk_cone]/(float)nmix);
+              hgammaffxiuemix->Fill(xi,trkWeight_cone[itrk_cone]/nmixedUEevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight[itrk_cone]/(float)nmix);
+              hgammaffxiuemixsideband->Fill(xi,trkWeight_cone[itrk_cone]/nmixedUEevents);
             }
           }
         }
@@ -293,7 +294,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
 //! (2.3) Gen jet loop
     for (int igenjet = 0; igenjet < ngen; igenjet++) {
-      if( gensubid[igenjet]!=0) continue;
+      if( gen.compare("gengen")==0 && gensubid[igenjet]!=0) continue;
       if( genpt[igenjet]<jetptcut ) continue; //jet pt Cut
       if( fabs(geneta[igenjet]) > 1.6) continue; //jeteta Cut
       if( acos(cos(genphi[igenjet] - phoPhi[0])) < 7 * pi / 8 ) continue;
@@ -327,48 +328,53 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           }
         }
       }
-        
-      for(int igentrk = 0 ; igentrk < mult ; ++igentrk)
-      {
-        if(gen.compare("gengen")==0 && sube[igentrk]!=0) { continue; }
-        if(chg[igentrk]==0) continue;
-        if(pt[igentrk]<trkptmin) continue;
-
-        float dphi = acos( cos(genphi[igenjet] - phi[igentrk]));
-        float deta = fabs( geneta[igenjet] - eta[igentrk]);
-        float dr = sqrt((dphi*dphi)+(deta*deta));
-        if(dr<0.3)
+      if(gen.compare("gengen")==0 || gen.compare("mixgen")==0)
+      {      
+        for(int igentrk = 0 ; igentrk < mult ; ++igentrk)
         {
-          TLorentzVector vtrack;
-          vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
-          float angle = vjet.Angle(vtrack.Vect());
-          float z = pt[igentrk]*cos(angle)/genpt[igenjet];
-          float xi = log(1.0/z);
-//! 2-1: gjet gtrk sube==0
-//! 3-1: gjet gtrk
-          if(signal) { hgammaffxi->Fill(xi); } //recoj genp
-          if(sideband) { hgammaffxisideband->Fill(xi); }
+          if(gen.compare("gengen")==0 && sube[igentrk]!=0) continue;
+          if(chg[igentrk]==0) continue;
+          if(pt[igentrk]<trkptmin) continue;
+
+          float dphi = acos( cos(genphi[igenjet] - phi[igentrk]));
+          float deta = fabs( geneta[igenjet] - eta[igentrk]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+          if(dr<0.3)
+          {
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float z = pt[igentrk]*cos(angle)/genpt[igenjet];
+            float xi = log(1.0/z);
+  //! 2-1: gjet gtrk sube==0
+  //! 3-1: gjet gtrk
+            if(signal) { hgammaffxi->Fill(xi); } //recoj genp
+            if(sideband) { hgammaffxisideband->Fill(xi); }
+          }
         }
       }
 //! 3-3: gjet gtrk
-      for(int igentrk_cone = 0 ; igentrk_cone < mult_cone ; ++igentrk_cone)
+      if(gen.compare("mixgen")==0)
       {
-        if(chg[igentrk_cone]==0) continue;
-        if(pt[igentrk_cone]<trkptmin) continue;
-
-        float dphi = acos( cos(genphi[igenjet] - phi_cone[igentrk_cone]));
-        float deta = fabs( geneta[igenjet] - eta_cone[igentrk_cone]);
-        float dr = sqrt((dphi*dphi)+(deta*deta));
-        if(dr<0.3)
+        for(int igentrk_cone = 0 ; igentrk_cone < mult_cone ; ++igentrk_cone)
         {
-          TLorentzVector vtrack;
-          vtrack.SetPtEtaPhiM(pt_cone[igentrk_cone],eta_cone[igentrk_cone],phi_cone[igentrk_cone],0);
-          float angle = vjet.Angle(vtrack.Vect());
-          float z = pt_cone[igentrk_cone]*cos(angle)/genpt[igenjet];
-          float xi = log(1.0/z);
-//! 3-2: gjet_cone gtrk_cone
-          if(signal) { hgammaffxiuemix->Fill(xi); }
-          if(sideband) { hgammaffxiuemixsideband->Fill(xi); }
+          if(chg[igentrk_cone]==0) continue;
+          if(pt[igentrk_cone]<trkptmin) continue;
+
+          float dphi = acos( cos(genphi[igenjet] - phi_cone[igentrk_cone]));
+          float deta = fabs( geneta[igenjet] - eta_cone[igentrk_cone]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+          if(dr<0.3)
+          {
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(pt_cone[igentrk_cone],eta_cone[igentrk_cone],phi_cone[igentrk_cone],0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float z = pt_cone[igentrk_cone]*cos(angle)/genpt[igenjet];
+            float xi = log(1.0/z);
+  //! 3-2: gjet_cone gtrk_cone
+            if(signal) { hgammaffxiuemix->Fill(xi); }
+            if(sideband) { hgammaffxiuemixsideband->Fill(xi); }
+          }
         }
       }
     }
@@ -427,36 +433,37 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     }
 
 //! (2.5) Mix gen jet loop
-    for (int igenjet_mix = 0; igenjet_mix < ngen_mix; igenjet_mix++) {
-      if( genpt_mix[igenjet_mix]<jetptcut ) continue; //jet pt Cut
-      if( fabs(geneta_mix[igenjet_mix]) > 1.6) continue; //jeteta Cut
-      if( acos(cos(genphi_mix[igenjet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-      TLorentzVector vjet;
-      vjet.SetPtEtaPhiM(genpt_mix[igenjet_mix],geneta_mix[igenjet_mix],genphi_mix[igenjet_mix],0);
-      if(signal) { hgenjetpt_mix->Fill(genpt[igenjet_mix]); }
-      for(int igentrk_mix = 0 ; igentrk_mix < mult_mix ; ++igentrk_mix)
-      {
-        if(chg[igentrk_mix]==0) continue;
-        if(pt[igentrk_mix]<trkptmin) continue;
-
-        float dphi = acos( cos(genphi_mix[igenjet_mix] - phi_mix[igentrk_mix]));
-        float deta = fabs( geneta_mix[igenjet_mix] - eta_mix[igentrk_mix]);
-        float dr = sqrt((dphi*dphi)+(deta*deta));
-        if(dr<0.3)
+    if(gen.compare("mixgen")==0)
+    {
+      for (int igenjet_mix = 0; igenjet_mix < ngen_mix; igenjet_mix++) {
+        if( genpt_mix[igenjet_mix]<jetptcut ) continue; //jet pt Cut
+        if( fabs(geneta_mix[igenjet_mix]) > 1.6) continue; //jeteta Cut
+        if( acos(cos(genphi_mix[igenjet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+        TLorentzVector vjet;
+        vjet.SetPtEtaPhiM(genpt_mix[igenjet_mix],geneta_mix[igenjet_mix],genphi_mix[igenjet_mix],0);
+        if(signal) { hgenjetpt_mix->Fill(genpt[igenjet_mix]); }
+        for(int igentrk_mix = 0 ; igentrk_mix < mult_mix ; ++igentrk_mix)
         {
-          TLorentzVector vtrack;
-          vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
-          float angle = vjet.Angle(vtrack.Vect());
-          float z = pt_mix[igentrk_mix]*cos(angle)/genpt_mix[igenjet_mix];
-          float xi = log(1.0/z);
-//! 3-2: gjet_mix gtrk_mix
-          if(signal) { hgammaffxijetmix->Fill(xi); }
-          if(sideband) { hgammaffxijetmixsideband->Fill(xi); }
+          if(chg[igentrk_mix]==0) continue;
+          if(pt[igentrk_mix]<trkptmin) continue;
+
+          float dphi = acos( cos(genphi_mix[igenjet_mix] - phi_mix[igentrk_mix]));
+          float deta = fabs( geneta_mix[igenjet_mix] - eta_mix[igentrk_mix]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+          if(dr<0.3)
+          {
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float z = pt_mix[igentrk_mix]*cos(angle)/genpt_mix[igenjet_mix];
+            float xi = log(1.0/z);
+  //! 3-2: gjet_mix gtrk_mix
+            if(signal) { hgammaffxijetmix->Fill(xi); }
+            if(sideband) { hgammaffxijetmixsideband->Fill(xi); }
+          }
         }
       }
-
     }
-
     hnjetperevt->Fill(njets_perevent);
     hnjetpermixevt->Fill(njets_permixevent);
 
