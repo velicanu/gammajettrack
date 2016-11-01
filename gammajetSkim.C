@@ -257,7 +257,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   // the L2L3Residual correction is currently not being used, but can be turned on
   L2L3ResidualWFits * jetcorr = new L2L3ResidualWFits();
-  jetcorr->setL2L3Residual();
+  jetcorr->setL2L3Residual(3, 3, false);
   cout<<jetcorr<<endl;
 
   TF1 *jetResidualFunction[4];
@@ -881,7 +881,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     jettree_ak3pupf->SetBranchAddress("geneta", &_geneta_mix);
     jettree_ak3pupf->SetBranchAddress("genphi", &_genphi_mix);
     jettree_ak3pupf->SetBranchAddress("gensubid", &_gensubid_mix);
-    
+
     skimTree_mix                     = (TTree*) fminbias->Get("skimanalysis/HltTree");
     if( skimTree_mix == 0 )
     {
@@ -975,7 +975,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! End photon energy correction setup
 
-  
+
   TF1 *fcentweight = new TF1("fcentweight","gaus(0)",0,200);
   fcentweight->SetParameters(4.70614e+00,-3.38547e+01,5.60064e+01);
 
@@ -1188,8 +1188,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
       if(jtpt[ij]>jetptmin && fabs(jteta[ij])<2 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       {
-        //jetpt[njet] = jetcorr->get_corrected_pt(jtpt[ij],jteta[ij]);
-        //        cout<<jetpt[njet]<<endl;
        	jetpt[njet] = jtpt[ij];
         jeteta[njet] = jteta[ij];
         jetphi[njet] = jtphi[ij];
@@ -1220,12 +1218,15 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           jetptCorr[njet] = jetpt[njet]/jetResidualFunction[centBin]->Eval(jetpt[njet]);
           jetptCorr[njet] = jetcorr->get_corrected_pt(jetptCorr[njet],jeteta[njet]);
         } else {
-          jetptCorr[njet] = -1; // indicate correction wasn't applied
+          jetptCorr[njet] = jetcorr->get_corrected_pt(jetpt[njet], jeteta[njet]);
         }
         if(njet>19) {
           cout<<"need bigger smearing arrays"<<endl;
           exit(1);
         }
+
+        if (jetptCorr[njet] < 30) continue; // njet is not incremented
+
         if(is_pp) //do smearing
         {
           int smearcents[] = {5,25,65,105};
@@ -1482,9 +1483,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             mult_mix++;
           }
         }
-        
 
-        
+
+
         evttree_mix->GetEntry(vmix_index[iminbias]);
         dvz_mix[nmix] = fabs(vz - vz_mix);
         dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
