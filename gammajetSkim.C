@@ -1398,8 +1398,19 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
             // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
             // if( jetID[ijet]==0 ) continue;
+
+            float jetpt_mb_corr = jtpt_ak3pupf[ijetmix];
+            if (jetpt_mb_corr>xmin && jetpt_mb_corr<xmax) {
+              jetpt_mb_corr = jetpt_mb_corr/jetResidualFunction[centBin]->Eval(jetpt_mb_corr);
+              jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
+            } else {
+              jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
+            }
+
+            if (jetpt_mb_corr < 30) continue; // njets_mix is not incremented
+            jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
+
             rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
-            jtpt_ak3pupf_out[njets_mix] = jtpt_ak3pupf[ijetmix];
             jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
             jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
             neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
