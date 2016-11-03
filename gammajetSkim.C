@@ -1188,18 +1188,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       // if(jtpt[ij]>30 && fabs(jteta[ij])<1.6)
       if(jtpt[ij]>jetptmin && fabs(jteta[ij])<2 && acos(cos(jtphi[ij] - phoPhi[0])) > 7 * pi / 8)
       {
-       	jetpt[njet] = jtpt[ij];
-        jeteta[njet] = jteta[ij];
-        jetphi[njet] = jtphi[ij];
-       	gjetpt[njet] = refpt[ij];
-        gjeteta[njet] = refeta[ij];
-        gjetphi[njet] = refphi[ij];
-        jetID[njet] = goodJet(ij);
-        subid[njet] = _subid[ij];
-        chargedSum[njet] = _chargedSum[ij];
-        neutralSum[njet] = _neutralSum[ij];
-        eSum[njet] = _eSum[ij];
-
         // jet energy correction
         int centBin = 0;
         if (isHI) {
@@ -1214,18 +1202,31 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
         double xmin, xmax;
         jetResidualFunction[centBin]->GetRange(xmin,xmax);
-        if(jetpt[njet]>xmin && jetpt[njet]<xmax) {
-          jetptCorr[njet] = jetpt[njet]/jetResidualFunction[centBin]->Eval(jetpt[njet]);
-          jetptCorr[njet] = jetcorr->get_corrected_pt(jetptCorr[njet],jeteta[njet]);
-        } else {
-          jetptCorr[njet] = jetcorr->get_corrected_pt(jetpt[njet], jeteta[njet]);
+        float jetpt_corr = jtpt[ij];
+        if (jetpt_corr>xmin && jetpt_corr<xmax) {
+          jetpt_corr = jetpt_corr/jetResidualFunction[centBin]->Eval(jetpt_corr);
         }
+
         if(njet>19) {
           cout<<"need bigger smearing arrays"<<endl;
           exit(1);
         }
 
-        if (jetptCorr[njet] < 30) continue; // njet is not incremented
+        jetpt_corr = jetcorr->get_corrected_pt(jetpt_corr, jteta[ij]);
+        if (jetpt_corr < 30) continue; // njet is not incremented
+
+        jetpt[njet] = jtpt[ij];
+        jetptCorr[njet] = jetpt_corr;
+        jeteta[njet] = jteta[ij];
+        jetphi[njet] = jtphi[ij];
+        gjetpt[njet] = refpt[ij];
+        gjeteta[njet] = refeta[ij];
+        gjetphi[njet] = refphi[ij];
+        jetID[njet] = goodJet(ij);
+        subid[njet] = _subid[ij];
+        chargedSum[njet] = _chargedSum[ij];
+        neutralSum[njet] = _neutralSum[ij];
+        eSum[njet] = _eSum[ij];
 
         if(is_pp) //do smearing
         {
@@ -1399,17 +1400,29 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
             // if( jetID[ijet]==0 ) continue;
 
+            // jet energy correction
+            int centBin = 0;
+            if (isHI) {
+              if (hiBin >= 100)
+                centBin = 3;
+              else if (hiBin >= 60)
+                centBin = 2;
+              else if (hiBin >= 20)
+                centBin = 1;
+              else
+                centBin = 0;
+            }
+            double xmin, xmax;
+            jetResidualFunction[centBin]->GetRange(xmin,xmax);
             float jetpt_mb_corr = jtpt_ak3pupf[ijetmix];
             if (jetpt_mb_corr>xmin && jetpt_mb_corr<xmax) {
               jetpt_mb_corr = jetpt_mb_corr/jetResidualFunction[centBin]->Eval(jetpt_mb_corr);
-              jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
-            } else {
-              jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
             }
 
+            jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
             if (jetpt_mb_corr < 30) continue; // njets_mix is not incremented
-            jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
 
+            jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
             rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
             jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
             jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
