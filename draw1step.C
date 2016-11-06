@@ -9,7 +9,9 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
   int centmaxs[] = {20,60,100,200,200};
   string cents[] = {"0-10%","10-30%","30-50%","50-100%","70-100%"};
   TH1D * rawff_pbpbmc_recoreco[ncentbins];
+  TH1D * rawffue_pbpbmc_recoreco[ncentbins];
   TH1D * rawffjetmix_pbpbmc_recoreco[ncentbins];
+  TH1D * rawffjetmixue_pbpbmc_recoreco[ncentbins];
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
 
@@ -25,15 +27,22 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleSize(dummy_pbpbsub[icent]->GetXaxis()->GetTitleSize()*1.4);
     dummy_pbpbsub[icent]->Draw();
     rawff_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
-    rawff_pbpbmc_recoreco[icent]->Draw("same");
+    rawffue_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmix_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmixue_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmix_pbpbmc_recoreco[icent]->SetMarkerColor(kBlue);
+    rawffue_pbpbmc_recoreco[icent]->SetMarkerStyle(24);
+    rawffjetmixue_pbpbmc_recoreco[icent]->SetMarkerColor(kBlue);
+    rawffjetmixue_pbpbmc_recoreco[icent]->SetMarkerStyle(24);
+    rawff_pbpbmc_recoreco[icent]->Draw("same");
     rawffjetmix_pbpbmc_recoreco[icent]->Draw("same");
+    rawffue_pbpbmc_recoreco[icent]->Draw("same");
+    rawffjetmixue_pbpbmc_recoreco[icent]->Draw("same");
 
 
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent] = new TLegend(0.03,0.697,0.3,0.92);
+      leg_ff_pbpbsub[icent] = new TLegend(0.03,0.52,0.3,0.92);
     }
     else
     {
@@ -47,6 +56,8 @@ void draw1step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4) 
     {
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"Raw FF","p");
       leg_ff_pbpbsub[icent]->AddEntry(rawffjetmix_pbpbmc_recoreco[icent],"Jet Mix FF","p");
+      leg_ff_pbpbsub[icent]->AddEntry(rawffue_pbpbmc_recoreco[icent],"Raw UE FF","p");
+      leg_ff_pbpbsub[icent]->AddEntry(rawffjetmixue_pbpbmc_recoreco[icent],"Jet Mix UE FF","p");
     }
     else if(icent==1)
     {
