@@ -6,15 +6,17 @@ then
 fi
 
 
-./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-biran.root pbpbdata 0 20 $1 $2 $3 recoreco $4 $5 &
-./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-biran.root pbpbdata 20 60 $1 $2 $3 recoreco $4 $5  &
-./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-biran.root pbpbdata 60 100 $1 $2 $3 recoreco $4 $5  &
+./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v12.root pbpbdata 0 20 $1 $2 $3 recoreco $4 $5 &
+./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v12.root pbpbdata 20 60 $1 $2 $3 recoreco $4 $5  &
+wait
+./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v12.root pbpbdata 60 100 $1 $2 $3 recoreco $4 $5  &
 # ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v9.root pbpbdata 100 140 $1 $2 $3 recoreco $4 $5  &
-./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-biran.root pbpbdata 100 200 $1 $2 $3 recoreco $4 $5  &
+./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v12.root pbpbdata 100 200 $1 $2 $3 recoreco $4 $5  &
 wait
 
 ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata 0 20 $1 $2 $3 recoreco $4 $5 &
 ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata 20 60 $1 $2 $3 recoreco $4 $5  &
+wait
 ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata 60 100 $1 $2 $3 recoreco $4 $5  &
 # ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata 100 140 $1 $2 $3 recoreco $4 $5  &
 ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root ppdata 100 200 $1 $2 $3 recoreco $4 $5  &

@@ -46,11 +46,11 @@ class ztree {
    Int_t           dhiBin_mix[30];   //[nmix]
    Float_t         dhiEvtPlanes_mix[30];   //[nmix]
    Int_t           nTrk_mix;
-   Float_t         trkFromEv_mix[300];   //[nTrk_mix]
-   Float_t         trkPt_mix[300];   //[nTrk_mix]
-   Float_t         trkPhi_mix[300];   //[nTrk_mix]
-   Float_t         trkEta_mix[300];   //[nTrk_mix]
-   Float_t         trkWeight_mix[300];   //[nTrk_mix]
+   Float_t         trkFromEv_mix[30000];   //[nTrk_mix]
+   Float_t         trkPt_mix[30000];   //[nTrk_mix]
+   Float_t         trkPhi_mix[30000];   //[nTrk_mix]
+   Float_t         trkEta_mix[30000];   //[nTrk_mix]
+   Float_t         trkWeight_mix[30000];   //[nTrk_mix]
    Int_t           nTrk_cone;
    Float_t         trkFromEv_cone[30];   //[nTrk_cone]
    Float_t         trkPt_cone[30];   //[nTrk_cone]
@@ -244,7 +244,7 @@ class ztree {
    TBranch        *b_genphi_mix;   //!
    TBranch        *b_gensubid_mix;   //!
    TBranch        *b_genev_mix;   //!
-   
+
    TBranch        *b_isPP;   //!
    TBranch        *b_run;   //!
    TBranch        *b_evt;   //!
