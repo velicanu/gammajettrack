@@ -409,13 +409,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if( jetID_mix[ijet_mix]==0 ) continue;
       }
       if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-      if(signal && nmixEv_mix[ijet_mix]%2==1) {
+      if(signal && nmixEv_mix[ijet_mix]%3==1) {
         hjetptjetmix->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
       }
-      if(sideband && nmixEv_mix[ijet_mix]%2==1) {
+      if(sideband && nmixEv_mix[ijet_mix]%3==1) {
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents);
         hnmixsideband->Fill(1);
         xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
