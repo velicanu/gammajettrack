@@ -1390,74 +1390,68 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! (2.52) Jets from mixed events
         jettree_ak3pupf->GetEntry(vmix_index[iminbias]);
-        if(nmix%2==1) // odd events have the mix jets
-        {
-          for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix)
-          {
-            if( jtpt_ak3pupf[ijetmix]<jetptmin ) continue; //jet pt Cut
-            if( fabs(jteta_ak3pupf[ijetmix]) > 2) continue; //jeteta Cut
-            if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-            // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
-            // if( jetID[ijet]==0 ) continue;
+        for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix) {
+          if( jtpt_ak3pupf[ijetmix]<jetptmin ) continue; //jet pt Cut
+          if( fabs(jteta_ak3pupf[ijetmix]) > 2) continue; //jeteta Cut
+          if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+          // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
+          // if( jetID[ijet]==0 ) continue;
 
-            // jet energy correction
-            int centBin = 0;
-            if (isHI) {
-              if (hiBin >= 100)
-                centBin = 3;
-              else if (hiBin >= 60)
-                centBin = 2;
-              else if (hiBin >= 20)
-                centBin = 1;
-              else
-                centBin = 0;
-            }
-            double xmin, xmax;
-            jetResidualFunction[centBin]->GetRange(xmin,xmax);
-            float jetpt_mb_corr = jtpt_ak3pupf[ijetmix];
-            if (jetpt_mb_corr>xmin && jetpt_mb_corr<xmax) {
-              jetpt_mb_corr = jetpt_mb_corr/jetResidualFunction[centBin]->Eval(jetpt_mb_corr);
-            }
-
-            jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
-            if (jetpt_mb_corr < 30) continue; // njets_mix is not incremented
-
-            jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
-            rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
-            jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
-            jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
-            neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
-            chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
-            nmixEv_ak3pupf_out[njets_mix] = nmix;
-            jetID_ak3pupf_out[njets_mix] = goodJet_ak3pupf(ijetmix);
-            chargedN_ak3pupf_out[njets_mix] = chargedN_ak3pupf[ijetmix];
-            photonN_ak3pupf_out[njets_mix] = photonN_ak3pupf[ijetmix];
-            neutralN_ak3pupf_out[njets_mix] = neutralN_ak3pupf[ijetmix];
-            eN_ak3pupf_out[njets_mix] = eN_ak3pupf[ijetmix];
-            muN_ak3pupf_out[njets_mix] = muN_ak3pupf[ijetmix];
-            chargedMax_ak3pupf_out[njets_mix] = chargedMax_ak3pupf[ijetmix];
-            photonSum_ak3pupf_out[njets_mix] = photonSum_ak3pupf[ijetmix];
-            eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
-            njets_mix++;
+          // jet energy correction
+          int centBin = 0;
+          if (isHI) {
+            if (hiBin >= 100)
+              centBin = 3;
+            else if (hiBin >= 60)
+              centBin = 2;
+            else if (hiBin >= 20)
+              centBin = 1;
+            else
+              centBin = 0;
           }
-          if(ismc)
-          {
-            for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
-              if(_genpt_mix[igenj_mix] < 30) continue;
-              if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
-              // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
-              // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-              genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
-              geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
-              genphi_mix[ngen_mix] = _genphi_mix[igenj_mix];
-              gensubid_mix[ngen_mix] = _gensubid_mix[igenj_mix];
-              genev_mix[ngen_mix] = nmix;
-              ngen_mix++;
-            }
+          double xmin, xmax;
+          jetResidualFunction[centBin]->GetRange(xmin,xmax);
+          float jetpt_mb_corr = jtpt_ak3pupf[ijetmix];
+          if (jetpt_mb_corr>xmin && jetpt_mb_corr<xmax) {
+            jetpt_mb_corr = jetpt_mb_corr/jetResidualFunction[centBin]->Eval(jetpt_mb_corr);
+          }
+
+          jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
+          if (jetpt_mb_corr < 30) continue; // njets_mix is not incremented
+
+          jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
+          rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
+          jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
+          jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
+          neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
+          chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
+          nmixEv_ak3pupf_out[njets_mix] = nmix;
+          jetID_ak3pupf_out[njets_mix] = goodJet_ak3pupf(ijetmix);
+          chargedN_ak3pupf_out[njets_mix] = chargedN_ak3pupf[ijetmix];
+          photonN_ak3pupf_out[njets_mix] = photonN_ak3pupf[ijetmix];
+          neutralN_ak3pupf_out[njets_mix] = neutralN_ak3pupf[ijetmix];
+          eN_ak3pupf_out[njets_mix] = eN_ak3pupf[ijetmix];
+          muN_ak3pupf_out[njets_mix] = muN_ak3pupf[ijetmix];
+          chargedMax_ak3pupf_out[njets_mix] = chargedMax_ak3pupf[ijetmix];
+          photonSum_ak3pupf_out[njets_mix] = photonSum_ak3pupf[ijetmix];
+          eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
+          njets_mix++;
+        }
+        if(ismc)
+        {
+          for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
+            if(_genpt_mix[igenj_mix] < 30) continue;
+            if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
+            // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
+            // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
+            genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
+            geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
+            genphi_mix[ngen_mix] = _genphi_mix[igenj_mix];
+            gensubid_mix[ngen_mix] = _gensubid_mix[igenj_mix];
+            genev_mix[ngen_mix] = nmix;
+            ngen_mix++;
           }
         }
-        // return;
-
 
 //! (2.54) Tracks from jet and cones in mixed events
         tracktree_mix->GetEntry(vmix_index[iminbias]);
