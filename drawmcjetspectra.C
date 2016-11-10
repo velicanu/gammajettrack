@@ -38,7 +38,7 @@ void drawmcjetspectra(int phoetmin, int phoetmax) {
     hjetpt_ppmc_gengen[icent]->SetLineColor(kRed);
     hjetpt_ppmc_[icent]->GetXaxis()->CenterTitle();
 
-    float bw = hgenjetpt_pbpbmc_gengen_0_20->GetBinWidth(1);
+    float bw = hjetpt_ppmc_[icent]->GetBinWidth(1);
     float nphopp = hphoet_ppmc_[icent]->Integral();
     float nphopbpb = hphoet_pbpbmc_[icent]->Integral();
 

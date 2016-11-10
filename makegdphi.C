@@ -12,7 +12,7 @@
   // TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v3.root");
 
   TFile * ppfile = TFile::Open("/home/ursu/g.pp-photonHLTFilter-v0-HiForest-newphosel-fix.root");
-  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v8.root");
+  TFile * pbpbfile = TFile::Open("/home/ursu/g.HIPhoton40AndZ-PbPb-photonHLTFilter-v12.root");
 
   TTree * ppztree = (TTree*) ppfile->Get("ztree");
   TTree * pbpbztree = (TTree*) pbpbfile->Get("ztree");

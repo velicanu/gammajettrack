@@ -79,9 +79,10 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     xjgmixsignal_pbpbdata_recoreco[icent]->Scale(1.0/(binwidth*nphosignal));
     // xjgmixsignal_pbpbdata_recoreco[icent]->Draw("same");
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerStyle(24);
-    h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->Draw("same");
-    // xjgsignal_pbpbdata_recoreco[icent]->Divide(h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]);
+    h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerColor(kRed);
+    xjgsignal_pbpbdata_recoreco[icent]->Divide(h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]);
     xjgsignal_pbpbdata_recoreco[icent]->Draw("same");
+    // h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->Draw("same");
 
     if(icent==0)
     {
@@ -103,7 +104,7 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
     else if(icent==1)
     {
       leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],Form("%d>#gamma p_{T}>%d GeV",phoetmin,phoetmax),"");
-      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"","");
+      leg[icent]->AddEntry(xjgsignal_pbpbdata_recoreco[icent],"#sigma_{I#eta#eta}<0.1","");
     }
     else if(icent==2)
     {
@@ -126,7 +127,7 @@ void xjg1step(int phoetmin, int phoetmax, int jetptmin)
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
 
-  TLatex * ldndxi = new TLatex(0.4,0.37,"1/N#gamma dN/dx_{J#gamma} Raw");
+  TLatex * ldndxi = new TLatex(0.4,0.27,"1/N#gamma dN/dx_{J#gamma} Raw Signal");
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
