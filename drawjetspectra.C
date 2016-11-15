@@ -112,5 +112,5 @@ void drawjetspectra(int phoetmin, int phoetmax) {
     // laxis[ilatex]->Draw();
   // }
   gPad->SetLogy();
-  call->SaveAs("data_jetspectra_log.png");
+  call->SaveAs(Form("data_jetspectra_log_%d_%d.png",phoetmin,phoetmax));
 }

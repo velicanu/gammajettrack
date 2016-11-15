@@ -17,8 +17,8 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
   return 1; //no purity applied
 }
 
-void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0) {
-  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
+  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -70,14 +70,14 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmix_pbpbmc_recoreco[icent]->Add(rawffjetmixue_pbpbmc_recoreco[icent]);
     rawffjetmix_pbpbmc_recoreco[icent]->Scale(-1);
     rawff_pbpbmc_recoreco[icent]->Add(rawffjetmix_pbpbmc_recoreco[icent]);
-    
+
     hjetpt_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hjetpt_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     hjetptjetmix_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmix_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
-    
+
     float nrawjets = hjetpt_pbpbmc_recoreco[icent]->Integral();
     float nmixjets = hjetptjetmix_pbpbmc_recoreco[icent]->Integral();
-    
-    
+
+
     rawff_pbpbmc_recoreco[icent]->Scale(1/(nrawjets-nmixjets));
 
 
@@ -95,36 +95,36 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmixsideband_pbpbmc_recoreco[icent]->Add(rawffjetmixuesideband_pbpbmc_recoreco[icent]);
     rawffjetmixsideband_pbpbmc_recoreco[icent]->Scale(-1);
     rawffsideband_pbpbmc_recoreco[icent]->Add(rawffjetmixsideband_pbpbmc_recoreco[icent]);
-    
+
     hjetptsideband_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hjetptsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     hjetptjetmixsideband_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hjetptjetmixsideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
-    
+
     float nrawjetssideband = hjetptsideband_pbpbmc_recoreco[icent]->Integral();
     float nmixjetssideband = hjetptjetmixsideband_pbpbmc_recoreco[icent]->Integral();
-    
-    
+
+
     rawffsideband_pbpbmc_recoreco[icent]->Scale(1/(nrawjetssideband-nmixjetssideband));
     rawffsideband_pbpbmc_recoreco[icent]->SetMarkerColor(kGreen);
     // rawffsideband_pbpbmc_recoreco[icent]->Draw("same");
-    
+
     float purity   = getpurity(phoetmin,centmins[icent],false);
     float pppurity = getpurity(phoetmin,centmins[icent],true);
     rawff_pbpbmc_recoreco[icent]->Scale(1.0/purity);
     rawffsideband_pbpbmc_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbmc_recoreco[icent]->Add(rawffsideband_pbpbmc_recoreco[icent]);
-    
-    
-    
+
+
+
     rawff_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     rawff_pbpbmc_gengen[icent]->Sumw2();
     hgenjetpt_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgenjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     hgenjetpt_pbpbmc_gengen[icent]->Sumw2();
     float ngenjets = hgenjetpt_pbpbmc_gengen[icent]->Integral();
     rawff_pbpbmc_gengen[icent]->Scale(1/ngenjets);
-    
+
     if(do_divide==0) {
       rawff_pbpbmc_recoreco[icent]->Draw("same");
-      rawff_pbpbmc_gengen[icent]->Draw("same");
+      rawff_pbpbmc_gengen[icent]->Draw("hist same");
     } else {
       rawff_pbpbmc_recoreco[icent]->Divide(rawff_pbpbmc_gengen[icent]);
       rawff_pbpbmc_recoreco[icent]->Draw("same");
@@ -183,7 +183,11 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
 
-  TLatex * ldndxi = new TLatex(0.4,0.5,"dN/d#xi Raw");
+  TLatex * ldndxi;
+  if(gammaxi==0)
+    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet}");
+  else
+    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma}");
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
@@ -198,8 +202,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   }
   ldndxi->Draw();
   if(do_divide==0) {
-    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco.png",phoetmin,phoetmax,jetptmin));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
   } else {
-    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_ratio.png",phoetmin,phoetmax,jetptmin));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
   }
 }

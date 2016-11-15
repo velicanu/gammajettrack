@@ -92,7 +92,7 @@ float ztree::getSmearedPhi(int jetindex,int centindex)
 }
 
 // this function does the raw FF analysis and writes histograms to output file
-void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin)
+void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi)
 {
   string tag = outfname;
   string s_alpha = gen;
@@ -218,6 +218,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igen],eta[igen],phi[igen],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igen]*cos(angle)/tmpjetpt;
+            if(gammaxi==1) z = pt[igen]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
 
             if(sube[igen] == 0) { // signal particles
@@ -241,6 +242,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igen_mix],eta_mix[igen_mix],phi_mix[igen_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igen_mix]*cos(angle)/tmpjetpt;
+            if(gammaxi==1) z = pt_mix[igen_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
             hgammaffxiuemixgen->Fill(xi,2.0/(float)nmix);
           }
@@ -259,6 +261,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/tmpjetpt;
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
 //! 1-1: rjet rtrk
             if(signal) {
@@ -290,6 +293,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/tmpjetpt;
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
 //! 1-3: rjet rtrk_mix
             if(signal) {
@@ -333,6 +337,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/genpt[igenjet];
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
   //! 1-1: rjet rtrk
             if(signal) {
@@ -363,6 +368,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igentrk]*cos(angle)/genpt[igenjet];
+            if(gammaxi==1) z = pt[igentrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
   //! 2-1: gjet gtrk sube==0
   //! 3-1: gjet gtrk
@@ -388,6 +394,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt[igenjet];
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
             if(signal) { hgammaffxiuemix->Fill(xi); }
@@ -439,6 +446,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
 //! 1-2: rjet_mix rtrk_mix
             if(signal) {
@@ -463,6 +471,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
             if(signal) {
@@ -501,6 +510,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt_mix[igenjet_mix];
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
             if(signal) { hgammaffxijetmix->Fill(xi); }
@@ -521,7 +531,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
 int main(int argc, char *argv[])
 {
-  if(argc > 11 || argc < 3 )
+  if(argc > 12 || argc < 3 )
   {
     std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen] [checkjetid] [trkptmin]"<<std::endl;
     exit(1);
@@ -550,6 +560,9 @@ int main(int argc, char *argv[])
   }
   if (argc==11) {
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]));
+  }
+  if (argc==12) {
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]),std::atoi(argv[11]));
   }
   // cout<<argc<<endl;
   return 0;

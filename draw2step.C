@@ -1,7 +1,7 @@
 #include "makeMultiPanelCanvas.C"
 
-void draw2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0) {
-  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+void draw2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0) {
+  TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -158,7 +158,11 @@ void draw2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
 
-  TLatex * ldndxi = new TLatex(0.4,0.5,"dN/d#xi Raw");
+  TLatex * ldndxi;
+  if(gammaxi==0)
+    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet} Raw");
+  else
+    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma} Raw");
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
@@ -173,8 +177,8 @@ void draw2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   }
   ldndxi->Draw();
   if(do_divide==0) {
-    call->SaveAs(Form("rawminusjetff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco.png",phoetmin,phoetmax,jetptmin));
+    call->SaveAs(Form("rawminusjetff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
   } else {
-    call->SaveAs(Form("rawminusjetff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_ratio.png",phoetmin,phoetmax,jetptmin));
+    call->SaveAs(Form("rawminusjetff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
   }
 }

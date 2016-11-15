@@ -28,10 +28,10 @@ void drawmcjetspectra(int phoetmin, int phoetmax) {
   for (int icent = 0; icent < ncentbins; icent++) {
 
     call->cd(icent+2);
-    hjetpt_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hjetpt_ppmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_ppmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hphoet_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("phoetsignal_pbpbmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
-    hphoet_ppmc_[icent] = (TH1D*) _file0->Get(Form("phoetsignal_ppmc_reco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetpt_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetpt_ppmc_[icent] = (TH1D*) _file0->Get(Form("hjetpt_ppmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hphoet_pbpbmc_[icent] = (TH1D*) _file0->Get(Form("phoetsignal_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
+    hphoet_ppmc_[icent] = (TH1D*) _file0->Get(Form("phoetsignal_ppmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     hjetpt_pbpbmc_gengen[icent] = (TH1D*) _file0->Get(Form("hgenjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     hjetpt_ppmc_gengen[icent] = (TH1D*) _file0->Get(Form("hgenjetpt_ppmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     hjetpt_ppmc_[icent]->SetMarkerColor(kRed);
@@ -91,5 +91,5 @@ void drawmcjetspectra(int phoetmin, int phoetmax) {
   }
   call->cd(1);
   gPad->SetLogy();
-  call->SaveAs("jetspectra.png");
+  call->SaveAs(Form("mc_jetspectra_log_%d_%d.png",phoetmin,phoetmax));
 }
