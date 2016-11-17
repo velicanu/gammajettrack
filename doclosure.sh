@@ -6,7 +6,7 @@ then
 fi
 
 echo running closure histograms
-for i in ${@:6}
+for i in ${@:7}
 do
   ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root pbpbmc 0 20 $1 $2 $3 $i $4 $5 $6 &
   ./ffgamma.exe /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root pbpbmc 20 60 $1 $2 $3 $i $4 $5 $6 &
