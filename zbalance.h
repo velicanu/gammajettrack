@@ -51,12 +51,6 @@ class ztree {
    Float_t         trkPhi_mix[30000];   //[nTrk_mix]
    Float_t         trkEta_mix[30000];   //[nTrk_mix]
    Float_t         trkWeight_mix[30000];   //[nTrk_mix]
-   Int_t           nTrk_cone;
-   Float_t         trkFromEv_cone[30];   //[nTrk_cone]
-   Float_t         trkPt_cone[30];   //[nTrk_cone]
-   Float_t         trkPhi_cone[30];   //[nTrk_cone]
-   Float_t         trkEta_cone[30];   //[nTrk_cone]
-   Float_t         trkWeight_cone[30];   //[nTrk_cone]
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[30];   //[hiNevtPlane]
    Int_t           mult;
@@ -74,13 +68,6 @@ class ztree {
    Int_t           pdg_mix[3000];   //[mult_mix]
    Int_t           chg_mix[3000];   //[mult_mix]
    Int_t           nev_mix[3000];   //[mult_mix]
-   Int_t           mult_cone;
-   Float_t         pt_cone[20000];   //[mult_cone]
-   Float_t         eta_cone[20000];   //[mult_cone]
-   Float_t         phi_cone[20000];   //[mult_cone]
-   Int_t           pdg_cone[20000];   //[mult_cone]
-   Int_t           chg_cone[20000];   //[mult_cone]
-   Int_t           nev_cone[20000];   //[mult_cone]
    Int_t           njet_smeared;
    Float_t         jetpt_smeared0020[800];   //[njet_smeared]
    Float_t         jeteta_smeared0020[800];   //[njet_smeared]
@@ -265,13 +252,6 @@ class ztree {
    TBranch        *b_trkPhi_mix;   //!
    TBranch        *b_trkEta_mix;   //!
    TBranch        *b_trkWeight_mix;   //!
-   TBranch        *b_nTrk_cone;   //!
-   TBranch        *b_trkFromEv_cone;   //!
-   TBranch        *b_trkPt_cone;   //!
-   TBranch        *b_trkPhi_cone;   //!
-   TBranch        *b_trkEta_cone;   //!
-   TBranch        *b_trkWeight_cone;   //!
-   TBranch        *b_hiNevtPlane;   //!
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_mult;   //!
    TBranch        *b_pt;   //!
@@ -288,14 +268,6 @@ class ztree {
    TBranch        *b_pdg_mix;   //!
    TBranch        *b_chg_mix;   //!
    TBranch        *b_nev_mix;   //!
-   TBranch        *b_mult_cone;   //!
-   TBranch        *b_pt_cone;   //!
-   TBranch        *b_eta_cone;   //!
-   TBranch        *b_phi_cone;   //!
-   TBranch        *b_pdg_cone;   //!
-   TBranch        *b_chg_cone;   //!
-   TBranch        *b_nev_cone;   //!
-   TBranch        *b_njet_smeared;   //!
    TBranch        *b_jetpt_smeared0020;   //!
    TBranch        *b_jeteta_smeared0020;   //!
    TBranch        *b_jetphi_smeared0020;   //!
@@ -562,13 +534,6 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("trkPhi_mix", &trkPhi_mix, &b_trkPhi_mix);
    fChain->SetBranchAddress("trkEta_mix", &trkEta_mix, &b_trkEta_mix);
    fChain->SetBranchAddress("trkWeight_mix", &trkWeight_mix, &b_trkWeight_mix);
-   fChain->SetBranchAddress("nTrk_cone", &nTrk_cone, &b_nTrk_cone);
-   fChain->SetBranchAddress("trkFromEv_cone", &trkFromEv_cone, &b_trkFromEv_cone);
-   fChain->SetBranchAddress("trkPt_cone", &trkPt_cone, &b_trkPt_cone);
-   fChain->SetBranchAddress("trkPhi_cone", &trkPhi_cone, &b_trkPhi_cone);
-   fChain->SetBranchAddress("trkEta_cone", &trkEta_cone, &b_trkEta_cone);
-   fChain->SetBranchAddress("trkWeight_cone", &trkWeight_cone, &b_trkWeight_cone);
-   fChain->SetBranchAddress("hiNevtPlane", &hiNevtPlane, &b_hiNevtPlane);
    fChain->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("mult", &mult, &b_mult);
    fChain->SetBranchAddress("pt", pt, &b_pt);
@@ -585,14 +550,6 @@ void ztree::Init(TTree *tree)
    fChain->SetBranchAddress("pdg_mix", &pdg_mix, &b_pdg_mix);
    fChain->SetBranchAddress("chg_mix", &chg_mix, &b_chg_mix);
    fChain->SetBranchAddress("nev_mix", &nev_mix, &b_nev_mix);
-   fChain->SetBranchAddress("mult_cone", &mult_cone, &b_mult_cone);
-   fChain->SetBranchAddress("pt_cone", &pt_cone, &b_pt_cone);
-   fChain->SetBranchAddress("eta_cone", &eta_cone, &b_eta_cone);
-   fChain->SetBranchAddress("phi_cone", &phi_cone, &b_phi_cone);
-   fChain->SetBranchAddress("pdg_cone", &pdg_cone, &b_pdg_cone);
-   fChain->SetBranchAddress("chg_cone", &chg_cone, &b_chg_cone);
-   fChain->SetBranchAddress("nev_cone", &nev_cone, &b_nev_cone);
-   fChain->SetBranchAddress("njet_smeared", &njet_smeared, &b_njet_smeared);
    fChain->SetBranchAddress("jetpt_smeared0020", jetpt_smeared0020, &b_jetpt_smeared0020);
    fChain->SetBranchAddress("jeteta_smeared0020", jeteta_smeared0020, &b_jeteta_smeared0020);
    fChain->SetBranchAddress("jetphi_smeared0020", jetphi_smeared0020, &b_jetphi_smeared0020);
