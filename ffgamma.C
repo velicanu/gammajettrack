@@ -259,7 +259,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (2.2) Reco jet loop
     int njetloop = njet;
     for (int ijet = 0; ijet < njetloop; ijet++) {
-      float tmpjetpt = jetptCorr[ijet];
+      // float tmpjetpt = jetptCorr[ijet];
+      float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = jeteta[ijet];
       float tmpjetphi = jetphi[ijet];
 //! apply smearing if pp
@@ -413,8 +414,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( genpt[igenjet]<jetptcut ) continue; //jet pt Cut
       if( fabs(geneta[igenjet]) > 1.6) continue; //jeteta Cut
       if( acos(cos(genphi[igenjet] - phoPhi[0])) < 7 * pi / 8 ) continue;
-      float sigmapt = getSigmaRelPt(hiBin,genpt[igenjet]);
-      float tmpjetpt = genpt[igenjet]*randSmearing.Gaus(1,sigmapt);
+      // float sigmapt = getSigmaRelPt(hiBin,genpt[igenjet]);
+      // float tmpjetpt = genpt[igenjet]*randSmearing.Gaus(1,sigmapt);
+      float tmpjetpt = genpt[igenjet];
       
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(tmpjetpt,geneta[igenjet],genphi[igenjet],0);
