@@ -3,6 +3,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TMath.h>
+#include <TRandom3.h>
 #include <TCanvas.h>
 #include "ggTree.h"
 #include <algorithm>
@@ -36,6 +37,96 @@ Gen Jet Gen Trk inclusive: (mixgen)
  3-2: gjet_mix gtrk_mix   mix jet bk gen
  3-3: gjet gtrk           ue cone gen
 **********************************************************************/
+//! (1.11) Begin pp smearing
+TRandom3 randSmearing(12345);    // random number seed should be fixed or reproducible
+int smearcents[] = {5,25,65,105};
+// pp resolution
+std::vector<double> CSN_PP = {0.06, 0.91, 0};
+std::vector<double> CSN_phi_PP = {7.72/100000000, 0.1222, 0.5818};
+
+// smear 0-30 %
+std::vector<double> CSN_HI_cent0030 = {0.06, 1.23, 7.38};
+std::vector<double> CSN_phi_HI_cent0030 = {-1.303/1000000, 0.1651, 1.864};
+// smear 30-100 %
+std::vector<double> CSN_HI_cent30100 = {0.06, 1.23, 2.1};
+std::vector<double> CSN_phi_HI_cent30100 = {-2.013/100000000, 0.1646, 1.04};
+
+// smear 0-10 %
+std::vector<double> CSN_HI_cent0010 = {0.06, 1.23, 8.38};
+std::vector<double> CSN_phi_HI_cent0010 = {-3.18781/10000000, 0.125911, 2.23898};
+// smear 10-30 %
+std::vector<double> CSN_HI_cent1030 = {0.06, 1.23, 5.88};
+std::vector<double> CSN_phi_HI_cent1030 = {1.14344/100000, 0.179847, 1.56128};
+// smear 30-50 %
+std::vector<double> CSN_HI_cent3050 = {0.06, 1.23, 3.24};
+std::vector<double> CSN_phi_HI_cent3050 = {0.0145775, 0.1222, 1.21751};
+// smear 50-100 %
+std::vector<double> CSN_HI_cent50100 = {0.06, 1.23, 0};
+std::vector<double> CSN_phi_HI_cent50100 = {-0.0073078, 0.168879, 0.798885};
+
+float getSigmaRelPt(int hiBin, float jetpt)
+{
+  if(hiBin<20)
+    return TMath::Sqrt(
+                  (CSN_HI_cent0010.at(0)*CSN_HI_cent0010.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
+                  (CSN_HI_cent0010.at(1)*CSN_HI_cent0010.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
+                  (CSN_HI_cent0010.at(2)*CSN_HI_cent0010.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else if(20<=hiBin && hiBin<60)
+    return TMath::Sqrt(
+                  (CSN_HI_cent1030.at(0)*CSN_HI_cent1030.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
+                  (CSN_HI_cent1030.at(1)*CSN_HI_cent1030.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
+                  (CSN_HI_cent1030.at(2)*CSN_HI_cent1030.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else if(60<=hiBin && hiBin<100)
+    return TMath::Sqrt(
+                  (CSN_HI_cent3050.at(0)*CSN_HI_cent3050.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
+                  (CSN_HI_cent3050.at(1)*CSN_HI_cent3050.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
+                  (CSN_HI_cent3050.at(2)*CSN_HI_cent3050.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else
+    return TMath::Sqrt(
+                  (CSN_HI_cent50100.at(0)*CSN_HI_cent50100.at(0) - CSN_PP.at(0)*CSN_PP.at(0)) +
+                  (CSN_HI_cent50100.at(1)*CSN_HI_cent50100.at(1) - CSN_PP.at(1)*CSN_PP.at(1))/jetpt +
+                  (CSN_HI_cent50100.at(2)*CSN_HI_cent50100.at(2) - CSN_PP.at(2)*CSN_PP.at(2))/(jetpt*jetpt)
+                          );
+}
+
+float getSigmaRelPhi(int hiBin, float jetpt)
+{
+  if(hiBin<20)
+    return TMath::Sqrt(
+                  (CSN_phi_HI_cent0010.at(0)*CSN_phi_HI_cent0010.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent0010.at(1)*CSN_phi_HI_cent0010.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent0010.at(2)*CSN_phi_HI_cent0010.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else if(20<=hiBin && hiBin<60)
+    return TMath::Sqrt(
+                  (CSN_phi_HI_cent1030.at(0)*CSN_phi_HI_cent1030.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent1030.at(1)*CSN_phi_HI_cent1030.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent1030.at(2)*CSN_phi_HI_cent1030.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else if(60<=hiBin && hiBin<100)
+    return TMath::Sqrt(
+                  (CSN_phi_HI_cent3050.at(0)*CSN_phi_HI_cent3050.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent3050.at(1)*CSN_phi_HI_cent3050.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent3050.at(2)*CSN_phi_HI_cent3050.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
+                          );
+
+  else
+    return TMath::Sqrt(
+                  (CSN_phi_HI_cent50100.at(0)*CSN_phi_HI_cent50100.at(0) - CSN_phi_PP.at(0)*CSN_phi_PP.at(0)) +
+                  (CSN_phi_HI_cent50100.at(1)*CSN_phi_HI_cent50100.at(1) - CSN_phi_PP.at(1)*CSN_phi_PP.at(1))/jetpt +
+                  (CSN_phi_HI_cent50100.at(2)*CSN_phi_HI_cent50100.at(2) - CSN_phi_PP.at(2)*CSN_phi_PP.at(2))/(jetpt*jetpt)
+                          );
+}
+
+//! End pp smearing
 
 //! (1) Setup
 //! (1.1) Smearing functions for pp
@@ -276,6 +367,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             }
           }
         }
+      }
+      if(gen.compare("recoreco")==0) {
         float nmixedUEevents = (nmix+2)/3; //
         // nmixedUEevents = 1;
         // cout<<jentry<<" "<<nTrk_mix<<endl;
@@ -320,9 +413,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( genpt[igenjet]<jetptcut ) continue; //jet pt Cut
       if( fabs(geneta[igenjet]) > 1.6) continue; //jeteta Cut
       if( acos(cos(genphi[igenjet] - phoPhi[0])) < 7 * pi / 8 ) continue;
+      float sigmapt = getSigmaRelPt(hiBin,genpt[igenjet]);
+      float tmpjetpt = genpt[igenjet]*randSmearing.Gaus(1,sigmapt);
+      
       TLorentzVector vjet;
-      vjet.SetPtEtaPhiM(genpt[igenjet],geneta[igenjet],genphi[igenjet],0);
-      if(signal) { hgenjetpt->Fill(genpt[igenjet]); }
+      vjet.SetPtEtaPhiM(tmpjetpt,geneta[igenjet],genphi[igenjet],0);
+      if(signal) { hgenjetpt->Fill(tmpjetpt); }
 
       if(gen.compare("genreco")==0)
       {
@@ -336,17 +432,50 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrack;
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
-            float z = trkPt[itrk]*cos(angle)/genpt[igenjet];
+            float z = trkPt[itrk]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
-  //! 1-1: rjet rtrk
+//! 1-1: gjet rtrk
             if(signal) {
+              something = true;
+              // cout<<"sig: "<<jentry<<" "<<trkEta[itrk]<<" "<<trkPhi[itrk]<<" "<<trkPt[itrk]<<" "<<trkWeight[itrk]<<" "<<endl;
               hgammaffxi->Fill(xi,trkWeight[itrk]); //Raw FF after cuts (1.0)
               // hgammaffxi->Fill(xi); //Raw FF after cuts (1.0)
             }
             if(sideband) {
               hgammaffxisideband->Fill(xi,trkWeight[itrk]); // Raw FF after cuts sideband (1.1)
               // hgammaffxisideband->Fill(xi); // Raw FF after cuts sideband (1.1)
+            }
+          }
+        }
+        float nmixedUEevents = (nmix+2)/3; //
+        // nmixedUEevents = 1;
+        // cout<<jentry<<" "<<nTrk_mix<<endl;
+        for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix) { // reco jet UE track
+          // cout<<itrk_mix<<" "<<trkPt_mix[itrk_mix]<<" "<<trkFromEv_mix[itrk_mix]<<endl;
+          if(trkPt_mix[itrk_mix]<trkptmin) continue;
+          if(((int)trkFromEv_mix[itrk_mix])%3!=0) continue;
+          float dphi = acos( cos(genphi[igenjet] - trkPhi_mix[itrk_mix]));
+          float deta = fabs( geneta[igenjet] - trkEta_mix[itrk_mix]);
+          float dr = sqrt((dphi*dphi)+(deta*deta));
+          // cout<<itrk_mix<<" "<<trkPhi_mix[itrk_mix]<<" "<<tmpjetphi<<" , "<<trkEta_mix[itrk_mix]<<" "<<tmpjeteta<<" , "<<dr<<endl;
+          if(dr<0.3)
+          {
+            TLorentzVector vtrackmix;
+            vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
+            float angle = vjet.Angle(vtrackmix.Vect());
+            float z = trkPt_mix[itrk_mix]*cos(angle)/genpt[igenjet];
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            float xi = log(1.0/z);
+//! 1-3: gjet rtrk_mix
+            if(signal) {
+              // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
+              something = true;
+              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
+              // ntotmix++;
+            }
+            if(sideband) {
+              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
             }
           }
         }
@@ -367,7 +496,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrack;
             vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
             float angle = vjet.Angle(vtrack.Vect());
-            float z = pt[igentrk]*cos(angle)/genpt[igenjet];
+            float z = pt[igentrk]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = pt[igentrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
             float xi = log(1.0/z);
   //! 2-1: gjet gtrk sube==0
@@ -432,7 +561,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(gen.compare("gen")==0)
       {
         // no jet mixing in gen ff
-      } else if(gen.compare("recoreco")==0) {
+      } else if(gen.compare("recoreco")==0 || gen.compare("genreco")==0) {
         for(int itrk_mix = 0 ; itrk_mix < nTrk_mix ; ++itrk_mix)
         { // mix reco jet mix reco track
           if(trkPt_mix[itrk_mix]<trkptmin) continue;
@@ -482,7 +611,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             }
           }
         }
-
       }
     }
 
