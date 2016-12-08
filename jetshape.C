@@ -70,10 +70,6 @@ float getdr(float eta1, float phi1, float eta2 , float phi2) {
   return sqrt((deta*deta)+(dphi*dphi));
 }
 
-float getringarea(float dr) {
-  return TMath::Pi()*((ceil(dr/0.1)*ceil(dr/0.1)) - (ceil((dr-0.1)/0.1)*ceil((dr-0.1)/0.1)) );
-}
-
 float getSigmaRelPt(int hiBin, float jetpt)
 {
   if(hiBin<20)
@@ -367,16 +363,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta[itrk],trkPhi[itrk],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-1: rjet rtrk
             if(signal) {
               something = true;
               // cout<<"sig: "<<jentry<<" "<<trkEta[itrk]<<" "<<trkPhi[itrk]<<" "<<trkPt[itrk]<<" "<<trkWeight[itrk]<<" "<<endl;
-              hgammaffxi->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt*ringarea)); //Raw FF after cuts (1.0)
+              hgammaffxi->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt)); //Raw FF after cuts (1.0)
               // hgammaffxi->Fill(xi); //Raw FF after cuts (1.0)
             }
             if(sideband) {
-              hgammaffxisideband->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt*ringarea)); // Raw FF after cuts sideband (1.1)
+              hgammaffxisideband->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt)); // Raw FF after cuts sideband (1.1)
               // hgammaffxisideband->Fill(xi); // Raw FF after cuts sideband (1.1)
             }
           }
@@ -404,16 +399,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-3: rjet rtrk_mix
             if(signal) {
               // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
               something = true;
-              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedUEevents);
+              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedUEevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedUEevents);
+              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedUEevents);
             }
           }
         }
@@ -458,16 +452,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta[itrk],trkPhi[itrk],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-1: gjet rtrk
             if(signal) {
               something = true;
               // cout<<"sig: "<<jentry<<" "<<trkEta[itrk]<<" "<<trkPhi[itrk]<<" "<<trkPt[itrk]<<" "<<trkWeight[itrk]<<" "<<endl;
-              hgammaffxi->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt*ringarea)); //Raw FF after cuts (1.0)
+              hgammaffxi->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt)); //Raw FF after cuts (1.0)
               // hgammaffxi->Fill(xi); //Raw FF after cuts (1.0)
             }
             if(sideband) {
-              hgammaffxisideband->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt*ringarea)); // Raw FF after cuts sideband (1.1)
+              hgammaffxisideband->Fill(xi,trkWeight[itrk]*trkPt[itrk]/(tmpjetpt)); // Raw FF after cuts sideband (1.1)
               // hgammaffxisideband->Fill(xi); // Raw FF after cuts sideband (1.1)
             }
           }
@@ -494,16 +487,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-3: gjet rtrk_mix
             if(signal) {
               // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
               something = true;
-              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedUEevents);
+              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedUEevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedUEevents);
+              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedUEevents);
             }
           }
         }
@@ -530,11 +522,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(eta[igentrk],phi[igentrk],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
   //! 2-1: gjet gtrk sube==0
   //! 3-1: gjet gtrk
-            if(signal) { hgammaffxi->Fill(xi,pt[igentrk]/(tmpjetpt*ringarea)); } //recoj genp
-            if(sideband) { hgammaffxisideband->Fill(xi,pt[igentrk]/(tmpjetpt*ringarea)); }
+            if(signal) { hgammaffxi->Fill(xi,pt[igentrk]/(tmpjetpt)); } //recoj genp
+            if(sideband) { hgammaffxisideband->Fill(xi,pt[igentrk]/(tmpjetpt)); }
           }
         }
       }
@@ -616,16 +607,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-2: rjet_mix rtrk_mix
             if(signal) {
               // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
               something = true;
-              hgammaffxijetmix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedjetevents);
+              hgammaffxijetmix->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedjetevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxijetmixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedjetevents);
+              hgammaffxijetmixsideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedjetevents);
             }
           }
         }
@@ -648,13 +638,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
 //! 1-4: rjet_mix rtrk_mix
             if(signal) {
-              hgammaffxijetmixue->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedjetevents);
+              hgammaffxijetmixue->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedjetevents);
             }
             if(sideband) {
-              hgammaffxijetmixuesideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt*ringarea)/nmixedjetevents);
+              hgammaffxijetmixuesideband->Fill(xi,trkWeight_mix[itrk_mix]*trkPt_mix[itrk_mix]/(tmpjetpt)/nmixedjetevents);
             }
           }
         }
@@ -693,10 +682,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
             float deltar = getdr(eta_mix[igentrk_mix],phi_mix[igentrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
-            float ringarea = getringarea(deltar);
   //! 3-2: gjet_mix gtrk_mix
-            if(signal) { hgammaffxijetmix->Fill(xi,pt_mix[igentrk_mix]/(tmpjetpt*ringarea)); }
-            if(sideband) { hgammaffxijetmixsideband->Fill(xi,pt_mix[igentrk_mix]/(tmpjetpt*ringarea)); }
+            if(signal) { hgammaffxijetmix->Fill(xi,pt_mix[igentrk_mix]/(tmpjetpt)); }
+            if(sideband) { hgammaffxijetmixsideband->Fill(xi,pt_mix[igentrk_mix]/(tmpjetpt)); }
           }
         }
       }
