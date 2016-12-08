@@ -146,6 +146,8 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawff_ppdata_recoreco[icent]->Add(rawffsideband_ppdata_recoreco[icent]);
 
 
+    rawff_pbpbdata_recoreco[icent]->SetMarkerSize(2);
+    rawff_ppdata_recoreco[icent]->SetMarkerSize(2);
     if(do_divide==0) {
       rawff_pbpbdata_recoreco[icent]->Draw("same");
       rawff_ppdata_recoreco[icent]->SetMarkerColor(kRed);
@@ -215,7 +217,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet}");
   else
     ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma}");
-  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.4);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
 
@@ -230,7 +232,9 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   ldndxi->Draw();
   if(do_divide==0) {
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   } else {
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
 }
