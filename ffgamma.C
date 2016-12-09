@@ -294,7 +294,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(isPP)
       {
         tmpjetpt = getSmearedPt(ijet*100,centmin);
-        tmpjeteta = getSmearedEta(ijet*100,centmin);
+        // tmpjeteta = getSmearedEta(ijet*100,centmin);
+        tmpjetphi = getSmearedPhi(ijet*100,centmin);
       }
       // apply JER systematic uncertainty for PbPb
       float smearFactor = 1;

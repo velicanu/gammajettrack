@@ -273,7 +273,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(isPP)
       {
         tmpjetpt = getSmearedPt(ijet*100,centmin);
-        tmpjeteta = getSmearedEta(ijet*100,centmin);
+        // tmpjeteta = getSmearedEta(ijet*100,centmin);
+        tmpjeteta = getSmearedPhi(ijet*100,centmin);
       }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
