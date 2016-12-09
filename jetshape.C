@@ -249,6 +249,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017);
     if( phoEt[0]/phoCorr[0]<phoetmin || phoEt[0]/phoCorr[0]>phoetmax) continue;
+    if(signal) {
+      phoetsignal->Fill(phoEt[0]/phoCorr[0]);
     }
     if(sideband) {
       phoetsideband->Fill(phoEt[0]/phoCorr[0]);
@@ -272,7 +274,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       {
         tmpjetpt = getSmearedPt(ijet*100,centmin);
         // tmpjeteta = getSmearedEta(ijet*100,centmin);
-        tmpjetphi = getSmearedPhi(ijet*100,centmin);
+        tmpjeteta = getSmearedPhi(ijet*100,centmin);
       }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
