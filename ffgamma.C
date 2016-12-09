@@ -64,6 +64,33 @@ std::vector<double> CSN_phi_HI_cent3050 = {0.0145775, 0.1222, 1.21751};
 std::vector<double> CSN_HI_cent50100 = {0.06, 1.23, 0};
 std::vector<double> CSN_phi_HI_cent50100 = {-0.0073078, 0.168879, 0.798885};
 
+std::vector<double>* CSN_vector[4] = {&CSN_HI_cent0010, &CSN_HI_cent1030, &CSN_HI_cent3050, &CSN_HI_cent50100};
+
+int getResolutionBin(int centmin) {
+  if (centmin == 0)
+    return 0;
+  else if (centmin == 20)
+    return 1;
+  else if (centmin == 60)
+    return 2;
+  else if (centmin == 100)
+    return 3;
+  else
+    return 0;
+}
+
+double getResolutionHI(float jtpt, int resolutionBin)
+{
+  std::vector<double>* CSN_HI = CSN_vector[resolutionBin];
+  double sigma = TMath::Sqrt(
+    (CSN_HI->at(0)*CSN_HI->at(0)) +
+    (CSN_HI->at(1)*CSN_HI->at(1))/jtpt +
+    (CSN_HI->at(2)*CSN_HI->at(2))/(jtpt*jtpt)
+  );
+
+  return sigma;
+}
+
 float getSigmaRelPt(int hiBin, float jetpt)
 {
   if(hiBin<20)
@@ -183,7 +210,7 @@ float ztree::getSmearedPhi(int jetindex,int centindex)
 }
 
 // this function does the raw FF analysis and writes histograms to output file
-void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi)
+void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys)
 {
   string tag = outfname;
   string s_alpha = gen;
@@ -269,6 +296,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         tmpjetpt = getSmearedPt(ijet*100,centmin);
         // tmpjeteta = getSmearedEta(ijet*100,centmin);
         tmpjetphi = getSmearedPhi(ijet*100,centmin);
+      }
+      // apply JER systematic uncertainty for PbPb
+      float smearFactor = 1;
+      if (doJERsys) {
+        float SF = 1 + 0.15;
+        int resolutionBin = getResolutionBin(centmin);
+        float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
+        smearFactor = randSmearing.Gaus(1, SF* initialResolution * sqrt(SF*SF - 1));
+        tmpjetpt *= smearFactor;
       }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
@@ -658,8 +694,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   fout->Close();
 }
 
-
-
 int main(int argc, char *argv[])
 {
   if(argc > 12 || argc < 3 )
@@ -694,6 +728,9 @@ int main(int argc, char *argv[])
   }
   if (argc==12) {
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]),std::atoi(argv[11]));
+  }
+  if (argc==13) {
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]),std::atoi(argv[11]),std::atoi(argv[12]));
   }
   // cout<<argc<<endl;
   return 0;

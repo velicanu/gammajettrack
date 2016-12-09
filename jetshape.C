@@ -195,7 +195,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   string s_alpha = gen;
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
-  TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
+  TFile * fout = new TFile(Form("%s_%s_%d_%d_%d.root",tag.data(),s_alpha.data(),(int)phoetmin,abs(centmin),abs(centmax)),"recreate");
 
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
