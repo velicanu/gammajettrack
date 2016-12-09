@@ -97,11 +97,14 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
     //xjgsignal_pbpbdata_recoreco[icent]->Draw("same");
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerColor(kRed);
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerStyle(24);
+    h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->SetMarkerSize(2);
     h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]->Draw("same");
     //xjgsignal_pbpbdata_recoreco[icent]->Divide(h1D_xjg_ptBin1_hiBin_phoSIG_jetSIG_final_norm[icent]);
+    xjgsignal_pbpbdata_recoreco[icent]->SetBarOffset(0.5);
+    xjgsignal_pbpbdata_recoreco[icent]->SetMarkerSize(2);
     xjgsignal_pbpbdata_recoreco[icent]->Draw("same");
-    
-    
+
+
 
     if(icent==0)
     {
@@ -164,4 +167,5 @@ void xjg3step(int phoetmin, int phoetmax, int jetptmin)
   }
 
   c1->SaveAs("xjg_step3_allsubtractions.png");
+  c1->SaveAs("xjg_step3_allsubtractions.pdf");
 }
