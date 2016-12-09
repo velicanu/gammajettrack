@@ -140,7 +140,7 @@ void genreco2step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],"|#eta^{jet}| < 1.6","");
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)

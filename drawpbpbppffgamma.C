@@ -306,7 +306,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"|#eta^{jet}| < 1.6","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"p_{T}^{jet} > 40 GeV","");
     }
     else
@@ -419,7 +419,7 @@ void drawpbpbppffgamma(int phoetmin, int phoetmax, int sub = 1) {
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"|#eta^{jet}| < 1.6","");
       leg_ff_pbpbsub_ppsub[icent]->AddEntry(clone_hgammaffxi_ppdata_[icent],"p_{T}^{jet} > 40 GeV","");
     }
     else

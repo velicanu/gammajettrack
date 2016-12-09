@@ -161,7 +161,7 @@ void drawcentffgamma() {
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"|#eta^{jet}| < 1.6","");
       leg_ff_pbpbsub[icent]->AddEntry(clone_hgammaffxi_pbpbmc_[icent],"p_{T}^{jet} > 40 GeV","");
     }
     else

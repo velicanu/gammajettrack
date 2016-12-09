@@ -192,7 +192,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     }
     else if(icent==2)
     {
-      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"0.3 < |#eta^{jet}| < 1.6","");
+      leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"|#eta^{jet}| < 1.6","");
       leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],Form("p_{T}^{jet} > %d GeV",jetptmin),"");
     }
     else if(icent==3)
