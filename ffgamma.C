@@ -267,7 +267,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(isPP)
       {
         tmpjetpt = getSmearedPt(ijet*100,centmin);
-        tmpjeteta = getSmearedEta(ijet*100,centmin);
+        // tmpjeteta = getSmearedEta(ijet*100,centmin);
+        tmpjetphi = getSmearedPhi(ijet*100,centmin);
       }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
@@ -417,7 +418,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       // float sigmapt = getSigmaRelPt(hiBin,genpt[igenjet]);
       // float tmpjetpt = genpt[igenjet]*randSmearing.Gaus(1,sigmapt);
       float tmpjetpt = genpt[igenjet];
-      
+
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(tmpjetpt,geneta[igenjet],genphi[igenjet],0);
       if(signal) { hgenjetpt->Fill(tmpjetpt); }
