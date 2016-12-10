@@ -43,8 +43,9 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
   return 1; //no purity applied
 }
 
-void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0) {
-  TFile *_file0 = TFile::Open(Form("all_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
+void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0, string inpath="./", string outfname = "outfile.root") {
+
+  TFile *_file0 = TFile::Open(Form("%sall_%d_%d_%d_gammaxi%d.root",inpath.data(),phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -74,6 +75,8 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   TH1D * hgenjetpt_pbpbdata_gengen[ncentbins];
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
+
+  TFile * outf = new TFile(outfname.data(),"recreate");
 
   TCanvas * call = new TCanvas("call","",1600,500);
   makeMultiPanelCanvas(call,ncentbins+1,1,0.02,0.0,-6,0.2,0.04);
@@ -174,6 +177,8 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
 
     rawff_pbpbdata_recoreco[icent]->SetMarkerSize(2);
     rawff_ppdata_recoreco[icent]->SetMarkerSize(2);
+
+
     if(do_divide==0) {
       rawff_pbpbdata_recoreco[icent]->Draw("same");
       rawff_ppdata_recoreco[icent]->SetMarkerColor(kRed);
@@ -230,6 +235,10 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     }
     leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],Form("%s",cents[icent].data()),"");
     leg_ff_pbpbsub[icent]->Draw();
+
+    rawff_pbpbdata_recoreco[icent]->Write();
+    rawff_ppdata_recoreco[icent]->Write();
+
   }
 
   call->cd(1);
@@ -263,4 +272,5 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
+  outf->Close();
 }
