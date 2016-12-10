@@ -317,7 +317,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igen],eta[igen],phi[igen],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igen]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt[igen]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = pt[igen]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
 
             if(sube[igen] == 0) { // signal particles
@@ -341,7 +341,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igen_mix],eta_mix[igen_mix],phi_mix[igen_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igen_mix]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt_mix[igen_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igen_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             hgammaffxiuemixgen->Fill(xi,2.0/(float)nmix);
           }
@@ -360,7 +360,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta[itrk],trkPhi[itrk],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -396,7 +396,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -449,7 +449,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta[itrk],trkPhi[itrk],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -484,7 +484,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/genpt[igenjet];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -519,7 +519,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igentrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt[igentrk]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = pt[igentrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(eta[igentrk],phi[igentrk],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -548,7 +548,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt[igenjet];
-            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
             if(signal) { hgammaffxiuemix->Fill(xi); }
@@ -604,7 +604,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -635,7 +635,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
@@ -679,7 +679,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt_mix[igenjet_mix];
-            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]*phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
             float xi = log(1.0/z);
             float deltar = getdr(eta_mix[igentrk_mix],phi_mix[igentrk_mix],tmpjeteta,tmpjetphi);
             xi = deltar;
