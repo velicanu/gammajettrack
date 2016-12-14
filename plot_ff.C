@@ -75,6 +75,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
+            h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
         }
 
         TBox* sys_box_pp = new TBox();
