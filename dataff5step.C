@@ -236,6 +236,17 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],Form("%s",cents[icent].data()),"");
     leg_ff_pbpbsub[icent]->Draw();
 
+    if(gammaxi==0) {
+      rawff_pbpbdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{jet}");
+      rawff_pbpbdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{jet}=-ln(p_{T}^{trk}/p_{T}^{jet})");
+      rawff_ppdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{jet}");
+      rawff_ppdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{jet}=-ln(p_{T}^{trk}/p_{T}^{jet})");
+    } else {
+      rawff_pbpbdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{#gamma}");
+      rawff_pbpbdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{#gamma}=-ln(p_{T}^{trk}/E_{T}^{#gamma})");
+      rawff_ppdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{#gamma}");
+      rawff_ppdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{#gamma}=-ln(p_{T}^{trk}/E_{T}^{#gamma})");
+    }
     rawff_pbpbdata_recoreco[icent]->Write();
     rawff_ppdata_recoreco[icent]->Write();
 
