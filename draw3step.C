@@ -203,7 +203,9 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   ldndxi->Draw();
   if(do_divide==0) {
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   } else {
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
 }
