@@ -27,7 +27,7 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
 int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0) {
-    TFile* finput = new TFile(ffinal, "update");
+    TFile* finput = new TFile(ffinal, "read");
 
     std::vector<std::string> hist_names;
     std::ifstream file_stream(hist_list);
@@ -44,8 +44,8 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     else
         draw_ratio = 0;
 
-    float margin = 0.16; // left/bottom margins (with labels)
-    float edge = 0.1;    // right/top edges (no labels)
+    float margin = 0.2; // left/bottom margins (with labels)
+    float edge = 0.12;    // right/top edges (no labels)
 
     float row_scale_factor = (rows > 1) ? 1.0/(1.0-margin) + 1.0/(1.0-edge) + rows - 2 : 1.0/(1.0-margin-edge);
     float column_scale_factor = (columns > 1) ? 1.0/(1.0-margin) + 1.0/(1.0-edge) + columns - 2 : 1.0/(1.0-margin-edge);
@@ -115,16 +115,17 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
             hratio[i]->Divide(h1[i][1]);
             hratio[i]->SetYTitle("Ratio");
 
+            set_hist_style(hratio[i], 2);
+            set_axis_style(hratio[i], i, 1);
+            hratio[i]->SetYTitle("r");
+            hratio[i]->SetAxisRange(0, 2, "Y");
+
+            hratio[i]->Draw();
+
             TLine* line1 = new TLine(0, 1, 1, 1);
             line1->SetLineWidth(1);
             line1->SetLineStyle(2);
             line1->Draw();
-
-            set_hist_style(hratio[i], 2);
-            set_axis_style(hratio[i], i, 1);
-            hratio[i]->SetAxisRange(0, 2, "Y");
-
-            hratio[i]->Draw();
         }
     }
 
@@ -132,7 +133,7 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
 
     float canvas_left_margin = (columns > 1) ? margin / (1-margin) / column_scale_factor : margin;
     float canvas_right_margin = (columns > 1) ? edge / (1-edge) / column_scale_factor : edge;
-    float canvas_top_edge = (rows > 1) ? 1.03 - edge / (1-edge) / row_scale_factor : 1.03 - edge;
+    float canvas_top_edge = (rows > 1) ? 1.02 - edge / (1-edge) / row_scale_factor : 1.03 - edge;
 
     TLatex* energyLatex = new TLatex();
     energyLatex->SetTextFont(43);
@@ -155,7 +156,6 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
     c1->SaveAs(Form("%s.pdf", plot_name));
-    c1->Write("", TObject::kOverwrite);
 
     finput->Close();
 
@@ -258,15 +258,20 @@ void set_axis_style(TH1D* h1, int i, int j) {
     y_axis->SetTitleSize(16);
 
     if (j == rows - 1) {
-        x_axis->SetTitleOffset(1.0);
+        if (rows == 1)
+            x_axis->SetTitleOffset(1.0);
+        else
+            x_axis->SetTitleOffset(1.8);
         x_axis->CenterTitle();
     } else {
         x_axis->SetTitleOffset(999);
-        x_axis->SetTitle("");
     }
 
     if (i == 0) {
-        y_axis->SetTitleOffset(1.15);
+        if (rows == 1)
+            y_axis->SetTitleOffset(1.15);
+        else
+            y_axis->SetTitleOffset(2.4);
         y_axis->CenterTitle();
     } else {
         y_axis->SetTitleOffset(999);
