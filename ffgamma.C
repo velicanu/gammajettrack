@@ -266,15 +266,16 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     }
     if(nPho!=1) continue;
     if(phoNoise[0]==0) continue;
+    // if( gen.compare("gengen")==0 && mcMomPID[0]!=-999 ) continue ; // prompt gen photon cut
     if(weight==0)                   weight=1;
     bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017);
     if( phoEt[0]/phoCorr[0]<phoetmin || phoEt[0]/phoCorr[0]>phoetmax) continue;
     if(signal) {
-      phoetsignal->Fill(phoEt[0]/phoCorr[0]);
+      phoetsignal->Fill(phoEtCorrected[0]);
     }
     if(sideband) {
-      phoetsideband->Fill(phoEt[0]/phoCorr[0]);
+      phoetsideband->Fill(phoEtCorrected[0]);
     }
 
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
@@ -319,13 +320,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt);
         njets_perevent++;
-        if(jetptCorr[ijet]!=-1) { xjgsignal->Fill(jetptCorr[ijet]/phoEt[0]*phoCorr[0]); }
-        else                    { xjgsignal->Fill(jetpt[ijet]/phoEt[0]*phoCorr[0]); }
+        if(jetptCorr[ijet]!=-1) { xjgsignal->Fill(jetptCorr[ijet]/phoEtCorrected[0]); }
+        else                    { xjgsignal->Fill(jetpt[ijet]/phoEtCorrected[0]); }
       }
       if(sideband) {
         hjetptsideband->Fill(tmpjetpt);
-        if(jetptCorr[ijet]!=-1) { xjgsideband->Fill(jetptCorr[ijet]/phoEt[0]*phoCorr[0]); }
-        else                    { xjgsideband->Fill(jetpt[ijet]/phoEt[0]*phoCorr[0]); }
+        if(jetptCorr[ijet]!=-1) { xjgsideband->Fill(jetptCorr[ijet]/phoEtCorrected[0]); }
+        else                    { xjgsideband->Fill(jetpt[ijet]/phoEtCorrected[0]); }
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
       TLorentzVector vjet;
@@ -347,7 +348,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igen],eta[igen],phi[igen],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igen]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt[igen]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = pt[igen]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 
             if(sube[igen] == 0) { // signal particles
@@ -371,7 +372,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igen_mix],eta_mix[igen_mix],phi_mix[igen_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igen_mix]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt_mix[igen_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igen_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
             hgammaffxiuemixgen->Fill(xi,2.0/(float)nmix);
           }
@@ -390,7 +391,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-1: rjet rtrk
             if(signal) {
@@ -424,7 +425,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-3: rjet rtrk_mix
             if(signal) {
@@ -472,7 +473,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(trkPt[itrk],trkEta[itrk],trkPhi[itrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = trkPt[itrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt[itrk]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-1: gjet rtrk
             if(signal) {
@@ -504,7 +505,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/genpt[igenjet];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-3: gjet rtrk_mix
             if(signal) {
@@ -536,7 +537,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt[igentrk],eta[igentrk],phi[igentrk],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt[igentrk]*cos(angle)/tmpjetpt;
-            if(gammaxi==1) z = pt[igentrk]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = pt[igentrk]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
   //! 2-1: gjet gtrk sube==0
   //! 3-1: gjet gtrk
@@ -562,7 +563,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt[igenjet];
-            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
             if(signal) { hgammaffxiuemix->Fill(xi); }
@@ -588,12 +589,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         hjetptjetmix->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
-        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
+        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEtCorrected[0],1/nmixedjetevents);
       }
       if(sideband && nmixEv_mix[ijet_mix]%3==1) {
         hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents);
         hnmixsideband->Fill(1);
-        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEt[0]*phoCorr[0],1/nmixedjetevents);
+        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEtCorrected[0],1/nmixedjetevents);
       }
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
@@ -614,7 +615,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-2: rjet_mix rtrk_mix
             if(signal) {
@@ -639,7 +640,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
             float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
-            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
             if(signal) {
@@ -677,7 +678,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             vtrack.SetPtEtaPhiM(pt_mix[igentrk_mix],eta_mix[igentrk_mix],phi_mix[igentrk_mix],0);
             float angle = vjet.Angle(vtrack.Vect());
             float z = pt_mix[igentrk_mix]*cos(angle)/genpt_mix[igenjet_mix];
-            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/(phoEt[0]/phoCorr[0]);
+            if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
             if(signal) { hgammaffxijetmix->Fill(xi); }
