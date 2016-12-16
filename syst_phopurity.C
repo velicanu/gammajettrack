@@ -47,7 +47,7 @@ float getpurity(float phoetmin, float hibinmin, bool ispp, int updown)
   return 1; //no purity applied
 }
 
-void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0) {
+void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0, string inpath="./", string outfname = "outfile.root") {
   TFile *_file0 = TFile::Open(Form("all_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
@@ -88,6 +88,8 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
   TH1D * hgenjetpt_pbpbdata_gengen[ncentbins];
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
+
+  TFile * outf = new TFile(outfname.data(),"recreate");
 
   TCanvas * call = new TCanvas("call","",1600,500);
   makeMultiPanelCanvas(call,ncentbins+1,1,0.02,0.0,-6,0.2,0.04);
@@ -156,19 +158,19 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
     // rawffsideband_pbpbdata_recoreco[icent]->Draw("same");
 
     float purity   = getpurity(phoetmin,centmins[icent],false,1);
-    rawff_pbpbdata_recoreco_up[icent] = (TH1D*) rawff_pbpbdata_recoreco[icent]->Clone(Form("rawff_pbpbdata_recoreco_up%d",icent));
+    rawff_pbpbdata_recoreco_up[icent] = (TH1D*) rawff_pbpbdata_recoreco[icent]->Clone(Form("hgammaffxi_pbpbdata_recoreco_%d_%d_up",centmins[icent],centmaxs[icent]));
     rawff_pbpbdata_recoreco_up[icent]->Scale(1.0/purity);
     rawff_pbpbdata_recoreco[icent]->SetMarkerStyle(24);
-    rawffsideband_pbpbdata_recoreco_up[icent] = (TH1D*) rawffsideband_pbpbdata_recoreco[icent]->Clone(Form("rawffsideband_pbpbdata_recoreco_up%d",icent));
+    rawffsideband_pbpbdata_recoreco_up[icent] = (TH1D*) rawffsideband_pbpbdata_recoreco[icent]->Clone(Form("hgammaffxisideband_pbpbdata_recoreco_%d_%d_up",centmins[icent],centmaxs[icent]));
     rawffsideband_pbpbdata_recoreco_up[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbdata_recoreco_up[icent]->Add(rawffsideband_pbpbdata_recoreco_up[icent]);
 
     cout<<1.0/purity<<endl;
     purity   = getpurity(phoetmin,centmins[icent],false,-1);
     cout<<1.0/purity<<endl;
-    rawff_pbpbdata_recoreco_down[icent] = (TH1D*) rawff_pbpbdata_recoreco[icent]->Clone(Form("rawff_pbpbdata_recoreco_down%d",icent));
+    rawff_pbpbdata_recoreco_down[icent] = (TH1D*) rawff_pbpbdata_recoreco[icent]->Clone(Form("hgammaffxi_pbpbdata_recoreco_%d_%d_down",centmins[icent],centmaxs[icent]));
     rawff_pbpbdata_recoreco_down[icent]->Scale(1.0/purity);
-    rawffsideband_pbpbdata_recoreco_down[icent] = (TH1D*) rawffsideband_pbpbdata_recoreco[icent]->Clone(Form("rawffsideband_pbpbdata_recoreco_down%d",icent));
+    rawffsideband_pbpbdata_recoreco_down[icent] = (TH1D*) rawffsideband_pbpbdata_recoreco[icent]->Clone(Form("hgammaffxisideband_pbpbdata_recoreco_%d_%d_down",centmins[icent],centmaxs[icent]));
     rawffsideband_pbpbdata_recoreco_down[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbdata_recoreco_down[icent]->Add(rawffsideband_pbpbdata_recoreco_down[icent]);
 
@@ -199,19 +201,32 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
     rawffsideband_ppdata_recoreco[icent]->Scale(1.0/nrawjetssideband);
 
     float pppurity   = getpurity(phoetmin,centmins[icent],true,1);
-    rawff_ppdata_recoreco_up[icent] = (TH1D*) rawff_ppdata_recoreco[icent]->Clone(Form("rawff_ppdata_recoreco_up%d",icent));
+    rawff_ppdata_recoreco_up[icent] = (TH1D*) rawff_ppdata_recoreco[icent]->Clone(Form("hgammaffxi_ppdata_recoreco_%d_%d_up",centmins[icent],centmaxs[icent]));
     rawff_ppdata_recoreco_up[icent]->Scale(1.0/pppurity);
-    rawffsideband_ppdata_recoreco_up[icent] = (TH1D*) rawffsideband_ppdata_recoreco[icent]->Clone(Form("rawffsideband_ppdata_recoreco_up%d",icent));
+    rawffsideband_ppdata_recoreco_up[icent] = (TH1D*) rawffsideband_ppdata_recoreco[icent]->Clone(Form("hgammaffxisideband_ppdata_recoreco_%d_%d_up",centmins[icent],centmaxs[icent]));
     rawffsideband_ppdata_recoreco_up[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
     rawff_ppdata_recoreco_up[icent]->Add(rawffsideband_ppdata_recoreco_up[icent]);
 
     pppurity   = getpurity(phoetmin,centmins[icent],true,-1);
-    rawff_ppdata_recoreco_down[icent] = (TH1D*) rawff_ppdata_recoreco[icent]->Clone(Form("rawff_ppdata_recoreco_down%d",icent));
+    rawff_ppdata_recoreco_down[icent] = (TH1D*) rawff_ppdata_recoreco[icent]->Clone(Form("hgammaffxi_ppdata_recoreco_%d_%d_down",centmins[icent],centmaxs[icent]));
     rawff_ppdata_recoreco_down[icent]->Scale(1.0/pppurity);
-    rawffsideband_ppdata_recoreco_down[icent] = (TH1D*) rawffsideband_ppdata_recoreco[icent]->Clone(Form("rawffsideband_ppdata_recoreco_down%d",icent));
+    rawffsideband_ppdata_recoreco_down[icent] = (TH1D*) rawffsideband_ppdata_recoreco[icent]->Clone(Form("hgammaffxisideband_ppdata_recoreco_%d_%d_down",centmins[icent],centmaxs[icent]));
     rawffsideband_ppdata_recoreco_down[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
     rawff_ppdata_recoreco_down[icent]->Add(rawffsideband_ppdata_recoreco_down[icent]);
 
+//nominal
+    purity   = getpurity(phoetmin,centmins[icent],false,0);
+    rawff_pbpbdata_recoreco[icent]->Scale(1.0/purity);
+    rawffsideband_pbpbdata_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
+    rawff_pbpbdata_recoreco[icent]->Add(rawffsideband_pbpbdata_recoreco[icent]);
+
+    pppurity   = getpurity(phoetmin,centmins[icent],true,0);
+    rawff_ppdata_recoreco[icent]->Scale(1.0/pppurity);
+    rawffsideband_ppdata_recoreco[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
+    rawff_ppdata_recoreco[icent]->Add(rawffsideband_ppdata_recoreco[icent]);
+
+
+//nominal
     //
     // rawff_pbpbdata_recoreco[icent]->SetMarkerSize(2);
     // rawff_ppdata_recoreco[icent]->SetMarkerSize(2);
@@ -237,7 +252,7 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
 
     if(icent==0)
     {
-      leg_ff_pbpbsub[icent] = new TLegend(0.03,0.697,0.3,0.92);
+      leg_ff_pbpbsub[icent] = new TLegend(0.03,0.55,0.3,0.92);
     }
     else
     {
@@ -250,8 +265,10 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
     if(icent==0)
     {
       if(do_divide==0) {
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco_up[icent],"PbPb FF","p");
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco_up[icent],"pp FF","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco_up[icent],"PbPb FF +10% purity","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco_up[icent],"pp FF +10% purity","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco_down[icent],"PbPb FF -10% purity","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco_down[icent],"pp FF -10% purity","p");
       } else {
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco_up[icent],"purity +10/-10% PbPb FF","p");
         leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco_up[icent],"purity +10/-10% pp FF","p");
@@ -278,6 +295,13 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
     }
     leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],Form("%s",cents[icent].data()),"");
     leg_ff_pbpbsub[icent]->Draw();
+
+    rawff_pbpbdata_recoreco[icent]->Write();
+    rawff_pbpbdata_recoreco_up[icent]->Write();
+    rawff_pbpbdata_recoreco_down[icent]->Write();
+    rawff_ppdata_recoreco[icent]->Write();
+    rawff_ppdata_recoreco_up[icent]->Write();
+    rawff_ppdata_recoreco_down[icent]->Write();
   }
 
   call->cd(1);
@@ -323,4 +347,5 @@ void syst_phopurity(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut 
     call->SaveAs(Form("syst_phopurity_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
     call->SaveAs(Form("syst_phopurity_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
+  // outf->Close();
 }

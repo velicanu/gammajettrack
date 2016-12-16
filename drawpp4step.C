@@ -220,7 +220,9 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   if(do_divide==0)
   {
     call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_ppmc_recoreco_gammaxi%d.png",phoetmin,phoetmax,jetptmin,trkptcut,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_ppmc_recoreco_gammaxi%d.pdf",phoetmin,phoetmax,jetptmin,trkptcut,gammaxi));
   } else {
     call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_ppmc_recoreco_gammaxi%d_ratio.png",phoetmin,phoetmax,jetptmin,trkptcut,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_trkpt%d_ppmc_recoreco_gammaxi%d_ratio.pdf",phoetmin,phoetmax,jetptmin,trkptcut,gammaxi));
   }
 }
