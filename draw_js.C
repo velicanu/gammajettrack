@@ -94,12 +94,7 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjs_final[i]->Scale(1.0/purity[i]);
         hjs_final[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
 
-        for (int j=1; j<=hjs_final[i]->GetNbinsX(); ++j) {
-            float bin_ll = hjs_final[i]->GetBinLowEdge(j);
-            float bin_ul = hjs_final[i]->GetBinLowEdge(j+1);
-            hjs_final[i]->SetBinContent(j, hjs_final[i]->GetBinContent(j)/(TMath::Pi() * (bin_ul + bin_ll) * (bin_ul - bin_ll)));
-            hjs_final[i]->SetBinError(j, hjs_final[i]->GetBinError(j)/(TMath::Pi() * (bin_ul + bin_ll) * (bin_ul - bin_ll)));
-        }
+        hjs_final[i]->Scale(1/hjs_final[i]->Integral(hjs_final[i]->FindBin(0.01), hjs_final[i]->FindBin(0.29)), "width");
 
         hjs_final[i]->SetYTitle("#rho(r)");
     }

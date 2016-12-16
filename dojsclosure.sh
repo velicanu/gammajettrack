@@ -1,6 +1,6 @@
 if [ $# -lt 7 ]
 then
-  echo "Usage: ./dojsclosure.sh <phoetmin> <phoetmax> <jetptmin> <checkjetid> <trkptmin> <gammaxi> <trkptmax> <types...>"
+  echo "Usage: ./dojsclosure.sh <phoetmin> <phoetmax> <jetptmin> <checkjetid> <trkptmin> <gammaxi> <types...>"
   echo "Example: ./dojsclosure.sh 60 1000 30 0 1 0 gengen recoreco"
   exit 1
 fi
@@ -20,9 +20,9 @@ do
 wait
 done
 
-hadd -f closure_${1}_${2}_${3}_xijet_jetshape.root pbpbmc_*_${1}_*_*.root
+hadd -f closure_${1}_${2}_${3}_gammaxi${6}_jetshape.root pbpbmc_*_${1}_*_*.root
 rm pbpbmc_*_${1}_*_*.root
 
-./draw_js pbpbmc closure_${1}_${2}_${3}_xijet_jetshape.root closure_${1}.root gengen recoreco
-./plot_js closure_${1}.root closure_${1} jsclosure.list
+./draw_js pbpbmc closure_${1}_${2}_${3}_gammaxi${6}_jetshape.root closure_${1}_gammaxi${6}.root gengen recoreco
+./plot_js closure_${1}_gammaxi${6}.root closure_${1}_gammaxi${6} jsclosure.list 1
 

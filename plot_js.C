@@ -238,7 +238,7 @@ void set_hist_style(TH1D* h1, int k) {
 }
 
 void set_axis_style(TH1D* h1, int i, int j) {
-    h1->SetAxisRange(0.005, 100, "Y");
+    h1->SetAxisRange(0.05, 50, "Y");
     h1->SetNdivisions(609);
 
     TAxis* x_axis = h1->GetXaxis();
@@ -330,7 +330,7 @@ void cover_axis(float margin, float edge, float column_scale_factor, float row_s
 int main(int argc, char* argv[]) {
     if (argc == 4)
         return plot_js(argv[1], argv[2], argv[3]);
-    if (argc == 5)
+    else if (argc == 5)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]));
     else
         printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio>\n"
