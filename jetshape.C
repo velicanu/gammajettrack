@@ -274,7 +274,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       {
         tmpjetpt = getSmearedPt(ijet*100,centmin);
         // tmpjeteta = getSmearedEta(ijet*100,centmin);
-        tmpjeteta = getSmearedPhi(ijet*100,centmin);
+        tmpjetphi = getSmearedPhi(ijet*100,centmin);
       }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
@@ -299,7 +299,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012[0]);
       TLorentzVector vjet;
-      if(isPP)  vjet.SetPtEtaPhiM(jetptCorr[ijet],tmpjeteta,tmpjetphi,0);
+      if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
 
       if(gen.compare("recogen")==0)
