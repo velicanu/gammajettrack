@@ -118,7 +118,7 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
             set_hist_style(hratio[i], 2);
             set_axis_style(hratio[i], i, 1);
             hratio[i]->SetYTitle("r");
-            hratio[i]->SetAxisRange(0, 2, "Y");
+            hratio[i]->SetAxisRange(0, 3, "Y");
 
             hratio[i]->Draw();
 
