@@ -4,9 +4,27 @@
 
 #include <string>
 
+
+// Photon pT > 60
 float purity_pbpbdata[4] = {0.681689, 0.730339, 0.775276, 0.825922};
 float purity_pbpbmc[4] = {0.922658, 0.957185, 0.973422, 0.982594};
 float purity_ppdata[4] = {0.841322, 0.841322, 0.841322, 0.841322};
+float purity_ppmc[4] = {0.984076, 0.984076, 0.984076, 0.984076};
+
+
+/*
+// Photon pT 80 - 100
+float purity_pbpbdata[4] = {0.67868, 0.725783, 0.771699, 0.850336};
+float purity_pbpbmc[4] = {0.94023, 0.937177, 0.958919, 0.978493};
+float purity_ppdata[4] = {0.858868, 0.858868, 0.858868, 0.858868};
+*/
+
+/*
+// Photon pT > 100
+float purity_pbpbdata[4] = {0.700252, 0.792531, 0.821031, 0.797929};
+float purity_pbpbmc[4] = {0.888486, 0.950618, 0.97097, 0.980991};
+float purity_ppdata[4] = {0.851183, 0.851183, 0.851183, 0.851183};
+*/
 
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
@@ -26,8 +44,8 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
             purity[i] = purity_pbpbdata[i];
         else if (sample == "ppdata")
             purity[i] = purity_ppdata[i];
-        else
-            return 1;
+        else if (sample == "ppmc")
+            purity[i] = purity_ppmc[i];
     }
 
     TH1D* hjetpt[4] = {0};

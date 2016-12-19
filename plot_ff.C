@@ -27,7 +27,7 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
-int plot_ff(const char* fresults, const char* fsys, const char* plot_name) {
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale) {
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -70,11 +70,15 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name) {
     TH1D* h1[4][2] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
+        if (draw_log_scale)
+            gPad->SetLogy();
 
         for (int k=0; k<2; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
+            if (draw_log_scale)
+                h1[i][k]->SetAxisRange(0.001, 10, "Y");
             h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
         }
 
@@ -120,6 +124,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name) {
             latexPrelim->DrawLatexNDC(prelim_box.x1, prelim_box.y1, "Preliminary");
 
             box_t l_box = (box_t) {0.06, 0.64, 0.64, 0.8};
+            if (draw_log_scale)
+                l_box = (box_t) {0.25, 0.32, 0.84, 0.48};
             adjust_coordinates(l_box, margin, edge, i, 0);
             TLegend* l1 = new TLegend(l_box.x1, l_box.y1, l_box.x2, l_box.y2);
             l1->SetTextFont(43);
@@ -156,7 +162,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name) {
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
@@ -350,10 +356,10 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 4)
-        return plot_ff(argv[1], argv[2], argv[3]);
+    if (argc == 5)
+        return plot_ff(argv[1], argv[2], argv[3], atoi(argv[4]));
     else
-        printf("./plot_ff <results file> <sys file> <plot name>\n");
+        printf("./plot_ff <results file> <sys file> <plot name> <log scale>\n");
 
     return 1;
 }

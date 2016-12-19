@@ -30,4 +30,5 @@ rm pbpbdata_recoreco_${1}_*_*.root ppdata_recoreco_${1}_*_*.root
 
 ./draw_js pbpbdata data_${1}_${2}_${3}_gammaxi${6}_jetshape.root jsdata_${1}_gammaxi${6}.root recoreco
 ./draw_js ppdata data_${1}_${2}_${3}_gammaxi${6}_jetshape.root jsdata_${1}_gammaxi${6}.root recoreco
+echo "./plot_js jsdata_${1}_gammaxi${6}.root jsdata_${1}_gammaxi${6} jsdata.list 1"
 ./plot_js jsdata_${1}_gammaxi${6}.root jsdata_${1}_gammaxi${6} jsdata.list 1

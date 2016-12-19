@@ -5,10 +5,30 @@
 #include "TLatex.h"
 #include "TLegend.h"
 #include "TLine.h"
+#include "TGraphErrors.h"
 
 #include <fstream>
 #include <vector>
 #include <string>
+
+float x[] = {0.025,0.075,0.125,0.175,0.225,0.275};
+float y[] = {12.636,4.560,1.318,0.707,0.486,0.294};
+float ypp[] = {12.636,4.560,1.318,0.707,0.486,0.294};
+float ex[] = {0.025,0.025,0.025,0.025,0.025,0.025};
+float ey[] = {0.050,0.028,0.012,0.009,0.009,0.009};
+float eypp[] = {0.050,0.028,0.012,0.009,0.009,0.009};
+
+TGraphErrors* oldjs_0_20 = new TGraphErrors(6,x,y,ex,ey);
+TGraphErrors* oldjspp_0_20 = new TGraphErrors(6,x,ypp,ex,eypp);
+
+void sethin12002() {
+  x[0]=0.025, ypp[0]=12.363, ex[0]=0.025, eypp[0]=0.0233;
+  x[1]=0.075, ypp[1]=4.754, ex[1]=0.025, eypp[1]=0.0134;
+  x[2]=0.125, ypp[2]=1.528, ex[2]=0.025, eypp[2]=0.006;
+  x[3]=0.175, ypp[3]=0.736, ex[3]=0.025, eypp[3]=0.004;
+  x[4]=0.225, ypp[4]=0.402, ex[4]=0.025, eypp[4]=0.002;
+  x[5]=0.275, ypp[5]=0.217, ex[5]=0.025, eypp[5]=0.002;
+}
 
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
@@ -26,7 +46,14 @@ void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0) {
+int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0) {
+    sethin12002();
+    oldjs_0_20->SetMarkerColor(kBlue);
+    oldjs_0_20->SetLineColor(kBlue);
+    oldjspp_0_20->SetMarkerColor(kViolet);
+    oldjspp_0_20->SetLineColor(kViolet);
+    oldjspp_0_20->SetLineStyle(3);
+
     TFile* finput = new TFile(ffinal, "read");
 
     std::vector<std::string> hist_names;
@@ -66,9 +93,13 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
+            if (draw_lt_0_3)
+                h1[i][k]->SetAxisRange(0, 0.3, "X");
         }
 
         h1[i][0]->Draw();
+        // if (i==0) oldjs_0_20->Draw("pe same");
+        // if (i==0) oldjspp_0_20->Draw("pe same");
         for (std::size_t l=1; l<hist_names.size()/5; ++l)
             h1[i][l]->Draw("same");
         h1[i][0]->Draw("same");
@@ -104,6 +135,8 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
 
             for (std::size_t m=0; m<hist_names.size()/5; ++m)
                 l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pl");
+            // l1->AddEntry(oldjs_0_20, "HIN-12-002 PbPb", "pl");
+            // l1->AddEntry(oldjspp_0_20, "HIN-12-002 pp", "pl");
 
             l1->Draw();
         }
@@ -119,6 +152,8 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
             set_axis_style(hratio[i], i, 1);
             hratio[i]->SetYTitle("r");
             hratio[i]->SetAxisRange(0, 3, "Y");
+            if (draw_lt_0_3)
+                hratio[i]->SetAxisRange(0, 0.3, "X");
 
             hratio[i]->Draw();
 
@@ -151,7 +186,7 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
@@ -337,9 +372,10 @@ int main(int argc, char* argv[]) {
         return plot_js(argv[1], argv[2], argv[3]);
     else if (argc == 5)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]));
+    else if (argc == 6)
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
     else
-        printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio>\n"
-               "./plot_js jsdata_60.root jsdata_60 jsdata.list 1\n");
+        printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio> < draw r<0.3 >\n");
 
     return 1;
 }
