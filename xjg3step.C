@@ -20,7 +20,7 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
 
 void xjg3step(int phoetmin, int phoetmax, int jetptmin)
 {
-  TFile * _file0 = TFile::Open(Form("all_%d_%d_%d.root",phoetmin,phoetmax,jetptmin));
+  TFile * _file0 = TFile::Open(Form("all_%d_%d_%d_gammaxi0.root",phoetmin,phoetmax,jetptmin));
   TFile * _fran = TFile::Open("/home/ursu/PbPb_Data_gammaJetHistogramArithmetic.root");
 
   const static int nCentBins = 4;
