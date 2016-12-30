@@ -53,7 +53,7 @@
   THStack * hsppnorm[2];
   THStack * hspbpbnorm[2];
   TH2D * dummydphi[2];
-  int itrkstart = 3;
+  int itrkstart = 5;
   for(int izcut = 1 ; izcut < 2 ; ++izcut)
   {
     for(int itrkcut = itrkstart ; itrkcut < itrkstart+1 ; ++itrkcut)

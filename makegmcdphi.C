@@ -79,7 +79,7 @@
       float pbpbbinwidth = hpbpbzdphi[izcut][itrkcut]->GetBinWidth(1);
       // ppztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hppzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
       // pbpbztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hpbpbzdphi_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && trkPt>%2.1f && trkPt<%2.1f)*trkPt*highPurity",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
-      ppztree->Draw(Form("acos(cos(phoPhi[0] - trkPhi))>>hppzdphi_gen_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && pt>%2.1f && pt<%2.1f && chg!=0)*pt",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
+      ppztree->Draw(Form("acos(cos(phoPhi[0] - phi))>>hppzdphi_gen_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && pt>%2.1f && pt<%2.1f && chg!=0)*pt",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
       pbpbztree->Draw(Form("acos(cos(phoPhi[0] - phi))>>hpbpbzdphi_gen_%d_%d_%d",zptcuts[izcut],int(trkptmin[itrkcut]),int(trkptmax[itrkcut])),Form("(phoEt[0]>%d && pt>%2.1f && pt<%2.1f && chg!=0)*pt",zptcuts[izcut],trkptmin[itrkcut],trkptmax[itrkcut]),"goff");
       // && (abs(pdg)==11 || abs(pdg)==13 || abs(pdg)==211 || abs(pdg)==2212 || abs(pdg)==321)
       hppzdphi_gen[izcut][itrkcut]->Sumw2();
