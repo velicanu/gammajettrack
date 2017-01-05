@@ -356,6 +356,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
       // apply JER systematic uncertainty for PbPb
       float smearFactor = 1;
+      doJERsys = 1;
       if (doJERsys) {
         float SF = 1 + 0.15;
         int resolutionBin = getResolutionBin(centmin);
