@@ -2,6 +2,7 @@
 TrkCorr_Mar15_Iterative_*
 corrections.tar
 *.root
+*.root*
 *.png
 *.pdf
 *~
