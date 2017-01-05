@@ -266,8 +266,8 @@ float ztree::getSmearedPhi(int jetindex,int centindex)
 // this function does the raw FF analysis and writes histograms to output file
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys)
 {
-  float phoerror = .99;
-  if(centmin >= 60) phoerror = 0.995;
+  float phoerror = 1.01;
+  if(centmin >= 60) phoerror = 1.005;
   string tag = outfname;
   string s_alpha = gen;
   if (fChain == 0) return;
