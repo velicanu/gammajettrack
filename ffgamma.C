@@ -343,7 +343,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (2.2) Reco jet loop
     int njetloop = njet;
     for (int ijet = 0; ijet < njetloop; ijet++) {
-      float tmpjetpt = jetptCorr[ijet];
+      float tmpjetpt = jetptCorr[ijet]*1.05;
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = jeteta[ijet];
       float tmpjetphi = jetphi[ijet];
