@@ -124,10 +124,10 @@ int add_sys(const char* sys_file, const char* outname) {
     TH1D* h_pes_sum[8];
 
     for (int i=0; i<8; ++i) {
-        h_sum[i] = (TH1D*)finput->Get(hist_names[i*7+4].c_str())->Clone(new_names[i].c_str());
-        h_jes_sum[i] = (TH1D*)finput->Get(hist_names[i*7].c_str())->Clone();
-        h_purity_sum[i] = (TH1D*)finput->Get(hist_names[i*7+2].c_str())->Clone();
-        h_pes_sum[i] = (TH1D*)finput->Get(hist_names[i*7+5].c_str())->Clone();
+        h_sum[i] = (TH1D*)finput->Get(hist_names[i*7+4].c_str())->Clone(new_names[i].c_str()); // JER
+        h_jes_sum[i] = (TH1D*)finput->Get(hist_names[i*7].c_str())->Clone(); //JES
+        h_purity_sum[i] = (TH1D*)finput->Get(hist_names[i*7+2].c_str())->Clone(); //Purity
+        h_pes_sum[i] = (TH1D*)finput->Get(hist_names[i*7+5].c_str())->Clone(); //pes
 
         TH1D_Max(h_jes_sum[i], (TH1D*)finput->Get(hist_names[i*7+1].c_str()));
         TH1D_Max(h_purity_sum[i], (TH1D*)finput->Get(hist_names[i*7+3].c_str()));

@@ -123,10 +123,14 @@ public:
         this->h1D_varied->Multiply(h1D_ratio);
     }
 
-    void calc_sys() {
+    void calc_sys(bool returnzero = false) {
         h1D_diff = (TH1D*)h1D_varied->Clone(Form("h1D_%s_diff_%s", hist_name.c_str(), sys_type.c_str()));
-        h1D_diff->Add(h1D_nominal, -1);
-
+        if(returnzero)
+        {
+          h1D_diff->Scale(0);
+        } else {
+          h1D_diff->Add(h1D_nominal, -1);
+        }
         h1D_diff_abs = (TH1D*)h1D_diff->Clone(Form("h1D_%s_diff_abs_%s", hist_name.c_str(), sys_type.c_str()));
         TH1D_Abs(h1D_diff_abs);
 

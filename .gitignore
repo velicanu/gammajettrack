@@ -8,6 +8,17 @@ corrections.tar
 *~
 *.tgz
 .sync-config.cson
+draw_js
+plot_js
+plot2ff
+plot_ff
+oldcode/
+html
+jetshape
+plot_ff_ratio
+syst/
+trkcorr/
+papermacros/
 
 # Compiled Object files
 *.slo

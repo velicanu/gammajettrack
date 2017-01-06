@@ -67,7 +67,11 @@ int ff_systematics(const char* file_list, const char* outputfile) {
 
             SysVar* sys_hists = new SysVar(hist_name, sys_types[m]);
             sys_hists->init(h1D_nominal, h1D_varied);
-            sys_hists->calc_sys();
+            if(false) {
+              sys_hists->calc_sys(true);
+            } else {
+              sys_hists->calc_sys(false);
+            }
 
             systematics[i].push_back(sys_hists);
         }
