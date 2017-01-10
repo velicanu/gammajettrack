@@ -27,9 +27,10 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
-int plot2ff(const char* file1, const char* file2, const char* plot_name, int draw_log_scale, const char* tag, int divide) {
-    TFile* finput = new TFile(file1, "read");
-    TFile* finput2 = new TFile(file2, "read");
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag) {
+    TFile* finput = new TFile(fresults, "read");
+
+    TFile* fsysfile = new TFile(fsys, "read");
 
     std::vector<std::string> hist_names = {
         "PbPb Data",                            // Legend label
@@ -56,9 +57,17 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
     TCanvas* c1 = new TCanvas("c1", "", pad_width, pad_height);
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
+    TH1D* h1_sys[4][2] = {0};
+    h1_sys[0][0] = (TH1D*)fsysfile->Get("pbpbdata_0_20");
+    h1_sys[1][0] = (TH1D*)fsysfile->Get("pbpbdata_20_60");
+    h1_sys[2][0] = (TH1D*)fsysfile->Get("pbpbdata_60_100");
+    h1_sys[3][0] = (TH1D*)fsysfile->Get("pbpbdata_100_200");
+    h1_sys[0][1] = (TH1D*)fsysfile->Get("ppdata_0_20");
+    h1_sys[1][1] = (TH1D*)fsysfile->Get("ppdata_20_60");
+    h1_sys[2][1] = (TH1D*)fsysfile->Get("ppdata_60_100");
+    h1_sys[3][1] = (TH1D*)fsysfile->Get("ppdata_100_200");
 
     TH1D* h1[4][2] = {0};
-    TH1D* h2[4][2] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
         if (draw_log_scale)
@@ -72,34 +81,26 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
                 h1[i][k]->SetAxisRange(0.001, 10, "Y");
             // h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
         }
-        for (int k=0; k<2; ++k) {
-            h2[i][k] = (TH1D*)finput2->Get(hist_names[5*k+i+1].c_str());
-            set_hist_style(h2[i][k], k);
-            set_axis_style(h2[i][k], i, 0);
-            if (draw_log_scale)
-                h2[i][k]->SetAxisRange(0.001, 10, "Y");
-            // h2[i][k]->SetYTitle("dN/d#xi_{#gamma}");
-        }
 
+        TBox* sys_box_pp = new TBox();
+        sys_box_pp->SetFillStyle(1001);
+        // sys_box_pp->SetFillColorAlpha(30, 0.7);
+        sys_box_pp->SetFillColor(30);
+        draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
+        h1[i][1]->Draw("e x0");
+
+        TBox* sys_box_PbPb = new TBox();
+        sys_box_PbPb->SetFillStyle(1001);
+        // sys_box_PbPb->SetFillColorAlpha(46, 0.7);
+        sys_box_PbPb->SetFillColor(46);
+        draw_sys_unc(sys_box_PbPb, h1[i][0], h1_sys[i][0]);
+        h1[i][0]->Draw("same e x0");
+
+        h1[i][1]->SetFillColor(sys_box_pp->GetFillColor());
         h1[i][1]->SetFillStyle(1001);
+
+        h1[i][0]->SetFillColor(sys_box_PbPb->GetFillColor());
         h1[i][0]->SetFillStyle(1001);
-        h2[i][1]->SetMarkerColor(30);
-        h2[i][0]->SetMarkerColor(46);
-        TLine * lone; 
-        if(divide==0) {
-          h1[i][1]->Draw("e x0");
-          h1[i][0]->Draw("same e x0");
-          h2[i][1]->Draw("same e x0");
-          h2[i][0]->Draw("same e x0");
-        } else {
-          h1[i][1]->Divide(h2[i][1]);
-          h1[i][0]->Divide(h2[i][0]);
-          h1[i][1]->Draw("e x0");
-          h1[i][0]->Draw("same e x0");
-          lone = new TLine(0,1,5,1);
-          lone->SetLineStyle(9);
-          lone->Draw();
-        }
 
         TLatex* centInfo = new TLatex();
         centInfo->SetTextFont(43);
@@ -134,23 +135,10 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
             l1->SetBorderSize(0);
             l1->SetFillStyle(0);
 
-            for (std::size_t m=0; m<hist_names.size()/5; ++m) {
-              if(divide==0) l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "p");
-              else          l1->AddEntry(h1[0][m], Form("%s/%s",hist_names[5*m].c_str(),tag), "p");
-            }
+            for (std::size_t m=0; m<hist_names.size()/5; ++m)
+                l1->AddEntry(h1[0][m], Form("%s %s",hist_names[5*m].c_str(),tag), "pf");
 
             l1->Draw();
-            
-            TLegend* l2 = new TLegend(l_box.x1+0.4, l_box.y1, l_box.x2+0.4, l_box.y2);
-            l2->SetTextFont(43);
-            l2->SetTextSize(16);
-            l2->SetBorderSize(0);
-            l2->SetFillStyle(0);
-
-            for (std::size_t m=0; m<hist_names.size()/5; ++m) {
-              if(divide==0) l2->AddEntry(h2[0][m], tag, "p");
-            }
-            l2->Draw();
         }
     }
 
@@ -371,10 +359,10 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 7)
-        return plot2ff(argv[1], argv[2], argv[3], atoi(argv[4]), argv[5], atoi(argv[6]));
+    if (argc == 6)
+        return plot_ff(argv[1], argv[2], argv[3], atoi(argv[4]), argv[5], atoi(argv[6]));
     else
-        printf("./plot2ff <file1> <file2> <plot name> <log scale> <tag> <divide>\n");
+        printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
 
     return 1;
 }
