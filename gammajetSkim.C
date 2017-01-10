@@ -4,7 +4,7 @@
 #include "trackTree.h"
 #include "SkimTree.h"
 #include "L2L3ResidualWFits.h"
-#include "getTrkCorr.h"
+#include "trkCorr.h"
 #include <stdlib.h>     /* srand, rand */
 #include <functional>   /* hash */
 
@@ -108,7 +108,7 @@ float getTrkWeight(TrkCorr * trkCorr, int itrk, int hiBin, Float_t * trkRmin, in
     if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
   }
   trkRmin[trkindex] = rmin;
-  return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin,rmin);
+  return trkCorr->getTrkCorr(trkPt_[itrk],trkEta_[itrk],trkPhi_[itrk],hiBin);
 }
 
 void getTrkRmin2(int itrk, float jetptmin, Float_t * trkRmin2, Float_t * trkRmin2jetpt, int trkindex)
@@ -140,7 +140,7 @@ float getTrkWeightMix(TrkCorr * trkCorr, int itrk, int hiBin)
     float R = TMath::Power(jteta_corr_mix[k]-trkEta_mix_[itrk],2)+TMath::Power(TMath::ACos(TMath::Cos(jtphi_corr_mix[k]-trkPhi_mix_[itrk])),2);
     if(rmin*rmin>R) rmin=TMath::Power(R,0.5);
   }
-  return trkCorr->getTrkCorr(trkPt_mix_[itrk],trkEta_mix_[itrk],trkPhi_mix_[itrk],hiBin,rmin);
+  return trkCorr->getTrkCorr(trkPt_mix_[itrk],trkEta_mix_[itrk],trkPhi_mix_[itrk],hiBin);
 }
 
 //! (1.11) Begin pp smearing
@@ -251,7 +251,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   // tracking correction initialized here
   TrkCorr* trkCorr;
-  if(!is_pp) trkCorr = new TrkCorr("Corrections/TrkCorr_Jun7_Iterative_PbPb_etaLT2p4/");
+  if(!is_pp) trkCorr = new TrkCorr("Corrections/TrkCorr_5020GeV_PbPb/inputCorr_v11_residual.root");
   else trkCorr = new TrkCorr("Corrections/TrkCorr_July22_Iterative_pp_eta2p4/");
   cout<<trkCorr<<endl;
 
