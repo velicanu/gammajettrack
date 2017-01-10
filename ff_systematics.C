@@ -16,13 +16,50 @@
 #define _PURITY_UP   3
 #define _PURITY_DOWN 4
 
-int ff_systematics(const char* file_list, const char* outputfile) {
+/* whichsysts:
+0 : all ,   m 1-7 
+1 : JES ,   m 1,2
+2 : purity  m 3,4
+3 : JER     m 5
+4 : pes     m 6,7
+*/
+
+int ff_systematics(const char* file_list, const char* outputfile, int whichsysts) {
     std::vector<std::string> sys_types {
         "nominal",
         "JES_up", "JES_down", "purity_up", "purity_down",
         "JER", "pes_up", "pes_down"
     };
-    int n_sys_types = sys_types.size();
+    int n_sys_types = sys_types.size(); // default of whichsysts = 0
+        std::vector<bool> sys_control { 
+        false, false, false, false, false, false, false, false
+    };
+    if(whichsysts == 1) {
+      sys_control[3] = true; 
+      sys_control[4] = true; 
+      sys_control[5] = true; 
+      sys_control[6] = true; 
+      sys_control[7] = true; 
+    } else if(whichsysts == 2) {
+      sys_control[1] = true; 
+      sys_control[2] = true; 
+      sys_control[5] = true; 
+      sys_control[6] = true; 
+      sys_control[7] = true; 
+    } else if(whichsysts == 3) {
+      sys_control[1] = true; 
+      sys_control[2] = true; 
+      sys_control[3] = true; 
+      sys_control[4] = true; 
+      sys_control[6] = true; 
+      sys_control[7] = true; 
+    } else if(whichsysts == 4) {
+      sys_control[1] = true; 
+      sys_control[2] = true; 
+      sys_control[3] = true; 
+      sys_control[4] = true; 
+      sys_control[5] = true; 
+    }
 
     std::vector<std::string> sys_files;
     std::ifstream file_stream(file_list);
@@ -67,11 +104,7 @@ int ff_systematics(const char* file_list, const char* outputfile) {
 
             SysVar* sys_hists = new SysVar(hist_name, sys_types[m]);
             sys_hists->init(h1D_nominal, h1D_varied);
-            if(false) {
-              sys_hists->calc_sys(true);
-            } else {
-              sys_hists->calc_sys(false);
-            }
+            sys_hists->calc_sys(sys_control[m]); // returns 0 if true, returns syst if false 
 
             systematics[i].push_back(sys_hists);
         }
@@ -120,10 +153,10 @@ int ff_systematics(const char* file_list, const char* outputfile) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 3)
-        return ff_systematics(argv[1], argv[2]);
+    if (argc == 4)
+        return ff_systematics(argv[1], argv[2], std::atoi(argv[3]));
     else
-        printf("Usage: ./ff_systematics <list of variations, e.g. gammaxi0_sys.list> <output to be used as input for add_sys>\n");
+        printf("Usage: ./ff_systematics <list of variations, e.g. gammaxi0_sys.list> <output to be used as input for add_sys> <which systs 0 for all>\n");
 
     return 1;
 }
