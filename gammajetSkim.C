@@ -491,6 +491,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   Int_t           nref_ak3pupf_out;
   Float_t         * rawpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * gjtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * gjteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * gjtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
   Float_t         * jtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
   Float_t         * jteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
   Float_t         * jtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
@@ -607,6 +610,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   ztree->Branch("njet_mix", &nref_ak3pupf_out, "njet_mix/I");
   ztree->Branch("rawpt_mix", rawpt_ak3pupf_out, "rawpt_mix[njet_mix]/F");
+  ztree->Branch("gjetpt_mix", gjtpt_ak3pupf_out, "gjetpt_mix[njet_mix]/F");
+  ztree->Branch("gjeteta_mix", gjteta_ak3pupf_out, "gjeteta_mix[njet_mix]/F");
+  ztree->Branch("gjetphi_mix", gjtphi_ak3pupf_out, "gjetphi_mix[njet_mix]/F");
   ztree->Branch("jetpt_mix", jtpt_ak3pupf_out, "jetpt_mix[njet_mix]/F");
   ztree->Branch("jeteta_mix", jteta_ak3pupf_out, "jeteta_mix[njet_mix]/F");
   ztree->Branch("jetphi_mix", jtphi_ak3pupf_out, "jetphi_mix[njet_mix]/F");
@@ -1423,6 +1429,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
           jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
           jtphi_ak3pupf_out[njets_mix] = jtphi_ak3pupf[ijetmix];
+          gjtpt_ak3pupf_out[njets_mix] = gjtpt_ak3pupf[ijetmix];
+          gjteta_ak3pupf_out[njets_mix] = gjteta_ak3pupf[ijetmix];
+          gjtphi_ak3pupf_out[njets_mix] = gjtphi_ak3pupf[ijetmix];
           neutralSum_ak3pupf_out[njets_mix] = neutralSum_ak3pupf[ijetmix];
           chargedSum_ak3pupf_out[njets_mix] = chargedSum_ak3pupf[ijetmix];
           nmixEv_ak3pupf_out[njets_mix] = nmix;

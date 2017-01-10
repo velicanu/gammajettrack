@@ -95,6 +95,9 @@
   Float_t         * jtpt_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
   Float_t         * jteta_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
   Float_t         * jtphi_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * gjtpt_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * gjteta_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+  Float_t         * gjtphi_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
   Float_t         * neutralSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
   Float_t         * chargedSum_ak3pupf = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
   Int_t         * chargedN_ak3pupf = (Int_t*) malloc(sizeof(Float_t)*300);   //[nref]
@@ -209,6 +212,9 @@ void initjetTree_ak3pupf(TTree *jettree_ak3pupf) {
   jettree_ak3pupf->SetBranchAddress("jtpt", jtpt_ak3pupf);
   jettree_ak3pupf->SetBranchAddress("jteta", jteta_ak3pupf);
   jettree_ak3pupf->SetBranchAddress("jtphi", jtphi_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("refpt", gjtpt_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("refeta", gjteta_ak3pupf);
+  jettree_ak3pupf->SetBranchAddress("refphi", gjtphi_ak3pupf);
   jettree_ak3pupf->SetBranchAddress("neutralSum", neutralSum_ak3pupf);
   jettree_ak3pupf->SetBranchAddress("chargedSum", chargedSum_ak3pupf);
   jettree_ak3pupf->SetBranchAddress("chargedN", chargedN_ak3pupf);
