@@ -643,7 +643,20 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     // nmixedjetevents = 1;
     for (int ijet_mix = 0; ijet_mix < njet_mix; ijet_mix++) {
       if( nmixEv_mix[ijet_mix]%3!= 1) continue;
-      if( jetpt_mix[ijet_mix]<jetptcut ) continue; //jet pt Cut
+      
+      float tmpjetpt = jetpt_mix[ijet_mix];
+      float smearFactor = 1;
+      doJERsys = 1;
+      if (doJERsys) {
+        float SF = 1 + 0.15;
+        int resolutionBin = getResolutionBin(centmin);
+        float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
+        smearFactor = randSmearing.Gaus(1, SF* initialResolution * sqrt(SF*SF - 1));
+        tmpjetpt *= smearFactor;
+      }
+      
+      
+      if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(jeteta_mix[ijet_mix]) > 1.6) continue; //jeteta_mix Cut
       if(checkjetid==1)
       {
@@ -651,18 +664,18 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
       if( acos(cos(jetphi_mix[ijet_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
       if(signal && nmixEv_mix[ijet_mix]%3==1) {
-        hjetptjetmix->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
-        xjgmixsignal->Fill(jetpt_mix[ijet_mix]/phoEtCorrected[0],1/nmixedjetevents);
+        xjgmixsignal->Fill(tmpjetpt/phoEtCorrected[0],1/nmixedjetevents);
       }
       if(sideband && nmixEv_mix[ijet_mix]%3==1) {
-        hjetptjetmixsideband->Fill(jetpt_mix[ijet_mix],1./nmixedjetevents);
+        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents);
         hnmixsideband->Fill(1);
-        xjgmixsideband->Fill(jetpt_mix[ijet_mix]/phoEtCorrected[0],1/nmixedjetevents);
+        xjgmixsideband->Fill(tmpjetpt/phoEtCorrected[0],1/nmixedjetevents);
       }
       TLorentzVector vjet;
-      vjet.SetPtEtaPhiM(jetpt_mix[ijet_mix],jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
+      vjet.SetPtEtaPhiM(tmpjetpt,jeteta_mix[ijet_mix],jetphi_mix[ijet_mix],0);
       if(gen.compare("gen")==0)
       {
         // no jet mixing in gen ff
@@ -679,7 +692,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrackmix;
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
-            float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
+            float z = trkPt_mix[itrk_mix]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-2: rjet_mix rtrk_mix
@@ -704,7 +717,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             TLorentzVector vtrackmix;
             vtrackmix.SetPtEtaPhiM(trkPt_mix[itrk_mix],trkEta_mix[itrk_mix],trkPhi_mix[itrk_mix],0);
             float angle = vjet.Angle(vtrackmix.Vect());
-            float z = trkPt_mix[itrk_mix]*cos(angle)/jetpt_mix[ijet_mix];
+            float z = trkPt_mix[itrk_mix]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = trkPt_mix[itrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
