@@ -36,6 +36,9 @@
 ./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_JER JER
 ./plot2ff nominal_xijet.root systjer_xijet.root sysSummary_JER 0 JER 0 
 ./plot2ff nominal_xijet.root systjer_xijet.root sysSummary_JER_ratio 0 JER 1
+./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk 0 trk 0 
+./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk_ratio 0 trk 1
+
 
 
 ## just pes
