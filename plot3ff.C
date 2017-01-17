@@ -360,7 +360,7 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 
 int main(int argc, char* argv[]) {
     if (argc == 6)
-        return plot_ff(argv[1], argv[2], argv[3], atoi(argv[4]), argv[5], atoi(argv[6]));
+        return plot_ff(argv[1], argv[2], argv[3], atoi(argv[4]), argv[5]);
     else
         printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
 

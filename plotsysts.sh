@@ -3,7 +3,7 @@
 # from root dataff5step.C\(60,1000,30,1,0,0,\"syst/syst_nominal/\",\"nominal.root\"\)
 # from root dataff5step.C\(60,1000,30,1,1,0,\"v2syst/nominal/\",\"ratio_nominal.root\"\)
 
-./ff_systematics.exe gammaxi0_sys.list gammaxi0_sys.root 0
+./ff_systematics.exe gammaxi0_sys1.list gammaxi0_sys.root 0
 ./add_sys.exe gammaxi0_sys.root gammaxi0_sys_plot.root 
 ./plot_ff nominal.root gammaxi0_sys_plot.root sysSummary_result_all 0 all
 ./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_all all
@@ -30,12 +30,12 @@
 ./plot2ff nominal_xijet.root systpurity1_xijet.root sysSummary_purity_up_ratio 0 purity_up 1
 
 ## just JER
-./ff_systematics.exe gammaxi0_sys.list gammaxi0_sys.root 3
+./ff_systematics.exe gammaxi0_sys1.list gammaxi0_sys.root 3
 ./add_sys.exe gammaxi0_sys.root gammaxi0_sys_plot.root 
 ./plot_ff nominal.root gammaxi0_sys_plot.root sysSummary_result_jer 0 JER
 ./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_JER JER
-./plot2ff nominal_xijet.root systjer_xijet.root sysSummary_JER 0 JER 0 
-./plot2ff nominal_xijet.root systjer_xijet.root sysSummary_JER_ratio 0 JER 1
+./plot2ff nominal_xijet.root systjer_mix_xijet.root sysSummary_JER 0 JER 0 
+./plot2ff nominal_xijet.root systjer_mix_xijet.root sysSummary_JER_ratio 0 JER 1
 ./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk 0 trk 0 
 ./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk_ratio 0 trk 1
 
