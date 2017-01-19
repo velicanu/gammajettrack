@@ -55,7 +55,7 @@ float smeargenpt(int ispp, int hibin)
       return hpbpbrpt->ProjectionY("",3,6)->GetRandom();
     else if(hibin >= 60 && hibin < 100)
       return hpbpbrpt->ProjectionY("",7,10)->GetRandom();
-    else 
+    else
       return hpbpbrpt->ProjectionY("",11,20)->GetRandom();
   }
   else return hpprpt->ProjectionY()->GetRandom();
@@ -70,7 +70,7 @@ float smeargeneta(int ispp, int hibin)
       return hpbpbreta->ProjectionY("",3,6)->GetRandom();
     else if(hibin >= 60 && hibin < 100)
       return hpbpbreta->ProjectionY("",7,10)->GetRandom();
-    else 
+    else
       return hpbpbreta->ProjectionY("",11,20)->GetRandom();
   }
   else return hppreta->ProjectionY()->GetRandom();
@@ -85,7 +85,7 @@ float smeargenphi(int ispp, int hibin)
       return hpbpbrphi->ProjectionY("",3,6)->GetRandom();
     else if(hibin >= 60 && hibin < 100)
       return hpbpbrphi->ProjectionY("",7,10)->GetRandom();
-    else 
+    else
       return hpbpbrphi->ProjectionY("",11,20)->GetRandom();
   }
   else return hpprphi->ProjectionY()->GetRandom();
@@ -267,7 +267,12 @@ float ztree::getSmearedPhi(int jetindex,int centindex)
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys)
 {
 
-  
+  bool ismc;
+  TFile * fvzweight = TFile::Open("fvzweight.root");
+  TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
+  TFile * fcentweight = TFile::Open("fcentweight.root");
+  TH1D * hcentweight = (TH1D*) fcentweight->Get(Form("hcentdata_%d_%d",centmin,centmax));
+
   string tag = outfname;
   string s_alpha = gen;
   if (fChain == 0) return;
@@ -303,6 +308,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * phoetsignal = new TH1D(Form("phoetsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#gamma E_{T};"),50,0,500); // xjg crosscheck
   TH1D * phoetsideband = new TH1D(Form("phoetsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#gamma E_{T};"),50,0,500); // xjg crosscheck
 
+  TH1D * hvz = new TH1D(Form("hvz_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";vz;"),30,-15,15); // vz weighting check
+  TH1D * hcent = new TH1D(Form("hcent_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";cent;"),200,0,200); // vz weighting check
 
 
 
@@ -323,7 +330,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     if(nPho!=1) continue;
     if(phoNoise[0]==0) continue;
     // if( gen.compare("gengen")==0 && mcMomPID[0]!=-999 ) continue ; // prompt gen photon cut
-    if(weight==0)                   weight=1;
     bool signal = (phoSigmaIEtaIEta_2012[0]<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0]>0.011 && phoSigmaIEtaIEta_2012[0]<0.017);
     if( phoEt[0]/phoCorr[0]<phoetmin || phoEt[0]/phoCorr[0]>phoetmax) continue;
@@ -334,7 +340,14 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       phoetsideband->Fill(phoEtCorrected[0]);
     }
 
+    ismc = (weight!=0);
+    weight=1;
+    if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
+
+    hvz->Fill(vz,weight);
+    hcent->Fill(hiBin,weight);
 
     int njets_perevent = 0;
     int njets_permixevent = 0;
@@ -453,11 +466,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(signal) {
               something = true;
               // cout<<"sig: "<<jentry<<" "<<trkEta[itrk]<<" "<<trkPhi[itrk]<<" "<<trkPt[itrk]<<" "<<trkWeight[itrk]<<" "<<endl;
-              hgammaffxi->Fill(xi,trkWeight[itrk]); //Raw FF after cuts (1.0)
+              hgammaffxi->Fill(xi,weight*trkWeight[itrk]); //Raw FF after cuts (1.0)
               // hgammaffxi->Fill(xi); //Raw FF after cuts (1.0)
             }
             if(sideband) {
-              hgammaffxisideband->Fill(xi,trkWeight[itrk]); // Raw FF after cuts sideband (1.1)
+              hgammaffxisideband->Fill(xi,weight*trkWeight[itrk]); // Raw FF after cuts sideband (1.1)
               // hgammaffxisideband->Fill(xi); // Raw FF after cuts sideband (1.1)
             }
           }
@@ -487,11 +500,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(signal) {
               // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
               something = true;
-              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
+              hgammaffxiuemix->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedUEevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
+              hgammaffxiuemixsideband->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedUEevents);
             }
           }
         }
@@ -543,11 +556,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(signal) {
               something = true;
               // cout<<"sig: "<<jentry<<" "<<trkEta[itrk]<<" "<<trkPhi[itrk]<<" "<<trkPt[itrk]<<" "<<trkWeight[itrk]<<" "<<endl;
-              hgammaffxi->Fill(xi,trkWeight[itrk]); //Raw FF after cuts (1.0)
+              hgammaffxi->Fill(xi,weight*trkWeight[itrk]); //Raw FF after cuts (1.0)
               // hgammaffxi->Fill(xi); //Raw FF after cuts (1.0)
             }
             if(sideband) {
-              hgammaffxisideband->Fill(xi,trkWeight[itrk]); // Raw FF after cuts sideband (1.1)
+              hgammaffxisideband->Fill(xi,weight*trkWeight[itrk]); // Raw FF after cuts sideband (1.1)
               // hgammaffxisideband->Fill(xi); // Raw FF after cuts sideband (1.1)
             }
           }
@@ -575,11 +588,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(signal) {
               // cout<<"bak: "<<jentry<<" "<<trkEta_mix[itrk_mix]<<" "<<trkPhi_mix[itrk_mix]<<" "<<trkPt_mix[itrk_mix]<<" "<<trkWeight_mix[itrk_mix]<<" "<<endl;
               something = true;
-              hgammaffxiuemix->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
+              hgammaffxiuemix->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedUEevents);
               // ntotmix++;
             }
             if(sideband) {
-              hgammaffxiuemixsideband->Fill(xi,trkWeight_mix[itrk_mix]/nmixedUEevents);
+              hgammaffxiuemixsideband->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedUEevents);
             }
           }
         }
@@ -605,8 +618,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
   //! 2-1: gjet gtrk sube==0
   //! 3-1: gjet gtrk
-            if(signal) { hgammaffxi->Fill(xi); } //recoj genp
-            if(sideband) { hgammaffxisideband->Fill(xi); }
+            if(signal) { hgammaffxi->Fill(xi,weight); } //recoj genp
+            if(sideband) { hgammaffxisideband->Fill(xi,weight); }
           }
         }
       }
@@ -630,8 +643,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
-            if(signal) { hgammaffxiuemix->Fill(xi); }
-            if(sideband) { hgammaffxiuemixsideband->Fill(xi); }
+            if(signal) { hgammaffxiuemix->Fill(xi,weight); }
+            if(sideband) { hgammaffxiuemixsideband->Fill(xi,weight); }
           }
         }
       }
@@ -683,10 +696,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
 //! 1-2: rjet_mix rtrk_mix
             if(signal) {
-              hgammaffxijetmix->Fill(xi,trkWeight_mix[itrk_mix]/nmixedjetevents);
+              hgammaffxijetmix->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedjetevents);
             }
             if(sideband) {
-              hgammaffxijetmixsideband->Fill(xi,trkWeight_mix[itrk_mix]/nmixedjetevents);
+              hgammaffxijetmixsideband->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedjetevents);
             }
           }
         }
@@ -708,10 +721,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
             if(signal) {
-              hgammaffxijetmixue->Fill(xi,trkWeight_mix[itrk_mix]/nmixedjetevents);
+              hgammaffxijetmixue->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedjetevents);
             }
             if(sideband) {
-              hgammaffxijetmixuesideband->Fill(xi,trkWeight_mix[itrk_mix]/nmixedjetevents);
+              hgammaffxijetmixuesideband->Fill(xi,weight*trkWeight_mix[itrk_mix]/nmixedjetevents);
             }
           }
         }
@@ -745,8 +758,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             if(gammaxi==1) z = pt_mix[igentrk_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
   //! 3-2: gjet_mix gtrk_mix
-            if(signal) { hgammaffxijetmix->Fill(xi); }
-            if(sideband) { hgammaffxijetmixsideband->Fill(xi); }
+            if(signal) { hgammaffxijetmix->Fill(xi, weight); }
+            if(sideband) { hgammaffxijetmixsideband->Fill(xi, weight); }
           }
         }
       }
