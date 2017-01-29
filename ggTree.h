@@ -164,6 +164,7 @@ float getDphi(float phi1, float phi2) {
    vector<float>   *_pfnIso4;
    vector<float>   *_pfnIso5;
    Int_t				   _nMC;
+   vector<float>   *_mcCalIsoDR04;
 	 vector<int>     *_mcPID;
    vector<int>     *_mcStatus;
 	 vector<float>   *_mcPt;
@@ -325,6 +326,7 @@ void initggTree(TTree *tree) {
    _pfnIso4 = 0;
    _pfnIso5 = 0;
 	 _nMC = 0;
+   _mcCalIsoDR04 = 0;
 	 _mcPID = 0;
    _mcStatus = 0;
 	 _mcPt = 0;
@@ -488,6 +490,7 @@ void initggTree(TTree *tree) {
    tree->SetBranchAddress("pfnIso4", &_pfnIso4);
    tree->SetBranchAddress("pfnIso5", &_pfnIso5);
 	 tree->SetBranchAddress("nMC", &_nMC);
+   tree->SetBranchAddress("mcCalIsoDR04", &_mcCalIsoDR04);
 	 tree->SetBranchAddress("mcPID", &_mcPID);
    tree->SetBranchAddress("mcStatus", &_mcStatus);
 	 tree->SetBranchAddress("mcPt", &_mcPt);
