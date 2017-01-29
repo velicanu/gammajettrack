@@ -477,7 +477,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   Float_t  pfnIso5[1];   //_nPho
 	Int_t    nMC;
 	Int_t    mcPID[500];
-
+	float    mcCalIsoDR04[500];
 	Int_t    mcStatus[500];
 	Float_t  mcEt[500];
 	Float_t  mcPt[500];
@@ -725,6 +725,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("pfnIso4",&pfnIso4,"pfnIso4[nPho]/F");
   ztree->Branch("pfnIso5",&pfnIso5,"pfnIso5[nPho]/F");
 	ztree->Branch("nMC", &nMC,"nMC/I");
+        ztree->Branch("mcCalIsoDR04", &mcCalIsoDR04,"mcCalIsoDR04[nMC]/F");
 	ztree->Branch("mcPID", &mcPID,"mcPID[nMC]/I");
 	ztree->Branch("mcStatus", &mcStatus,"mcStatus[nMC]/I");
 	ztree->Branch("mcPt", &mcPt,"mcPt[nMC]/F");
@@ -1037,6 +1038,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 			// if(abs((*_mcMomPID)[imc])!=22) continue; //only signal photons if mc
 			nmcphoton++;
 			mcPID[imc] = (*_mcPID)[imc];
+			mcCalIsoDR04[imc] = (*_mcCalIsoDR04)[imc];
 			mcStatus[imc] = (*_mcStatus)[imc];
 			mcPt[imc] = (*_mcPt)[imc];
 			mcEt[imc] = (*_mcEt)[imc];
