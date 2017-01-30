@@ -19,6 +19,7 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
 
 void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
+  TFile *_fout = new TFile("pbpbmcff.root","recreate");
   const static int ncentbins = 4;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -132,6 +133,7 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
       lone->SetLineStyle(9);
       lone->Draw();
     }
+    rawff_pbpbmc_recoreco[icent]->Write();
 
     if(icent==0)
     {
@@ -208,4 +210,6 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
+  // _fout->Write();
+  _fout->Save();
 }
