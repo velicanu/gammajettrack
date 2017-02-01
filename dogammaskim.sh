@@ -1,12 +1,12 @@
 # pp MC
 
-# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon15_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon15_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.999456 &
-# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon30_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon30_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.186121 &
-# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon50_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon50_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.0422225 &
-# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon80_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon80_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.00931044 &
-# ./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon120_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon120_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.00194072 &
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon15_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon15_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.999456 &
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon30_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon30_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.186121 &
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon50_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon50_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.0422225 &
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon80_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon80_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.00931044 &
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/rbi/merged/Pythia8_Photon120_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1/0.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon120_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root ak3PFJetAnalyzer 1 0.00194072 &
 
-# wait
+wait
 
 # PbPb MC
 
@@ -76,7 +76,7 @@ wait
 hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
 
 # pp MC
-# hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root
+hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root
 
 
 
