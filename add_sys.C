@@ -146,9 +146,9 @@ int add_sys(const char* sys_file, const char* outname) {
         TH1D_SqrtSumofSquares(h_sum[i], h_jes_sum[i]);
         TH1D_SqrtSumofSquares(h_sum[i], h_purity_sum[i]);
         TH1D_SqrtSumofSquares(h_sum[i], h_pes_sum[i]);
+        TH1D_SqrtSumofSquares(h_sum[i], h_trk_sum[i]);
 
         h_sum[i]->Write("", TObject::kOverwrite);
-        h_trk_sum[i]->Write("", TObject::kOverwrite);
     }
 
     fout->Close();
