@@ -85,7 +85,7 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
         h1[i][0]->SetFillStyle(1001);
         h2[i][1]->SetMarkerColor(30);
         h2[i][0]->SetMarkerColor(46);
-        TLine * lone; 
+        TLine * lone;
         if(divide==0) {
           h1[i][1]->Draw("e x0");
           h1[i][0]->Draw("same e x0");
@@ -140,7 +140,7 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
             }
 
             l1->Draw();
-            
+
             TLegend* l2 = new TLegend(l_box.x1+0.4, l_box.y1, l_box.x2+0.4, l_box.y2);
             l2->SetTextFont(43);
             l2->SetTextSize(16);
@@ -180,7 +180,7 @@ int plot2ff(const char* file1, const char* file2, const char* plot_name, int dra
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
-    // c1->SaveAs(Form("%s.pdf", plot_name));
+    c1->SaveAs(Form("%s.pdf", plot_name));
     c1->SaveAs(Form("%s.png", plot_name));
 
     finput->Close();
