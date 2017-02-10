@@ -490,25 +490,25 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   int nmix = 0, nlooped = 0;
 
   Int_t           nref_ak3pupf_out;
-  Float_t         * rawpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * gjtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * gjteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * gjtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * jtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * jteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * jtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * neutralSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * chargedSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * nmixEv_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * jetID_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * chargedN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * photonN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * neutralN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * eN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Int_t         * muN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * chargedMax_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * photonSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
-  Float_t         * eSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*3000);   //[nref]
+  Float_t         * rawpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * gjtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * gjteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * gjtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * jtpt_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * jteta_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * jtphi_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * neutralSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * chargedSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * nmixEv_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * jetID_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * chargedN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * photonN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * neutralN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * eN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Int_t         * muN_ak3pupf_out = (Int_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * chargedMax_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * photonSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
+  Float_t         * eSum_ak3pupf_out = (Float_t*) malloc(sizeof(Float_t)*30000);   //[nref]
 //! End list of input/output variables
 
 //! (1.3) Begin output skim and branch definitions
@@ -855,7 +855,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> vmix_pBeamScrapingFilter;
   vector<int> vmix_index;
 
-  int nEventsToMix = 12;
+  int nEventsToMix = 24;
   if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
@@ -992,7 +992,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     skimTree->GetEntry(j);
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
-
+    cout<<"start event: "<<j<<"/"<<endindex<<endl;
     if(weight==1) weight = mcweight;
 
     if(ismc)
@@ -1010,7 +1010,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         sube[igenp] = _sube->at(igenp);
       }
     }
+    cout<<"1"<<endl;
     hlttree->GetEntry(j);
+    cout<<"hlttree"<<endl;
     if(j%1000 == 0) { cout << "Processing event: " << j << "/" << endindex << endl; }
 //! (2.1) Begin event and trigger cuts
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
@@ -1032,6 +1034,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! (2.2) Begin photon cuts and selection
     inggTree->GetEntry(j);
+    cout<<"ggtree"<<endl;
 		int nmcphoton = 0;
     for(int imc = 0 ; imc < _nMC ; ++imc)
 		{
@@ -1180,7 +1183,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! End photon cuts and selection
 
 //! (2.3) Begin jet cuts and selection
+    cout<<"before_jet"<<endl;
     injetTree->GetEntry(j);
+    cout<<"jettree"<<endl;
     injetTreeFORTRKCORR->GetEntry(j);
     njet = 0;
 
@@ -1348,6 +1353,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
     // if(false) //mix things up
     {
+      cout<<"here"<<endl;
       int minbiasend = minbiasstart;
       mult_mix = 0;
       nmix = 0;
@@ -1395,7 +1401,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           if(jtpt_corr_mix[k]>maxJetPt_mix) maxJetPt_mix=jtpt_corr_mix[k];
         }
 
-
 //! (2.52) Jets from mixed events
         jettree_ak3pupf->GetEntry(vmix_index[iminbias]);
         for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix) {
@@ -1426,7 +1431,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
           jetpt_mb_corr = jetcorr->get_corrected_pt(jetpt_mb_corr, jteta_ak3pupf[ijetmix]);
           if (jetpt_mb_corr < 30) continue; // njets_mix is not incremented
-
           jtpt_ak3pupf_out[njets_mix] = jetpt_mb_corr;
           rawpt_ak3pupf_out[njets_mix] = rawpt_ak3pupf[ijetmix];
           jteta_ak3pupf_out[njets_mix] = jteta_ak3pupf[ijetmix];
@@ -1448,6 +1452,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
           njets_mix++;
         }
+	cout<<"njets_mix "<<njets_mix<<endl;
         if(ismc)
         {
           for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
@@ -1455,13 +1460,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
             // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
             // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-            genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
+	    genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
             geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
             genphi_mix[ngen_mix] = _genphi_mix[igenj_mix];
             gensubid_mix[ngen_mix] = _gensubid_mix[igenj_mix];
             genev_mix[ngen_mix] = nmix;
             ngen_mix++;
           }
+          cout<<"ngen_mix "<<ngen_mix<<endl;
         }
 
 //! (2.54) Tracks from jet and cones in mixed events
@@ -1491,6 +1497,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           trkWeight_mix[ntracks_mix] = trkweight_mix;
           ntracks_mix++;
         }
+	cout<<"ntracks_mix "<<ntracks_mix<<endl;
         // cout<<ntracks_mix<<endl;
         if(ismc)
         {
@@ -1502,7 +1509,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
             if(_chg_mix->at(igenp)==0) continue;
             if(_pt_mix->at(igenp)<1) continue;
-
             pt_mix[mult_mix] = _pt_mix->at(igenp);
             eta_mix[mult_mix] = _eta_mix->at(igenp);
             phi_mix[mult_mix] = _phi_mix->at(igenp);
@@ -1511,6 +1517,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             nev_mix[mult_mix] = nmix;
             mult_mix++;
           }
+	  cout<<"mult_mix "<<mult_mix<<endl;
         }
 
 
@@ -1540,7 +1547,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(ismc) { weightCent = fcentweight->Eval(hiBin); }
     ztree->Fill();
     // cout<<j<<" after fill"<<endl;
-
+    cout<<"end event: "<<j<<"/"<<endindex<<endl;
   } //end of loop over events
 
 
