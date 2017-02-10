@@ -36,8 +36,6 @@
 ./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_JER JER
 ./plot2ff nominal_xijet.root systjer_mix_xijet.root sysSummary_JER 0 JER 0 
 ./plot2ff nominal_xijet.root systjer_mix_xijet.root sysSummary_JER_ratio 0 JER 1
-./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk 0 trk 0 
-./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk_ratio 0 trk 1
 
 
 
@@ -50,3 +48,11 @@
 ./plot2ff nominal_xijet.root systpes1_xijet.root sysSummary_pes_up 0 pes_up 0 
 ./plot2ff nominal_xijet.root systpes0_xijet.root sysSummary_pes_down_ratio 0 pes_down 1
 ./plot2ff nominal_xijet.root systpes1_xijet.root sysSummary_pes_up_ratio 0 pes_up 1
+
+## just trk
+./ff_systematics.exe gammaxi0_sys.list gammaxi0_sys.root 5
+./add_sys.exe gammaxi0_sys.root gammaxi0_sys_plot.root 
+./plot_ff nominal.root gammaxi0_sys_plot.root sysSummary_result_trk 0 trk
+./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_trk trk
+./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk 0 trk 0 
+./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk_ratio 0 trk 1
