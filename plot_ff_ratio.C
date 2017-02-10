@@ -165,7 +165,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
-    // c1->SaveAs(Form("%s.pdf", plot_name));
+    c1->SaveAs(Form("%s.pdf", plot_name));
     c1->SaveAs(Form("%s.png", plot_name));
 
     finput->Close();

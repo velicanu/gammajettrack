@@ -19,6 +19,8 @@ plot_ff_ratio
 syst/
 trkcorr/
 papermacros/
+plot_data_mc_ff
+v2syst/
 
 # Compiled Object files
 *.slo

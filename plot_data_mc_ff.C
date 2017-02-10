@@ -28,6 +28,16 @@ void cover_axis(float margin, float edge, float column_scale_factor, float row_s
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
 int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale) {
+
+    TFile* fmcinput = TFile::Open("pbpbmcff.root");
+    std::vector<std::string> mchist_names = {
+        "PbPb MC",                            // Legend label
+        "hgammaffxi_pbpbmc_recoreco_0_20",
+        "hgammaffxi_pbpbmc_recoreco_20_60",
+        "hgammaffxi_pbpbmc_recoreco_60_100",
+        "hgammaffxi_pbpbmc_recoreco_100_200"
+    };
+
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -49,6 +59,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     float edge = 0.1;    // right/top edges (no labels)
 
     float row_scale_factor = (rows > 1) ? 1.0/(1.0-margin) + 1.0/(1.0-edge) + rows - 2 : 1.0/(1.0-margin-edge);
+
     float column_scale_factor = (columns > 1) ? 1.0/(1.0-margin) + 1.0/(1.0-edge) + columns - 2 : 1.0/(1.0-margin-edge);
 
     float pad_width = 250 * column_scale_factor;
@@ -68,10 +79,21 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     h1_sys[3][1] = (TH1D*)fsysfile->Get("ppdata_100_200");
 
     TH1D* h1[4][2] = {0};
+    TH1D* hmc[4] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
         if (draw_log_scale)
             gPad->SetLogy();
+
+        hmc[i] = (TH1D*)fmcinput->Get(mchist_names[i+1].c_str());
+        set_axis_style(hmc[i], i, 0);
+        if (draw_log_scale)
+            hmc[i]->SetAxisRange(0.001, 10, "Y");
+        hmc[i]->SetYTitle("dN/d#xi_{#gamma}");
+        hmc[i]->SetLineStyle(3);
+        hmc[i]->SetLineWidth(1);
+        hmc[i]->SetLineColor(kRed);
+
 
         for (int k=0; k<2; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
@@ -99,6 +121,9 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 
         h1[i][0]->SetFillColor(sys_box_PbPb->GetFillColor());
         h1[i][0]->SetFillStyle(1001);
+
+        // hmc[i]->Draw("hist same");
+        hmc[i]->Draw("e same");
 
         TLatex* centInfo = new TLatex();
         centInfo->SetTextFont(43);
@@ -136,6 +161,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             for (std::size_t m=0; m<hist_names.size()/5; ++m)
                 l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pf");
 
+            l1->AddEntry(hmc[0], mchist_names[0].c_str(), "l");
             l1->Draw();
         }
     }
