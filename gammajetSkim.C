@@ -855,7 +855,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> vmix_pBeamScrapingFilter;
   vector<int> vmix_index;
 
-  int nEventsToMix = 12;
+  int nEventsToMix = 6;
   if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
@@ -922,8 +922,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
 
     const int nevmix = evttree_mix->GetEntries();
-    minbiasstart = rand() % nevmix; // here we pick a random start event to protect from condor jobs always starting at 0
-    cout<<"indexing minbias for mixing... Start event is: "<<minbiasstart<<"  ";
     // First put everything we cut on for mixing in vectors for performance (not sure how much this helps)
     // same event cuts as signal
     // (1.51) Begin minbias mixing indexing
@@ -955,6 +953,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       vmix_index.push_back(iminbias);
     }
     cout<<"done indexing minbias"<<endl;
+    minbiasstart = rand() % vmix_index.size(); // here we pick a random start event to protect from condor jobs always starting at 0
+    cout<<"indexing minbias for mixing... Start event is: "<<minbiasstart<<"  ";
 
   } else {
     cout<<"WARNING: Minbias file not provided, no mixing will be done"<<endl;
@@ -1367,13 +1367,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         if(wraparound && iminbias == minbiasstart) break; //came back to start, done mixing
         nlooped++;
 //! (2.51) HiBin, vz, eventplane selection
-        // vmix_ vectors are set in 1.51
-        if(abs(hiBin - vmix_hiBin[iminbias])>0) continue;
+        // vmix_ vectors are set in 1.51	
+	if(abs(hiBin - vmix_hiBin[iminbias])>0) continue;
         if(fabs(vz - vmix_vz[iminbias])>1) continue;
         float dphi_evplane = fabs(hiEvtPlanes[8] - vmix_hiEvtPlanes[iminbias]);
         if(dphi_evplane > TMath::Pi()/2.0) dphi_evplane = TMath::Pi()-dphi_evplane;
         if(dphi_evplane > TMath::Pi()/16.0) continue;
-        // now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
+	// now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
         if (!is_pp) // HI event selection
         {
           if ((vmix_pcollisionEventSelection[iminbias] < 1))  continue;
