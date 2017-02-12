@@ -44,6 +44,7 @@
 
 // these variables are used to get tracking efficiency correction
 // they're not filled in the output tree
+int nEventsToMix = 24;
 Int_t           nref_corr;
 Float_t         chargedSum_corr[100];   //[nref_corr]
 Float_t         rawpt_corr[100];   //[nref_corr]
@@ -289,9 +290,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   //mixvar decleration
-  float dvz_mix[10];
-  int dhiBin_mix[10];
-  float dhiEvtPlanes_mix[10];
+  float dvz_mix[nEventsToMix];
+  int dhiBin_mix[nEventsToMix];
+  float dhiEvtPlanes_mix[nEventsToMix];
 
   int njet_smeared;
   float jetpt_smeared0020[2000], jeteta_smeared0020[2000], jetphi_smeared0020[2000];
@@ -855,7 +856,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   vector<int> vmix_pBeamScrapingFilter;
   vector<int> vmix_index;
 
-  int nEventsToMix = 6;
   if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
