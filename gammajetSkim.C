@@ -933,14 +933,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TFile* sumIsoCorrectionFile;
   if(ismc) sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_MC.root");
   else     sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_Data.root");
-  cout<<"printing memory addresses"<<endl;
   TH1D* sumIsoCorrections = (TH1D*)sumIsoCorrectionFile->Get("sumIsoCorrections");
   for (int icent=0; icent<nCentBins; ++icent)
   {
     for (int ieta=0; ieta<nEtaBins; ++ieta)
     {
       photonEnergyCorrections[icent][ieta] = (TH1D*)energyCorrectionFile->Get(Form("photonEnergyCorr_cent%i_eta%i", icent, ieta));
-      cout<<photonEnergyCorrections[icent][ieta]<<endl;
     }
   }
 
@@ -1130,10 +1128,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         pfnIso3[0] = (*_pfnIso3)[maxPhoIndex];
         pfnIso4[0] = (*_pfnIso4)[maxPhoIndex];
         pfnIso5[0] = (*_pfnIso5)[maxPhoIndex];
-	cout<<"here"<<endl;
-	cout<<photonEnergyCorrections[getCentBin(hiBin)][0]<<endl;
         phoCorr[0] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
-	cout<<"there"<<endl;
         phoEtCorrected[0] = (*_phoEt)[maxPhoIndex]/phoCorr[0];
         pho_sumIso[0] = sumIso;
         pho_sumIsoCorrected[0] = sumIsoCorrected;
@@ -1320,7 +1315,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       ngen_mix = 0;
       // Start looping through the mixed event starting where we left off, so we don't always mix same events
       const int nevmix = evttree_mix->GetEntries();
-      cout<<"nevmix "<<nevmix<<endl;
       for(int iminbias = minbiasstart ; iminbias <= nevmix ; ++ iminbias )
       {
 	skimTree_mix->GetEntry(iminbias);
@@ -1348,18 +1342,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         if(wraparound && iminbias == minbiasstart) break; //came back to start, done mixing
         nlooped++;
 //! (2.51) HiBin, vz, eventplane selection
-	//cout<<"after event selections, dhibin="<<abs(hiBin - hiBin_mix)<<endl;
         if(abs(hiBin - hiBin_mix)>0) continue;
 	if(fabs(vz - vz_mix)>1) continue;
-	//cout<<"after hiBin selections, dvz="<<fabs(vz-vz_mix)<<endl; 
-	//cout<<"vz="<<vz<<endl;
-	//cout<<"vz_mix="<<vz_mix<<endl;
         float dphi_evplane = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
-	//cout<<"after vz selections, evplane="<<acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])))<<endl;
         if(dphi_evplane > TMath::Pi()/16.0) continue;
         // now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
         injetTreeFORTRKCORR_mix->GetEntry(iminbias);
-	//cout<<"after all selections"<<endl;
         float maxJetPt_mix = -999;
         for(int k = 0; k<nref_corr_mix; k++)
         {
