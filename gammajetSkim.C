@@ -44,6 +44,8 @@
 
 // these variables are used to get tracking efficiency correction
 // they're not filled in the output tree
+const int nEventsToMix = 24;
+
 Int_t           nref_corr;
 Float_t         chargedSum_corr[100];   //[nref_corr]
 Float_t         rawpt_corr[100];   //[nref_corr]
@@ -289,9 +291,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 
   //mixvar decleration
-  float dvz_mix[10];
-  int dhiBin_mix[10];
-  float dhiEvtPlanes_mix[10];
+  float dvz_mix[nEventsToMix];
+  int dhiBin_mix[nEventsToMix];
+  float dhiEvtPlanes_mix[nEventsToMix];
 
   int njet_smeared;
   float jetpt_smeared0020[2000], jeteta_smeared0020[2000], jetphi_smeared0020[2000];
@@ -846,16 +848,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TTree *injetTreeFORTRKCORR_mix = 0;
   TTree * jettree_ak3pupf   = 0;
 
-  vector<float> vmix_vz;
-  vector<int> vmix_hiBin;
-  vector<float> vmix_hiEvtPlanes;
-  vector<int> vmix_pcollisionEventSelection;
-  vector<int> vmix_HBHENoiseFilterResultRun2Loose;
-  vector<int> vmix_pPAprimaryVertexFilter;
-  vector<int> vmix_pBeamScrapingFilter;
-  vector<int> vmix_index;
-
-  int nEventsToMix = 24;
+  
   if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
@@ -922,40 +915,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
 
     const int nevmix = evttree_mix->GetEntries();
+    
     minbiasstart = rand() % nevmix; // here we pick a random start event to protect from condor jobs always starting at 0
-    cout<<"indexing minbias for mixing... Start event is: "<<minbiasstart<<"  ";
-    // First put everything we cut on for mixing in vectors for performance (not sure how much this helps)
-    // same event cuts as signal
-    // (1.51) Begin minbias mixing indexing
-    for(int iminbias = 0 ; iminbias < nevmix ; ++ iminbias )
-    {
-      skimTree_mix->GetEntry(iminbias);
-      evttree_mix->GetEntry(iminbias);
-      if(fabs(vz_mix)>15) continue;
-      skimTree_mix->GetEntry(iminbias);
-      if (!is_pp) // HI event selection
-      {
-        if ((pcollisionEventSelection_mix < 1))  continue;
-        if(!ismc)
-        {
-          if (HBHENoiseFilterResultRun2Loose_mix < 1) continue; // re-use config value...
-        }
-      }
-      else // pp event selection
-      {
-        if (pPAprimaryVertexFilter_mix < 1 || pBeamScrapingFilter_mix < 1)  continue;
-      }
-      vmix_vz.push_back(vz_mix);
-      vmix_hiBin.push_back(hiBin_mix);
-      vmix_hiEvtPlanes.push_back(hiEvtPlanes_mix[8]);
-      vmix_pcollisionEventSelection.push_back(pcollisionEventSelection_mix);
-      vmix_HBHENoiseFilterResultRun2Loose.push_back(HBHENoiseFilterResultRun2Loose_mix);
-      vmix_pPAprimaryVertexFilter.push_back(pPAprimaryVertexFilter_mix);
-      vmix_pBeamScrapingFilter.push_back(pBeamScrapingFilter_mix);
-      vmix_index.push_back(iminbias);
-    }
-    cout<<"done indexing minbias"<<endl;
-
+    cout<<"Start event is: "<<minbiasstart<<endl;
+    
   } else {
     cout<<"WARNING: Minbias file not provided, no mixing will be done"<<endl;
   }
@@ -970,13 +933,14 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TFile* sumIsoCorrectionFile;
   if(ismc) sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_MC.root");
   else     sumIsoCorrectionFile = TFile::Open("Corrections/sumIsoCorrections_Data.root");
-
+  cout<<"printing memory addresses"<<endl;
   TH1D* sumIsoCorrections = (TH1D*)sumIsoCorrectionFile->Get("sumIsoCorrections");
   for (int icent=0; icent<nCentBins; ++icent)
   {
     for (int ieta=0; ieta<nEtaBins; ++ieta)
     {
       photonEnergyCorrections[icent][ieta] = (TH1D*)energyCorrectionFile->Get(Form("photonEnergyCorr_cent%i_eta%i", icent, ieta));
+      cout<<photonEnergyCorrections[icent][ieta]<<endl;
     }
   }
 
@@ -992,7 +956,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     skimTree->GetEntry(j);
     // if(!(HBHENoiseFilterResultRun2Loose && pPAprimaryVertexFilter && pBeamScrapingFilter)) continue;
     evttree->GetEntry(j);
-    cout<<"start event: "<<j<<"/"<<endindex<<endl;
     if(weight==1) weight = mcweight;
 
     if(ismc)
@@ -1010,9 +973,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         sube[igenp] = _sube->at(igenp);
       }
     }
-    cout<<"1"<<endl;
     hlttree->GetEntry(j);
-    cout<<"hlttree"<<endl;
     if(j%1000 == 0) { cout << "Processing event: " << j << "/" << endindex << endl; }
 //! (2.1) Begin event and trigger cuts
     if(j == endindex ) { cout << "stopping: " << j << endl; break; }
@@ -1034,7 +995,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
 //! (2.2) Begin photon cuts and selection
     inggTree->GetEntry(j);
-    cout<<"ggtree"<<endl;
 		int nmcphoton = 0;
     for(int imc = 0 ; imc < _nMC ; ++imc)
 		{
@@ -1074,6 +1034,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
     int nphoton = 0;
     bool passed = true;
+
     if(maxPhoIndex>-1)
     {
       bool failedNoiseCut =  ((_phoE3x3->at(maxPhoIndex)/_phoE5x5->at(maxPhoIndex) > 2./3.-0.03 &&
@@ -1169,12 +1130,13 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         pfnIso3[0] = (*_pfnIso3)[maxPhoIndex];
         pfnIso4[0] = (*_pfnIso4)[maxPhoIndex];
         pfnIso5[0] = (*_pfnIso5)[maxPhoIndex];
-
+	cout<<"here"<<endl;
+	cout<<photonEnergyCorrections[getCentBin(hiBin)][0]<<endl;
         phoCorr[0] = photonEnergyCorrections[getCentBin(hiBin)][0]->GetBinContent(photonEnergyCorrections[getCentBin(hiBin)][0]->FindBin((*_phoEt)[maxPhoIndex]));
+	cout<<"there"<<endl;
         phoEtCorrected[0] = (*_phoEt)[maxPhoIndex]/phoCorr[0];
         pho_sumIso[0] = sumIso;
         pho_sumIsoCorrected[0] = sumIsoCorrected;
-
         nphoton = 1;
       }
     }
@@ -1183,9 +1145,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 //! End photon cuts and selection
 
 //! (2.3) Begin jet cuts and selection
-    cout<<"before_jet"<<endl;
     injetTree->GetEntry(j);
-    cout<<"jettree"<<endl;
     injetTreeFORTRKCORR->GetEntry(j);
     njet = 0;
 
@@ -1297,13 +1257,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     tracktree_->GetEntry(j);
 
     int ntracks = 0;
-    // std::cout<<nTrk_<<std::endl;
     for(int itrk = 0 ; itrk < nTrk_ ; ++itrk)
     {
-      // cout<<"itrk "<<itrk<<endl;
       // if((trkMVA_zzz[itrk]<0.5 && trkMVA_[itrk]!=-99) || (int)trkNHit_[itrk]<8 || trkPtError_[itrk]/trkPt_[itrk]>0.3 || fabs(trkDz1_[itrk])/trkDzError1_[itrk]>3 || fabs(trkDxy1_[itrk])/trkDxyError1_[itrk]>3) continue;
       // if(!highPurity_[itrk]) continue;
-      // std::cout<<"here"<<std::endl;
       if(trkPt_[itrk]<1 || trkPt_[itrk]>300 || fabs(trkEta_[itrk])>2.4 ) continue;
       if(highPurity_[itrk]!=1) continue;
       if(trkPtError_[itrk]/trkPt_[itrk]>0.1 || TMath::Abs(trkDz1_[itrk]/trkDzError1_[itrk])>3 || TMath::Abs(trkDxy1_[itrk]/trkDxyError1_[itrk])>3) continue;
@@ -1314,7 +1271,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
       float Et = (pfHcal_[itrk]+pfEcal_[itrk])/TMath::CosH(trkEta_[itrk]);
       if(!(trkPt_[itrk]<20 || (Et>0.5*trkPt_[itrk]))) continue;
-      // cout<<"itrk "<<itrk<<endl;
       if(trkPt_[itrk] > maxTrkPt) maxTrkPt = trkPt_[itrk];
       if(is_pp) trkWeight[ntracks] = getTrkWeight(trkCorr,itrk,0,trkRmin,ntracks);
       else trkWeight[ntracks] = getTrkWeight(trkCorr,itrk,hiBin,trkRmin,ntracks);
@@ -1353,7 +1309,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
     // if(false) //mix things up
     {
-      cout<<"here"<<endl;
+      cout<<"mixing binbias for event "<<j<<endl;
       int minbiasend = minbiasstart;
       mult_mix = 0;
       nmix = 0;
@@ -1362,38 +1318,48 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
       int ntracks_mix = 0;
       int njets_mix = 0;
       ngen_mix = 0;
-      // Start looping through the mixed event starting where we left off, so we don't always mix same events`
-      for(int iminbias = minbiasstart ; iminbias <= (int)vmix_index.size() ; ++ iminbias )
+      // Start looping through the mixed event starting where we left off, so we don't always mix same events
+      const int nevmix = evttree_mix->GetEntries();
+      cout<<"nevmix "<<nevmix<<endl;
+      for(int iminbias = minbiasstart ; iminbias <= nevmix ; ++ iminbias )
       {
+	skimTree_mix->GetEntry(iminbias);
+	evttree_mix->GetEntry(iminbias);
+	if(fabs(vz_mix)>15) continue;
+	skimTree_mix->GetEntry(iminbias);
+	if (!is_pp) // HI event selection
+	{
+	  if ((pcollisionEventSelection_mix < 1))  continue;
+	  if(!ismc)
+	  {
+	    if (HBHENoiseFilterResultRun2Loose_mix < 1) continue; // re-use config value...
+	  }
+	}
+	else // pp event selection
+	{
+	  if (pPAprimaryVertexFilter_mix < 1 || pBeamScrapingFilter_mix < 1)  continue;
+	}
         // this part lets us wrap around to the beginning if we reach the last event
-        if(iminbias == (int)vmix_index.size()) {
+        if(iminbias == nevmix) {
           wraparound = true;
-          iminbias = 0;
+          iminbias = -1;
+	  continue;
         }
         if(wraparound && iminbias == minbiasstart) break; //came back to start, done mixing
         nlooped++;
 //! (2.51) HiBin, vz, eventplane selection
-        // vmix_ vectors are set in 1.51
-        if(abs(hiBin - vmix_hiBin[iminbias])>0) continue;
-        if(fabs(vz - vmix_vz[iminbias])>1) continue;
-        float dphi_evplane = fabs(hiEvtPlanes[8] - vmix_hiEvtPlanes[iminbias]);
-        if(dphi_evplane > TMath::Pi()/2.0) dphi_evplane = TMath::Pi()-dphi_evplane;
+	//cout<<"after event selections, dhibin="<<abs(hiBin - hiBin_mix)<<endl;
+        if(abs(hiBin - hiBin_mix)>0) continue;
+	if(fabs(vz - vz_mix)>1) continue;
+	//cout<<"after hiBin selections, dvz="<<fabs(vz-vz_mix)<<endl; 
+	//cout<<"vz="<<vz<<endl;
+	//cout<<"vz_mix="<<vz_mix<<endl;
+        float dphi_evplane = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
+	//cout<<"after vz selections, evplane="<<acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])))<<endl;
         if(dphi_evplane > TMath::Pi()/16.0) continue;
         // now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
-        if (!is_pp) // HI event selection
-        {
-          if ((vmix_pcollisionEventSelection[iminbias] < 1))  continue;
-          if(!ismc)
-          {
-            if (vmix_HBHENoiseFilterResultRun2Loose[iminbias] < 1) continue; // re-use config value...
-          }
-        }
-        else // pp event selection
-        {
-          if (vmix_pPAprimaryVertexFilter[iminbias] < 1 || vmix_pBeamScrapingFilter[iminbias] < 1)  continue;
-        }
-        injetTreeFORTRKCORR_mix->GetEntry(vmix_index[iminbias]);
-
+        injetTreeFORTRKCORR_mix->GetEntry(iminbias);
+	//cout<<"after all selections"<<endl;
         float maxJetPt_mix = -999;
         for(int k = 0; k<nref_corr_mix; k++)
         {
@@ -1402,13 +1368,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         }
 
 //! (2.52) Jets from mixed events
-        jettree_ak3pupf->GetEntry(vmix_index[iminbias]);
+        jettree_ak3pupf->GetEntry(iminbias);
         for(int ijetmix = 0 ; ijetmix < nref_ak3pupf ; ++ijetmix) {
           if( jtpt_ak3pupf[ijetmix]<jetptmin ) continue; //jet pt Cut
           if( fabs(jteta_ak3pupf[ijetmix]) > 2) continue; //jeteta Cut
           if( acos(cos(jtphi_ak3pupf[ijetmix] - phoPhi[0])) < 7 * pi / 8 ) continue;
-          // cout<<jtpt_ak3pupf[ijetmix]<<" "<<fabs(jteta_ak3pupf[ijetmix])<<endl;
-          // if( jetID[ijet]==0 ) continue;
 
           // jet energy correction
           int centBin = 0;
@@ -1452,13 +1416,11 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           eSum_ak3pupf_out[njets_mix] = eSum_ak3pupf[ijetmix];
           njets_mix++;
         }
-	cout<<"njets_mix "<<njets_mix<<endl;
         if(ismc)
         {
           for (int igenj_mix = 0; igenj_mix < _ngen_mix; igenj_mix++) {
             if(_genpt_mix[igenj_mix] < 30) continue;
             if(fabs(_geneta_mix[igenj_mix])>1.6) continue;
-            // cout<<acos(cos(_genphi_mix[igenj_mix] - phoPhi[0]))<<endl;
             // if( acos(cos(_genphi_mix[igenj_mix] - phoPhi[0])) < 7 * pi / 8 ) continue;
 	    genpt_mix[ngen_mix] = _genpt_mix[igenj_mix];
             geneta_mix[ngen_mix] = _geneta_mix[igenj_mix];
@@ -1467,12 +1429,10 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             genev_mix[ngen_mix] = nmix;
             ngen_mix++;
           }
-          cout<<"ngen_mix "<<ngen_mix<<endl;
         }
 
 //! (2.54) Tracks from jet and cones in mixed events
-        tracktree_mix->GetEntry(vmix_index[iminbias]);
-        // cout<<j<<": "<<nTrk_mix_<<endl;
+        tracktree_mix->GetEntry(iminbias);
         for(int itrkmix = 0 ; itrkmix < nTrk_mix_ ; ++itrkmix)
         {
           if(trkPt_mix_[itrkmix]<1 || trkPt_mix_[itrkmix]>300 || fabs(trkEta_mix_[itrkmix])>2.4 ) continue;
@@ -1489,7 +1449,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
           float trkweight_mix = 0;
           if(is_pp) trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,0);
-          else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,vmix_hiBin[iminbias]);
+          else trkweight_mix = getTrkWeightMix(trkCorr,itrkmix,hiBin_mix);
           trkFromEv_mix[ntracks_mix] = nmix;   //[nTrk_mix]
           trkPt_mix[ntracks_mix] = trkPt_mix_[itrkmix];   //[nTrk_mix]
           trkEta_mix[ntracks_mix] = trkEta_mix_[itrkmix];   //[nTrk_mix]
@@ -1497,11 +1457,9 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
           trkWeight_mix[ntracks_mix] = trkweight_mix;
           ntracks_mix++;
         }
-	cout<<"ntracks_mix "<<ntracks_mix<<endl;
-        // cout<<ntracks_mix<<endl;
         if(ismc)
         {
-          genptree_mix->GetEntry(vmix_index[iminbias]);
+          genptree_mix->GetEntry(iminbias);
 //! (2.55) Gen particles from jet and cones in mixed events
           for(int igenp = 0 ; igenp < _mult_mix ; ++igenp)
           {
@@ -1517,37 +1475,22 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
             nev_mix[mult_mix] = nmix;
             mult_mix++;
           }
-	  cout<<"mult_mix "<<mult_mix<<endl;
         }
 
-
-
-        evttree_mix->GetEntry(vmix_index[iminbias]);
         dvz_mix[nmix] = fabs(vz - vz_mix);
         dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
         dhiEvtPlanes_mix[nmix] = dphi_evplane;
-        // if(atleastonetrack)
         nmix++;
-        // if(atleastonetrack) nmix++;
         minbiasend = iminbias;
         if(nmix >= nEventsToMix) break; // done mixing
       }
       minbiasstart = minbiasend;
       nTrk_mix = ntracks_mix;
       nref_ak3pupf_out = njets_mix;
-      if(nTrk_mix==0)
-      {
-        // cout<<nTrk_mix<<" "<<j<<endl;
-        // cout<<"here"<<endl;
-       // break;
-      }
     }
 //! End minbias mixing
-    // cout<<j<<" before fill"<<endl;
     if(ismc) { weightCent = fcentweight->Eval(hiBin); }
     ztree->Fill();
-    // cout<<j<<" after fill"<<endl;
-    cout<<"end event: "<<j<<"/"<<endindex<<endl;
   } //end of loop over events
 
 
