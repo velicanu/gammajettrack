@@ -848,7 +848,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   TTree *injetTreeFORTRKCORR_mix = 0;
   TTree * jettree_ak3pupf   = 0;
 
-  
   if(!minbias.empty() && minbias.compare("null")!=0 )
   {
     fminbias = TFile::Open(minbias.data());
@@ -915,7 +914,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     }
 
     const int nevmix = evttree_mix->GetEntries();
-    
+
     minbiasstart = rand() % nevmix; // here we pick a random start event to protect from condor jobs always starting at 0
     cout<<"Start event is: "<<minbiasstart<<endl;
     
@@ -1304,7 +1303,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
     if(!minbias.empty() && minbias.compare("null")!=0 ) //mix things up
     // if(false) //mix things up
     {
-      cout<<"mixing binbias for event "<<j<<endl;
       int minbiasend = minbiasstart;
       mult_mix = 0;
       nmix = 0;
@@ -1343,11 +1341,12 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         nlooped++;
 //! (2.51) HiBin, vz, eventplane selection
         if(abs(hiBin - hiBin_mix)>0) continue;
-	if(fabs(vz - vz_mix)>1) continue;
+	      if(fabs(vz - vz_mix)>1) continue;
         float dphi_evplane = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
         if(dphi_evplane > TMath::Pi()/16.0) continue;
         // now we are within 2.5% centrality, 5cm vz and pi/16 angle of the original event
         injetTreeFORTRKCORR_mix->GetEntry(iminbias);
+
         float maxJetPt_mix = -999;
         for(int k = 0; k<nref_corr_mix; k++)
         {
