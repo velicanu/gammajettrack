@@ -13,61 +13,72 @@
 
 
 /* whichsysts:
-0 : all ,   m 1-8 
+0 : all ,   m 1-8
 1 : JES ,   m 1,2
 2 : purity  m 3,4
 3 : JER     m 5
 4 : pes     m 6,7
 5 : trk     m 8
+6 : nbkg    m 9
 */
 
 int ff_systematics(const char* file_list, const char* outputfile, int whichsysts) {
     std::vector<std::string> sys_types {
         "nominal",
         "JES_up", "JES_down", "purity_up", "purity_down",
-	  "JER", "pes_up", "pes_down", "trk"
+	  "JER", "pes_up", "pes_down", "trk", "nbkg"
     };
     int n_sys_types = sys_types.size(); // default of whichsysts = 0
-        std::vector<bool> sys_control { 
-	  false, false, false, false, false, false, false, false, false
+        std::vector<bool> sys_control {
+	  false, false, false, false, false, false, false, false, false, true
     };
       if(whichsysts == 1) {     //turns off all but JES
-      sys_control[3] = true; 
-      sys_control[4] = true; 
-      sys_control[5] = true; 
-      sys_control[6] = true; 
-      sys_control[7] = true; 
-      sys_control[8] = true; 
-      } else if(whichsysts == 2) { //turns off all but purity
-      sys_control[1] = true; 
-      sys_control[2] = true; 
-      sys_control[5] = true; 
-      sys_control[6] = true; 
-      sys_control[7] = true; 
-      sys_control[8] = true; 
-      } else if(whichsysts == 3) { //turns off all but JER
-      sys_control[1] = true; 
-      sys_control[2] = true; 
-      sys_control[3] = true; 
-      sys_control[4] = true; 
-      sys_control[6] = true; 
-      sys_control[7] = true; 
-      sys_control[8] = true; 
-      } else if(whichsysts == 4) { // turns off all but PES
-      sys_control[1] = true; 
-      sys_control[2] = true; 
-      sys_control[3] = true; 
-      sys_control[4] = true; 
+      sys_control[3] = true;
+      sys_control[4] = true;
       sys_control[5] = true;
-      sys_control[8] = true; 
+      sys_control[6] = true;
+      sys_control[7] = true;
+      sys_control[8] = true;
+      } else if(whichsysts == 2) { //turns off all but purity
+      sys_control[1] = true;
+      sys_control[2] = true;
+      sys_control[5] = true;
+      sys_control[6] = true;
+      sys_control[7] = true;
+      sys_control[8] = true;
+      } else if(whichsysts == 3) { //turns off all but JER
+      sys_control[1] = true;
+      sys_control[2] = true;
+      sys_control[3] = true;
+      sys_control[4] = true;
+      sys_control[6] = true;
+      sys_control[7] = true;
+      sys_control[8] = true;
+      } else if(whichsysts == 4) { // turns off all but PES
+      sys_control[1] = true;
+      sys_control[2] = true;
+      sys_control[3] = true;
+      sys_control[4] = true;
+      sys_control[5] = true;
+      sys_control[8] = true;
       } else if(whichsysts == 5) { // turns off all but trk
-      sys_control[1] = true; 
-      sys_control[2] = true; 
-      sys_control[3] = true; 
-      sys_control[4] = true; 
-      sys_control[5] = true; 
-      sys_control[6] = true; 
-      sys_control[7] = true; 
+      sys_control[1] = true;
+      sys_control[2] = true;
+      sys_control[3] = true;
+      sys_control[4] = true;
+      sys_control[5] = true;
+      sys_control[6] = true;
+      sys_control[7] = true;
+      } else if(whichsysts == 5) { // turns off all but nbkg
+      sys_control[1] = true;
+      sys_control[2] = true;
+      sys_control[3] = true;
+      sys_control[4] = true;
+      sys_control[5] = true;
+      sys_control[6] = true;
+      sys_control[7] = true;
+      sys_control[8] = true;
+      sys_control[9] = false;
     }
 
     std::vector<std::string> sys_files;
@@ -113,7 +124,7 @@ int ff_systematics(const char* file_list, const char* outputfile, int whichsysts
 
             SysVar* sys_hists = new SysVar(hist_name, sys_types[m]);
             sys_hists->init(h1D_nominal, h1D_varied);
-            sys_hists->calc_sys(sys_control[m]); // returns 0 if true, returns syst if false 
+            sys_hists->calc_sys(sys_control[m]); // returns 0 if true, returns syst if false
 
             systematics[i].push_back(sys_hists);
         }
