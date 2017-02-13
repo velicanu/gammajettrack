@@ -27,7 +27,7 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
-int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale) {
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag = "") {
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -133,8 +133,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             l1->SetBorderSize(0);
             l1->SetFillStyle(0);
 
-            for (std::size_t m=0; m<hist_names.size()/5; ++m)
-                l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pf");
+            for (std::size_t m=0; m<1; ++m)
+                l1->AddEntry(h1[0][m], Form("%s %s",hist_names[5*m].c_str(),tag), "pf");
 
             l1->Draw();
         }
@@ -358,9 +358,10 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 
 int main(int argc, char* argv[]) {
     if (argc == 5)
-        return plot_ff(argv[1], argv[2], argv[3], atoi(argv[4]));
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]));
+    else if(argc == 6)
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5]);
     else
-        printf("./plot_ff <results file> <sys file> <plot name> <log scale>\n");
-
-    return 1;
+      printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
+      return 1;
 }
