@@ -4,6 +4,9 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+
+using namespace std;
 
 void TH1D_Max(TH1D* h1, TH1D* h2) {
     for (int i=1; i<=h1->GetNbinsX(); ++i) {
@@ -47,6 +50,10 @@ void TH1D_SSoS_Constant(TH1D* h1, float constant) {
     }
 }
 
+float meansyst(TH1D* h1) {
+    return roundf(h1->Integral() / h1->GetNbinsX() * 1000 ) / 10.0 ;
+}
+
 int add_sys(const char* sys_file, const char* outname) {
     TFile* finput = new TFile(sys_file, "read");
 
@@ -59,6 +66,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_pbpbdata_recoreco_0_20_diff_abs_pes_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_0_20_diff_abs_pes_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_0_20_diff_abs_trk",
+        "h1D_hgammaffxi_pbpbdata_recoreco_0_20_diff_abs_nbkg",
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_JES_up",
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_JES_down",
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_purity_up",
@@ -67,6 +75,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_pes_up",
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_pes_down",
         "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_trk",
+        "h1D_hgammaffxi_ppdata_recoreco_0_20_diff_abs_nbkg",
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_JES_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_JES_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_purity_up",
@@ -75,6 +84,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_pes_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_pes_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_trk",
+        "h1D_hgammaffxi_pbpbdata_recoreco_20_60_diff_abs_nbkg",
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_JES_up",
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_JES_down",
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_purity_up",
@@ -83,6 +93,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_pes_up",
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_pes_down",
         "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_trk",
+        "h1D_hgammaffxi_ppdata_recoreco_20_60_diff_abs_nbkg",
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_JES_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_JES_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_purity_up",
@@ -91,6 +102,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_pes_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_pes_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_trk",
+        "h1D_hgammaffxi_pbpbdata_recoreco_60_100_diff_abs_nbkg",
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_JES_up",
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_JES_down",
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_purity_up",
@@ -99,6 +111,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_pes_up",
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_pes_down",
         "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_trk",
+        "h1D_hgammaffxi_ppdata_recoreco_60_100_diff_abs_nbkg",
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_JES_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_JES_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_purity_up",
@@ -107,6 +120,7 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_pes_up",
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_pes_down",
         "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_trk",
+        "h1D_hgammaffxi_pbpbdata_recoreco_100_200_diff_abs_nbkg",
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_JES_up",
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_JES_down",
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_purity_up",
@@ -114,7 +128,8 @@ int add_sys(const char* sys_file, const char* outname) {
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_JER",
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_pes_up",
         "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_pes_down",
-        "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_trk"
+        "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_trk",
+        "h1D_hgammaffxi_ppdata_recoreco_100_200_diff_abs_nbkg"
     };
 
     std::vector<std::string> new_names = {
@@ -127,29 +142,42 @@ int add_sys(const char* sys_file, const char* outname) {
     TFile* fout = new TFile(outname, "recreate");
 
     TH1D* h_sum[8];
+    TH1D* h_jer_sum[8];
     TH1D* h_jes_sum[8];
     TH1D* h_purity_sum[8];
     TH1D* h_pes_sum[8];
     TH1D* h_trk_sum[8];
+    TH1D* h_nbkg_sum[8];
 
     for (int i=0; i<8; ++i) {
-        h_sum[i] = (TH1D*)finput->Get(hist_names[i*8+4].c_str())->Clone(new_names[i].c_str()); // JER
-        h_trk_sum[i] = (TH1D*)finput->Get(hist_names[i*8+7].c_str())->Clone(new_names[i].c_str()); //trk
-        h_jes_sum[i] = (TH1D*)finput->Get(hist_names[i*8].c_str())->Clone(); //JES
-        h_purity_sum[i] = (TH1D*)finput->Get(hist_names[i*8+2].c_str())->Clone(); //Purity
-        h_pes_sum[i] = (TH1D*)finput->Get(hist_names[i*8+5].c_str())->Clone(); //pes
+        h_sum[i] = (TH1D*)finput->Get(hist_names[i*9+4].c_str())->Clone(new_names[i].c_str()); // JER
+        h_jer_sum[i] = (TH1D*)h_sum[i]->Clone(Form("tmp_%s",hist_names[i*9+4].c_str()));
+        h_trk_sum[i] = (TH1D*)finput->Get(hist_names[i*9+7].c_str())->Clone(new_names[i].c_str()); //trk
+        h_nbkg_sum[i] = (TH1D*)finput->Get(hist_names[i*9+8].c_str())->Clone(new_names[i].c_str()); //nbkg
+        h_jes_sum[i] = (TH1D*)finput->Get(hist_names[i*9].c_str())->Clone(); //JES
+        h_purity_sum[i] = (TH1D*)finput->Get(hist_names[i*9+2].c_str())->Clone(); //Purity
+        h_pes_sum[i] = (TH1D*)finput->Get(hist_names[i*9+5].c_str())->Clone(); //pes
 
-        TH1D_Max(h_jes_sum[i], (TH1D*)finput->Get(hist_names[i*8+1].c_str()));
-        TH1D_Max(h_purity_sum[i], (TH1D*)finput->Get(hist_names[i*8+3].c_str()));
-        TH1D_Max(h_pes_sum[i], (TH1D*)finput->Get(hist_names[i*8+6].c_str()));
+        TH1D_Max(h_jes_sum[i], (TH1D*)finput->Get(hist_names[i*9+1].c_str()));
+        TH1D_Max(h_purity_sum[i], (TH1D*)finput->Get(hist_names[i*9+3].c_str()));
+        TH1D_Max(h_pes_sum[i], (TH1D*)finput->Get(hist_names[i*9+6].c_str()));
+
+
 
         TH1D_SqrtSumofSquares(h_sum[i], h_jes_sum[i]);
         TH1D_SqrtSumofSquares(h_sum[i], h_purity_sum[i]);
         TH1D_SqrtSumofSquares(h_sum[i], h_pes_sum[i]);
         TH1D_SqrtSumofSquares(h_sum[i], h_trk_sum[i]);
+        TH1D_SqrtSumofSquares(h_sum[i], h_nbkg_sum[i]);
 
         h_sum[i]->Write("", TObject::kOverwrite);
     }
+    cout<<"Photon Purity           &  "<<meansyst(h_purity_sum[0])<<"\\%   & "<<meansyst(h_purity_sum[1])<<"\\%       &   "<<-1<<"\\% &   "<<-1<<"\\% \\\\"<<endl;
+    cout<<"Photon Energy Scale     &  "<<meansyst(h_pes_sum[0])<<"\\%   & "<<meansyst(h_pes_sum[1])<<"\\%        &   "<<-1<<"\\%  &   "<<-1<<"\\%  \\\\"<<endl;
+    cout<<"Jet Energy Scale        &  "<<meansyst(h_jes_sum[0])<<"\\%     & "<<meansyst(h_jes_sum[1])<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%  \\\\"<<endl;
+    cout<<"Jet Energy Resolution   &  "<<meansyst(h_jer_sum[0])<<"\\%     & "<<meansyst(h_jer_sum[1])<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
+    cout<<"Tracking Correction     &  "<<meansyst(h_trk_sum[0])<<"\\%     & "<<meansyst(h_trk_sum[1])<<"\\%        &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
+
 
     fout->Close();
 
