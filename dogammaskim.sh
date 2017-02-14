@@ -73,10 +73,10 @@ wait
 # done via condor
 
 # PbPb MC
-hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
+hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v96.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root.*
 
 # pp MC
-hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root
+hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v1.root /export/d00/scratch/${USER}/ztrees/g.Pythia8_Photon*_pp502_TuneCUETP8M1-HINppWinter16DR-75X_mcRun2_asymptotic_ppAt5TeV_v3-v1_forest_v96.root
 
 
 

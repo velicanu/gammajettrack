@@ -56,6 +56,6 @@ hadd -f /export/d00/scratch/${USER}/ztrees/g.Pythia8_EmEnrDijet_Hydjet_MB-HINPbP
 
 wait
 echo
-echo PbPb mc   : /export/d00/scratch/${USER}/ztrees/g.Pythia8_EmEnrDijet_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.root
+echo PbPb mc   : /export/d00/scratch/${USER}/ztrees/g.Pythia8_EmEnrDijet_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v96.root
 echo
 echo done
