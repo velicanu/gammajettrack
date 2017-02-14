@@ -44,7 +44,7 @@
 
 // these variables are used to get tracking efficiency correction
 // they're not filled in the output tree
-const int nEventsToMix = 24;
+const int nEventsToMix = 96;
 
 Int_t           nref_corr;
 Float_t         chargedSum_corr[100];   //[nref_corr]
