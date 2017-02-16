@@ -8,6 +8,8 @@
 
 using namespace std;
 
+TH1D * h1D_nominal[8];
+
 void TH1D_Max(TH1D* h1, TH1D* h2) {
     for (int i=1; i<=h1->GetNbinsX(); ++i) {
         double sys1 = h1->GetBinContent(i);
@@ -50,11 +52,30 @@ void TH1D_SSoS_Constant(TH1D* h1, float constant) {
     }
 }
 
-float meansyst(TH1D* h1) {
-    return roundf(h1->Integral() / h1->GetNbinsX() * 1000 ) / 10.0 ;
+float meansyst(TH1D* h1, int whichhist) {
+    h1->Divide(h1D_nominal[whichhist]);
+    return roundf(h1->Integral() / (h1->GetNbinsX()) * 1000 ) / 10.0 ;
 }
 
+// float meansyst(TH1D* h1, int whichhist) {
+//     h1->Divide(h1D_nominal[whichhist]);
+//     return roundf(h1->Integral(9,10) / 2 * 1000 ) / 10.0 ;
+// }
+
 int add_sys(const char* sys_file, const char* outname) {
+
+    TFile *fnominal = new TFile("nominal_xigamma.root");
+
+    std::vector<std::string> nominal_names {
+        "hgammaffxi_pbpbdata_recoreco_0_20", "hgammaffxi_ppdata_recoreco_0_20",
+        "hgammaffxi_pbpbdata_recoreco_20_60", "hgammaffxi_ppdata_recoreco_20_60",
+        "hgammaffxi_pbpbdata_recoreco_60_100", "hgammaffxi_ppdata_recoreco_60_100",
+        "hgammaffxi_pbpbdata_recoreco_100_200", "hgammaffxi_ppdata_recoreco_100_200",
+    };
+    for (int i = 0; i < 8; i++) {
+      h1D_nominal[i] = (TH1D*) fnominal->Get(nominal_names[i].c_str());
+    }
+
     TFile* finput = new TFile(sys_file, "read");
 
     std::vector<std::string> hist_names = {
@@ -172,11 +193,11 @@ int add_sys(const char* sys_file, const char* outname) {
 
         h_sum[i]->Write("", TObject::kOverwrite);
     }
-    cout<<"Photon Purity           &  "<<meansyst(h_purity_sum[0])<<"\\%   & "<<meansyst(h_purity_sum[1])<<"\\%       &   "<<-1<<"\\% &   "<<-1<<"\\% \\\\"<<endl;
-    cout<<"Photon Energy Scale     &  "<<meansyst(h_pes_sum[0])<<"\\%   & "<<meansyst(h_pes_sum[1])<<"\\%        &   "<<-1<<"\\%  &   "<<-1<<"\\%  \\\\"<<endl;
-    cout<<"Jet Energy Scale        &  "<<meansyst(h_jes_sum[0])<<"\\%     & "<<meansyst(h_jes_sum[1])<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%  \\\\"<<endl;
-    cout<<"Jet Energy Resolution   &  "<<meansyst(h_jer_sum[0])<<"\\%     & "<<meansyst(h_jer_sum[1])<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
-    cout<<"Tracking Correction     &  "<<meansyst(h_trk_sum[0])<<"\\%     & "<<meansyst(h_trk_sum[1])<<"\\%        &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
+    cout<<"Photon Purity           &  "<<meansyst(h_purity_sum[0],0)<<"\\%   & "<<meansyst(h_purity_sum[1],1)<<"\\%       &   "<<-1<<"\\% &   "<<-1<<"\\% \\\\"<<endl;
+    cout<<"Photon Energy Scale     &  "<<meansyst(h_pes_sum[0],0)<<"\\%   & "<<meansyst(h_pes_sum[1],1)<<"\\%        &   "<<-1<<"\\%  &   "<<-1<<"\\%  \\\\"<<endl;
+    cout<<"Jet Energy Scale        &  "<<meansyst(h_jes_sum[0],0)<<"\\%     & "<<meansyst(h_jes_sum[1],1)<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%  \\\\"<<endl;
+    cout<<"Jet Energy Resolution   &  "<<meansyst(h_jer_sum[0],0)<<"\\%     & "<<meansyst(h_jer_sum[1],1)<<"\\%      &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
+    cout<<"Tracking Correction     &  "<<meansyst(h_trk_sum[0],0)<<"\\%     & "<<meansyst(h_trk_sum[1],1)<<"\\%        &   "<<-1<<"\\%    &   "<<-1<<"\\%    \\\\"<<endl;
 
 
     fout->Close();

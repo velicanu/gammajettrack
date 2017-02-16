@@ -58,9 +58,9 @@
 ./plot2ff nominal_xijet.root systtrk_xijet.root sysSummary_trk_ratio 0 trk 1
 
 ## just nbkg
-./ff_systematics.exe gammaxi0_sys.list gammaxi0_sys.root 6
-./add_sys.exe gammaxi0_sys.root gammaxi0_sys_plot.root
-./plot_ff nominal.root gammaxi0_sys_plot.root sysSummary_result_nbkg 0 nbkg
-./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_nbkg nbkg
-./plot2ff nominal_xijet.root systnbkg_xijet.root sysSummary_nbkg 0 nbkg 0
-./plot2ff nominal_xijet.root systnbkg_xijet.root sysSummary_nbkg_ratio 0 nbkg 1
+# ./ff_systematics.exe gammaxi0_sys.list gammaxi0_sys.root 6
+# ./add_sys.exe gammaxi0_sys.root gammaxi0_sys_plot.root
+# ./plot_ff nominal.root gammaxi0_sys_plot.root sysSummary_result_nbkg 0 nbkg
+# ./plot_ff_ratio ratio_nominal.root gammaxi0_sys_plot.root sysSummary_result_ratio_nbkg nbkg
+# ./plot2ff nominal_xijet.root systnbkg_xijet.root sysSummary_nbkg 0 nbkg 0
+# ./plot2ff nominal_xijet.root systnbkg_xijet.root sysSummary_nbkg_ratio 0 nbkg 1
