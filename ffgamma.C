@@ -288,7 +288,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
-  TH1D * hgenjetpt_mix = new TH1D(Form("hgenjetpt_mix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet_mix p_{T};"),20,0,500);
+  // TH1D * hgenjetpt_mix = new TH1D(Form("hgenjetpt_mix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet_mix p_{T};"),20,0,500);
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
@@ -301,10 +301,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * hgammaffxijetmixuesideband = new TH1D(Form("hgammaffxijetmixuesideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sideband sub mix jet ff (2.1)
   TH1D * hgammaffxiuemix = new TH1D(Form("hgammaffxiuemix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sub mix jet ff (3.0)
   TH1D * hgammaffxiuemixsideband = new TH1D(Form("hgammaffxiuemixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sideband sub mix jet ff (3.1)
-  TH1D * hgammaffxiuesiggen = new TH1D(Form("hgammaffxiuesiggen_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // Raw FF after cuts (1.0)
-  TH1D * hgammaffxiuemixgen = new TH1D(Form("hgammaffxiuemixgen_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // Raw FF after cuts (1.0)
-  TH1D * hnjetperevt = new TH1D(Form("hnjetperevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
-  TH1D * hnjetpermixevt = new TH1D(Form("hnjetpermixevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per mixed event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
+  // TH1D * hgammaffxiuesiggen = new TH1D(Form("hgammaffxiuesiggen_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // Raw FF after cuts (1.0)
+  // TH1D * hgammaffxiuemixgen = new TH1D(Form("hgammaffxiuemixgen_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // Raw FF after cuts (1.0)
+  // TH1D * hnjetperevt = new TH1D(Form("hnjetperevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
+  // TH1D * hnjetpermixevt = new TH1D(Form("hnjetpermixevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per mixed event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
   TH1D * hnmixsignal = new TH1D(Form("hnmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * xjgsignal = new TH1D(Form("xjgsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
@@ -322,7 +322,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   int nij, nij_mix, nip, nip_mix;
   Int_t * j_ev_mix;
   Int_t * p_ev_mix;
-  
+
   Float_t * j_pt;
   Float_t * p_pt;
   Float_t * p_pt_mix;
@@ -344,6 +344,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     if (ientry < 0) break;
 
     nb = fChain->GetEntry(jentry);   nbytes += nb;
+    float_to_int(trkFromEv_mix,trkFromEv_mix_int,nTrk_mix);
 //! (2.1) Event selections
     if(!isPP)
     {
@@ -405,7 +406,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       p_pt_mix = trkPt_mix;
       p_eta_mix = trkEta_mix;
       p_phi_mix = trkPhi_mix;
-      p_ev_mix = trkFromEv_mix;
+      p_ev_mix = trkFromEv_mix_int;
     }
     else if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
       nip = mult;
@@ -450,6 +451,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt);
+        hgenjetpt->Fill(tmpjetpt);
         njets_perevent++;
         xjgsignal->Fill(tmpjetpt/phoEtCorrected[0]);
       }
@@ -515,7 +517,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (2.4) Mix jet loop
     float nmixedjetevents = (nmix+1)/3;
     // nmixedjetevents = 1;
-    for (int ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
+    for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       if( j_ev_mix[ij_mix]%3!= 1) continue;
       if( j_pt_mix[ij_mix]<jetptcut ) continue; //jet pt Cut
       if( fabs(j_eta_mix[ij_mix]) > 1.6) continue; //jeteta_mix Cut
