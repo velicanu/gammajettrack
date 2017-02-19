@@ -46,6 +46,7 @@ class ztree {
    Int_t           dhiBin_mix[96];   //[nmix]
    Float_t         dhiEvtPlanes_mix[96];   //[nmix]
    Int_t           nTrk_mix;
+   Int_t           trkFromEv_mix_int[120000];   //[nTrk_mix]
    Float_t         trkFromEv_mix[120000];   //[nTrk_mix]
    Float_t         trkPt_mix[120000];   //[nTrk_mix]
    Float_t         trkPhi_mix[120000];   //[nTrk_mix]
@@ -451,6 +452,13 @@ ztree::ztree(std::string thisfilename) : fChain(0)
   TFile *f = TFile::Open(thisfilename.data());
   TTree * tree = (TTree*) f->Get("ztree");
   Init(tree);
+}
+
+void float_to_int(Float_t * p1 , Int_t * p2 , int count)
+{
+  for (int i = 0; i < count; i++) {
+    p2[i] = int(p1[i]);
+  }
 }
 
 ztree::~ztree()
