@@ -427,6 +427,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
       float tmpjetphi = j_phi[ij];
+      if( gen.compare("gengen")==0  || gen.compare("genreco")==0) {
+        tmpjetpt *= smeargenpt(isPP,hiBin);
+        tmpjeteta *= smeargeneta(isPP,hiBin);
+        tmpjetphi *= smeargenphi(isPP,hiBin);
+      }
+
 //! apply smearing if pp
       if(isPP)
       {
@@ -447,7 +453,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta Cut
       if( acos(cos(tmpjetphi - phoPhi[0])) < 7 * pi / 8 ) continue;
-
+      cout<<jentry<<" "<<tmpjetpt<<" "<<tmpjeteta<<" "<<tmpjetphi<<endl;
+      exit(1);
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt);
