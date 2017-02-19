@@ -318,23 +318,23 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * hcent = new TH1D(Form("hcent_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";cent;"),200,0,200); // vz weighting check
 
   // iterators
-  int ij, ij_mix, ip, ip_mix;
-  int nij, nij_mix, nip, nip_mix;
-  Int_t * j_ev_mix;
-  Int_t * p_ev_mix;
+  int ij=-1, ij_mix=-1, ip=-1, ip_mix=-1;
+  int nij=-1, nij_mix=-1, nip=-1, nip_mix=-1;
+  Int_t * j_ev_mix=0;
+  Int_t * p_ev_mix=0;
 
-  Float_t * j_pt;
-  Float_t * p_pt;
-  Float_t * p_pt_mix;
-  Float_t * j_pt_mix;
-  Float_t * j_eta;
-  Float_t * j_eta_mix;
-  Float_t * p_eta;
-  Float_t * p_eta_mix;
-  Float_t * j_phi;
-  Float_t * j_phi_mix;
-  Float_t * p_phi;
-  Float_t * p_phi_mix;
+  Float_t * j_pt=0;
+  Float_t * p_pt=0;
+  Float_t * p_pt_mix=0;
+  Float_t * j_pt_mix=0;
+  Float_t * j_eta=0;
+  Float_t * j_eta_mix=0;
+  Float_t * p_eta=0;
+  Float_t * p_eta_mix=0;
+  Float_t * j_phi=0;
+  Float_t * j_phi_mix=0;
+  Float_t * p_phi=0;
+  Float_t * p_phi_mix=0;
 
 //! (2) Loop
   Long64_t nbytes = 0, nb = 0;
