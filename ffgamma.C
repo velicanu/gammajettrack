@@ -422,7 +422,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
-      if( gen.compare("gengen")==0 && gensubid[ij]!=0 ) continue;
+      if( gen.compare("gengen")==0 ) continue;
       float tmpjetpt = j_pt[ij];
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
