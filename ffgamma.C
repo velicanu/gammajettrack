@@ -265,7 +265,7 @@ float ztree::getSmearedPhi(int jetindex,int centindex)
 }
 
 float getTrkWeight(int trkindex, float * trkweight , string gen) {
-  if(gen.compare("gengen")==0 || gen.compare("recogen")==0) return 1;
+  if(gen.compare("gengen")==0 || gen.compare("gengen0")==0 || gen.compare("recogen")==0) return 1;
   return trkweight[trkindex];
 }
 
@@ -386,7 +386,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       j_phi_mix = jetphi_mix;
       j_ev_mix = nmixEv_mix;
     }
-    else if(gen.compare("genreco")==0 || gen.compare("gengen")==0) {
+    else if(gen.compare("genreco")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
       nij = ngen;
       j_pt = genpt;
       j_eta = geneta;
@@ -408,7 +408,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       p_phi_mix = trkPhi_mix;
       p_ev_mix = trkFromEv_mix_int;
     }
-    else if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
+    else if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
       nip = mult;
       p_pt = pt;
       p_eta = eta;
@@ -422,11 +422,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
+      if( gen.compare("gengen0")==0 && gensubid[ij]!=0 ) continue;
       float tmpjetpt = j_pt[ij];
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
       float tmpjetphi = j_phi[ij];
-      if( gen.compare("gengen")==0  || gen.compare("genreco")==0) {
+      if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0) {
         tmpjetpt *= smeargenpt(isPP,hiBin);
         tmpjeteta *= smeargeneta(isPP,hiBin);
         tmpjetphi *= smeargenphi(isPP,hiBin);
@@ -473,12 +474,12 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if(gen.compare("recogen")==0) {}
       for(ip = 0 ; ip < nip ; ++ip)
       {
-        if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
+        if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
           if(chg[ip]==0) continue;
         }
-        // if(gen.compare("gengen")==0) {
-        //   if(sube[ip]!=0) continue;
-        // }
+        if(gen.compare("gengen0")==0) {
+          if(sube[ip]!=0) continue;
+        }
 
         if(p_pt[ip]<trkptmin) continue;
         float dphi = acos( cos(tmpjetphi - p_phi[ip]));
@@ -502,7 +503,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if(p_pt_mix[ip_mix]<trkptmin) continue;
         if((p_ev_mix[ip_mix])%3!=0) continue;
         if(((int)p_ev_mix[ip_mix])%3!=0) continue;
-        if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
+        if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
           if(chg_mix[ip_mix]==0) continue;
         }
         float dphi = acos( cos(tmpjetphi - p_phi_mix[ip_mix]));
@@ -533,7 +534,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       float tmpjetpt = j_pt_mix[ij_mix];
       float tmpjeteta = j_eta_mix[ij_mix];
       float tmpjetphi = j_phi_mix[ij_mix];
-      if( gen.compare("gengen")==0  || gen.compare("genreco")==0) {
+      if( gen.compare("gengen")==0  || gen.compare("genreco")==0  || gen.compare("gengen0")==0) {
         tmpjetpt *= smeargenpt(isPP,hiBin);
         tmpjeteta *= smeargeneta(isPP,hiBin);
         tmpjetphi *= smeargenphi(isPP,hiBin);
@@ -559,7 +560,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         // jetmix
         for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
         { // mix reco jet mix reco track
-          if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
+          if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
             if(chg_mix[ip_mix]==0) continue;
           }
           if(p_pt_mix[ip_mix]<trkptmin) continue;
@@ -587,7 +588,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         // jetmixue
         for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
         { // mix reco jet mix reco track
-          if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
+          if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
             if(chg_mix[ip_mix]==0) continue;
           }
           if(p_pt_mix[ip_mix]<trkptmin) continue;
