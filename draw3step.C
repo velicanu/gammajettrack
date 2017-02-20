@@ -43,7 +43,20 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   TH1D * hjetptjetmixsideband_pbpbmc_recoreco[ncentbins];
 
   TH1D * rawff_pbpbmc_gengen[ncentbins];
-  TH1D * hgenjetpt_pbpbmc_gengen[ncentbins];
+  TH1D * rawffue_pbpbmc_gengen[ncentbins];
+  TH1D * rawffjetmix_pbpbmc_gengen[ncentbins];
+  TH1D * rawffjetmixue_pbpbmc_gengen[ncentbins];
+  TH1D * hjetpt_pbpbmc_gengen[ncentbins];
+  TH1D * hjetptjetmix_pbpbmc_gengen[ncentbins];
+
+  TH1D * rawffsideband_pbpbmc_gengen[ncentbins];
+  TH1D * rawffuesideband_pbpbmc_gengen[ncentbins];
+  TH1D * rawffjetmixsideband_pbpbmc_gengen[ncentbins];
+  TH1D * rawffjetmixuesideband_pbpbmc_gengen[ncentbins];
+  TH1D * hjetptsideband_pbpbmc_gengen[ncentbins];
+  TH1D * hjetptjetmixsideband_pbpbmc_gengen[ncentbins];
+
+
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
 
@@ -117,13 +130,63 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawff_pbpbmc_recoreco[icent]->Add(rawffsideband_pbpbmc_recoreco[icent]);
 
 
-
     rawff_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxi_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     rawff_pbpbmc_gengen[icent]->Sumw2();
-    hgenjetpt_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgenjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
-    hgenjetpt_pbpbmc_gengen[icent]->Sumw2();
-    float ngenjets = hgenjetpt_pbpbmc_gengen[icent]->Integral();
-    rawff_pbpbmc_gengen[icent]->Scale(1/ngenjets);
+    rawffue_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemix_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffue_pbpbmc_gengen[icent]->Sumw2();
+    rawffjetmix_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmix_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmix_pbpbmc_gengen[icent]->Sumw2();
+    rawffjetmixue_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmixue_pbpbmc_gengen[icent]->Sumw2();
+    rawffue_pbpbmc_gengen[icent]->Scale(-1);
+    rawffjetmixue_pbpbmc_gengen[icent]->Scale(-1);
+    rawff_pbpbmc_gengen[icent]->Add(rawffue_pbpbmc_gengen[icent]);
+    rawffjetmix_pbpbmc_gengen[icent]->Add(rawffjetmixue_pbpbmc_gengen[icent]);
+    rawffjetmix_pbpbmc_gengen[icent]->Scale(-1);
+    rawff_pbpbmc_gengen[icent]->Add(rawffjetmix_pbpbmc_gengen[icent]);
+
+    hjetpt_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hjetpt_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptjetmix_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hjetptjetmix_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+
+     nrawjets = hjetpt_pbpbmc_gengen[icent]->Integral();
+     nmixjets = hjetptjetmix_pbpbmc_gengen[icent]->Integral();
+
+
+    rawff_pbpbmc_gengen[icent]->Scale(1/(nrawjets-nmixjets));
+
+
+    rawffsideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxisideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffsideband_pbpbmc_gengen[icent]->Sumw2();
+    rawffuesideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxiuemixsideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffuesideband_pbpbmc_gengen[icent]->Sumw2();
+    rawffjetmixsideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixsideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmixsideband_pbpbmc_gengen[icent]->Sumw2();
+    rawffjetmixuesideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixuesideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    rawffjetmixuesideband_pbpbmc_gengen[icent]->Sumw2();
+    rawffuesideband_pbpbmc_gengen[icent]->Scale(-1);
+    rawffjetmixuesideband_pbpbmc_gengen[icent]->Scale(-1);
+    rawffsideband_pbpbmc_gengen[icent]->Add(rawffuesideband_pbpbmc_gengen[icent]);
+    rawffjetmixsideband_pbpbmc_gengen[icent]->Add(rawffjetmixuesideband_pbpbmc_gengen[icent]);
+    rawffjetmixsideband_pbpbmc_gengen[icent]->Scale(-1);
+    rawffsideband_pbpbmc_gengen[icent]->Add(rawffjetmixsideband_pbpbmc_gengen[icent]);
+
+    hjetptsideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hjetptsideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+    hjetptjetmixsideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hjetptjetmixsideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
+
+     nrawjetssideband = hjetptsideband_pbpbmc_gengen[icent]->Integral();
+     nmixjetssideband = hjetptjetmixsideband_pbpbmc_gengen[icent]->Integral();
+
+
+    rawffsideband_pbpbmc_gengen[icent]->Scale(1/(nrawjetssideband-nmixjetssideband));
+    rawffsideband_pbpbmc_gengen[icent]->SetMarkerColor(kGreen);
+    // rawffsideband_pbpbmc_gengen[icent]->Draw("same");
+
+     purity   = getpurity(phoetmin,centmins[icent],false);
+     pppurity = getpurity(phoetmin,centmins[icent],true);
+    rawff_pbpbmc_gengen[icent]->Scale(1.0/purity);
+    rawffsideband_pbpbmc_gengen[icent]->Scale(-1.0*(1.0-purity)/purity);
+    rawff_pbpbmc_gengen[icent]->Add(rawffsideband_pbpbmc_gengen[icent]);
+
 
     if(do_divide==0) {
       rawff_pbpbmc_recoreco[icent]->Draw("same");

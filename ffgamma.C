@@ -422,7 +422,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
-      if( gen.compare("gengen")==0 ) continue;
       float tmpjetpt = j_pt[ij];
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
@@ -477,9 +476,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0) {
           if(chg[ip]==0) continue;
         }
-        if(gen.compare("gengen")==0) {
-          if(sube[ip]!=0) continue;
-        }
+        // if(gen.compare("gengen")==0) {
+        //   if(sube[ip]!=0) continue;
+        // }
 
         if(p_pt[ip]<trkptmin) continue;
         float dphi = acos( cos(tmpjetphi - p_phi[ip]));
