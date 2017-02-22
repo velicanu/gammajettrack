@@ -346,6 +346,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     if (ientry < 0) break;
 
     nb = fChain->GetEntry(jentry);   nbytes += nb;
+    if(hiBin>20) continue;
     float_to_int(trkFromEv_mix,trkFromEv_mix_int,nTrk_mix);
 //! (2.1) Event selections
     if(!isPP)
@@ -479,9 +480,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
           if(chg[ip]==0) continue;
         }
-        if(gen.compare("gengen0")==0) {
-          if(sube[ip]!=0) continue;
-        }
+        // if(gen.compare("gengen0")==0) {
+        //   if(sube[ip]!=0) continue;
+        // }
+        if(sube[ip]==0) continue;
 
         if(p_pt[ip]<trkptmin) continue;
         float dphi = acos( cos(tmpjetphi - p_phi[ip]));
@@ -495,6 +497,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
+          if(xi>4.5 || xi < 4) continue;
           if(signal) { hgammaffxi->Fill(p_pt[ip],weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(p_pt[ip],weight*getTrkWeight(ip,trkWeight,gen)); }
         }
@@ -519,6 +522,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
+          if(xi>4.5 || xi < 4) continue;
           if(signal) {
             hgammaffxiuemix->Fill(p_pt_mix[ip_mix],weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
@@ -576,6 +580,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
+            if(xi>4.5 || xi < 4) continue;
 //! 1-2: rjet_mix rtrk_mix
             if(signal) {
               hgammaffxijetmix->Fill(p_pt_mix[ip_mix],weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
@@ -604,6 +609,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
             float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
             if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected[0];
             float xi = log(1.0/z);
+            if(xi>4.5 || xi < 4) continue;
 //! 1-4: rjet_mix rtrk_mix
             if(signal) {
               hgammaffxijetmixue->Fill(p_pt_mix[ip_mix],weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
