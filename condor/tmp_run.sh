@@ -5,15 +5,6 @@ whichmbfile=$(($whichmbfile+1))
 tar -xzvf $4
 mbfile=`head -n${whichmbfile} minbiasmixing.txt | tail -n1`
 
-echo waiting for queue to clear up
-while [ 4000 -lt `ls /mnt/hadoop/cms/store/user/velicanu/locks/ | wc -l` ]
-do
-  # will stay here until total job queue is less than the threshold
-  sleep 10
-done
-echo done waiting starting job
-
-echo 1 > /mnt/hadoop/cms/store/user/velicanu/locks/${1}.txt
 
 echo ./$5 `head -n${nline} $2 | tail -n1` ${nline}.root ${arglist} 1 ${mbfile}
 ./$5 `head -n${nline} $2 | tail -n1` ${nline}.root ${arglist} 1 ${mbfile}
@@ -26,4 +17,3 @@ else
 fi
 ls | grep -v .out | grep -v .err | grep -v .log | grep -v _condor_stdout | grep -v _condor_stderr | xargs rm -rf
 
-rm /mnt/hadoop/cms/store/user/velicanu/locks/${1}.txt
