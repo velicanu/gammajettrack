@@ -8,10 +8,14 @@ g++ gammajetSkim.C $(root-config --cflags --libs)  -Werror -Wall -O2 -o gammajet
 g++ ffgamma.C $(root-config --cflags --libs)  -Werror -Wall -O2 -o ffgamma.exe
 ```
 ## running skim
-The skim code can be run with several parameters listed below, and as an example.
+
+How to get this to run out of the box:
 ```bash
-# /gammajetSkim.exe <inputfile> <outfile> [jetname] [is_pp] [mcweight] [startindex] [endindex] /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root 147000 147010
-/gammajetSkim.exe /mnt/hadoop/cms/store/user/velicanu/Merged/Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1/0.root /export/d00/scratch/dav2105/ztrees/g.Pythia8_Photon120_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1.test akPu3PFJetAnalyzer 0 0.0434138 /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root 147000 147010
+git clone git@github.com:velicanu/gammajettrack.git
+cd gammajettrack/
+tar -xvf condor/residuals.tgz
+g++ gammajetSkim.C $(root-config --cflags --libs)  -Werror -Wall -O2 -o gammajetSkim.exe
+./gammajetSkim.exe /mnt/hadoop/cms/store/user/richard/2015-Data-promptRECO-photonSkims/HIPhoton40AndZ/PbPb-photonHLTFilter-v3/160202_145715/0000/HiForestAOD_5.root test2.root akPu3PFJetAnalyzer 0 1
 ```
 
 ## running ff analysis
