@@ -428,9 +428,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       float tmpjeteta = j_eta[ij];
       float tmpjetphi = j_phi[ij];
       if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0) {
-        tmpjetpt *= smeargenpt(isPP,hiBin);
-        tmpjeteta *= smeargeneta(isPP,hiBin);
-        tmpjetphi *= smeargenphi(isPP,hiBin);
+        // tmpjetpt *= smeargenpt(isPP,hiBin);
+        // tmpjeteta *= smeargeneta(isPP,hiBin);
+        // tmpjetphi *= smeargenphi(isPP,hiBin);
       }
 
 //! apply smearing if pp
@@ -535,9 +535,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       float tmpjeteta = j_eta_mix[ij_mix];
       float tmpjetphi = j_phi_mix[ij_mix];
       if( gen.compare("gengen")==0  || gen.compare("genreco")==0  || gen.compare("gengen0")==0) {
-        tmpjetpt *= smeargenpt(isPP,hiBin);
-        tmpjeteta *= smeargeneta(isPP,hiBin);
-        tmpjetphi *= smeargenphi(isPP,hiBin);
+        // tmpjetpt *= smeargenpt(isPP,hiBin);
+        // tmpjeteta *= smeargeneta(isPP,hiBin);
+        // tmpjetphi *= smeargenphi(isPP,hiBin);
       }
       if( j_ev_mix[ij_mix]%3!= 1) continue;
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
