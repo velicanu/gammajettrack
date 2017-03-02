@@ -150,8 +150,8 @@ double TrkCorr::getTrkCorr(float pt, float eta, float phi, float hiBin, float rm
     }
     if(s->stepOrder.at(j)==5)
     {
-      netEff *= eff[coarseBin][th1indx]->GetBinContent(eff[coarseBin][th1indx]->FindBin(rmin));
-      netFake *= fake[coarseBin][th1indx]->GetBinContent(fake[coarseBin][th1indx]->FindBin(rmin));
+      netEff *= 1;
+      netFake *= 1;
     }
     if(s->stepOrder.at(j)==7)
     {
