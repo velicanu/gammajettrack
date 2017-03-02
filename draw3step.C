@@ -156,9 +156,9 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     {
       if(do_divide==0) {
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],"genreco bkg-sub","p");
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gengen0[icent],"genreco sube==0","l");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gengen0[icent],"gengen0 sube==0","l");
       } else {
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],"genreco nkg-sub/genreco sube==0","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_genreco[icent],"genreco nkg-sub/gengen0 sube==0","p");
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gengen0[icent],"","");
       }
       // leg_ff_pbpbsub[icent]->AddEntry(rawffjetmix_pbpbmc_genreco[icent],"Jet Mix FF","p");
