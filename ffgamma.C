@@ -273,11 +273,11 @@ float getTrkWeight(int trkindex, float * trkweight , string gen) {
 void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys)
 {
   cout<<checkjetid<<endl; // doesn't do anything
-  bool ismc;
-  TFile * fvzweight = TFile::Open("fvzweight.root");
-  TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
-  TFile * fcentweight = TFile::Open("fcentweight.root");
-  TH1D * hcentweight = (TH1D*) fcentweight->Get(Form("hcentdata_%d_%d",centmin,centmax));
+  //bool ismc;
+  //TFile * fvzweight = TFile::Open("fvzweight.root");
+  //TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
+  //TFile * fcentweight = TFile::Open("fcentweight.root");
+  //TH1D * hcentweight = (TH1D*) fcentweight->Get(Form("hcentdata_%d_%d",centmin,centmax));
 
   string tag = outfname;
   string s_alpha = gen;
@@ -363,10 +363,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       phoetsideband->Fill(phoEtCorrected[0]);
     }
 
-    ismc = (weight!=0);
+    //ismc = (weight!=0);
     weight=1;
-    if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    //if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    //if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
 
     hvz->Fill(vz,weight);
