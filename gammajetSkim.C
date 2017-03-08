@@ -1191,7 +1191,6 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         gjetpt[njet] = refpt[ij];
         gjeteta[njet] = refeta[ij];
         gjetphi[njet] = refphi[ij];
-	cout<<"flavor: "<<refparton_flavor[ij]<<endl;
         gjetflavor[njet] = refparton_flavor[ij];
         jetID[njet] = goodJet(ij);
         subid[njet] = _subid[ij];
