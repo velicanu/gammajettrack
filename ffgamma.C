@@ -452,17 +452,17 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
 //! jet selections
       bool recoHasGen = (gjetpt[ij]>30 && fabs(gjeteta[ij])<1.6 && acos(cos(gjetphi[ij] - phoPhi[0])) > 7 * pi / 8 ); //true if this recojet has a genjet passing selections
-      bool genHasReco = false; //true if this genjet has a recojet
+      // bool genHasReco = false; //true if this genjet has a recojet
       
-      for(int ijtmp = 0 ; ijtmp < njet ; ijtmp++) {
-      	if(fabs(genpt[ij]-gjetpt[ijtmp]) < 0.0001) {
-      	  if(jetpt[ijtmp]>30 && fabs(jeteta[ijtmp])<1.6 && acos(cos(jetphi[ij] - phoPhi[0])) > 7 * pi / 8 ) {
-      	    genHasReco = true;
-      	    break;	    
-      	  }
-      	}
-      }      
-      if(!genHasReco) continue;
+      // for(int ijtmp = 0 ; ijtmp < njet ; ijtmp++) {
+      // 	if(fabs(genpt[ij]-gjetpt[ijtmp]) < 0.0001) {
+      // 	  if(jetpt[ijtmp]>30 && fabs(jeteta[ijtmp])<1.6 && acos(cos(jetphi[ij] - phoPhi[0])) > 7 * pi / 8 ) {
+      // 	    genHasReco = true;
+      // 	    break;	    
+      // 	  }
+      // 	}
+      // }      
+      if(!recoHasGen) continue;
 
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta Cut
