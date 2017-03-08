@@ -27,7 +27,7 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
-int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag = "") {
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag = "", int gammaxi=-1) {
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -79,7 +79,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             set_axis_style(h1[i][k], i, 0);
             if (draw_log_scale)
                 h1[i][k]->SetAxisRange(0.001, 10, "Y");
-            h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
+            if(gammaxi==1)  h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
+            else            h1[i][k]->SetYTitle("dN/d#xi_{jet}");
         }
 
         TBox* sys_box_pp = new TBox();
@@ -359,8 +360,8 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 int main(int argc, char* argv[]) {
     if (argc == 5)
       return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]));
-    else if(argc == 6)
-      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5]);
+    else if(argc == 7)
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5], std::atoi(argv[6]));
     else
       printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
       return 1;
