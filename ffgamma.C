@@ -288,6 +288,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
+  TH2D * hjetptvsz = new TH2D(Form("hjetptvsz_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";max z in cone;reco jetpt/gjetpt"),40,0,2,40,0,2);
   // TH1D * hgenjetpt_mix = new TH1D(Form("hgenjetpt_mix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet_mix p_{T};"),20,0,500);
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
@@ -450,6 +451,19 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         tmpjetpt *= smearFactor;
       }
 //! jet selections
+      bool recoHasGen = (gjetpt[ij]>30 && fabs(gjeteta[ij])<1.6 && acos(cos(gjetphi[ij] - phoPhi[0])) > 7 * pi / 8 ); //true if this recojet has a genjet passing selections
+      bool genHasReco = false; //true if this genjet has a recojet
+      
+      for(int ijtmp = 0 ; ijtmp < njet ; ijtmp++) {
+      	if(fabs(genpt[ij]-gjetpt[ijtmp]) < 0.0001) {
+      	  if(jetpt[ijtmp]>30 && fabs(jeteta[ijtmp])<1.6 && acos(cos(jetphi[ij] - phoPhi[0])) > 7 * pi / 8 ) {
+      	    genHasReco = true;
+      	    break;	    
+      	  }
+      	}
+      }      
+      if(!genHasReco) continue;
+
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta Cut
       if( acos(cos(tmpjetphi - phoPhi[0])) < 7 * pi / 8 ) continue;
@@ -472,6 +486,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
 
       if(gen.compare("recogen")==0) {}
+      float maxz = -1;
+      
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -492,11 +508,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float angle = vjet.Angle(vtrack.Vect());
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
+	  if(z>maxz) maxz=z;
           float xi = log(1.0/z);
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
       }
+      hjetptvsz->Fill(maxz,tmpjetpt/gjetpt[ij]);
       float nmixedUEevents = (nmix+2)/3;
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       {
