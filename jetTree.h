@@ -4,6 +4,7 @@
    Float_t         * rawpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jtpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * refpt = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
+   Int_t           * refparton_flavor = (Int_t*) malloc(sizeof(Int_t)*300);   //[nref]
    Float_t         * jteta = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * refeta = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
    Float_t         * jty = (Float_t*) malloc(sizeof(Float_t)*300);   //[nref]
@@ -119,6 +120,7 @@ void initjetTree(TTree *tree) {
    tree->SetBranchAddress("rawpt", rawpt);
    tree->SetBranchAddress("jtpt", jtpt);
    tree->SetBranchAddress("refpt", refpt);
+   tree->SetBranchAddress("refparton_flavor", refparton_flavor);
    tree->SetBranchAddress("jteta", jteta);
    tree->SetBranchAddress("refeta", refeta);
    tree->SetBranchAddress("jty", jty);

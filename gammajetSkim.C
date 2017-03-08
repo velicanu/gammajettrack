@@ -304,6 +304,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   float jetptCorr[200];
   float jetpt[200], jeteta[200], jetphi[200];
   float gjetpt[200], gjeteta[200], gjetphi[200];
+  int gjetflavor[200];
   float chargedSum[200], neutralSum[200], eSum[200];
   float jetptsigma0020[200], jetphisigma0020[200];
   float jetptsigma2060[200], jetphisigma2060[200];
@@ -581,6 +582,7 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
   ztree->Branch("gjetpt",	&gjetpt,	"gjetpt[njet]/F");
   ztree->Branch("gjeteta",	&gjeteta,	"gjeteta[njet]/F");
   ztree->Branch("gjetphi",	&gjetphi,	"gjetphi[njet]/F");
+  ztree->Branch("gjetflavor",	&gjetflavor,	"gjetflavor[njet]/I");
   ztree->Branch("jetID",	&jetID,	"jetID[njet]/I");
   ztree->Branch("subid",	&subid,	"subid[njet]/I");
   ztree->Branch("chargedSum",	&chargedSum,	"chargedSum[njet]/F");
@@ -1189,6 +1191,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
         gjetpt[njet] = refpt[ij];
         gjeteta[njet] = refeta[ij];
         gjetphi[njet] = refphi[ij];
+	cout<<"flavor: "<<refparton_flavor[ij]<<endl;
+        gjetflavor[njet] = refparton_flavor[ij];
         jetID[njet] = goodJet(ij);
         subid[njet] = _subid[ij];
         chargedSum[njet] = _chargedSum[ij];
