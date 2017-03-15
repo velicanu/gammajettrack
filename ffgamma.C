@@ -449,6 +449,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         smearFactor = randSmearing.Gaus(1, SF* initialResolution * sqrt(SF*SF - 1));
         tmpjetpt *= smearFactor;
       }
+      bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
+      if (dogensmearing) {
+        int resolutionBin = getResolutionBin(centmin);
+        float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
+        smearFactor = randSmearing.Gaus(1, initialResolution);
+        tmpjetpt *= smearFactor;
+      }
 //! jet selections
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta Cut
