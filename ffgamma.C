@@ -8,6 +8,8 @@
 #include "ggTree.h"
 #include <algorithm>
 #include <typeinfo>
+#include <iostream>
+#include <fstream>
 
 /************************ code outline ********************************
 (1) Setup                                                             *
@@ -285,6 +287,9 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
 
+  ofstream myfile;
+  myfile.open (Form("%s_%s_%s_%d_%d.txt",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)));
+
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
@@ -501,7 +506,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
-          if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
+          if(xi<2) myfile<<run<<" "<<lumi<<" "<<evt<<" "<<nTrk<<endl;
+	  if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
       }
@@ -633,6 +639,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   }
   fout->Write();
   fout->Close();
+  myfile.close();
 }
 
 int main(int argc, char *argv[])
