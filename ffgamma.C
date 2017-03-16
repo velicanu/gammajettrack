@@ -506,7 +506,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
-          if(xi<2) myfile<<run<<" "<<lumi<<" "<<evt<<" "<<nTrk<<endl;
+          if(xi<1) myfile<<run<<" "<<lumi<<" "<<evt<<" "<<nTrk<<endl;
 	  if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
