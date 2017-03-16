@@ -24,11 +24,11 @@ class ztree {
 
    // Declaration of leaf types
    Int_t           ngen_mix;
-   Float_t         genpt_mix[8];   //[ngen_mix]
-   Float_t         geneta_mix[8];   //[ngen_mix]
-   Float_t         genphi_mix[8];   //[ngen_mix]
-   Int_t           gensubid_mix[8];   //[ngen_mix]
-   Int_t           genev_mix[8];   //[ngen_mix]
+   Float_t         genpt_mix[201];   //[ngen_mix]
+   Float_t         geneta_mix[201];   //[ngen_mix]
+   Float_t         genphi_mix[201];   //[ngen_mix]
+   Int_t           gensubid_mix[201];   //[ngen_mix]
+   Int_t           genev_mix[201];   //[ngen_mix]
 
 
    Int_t           isPP;
@@ -42,15 +42,16 @@ class ztree {
    Float_t         HBHENoiseFilterResultRun2Loose;
    Int_t           nlooped;
    Int_t           nmix;
-   Float_t         dvz_mix[30];   //[nmix]
-   Int_t           dhiBin_mix[30];   //[nmix]
-   Float_t         dhiEvtPlanes_mix[30];   //[nmix]
+   Float_t         dvz_mix[96];   //[nmix]
+   Int_t           dhiBin_mix[96];   //[nmix]
+   Float_t         dhiEvtPlanes_mix[96];   //[nmix]
    Int_t           nTrk_mix;
-   Float_t         trkFromEv_mix[30000];   //[nTrk_mix]
-   Float_t         trkPt_mix[30000];   //[nTrk_mix]
-   Float_t         trkPhi_mix[30000];   //[nTrk_mix]
-   Float_t         trkEta_mix[30000];   //[nTrk_mix]
-   Float_t         trkWeight_mix[30000];   //[nTrk_mix]
+   Int_t           trkFromEv_mix_int[120000];
+   Float_t         trkFromEv_mix[120000];   //[nTrk_mix]
+   Float_t         trkPt_mix[120000];   //[nTrk_mix]
+   Float_t         trkPhi_mix[120000];   //[nTrk_mix]
+   Float_t         trkEta_mix[120000];   //[nTrk_mix]
+   Float_t         trkWeight_mix[120000];   //[nTrk_mix]
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[30];   //[hiNevtPlane]
    Int_t           mult;
@@ -62,12 +63,12 @@ class ztree {
    Int_t           matchingID[12000];   //[mult]
    Int_t           sube[12000];   //[mult]
    Int_t           mult_mix;
-   Float_t         pt_mix[3000];   //[mult_mix]
-   Float_t         eta_mix[3000];   //[mult_mix]
-   Float_t         phi_mix[3000];   //[mult_mix]
-   Int_t           pdg_mix[3000];   //[mult_mix]
-   Int_t           chg_mix[3000];   //[mult_mix]
-   Int_t           nev_mix[3000];   //[mult_mix]
+   Float_t         pt_mix[60000];   //[mult_mix]
+   Float_t         eta_mix[60000];   //[mult_mix]
+   Float_t         phi_mix[60000];   //[mult_mix]
+   Int_t           pdg_mix[60000];   //[mult_mix]
+   Int_t           chg_mix[60000];   //[mult_mix]
+   Int_t           nev_mix[60000];   //[mult_mix]
    Int_t           njet_smeared;
    Float_t         jetpt_smeared0020[800];   //[njet_smeared]
    Float_t         jeteta_smeared0020[800];   //[njet_smeared]
@@ -109,22 +110,22 @@ class ztree {
    Float_t         genphi[300];   //[ngen]
    Int_t           gensubid[300];   //[ngen]
    Int_t           njet_mix;
-   Float_t         rawpt_mix[30];   //[njet_mix]
-   Float_t         jetpt_mix[30];   //[njet_mix]
-   Float_t         jeteta_mix[30];   //[njet_mix]
-   Float_t         jetphi_mix[30];   //[njet_mix]
-   Int_t           nmixEv_mix[30];   //[njet_mix]
-   Int_t           jetID_mix[30];   //[njet_mix]
-   Float_t         neutralSum_mix[30];   //[njet_mix]
-   Float_t         chargedSum_mix[30];   //[njet_mix]
-   Int_t           chargedN_mix[30];   //[njet_mix]
-   Int_t           photonN_mix[30];   //[njet_mix]
-   Int_t           neutralN_mix[30];   //[njet_mix]
-   Int_t           eN_mix[30];   //[njet_mix]
-   Int_t           muN_mix[30];   //[njet_mix]
-   Float_t         chargedMax_mix[30];   //[njet_mix]
-   Float_t         photonSum_mix[30];   //[njet_mix]
-   Float_t         eSum_mix[30];   //[njet_mix]
+   Float_t         rawpt_mix[256];   //[njet_mix]
+   Float_t         jetpt_mix[256];   //[njet_mix]
+   Float_t         jeteta_mix[256];   //[njet_mix]
+   Float_t         jetphi_mix[256];   //[njet_mix]
+   Int_t           nmixEv_mix[256];   //[njet_mix]
+   Int_t           jetID_mix[256];   //[njet_mix]
+   Float_t         neutralSum_mix[256];   //[njet_mix]
+   Float_t         chargedSum_mix[256];   //[njet_mix]
+   Int_t           chargedN_mix[256];   //[njet_mix]
+   Int_t           photonN_mix[256];   //[njet_mix]
+   Int_t           neutralN_mix[256];   //[njet_mix]
+   Int_t           eN_mix[256];   //[njet_mix]
+   Int_t           muN_mix[256];   //[njet_mix]
+   Float_t         chargedMax_mix[256];   //[njet_mix]
+   Float_t         photonSum_mix[256];   //[njet_mix]
+   Float_t         eSum_mix[256];   //[njet_mix]
    Int_t           nTrk;
    Float_t         trkPt[3000];   //[nTrk]
    Float_t         trkPtError[3000];   //[nTrk]
@@ -432,9 +433,8 @@ class ztree {
   virtual Long64_t LoadTree(Long64_t entry);
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
-  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut=30, std::string gen="", int checkjetid=1, int trkptmin=1, int gammaxi=0, int trkptmax=1000);
+  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut=30, std::string gen="", int checkjetid=1, int trkptmin=1, int gammaxi=0);
   virtual float    getSmearedPt(int ijet, int centmin);
-  virtual float    getSmearedEta(int ijet, int centmin);
   virtual float    getSmearedPhi(int ijet, int centmin);
   // virtual void     MixedEvent(std::string outfname);
   virtual Bool_t   Notify();
