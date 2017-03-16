@@ -8,6 +8,8 @@
 #include "ggTree.h"
 #include <algorithm>
 #include <typeinfo>
+#include <unordered_map>
+#include <fstream>
 
 /************************ code outline ********************************
 (1) Setup                                                             *
@@ -284,7 +286,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
-
+  std::ifstream infile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax));
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
@@ -335,6 +337,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   Float_t * j_phi_mix=0;
   Float_t * p_phi=0;
   Float_t * p_phi_mix=0;
+  
   // bool something = false;
 //! (2) Loop
   Long64_t nbytes = 0, nb = 0;
@@ -501,6 +504,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
+	  //here
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
