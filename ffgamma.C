@@ -286,8 +286,15 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   if (fChain == 0) return;
   Long64_t nentries = fChain->GetEntriesFast();
   TFile * fout = new TFile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),"recreate");
-  std::ifstream infile(Form("%s_%s_%s_%d_%d.root",outfname.data(),tag.data(),s_alpha.data(),abs(centmin),abs(centmax));
-  int trun=0,tlumi=0,tevt=0,tnTrk=0;
+  std::ifstream infile(Form("%s_%s_recogen_%d_%d.txt",outfname.data(),tag.data(),abs(centmin),abs(centmax)));
+  cout<<Form("%s_%s_recogen_%d_%d.txt",outfname.data(),tag.data(),abs(centmin),abs(centmax))<<endl;
+  int trun = 0, tlumi = 0, tevt = 0, tnTrk = 0;
+  std::unordered_map<float,float> mymap;
+  while(infile >> trun >> tlumi >> tevt >> tnTrk) {
+    float key = (trun+1)*(tlumi+1)*(tevt+1)*(tnTrk+1);
+    mymap.insert({key,0});
+  }
+  
 //! (1.2) List of histograms
   TH1D * hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),40,0,0.02);
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
@@ -296,7 +303,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
   TH1D * hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
-  TH1D * hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // Raw FF after cuts (1.0)
+  TH1D * hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#Delta#phi_{j#gamma} , xi<1;"),36,2.748894,TMath::Pi()); // Raw FF after cuts (1.0)
   TH1D * hgammaffxisideband = new TH1D(Form("hgammaffxisideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sideband Raw FF after cuts (1.1)
   TH1D * hgammaffxijetmix = new TH1D(Form("hgammaffxijetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sub mix jet ff (2.0)
   TH1D * hgammaffxijetmixsideband = new TH1D(Form("hgammaffxijetmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),10,0,5); // sideband sub mix jet ff (2.1)
@@ -505,10 +512,13 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
           float xi = log(1.0/z);
+	  bool isinreco = true;
 	  if(xi<1) {
-	    
+	    isinreco = false;
+	    float key = (run+1)*(lumi+1)*(evt+1)*(nTrk+1);
+	    if(mymap.count(key)) isinreco = true;
 	  }
-          if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
+          if(signal) { if(isinreco==false) hgammaffxi->Fill( acos(cos(tmpjetphi - phoPhi[0])),weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
       }
