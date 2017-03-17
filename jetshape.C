@@ -421,7 +421,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       if (acos(cos(tmpjetphi - phoPhi[0])) < 7 * pi / 8) continue;
 
       if (signal) {
-        // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt);
         hgenjetpt->Fill(tmpjetpt);
         njets_perevent++;
@@ -454,6 +453,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         }
       }
 
+      if (gen.compare("gengen0") == 0) continue;
+
       // raw jet ue
       float nmixedUEevents = (nmix + 2) / 3;
       for (ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
@@ -474,9 +475,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
     }
 
+    if (gen.compare("gengen0") == 0) continue;
+
     //! (2.4) Mix jet loop
     float nmixedjetevents = (nmix + 1) / 3;
-    // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
       float tmpjeteta = j_eta_mix[ij_mix];

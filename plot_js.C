@@ -62,14 +62,11 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     std::string line;
     while (std::getline(file_stream, line))
         hist_names.push_back(line);
+    if (hist_names.size() % 5) return 1;
 
-    if (hist_names.size() % 5)
-        return 1;
-
-    if (draw_ratio && hist_names.size()/5 == 2)
+    std::size_t layers = hist_names.size() / 5;
+    if (draw_ratio)
         rows = 2;
-    else
-        draw_ratio = 0;
 
     float margin = 0.2; // left/bottom margins (with labels)
     float edge = 0.12;    // right/top edges (no labels)
@@ -83,13 +80,13 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     TCanvas* c1 = new TCanvas("c1", "", pad_width, pad_height);
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
-    TH1D* h1[4][hist_names.size()/5] = {0};
-    TH1D* hratio[4] = {0};
+    TH1D* h1[4][layers] = {0};
+    TH1D* hratio[4][layers-1] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
         gPad->SetLogy();
 
-        for (int k=0; k<2; ++k) {
+        for (std::size_t k=0; k<layers; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
@@ -100,7 +97,7 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
         h1[i][0]->Draw();
         // if (i==0) oldjs_0_20->Draw("pe same");
         // if (i==0) oldjspp_0_20->Draw("pe same");
-        for (std::size_t l=1; l<hist_names.size()/5; ++l)
+        for (std::size_t l=1; l<layers; ++l)
             h1[i][l]->Draw("same");
         h1[i][0]->Draw("same");
 
@@ -126,14 +123,16 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
             box_t prelim_box = (box_t) {0.15, 0.84, 1, 1};
             adjust_coordinates(prelim_box, margin, edge, 0, 0);
             latexPrelim->DrawLatexNDC(prelim_box.x1, prelim_box.y1, "Preliminary");
+        }
 
-            TLegend* l1 = new TLegend(0.48, 0.6, 0.75, 0.72);
+        if (i == 1) {
+            TLegend* l1 = new TLegend(0.25, 0.54, 0.54, 0.54+layers*0.05);
             l1->SetTextFont(43);
             l1->SetTextSize(15);
             l1->SetBorderSize(0);
             l1->SetFillStyle(0);
 
-            for (std::size_t m=0; m<hist_names.size()/5; ++m)
+            for (std::size_t m=0; m<layers; ++m)
                 l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pl");
             // l1->AddEntry(oldjs_0_20, "HIN-12-002 PbPb", "pl");
             // l1->AddEntry(oldjspp_0_20, "HIN-12-002 pp", "pl");
@@ -144,18 +143,18 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
         if (draw_ratio) {
             c1->cd(i+5);
 
-            hratio[i] = (TH1D*)h1[i][0]->Clone(Form("hratio_%i", i));
-            hratio[i]->Divide(h1[i][1]);
-            hratio[i]->SetYTitle("Ratio");
+            for (std::size_t r=1; r<layers; ++r) {
+                hratio[i][r] = (TH1D*)h1[i][r]->Clone(Form("hratio_%i_%zu", i, r));
+                hratio[i][r]->Divide(h1[i][0]);
+                hratio[i][r]->SetYTitle("Ratio");
 
-            set_hist_style(hratio[i], 2);
-            set_axis_style(hratio[i], i, 1);
-            hratio[i]->SetYTitle("r");
-            hratio[i]->SetAxisRange(0, 3, "Y");
-            if (draw_lt_0_3)
-                hratio[i]->SetAxisRange(0, 0.3, "X");
+                set_axis_style(hratio[i][r], i, 1);
+                hratio[i][r]->SetAxisRange(0, 2, "Y");
+                if (draw_lt_0_3)
+                    hratio[i][r]->SetAxisRange(0, 0.3, "X");
 
-            hratio[i]->Draw();
+                hratio[i][r]->Draw("same");
+            }
 
             TLine* line1 = new TLine(0, 1, 1, 1);
             line1->SetLineWidth(1);
@@ -264,10 +263,28 @@ void set_hist_style(TH1D* h1, int k) {
             h1->SetMarkerColor(2);
             break;
         case 2:
-            h1->SetLineColor(1);
+            h1->SetLineColor(8);
             h1->SetMarkerSize(0.64);
             h1->SetMarkerStyle(21);
-            h1->SetMarkerColor(1);
+            h1->SetMarkerColor(8);
+            break;
+        case 3:
+            h1->SetLineColor(4);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(22);
+            h1->SetMarkerColor(4);
+            break;
+        case 4:
+            h1->SetLineColor(kOrange-3);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(23);
+            h1->SetMarkerColor(kOrange-3);
+            break;
+        default:
+            h1->SetLineColor(kViolet+1);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(27);
+            h1->SetMarkerColor(kViolet+1);
             break;
     }
 }
