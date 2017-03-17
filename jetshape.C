@@ -1,4 +1,3 @@
-#define ztree_cxx
 #include "jetshape.h"
 #include <TH2.h>
 #include <TStyle.h>
@@ -203,7 +202,7 @@ float getSigmaRelPhi(int hiBin, float jetpt) {
 
 //! (1) Setup
 //! (1.1) Smearing functions for pp
-float ztree::getSmearedPt(int jetindex, int centindex) {
+float photonjettrack::getSmearedPt(int jetindex, int centindex) {
   if (centindex == 0)
     return jetpt_smeared0020[jetindex];
   else if (centindex == 20)
@@ -218,7 +217,7 @@ float ztree::getSmearedPt(int jetindex, int centindex) {
   }
 }
 
-float ztree::getSmearedPhi(int jetindex, int centindex) {
+float photonjettrack::getSmearedPhi(int jetindex, int centindex) {
   if (centindex == 0)
     return jetphi_smeared0020[jetindex];
   else if (centindex == 20)
@@ -239,8 +238,7 @@ float getTrkWeight(int trkindex, float* trkweight , string gen) {
   return trkweight[trkindex];
 }
 
-// this function does the raw FF analysis and writes histograms to output file
-void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi) {
+void photonjettrack::jetshape(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi) {
   cout << checkjetid << endl; // doesn't do anything
   bool ismc;
   TFile* fvzweight = TFile::Open("fvzweight.root");
@@ -316,11 +314,10 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     float_to_int(trkFromEv_mix, trkFromEv_mix_int, nTrk_mix);
     //! (2.1) Event selections
     if (!isPP) {
-      if (hiBin < centmin || hiBin >= centmax) continue; //centrality cut
+      if (hiBin < centmin || hiBin >= centmax) continue;
     }
     if (nPho != 1) continue;
     if (phoNoise[0] == 0) continue;
-    // if( gen.compare("gengen")==0 && mcMomPID[0]!=-999 ) continue ; // prompt gen photon cut
     bool signal = (phoSigmaIEtaIEta_2012[0] < 0.010);
     bool sideband = (phoSigmaIEtaIEta_2012[0] > 0.011 && phoSigmaIEtaIEta_2012[0] < 0.017);
     if (phoEt[0] / phoCorr[0] < phoetmin || phoEt[0] / phoCorr[0] > phoetmax) continue;
@@ -335,7 +332,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
     weight = 1;
     if (ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
     if (ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
-    //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
 
     hvz->Fill(vz, weight);
     hcent->Fill(hiBin, weight);
@@ -416,8 +412,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
 
       //! jet selections
-      if (tmpjetpt < jetptcut) continue; //jet pt Cut
-      if (fabs(tmpjeteta) > 1.6) continue; //jeteta Cut
+      if (tmpjetpt < jetptcut) continue;
+      if (fabs(tmpjeteta) > 1.6) continue;
       if (acos(cos(tmpjetphi - phoPhi[0])) < 7 * pi / 8) continue;
 
       if (signal) {
@@ -500,11 +496,11 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
 
       if (j_ev_mix[ij_mix] % 3 != 1) continue;
-      if (tmpjetpt < jetptcut) continue; //jet pt Cut
-      if (fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
+      if (tmpjetpt < jetptcut) continue;
+      if (fabs(tmpjeteta) > 1.6) continue;
       if (acos(cos(tmpjetphi - phoPhi[0])) < 7 * pi / 8) continue;
       if (signal) {
-        hjetptjetmix->Fill(tmpjetpt, 1. / nmixedjetevents); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt, 1. / nmixedjetevents);
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(tmpjetpt / phoEtCorrected[0], 1 / nmixedjetevents);
@@ -517,7 +513,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
       // mix jet
       for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-        // mix reco jet mix reco track
         if (gen.compare("recogen") == 0 || gen.compare("gengen") == 0 || gen.compare("gengen0") == 0) {
           if (chg_mix[ip_mix] == 0) continue;
         }
@@ -529,7 +524,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if (dr < 1) {
           float refpt = gammaxi ? phoEtCorrected[0] : tmpjetpt;
           float deltar = getdr(p_eta_mix[ip_mix], p_phi_mix[ip_mix], tmpjeteta, tmpjetphi);
-          //! 1-2: rjet_mix rtrk_mix
           if (signal) {
             hgammaffxijetmix->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, gen) / nmixedjetevents);
           }
@@ -541,7 +535,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
 
       // mix jet ue
       for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-        // mix reco jet mix reco track
         if (gen.compare("recogen") == 0 || gen.compare("gengen") == 0 || gen.compare("gengen0") == 0) {
           if (chg_mix[ip_mix] == 0) continue;
         }
@@ -553,7 +546,6 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         if (dr < 1) {
           float refpt = gammaxi ? phoEtCorrected[0] : tmpjetpt;
           float deltar = getdr(p_eta_mix[ip_mix], p_phi_mix[ip_mix], tmpjeteta, tmpjetphi);
-          //! 1-4: rjet_mix rtrk_mix
           if (signal) {
             hgammaffxijetmixue->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, gen) / nmixedjetevents);
           }
@@ -581,28 +573,28 @@ void float_to_int(float* p1 , int* p2 , int count) {
 
 int main(int argc, char* argv[]) {
   if (argc > 12 || argc < 3) {
-    std::cout << "usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen] [checkjetid] [trkptmin] [gammaxi]" << std::endl;
+    std::cout << "usage: ./jetshape <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen] [checkjetid] [trkptmin] [gammaxi]" << std::endl;
     exit(1);
   }
-  ztree* t = new ztree(argv[1]);
+  photonjettrack* t = new photonjettrack(argv[1]);
   if (argc == 3)
-    t->ffgammajet(argv[2]);
+    t->jetshape(argv[2]);
   else if (argc == 5)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]));
   else if (argc == 6)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]));
   else if (argc == 7)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]));
   else if (argc == 8)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]));
   else if (argc == 9)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8]);
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8]);
   else if (argc == 10)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]));
   else if (argc == 11)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]), std::atoi(argv[10]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]), std::atoi(argv[10]));
   else if (argc == 12)
-    t->ffgammajet(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]), std::atoi(argv[10]), std::stoi(argv[11]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]), std::atoi(argv[10]), std::stoi(argv[11]));
 
   return 0;
 }

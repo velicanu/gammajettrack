@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
 // Wed Dec 16 11:49:15 2015 by ROOT version 6.02/10
-// from TTree ztree/Z boson candidate events
+// from TTree photonjettrack/Z boson candidate events
 // found on file: test.root
 //////////////////////////////////////////////////////////
 
@@ -14,7 +14,7 @@
 
 // Header file for the classes stored in the TTree if any.
 
-class ztree {
+class photonjettrack {
   public :
   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
   TTree          *mix_fChain;
@@ -29,7 +29,6 @@ class ztree {
    Float_t         genphi_mix[201];   //[ngen_mix]
    Int_t           gensubid_mix[201];   //[ngen_mix]
    Int_t           genev_mix[201];   //[ngen_mix]
-
 
    Int_t           isPP;
    UInt_t          run;
@@ -424,16 +423,14 @@ class ztree {
    TBranch        *b_mcMomPhi;   //!
    TBranch        *b_mcMomPID;   //!
 
-
-
-  ztree(std::string thisfilename);
-  virtual ~ztree();
+  photonjettrack(std::string thisfilename);
+  virtual ~photonjettrack();
   virtual Int_t    Cut(Long64_t entry);
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
   virtual Long64_t LoadTreeMix(Long64_t entry);
   virtual void     Init(TTree *tree);
-  virtual void     ffgammajet(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut=30, std::string gen="", int checkjetid=1, int trkptmin=1, int gammaxi=0);
+  virtual void     jetshape(std::string outfname, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut=30, std::string gen="", int checkjetid=1, int trkptmin=1, int gammaxi=0);
   virtual float    getSmearedPt(int ijet, int centmin);
   virtual float    getSmearedPhi(int ijet, int centmin);
   // virtual void     MixedEvent(std::string outfname);
@@ -441,10 +438,7 @@ class ztree {
   virtual void     Show(Long64_t entry = -1);
 };
 
-#endif
-
-#ifdef ztree_cxx
-ztree::ztree(std::string thisfilename) : fChain(0)
+photonjettrack::photonjettrack(std::string thisfilename) : fChain(0)
 {
   // if parameter tree is not specified (or zero), connect the file
   // used to generate this class and read the Tree.
@@ -453,19 +447,20 @@ ztree::ztree(std::string thisfilename) : fChain(0)
   Init(tree);
 }
 
-ztree::~ztree()
+photonjettrack::~photonjettrack()
 {
   if (!fChain) return;
   delete fChain->GetCurrentFile();
 }
 
-Int_t ztree::GetEntry(Long64_t entry)
+Int_t photonjettrack::GetEntry(Long64_t entry)
 {
   // Read contents of entry.
   if (!fChain) return 0;
   return fChain->GetEntry(entry);
 }
-Long64_t ztree::LoadTree(Long64_t entry)
+
+Long64_t photonjettrack::LoadTree(Long64_t entry)
 {
   // Set the environment to read one entry
   if (!fChain) return -5;
@@ -478,7 +473,7 @@ Long64_t ztree::LoadTree(Long64_t entry)
   return centry;
 }
 
-Long64_t ztree::LoadTreeMix(Long64_t entry)
+Long64_t photonjettrack::LoadTreeMix(Long64_t entry)
 {
   // Set the environment to read one entry
   if (!mix_fChain) return -5;
@@ -491,7 +486,7 @@ Long64_t ztree::LoadTreeMix(Long64_t entry)
   return centry;
 }
 
-void ztree::Init(TTree *tree)
+void photonjettrack::Init(TTree *tree)
 {
   // The Init() function is called when the selector needs to initialize
   // a new tree or chain. Typically here the branch addresses and branch
@@ -708,8 +703,7 @@ void ztree::Init(TTree *tree)
   Notify();
 }
 
-
-Bool_t ztree::Notify()
+Bool_t photonjettrack::Notify()
 {
   // The Notify() function is called when a new file is opened. This
   // can be either for a new TTree in a TChain or when when a new TTree
@@ -720,18 +714,20 @@ Bool_t ztree::Notify()
   return kTRUE;
 }
 
-void ztree::Show(Long64_t entry)
+void photonjettrack::Show(Long64_t entry)
 {
   // Print contents of entry.
   // If entry is not specified, print current entry
   if (!fChain) return;
   fChain->Show(entry);
 }
-Int_t ztree::Cut(Long64_t entry)
+
+Int_t photonjettrack::Cut(Long64_t entry)
 {
   // This function may be called from Loop.
   // returns  1 if entry is accepted.
   // returns -1 otherwise.
   return 1;
 }
-#endif // #ifdef ztree_cxx
+
+#endif
