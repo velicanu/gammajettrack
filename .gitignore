@@ -10,7 +10,9 @@
 *.out
 
 # ROOT Specific
+TrkCorr_Jun7_Iterative_*
 TrkCorr_Mar15_Iterative_*
+Corrections/
 corrections.tar
 *.root
 *.root*
