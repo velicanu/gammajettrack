@@ -280,11 +280,17 @@ void set_hist_style(TH1D* h1, int k) {
             h1->SetMarkerStyle(23);
             h1->SetMarkerColor(kOrange-3);
             break;
-        default:
+        case 5:
             h1->SetLineColor(kViolet+1);
             h1->SetMarkerSize(0.64);
             h1->SetMarkerStyle(27);
             h1->SetMarkerColor(kViolet+1);
+            break;
+        default:
+            h1->SetLineColor(kCyan);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(28);
+            h1->SetMarkerColor(kCyan);
             break;
     }
 }
