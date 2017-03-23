@@ -500,7 +500,8 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
           float angle = vjet.Angle(vtrack.Vect());
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected[0];
-          float xi = log(1.0/z);
+          if( gjetpt[ij]>-1 ) z = p_pt[ip]*cos(angle)/gjetpt[ij];
+	  float xi = log(1.0/z);
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
