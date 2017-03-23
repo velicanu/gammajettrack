@@ -450,7 +450,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
         tmpjetpt *= smearFactor;
       }
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
-      dogensmearing = false;
+      // dogensmearing = false;
       if (dogensmearing) {
         int resolutionBin = getResolutionBin(centmin);
         float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
@@ -547,7 +547,7 @@ void ztree::ffgammajet(std::string outfname, int centmin, int centmax, float pho
       }
       float smearFactor = 1;
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
-      dogensmearing = false;
+      // dogensmearing = false;
       if (dogensmearing) {
         int resolutionBin = getResolutionBin(centmin);
         float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
