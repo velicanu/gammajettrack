@@ -1,5 +1,18 @@
+# ignore files without extensions
+*
+!*.*
+!*/
+
+# condor stuff
+*.condor
+*.log
+*.err
+*.out
+
 # ROOT Specific
+TrkCorr_Jun7_Iterative_*
 TrkCorr_Mar15_Iterative_*
+Corrections/
 corrections.tar
 *.root
 *.root*
@@ -8,13 +21,10 @@ corrections.tar
 *~
 *.tgz
 .sync-config.cson
-draw_js
-plot_js
 plot2ff
 plot_ff
 oldcode/
 html
-jetshape
 plot_ff_ratio
 syst/
 trkcorr/
