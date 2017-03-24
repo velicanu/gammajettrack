@@ -30,7 +30,7 @@ public :
    Float_t         vz;
    Float_t         weight;
    Int_t           hiNevtPlane;
-   Float_t         hiEvtPlanes[1];   //[hiNevtPlane]
+   Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           njet;
    vector<float>   *jetptCorr;
    vector<float>   *jetpt;
@@ -436,7 +436,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("vz", &vz, &b_vz);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("hiNevtPlane", &hiNevtPlane, &b_hiNevtPlane);
-   fChain->SetBranchAddress("hiEvtPlanes", &hiEvtPlanes, &b_hiEvtPlanes);
+   fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("njet", &njet, &b_njet);
    fChain->SetBranchAddress("jetptCorr", &jetptCorr, &b_jetptCorr);
    fChain->SetBranchAddress("jetpt", &jetpt, &b_jetpt);
