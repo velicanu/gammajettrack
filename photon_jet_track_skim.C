@@ -391,8 +391,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     pjtt.njet = njet;
     //! End jet selection
 
-    if (njet == 0) continue;
-
     jet_tree_for_trk_corr->GetEntry(j);
     float maxJetPt = -999;
     for (int k = 0; k < jt_trkcorr.nref; k++) {
