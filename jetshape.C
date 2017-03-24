@@ -18,36 +18,35 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
   TFile* fcentweight = TFile::Open("fcentweight.root");
   TH1D* hcentweight = (TH1D*)fcentweight->Get(Form("hcentdata_%d_%d", centmin, centmax));
 
-  std::string tag = label;
   if (fChain == 0) return;
   int64_t nentries = fChain->GetEntriesFast();
-  TFile* fout = new TFile(Form("%s_%s_%d_%d_%d.root", tag.data(), jet_part.data(), (int)phoetmin, abs(centmin), abs(centmax)), "recreate");
+  TFile* fout = new TFile(Form("%s_%s_%d_%d_%d.root", label.data(), jet_part.data(), (int)phoetmin, abs(centmin), abs(centmax)), "recreate");
 
-  TH1D* hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 40, 0, 0.02);
-  TH1D* hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";genjet p_{T};"), 20, 0, 500);
-  TH1D* hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
-  TH1D* hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
-  TH1D* hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
-  TH1D* hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
-  TH1D* hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxisideband = new TH1D(Form("hgammaffxisideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxijetmix = new TH1D(Form("hgammaffxijetmix_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxijetmixsideband = new TH1D(Form("hgammaffxijetmixsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxijetmixue = new TH1D(Form("hgammaffxijetmixue_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxijetmixuesideband = new TH1D(Form("hgammaffxijetmixuesideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxiuemix = new TH1D(Form("hgammaffxiuemix_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hgammaffxiuemixsideband = new TH1D(Form("hgammaffxiuemixsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hnmixsignal = new TH1D(Form("hnmixsignal_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 1, 0, 2);
-  TH1D* hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 1, 0, 2);
-  TH1D* xjgsignal = new TH1D(Form("xjgsignal_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
-  TH1D* xjgmixsignal = new TH1D(Form("xjgmixsignal_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
-  TH1D* xjgsideband = new TH1D(Form("xjgsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
-  TH1D* xjgmixsideband = new TH1D(Form("xjgmixsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
-  TH1D* phoetsignal = new TH1D(Form("phoetsignal_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";#gamma E_{T};"), 50, 0, 500);
-  TH1D* phoetsideband = new TH1D(Form("phoetsideband_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";#gamma E_{T};"), 50, 0, 500);
+  TH1D* hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 40, 0, 0.02);
+  TH1D* hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";genjet p_{T};"), 20, 0, 500);
+  TH1D* hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
+  TH1D* hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
+  TH1D* hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
+  TH1D* hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
+  TH1D* hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxisideband = new TH1D(Form("hgammaffxisideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxijetmix = new TH1D(Form("hgammaffxijetmix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxijetmixsideband = new TH1D(Form("hgammaffxijetmixsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxijetmixue = new TH1D(Form("hgammaffxijetmixue_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxijetmixuesideband = new TH1D(Form("hgammaffxijetmixuesideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxiuemix = new TH1D(Form("hgammaffxiuemix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hgammaffxiuemixsideband = new TH1D(Form("hgammaffxiuemixsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
+  TH1D* hnmixsignal = new TH1D(Form("hnmixsignal_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 1, 0, 2);
+  TH1D* hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 1, 0, 2);
+  TH1D* xjgsignal = new TH1D(Form("xjgsignal_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
+  TH1D* xjgmixsignal = new TH1D(Form("xjgmixsignal_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
+  TH1D* xjgsideband = new TH1D(Form("xjgsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
+  TH1D* xjgmixsideband = new TH1D(Form("xjgmixsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";xjg;"), 16, 0, 2);
+  TH1D* phoetsignal = new TH1D(Form("phoetsignal_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";#gamma E_{T};"), 50, 0, 500);
+  TH1D* phoetsideband = new TH1D(Form("phoetsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";#gamma E_{T};"), 50, 0, 500);
 
-  TH1D* hvz = new TH1D(Form("hvz_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";vz;"), 30, -15, 15);
-  TH1D* hcent = new TH1D(Form("hcent_%s_%s_%d_%d", tag.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";cent;"), 200, 0, 200);
+  TH1D* hvz = new TH1D(Form("hvz_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";vz;"), 30, -15, 15);
+  TH1D* hcent = new TH1D(Form("hcent_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";cent;"), 200, 0, 200);
 
   // iterators
   int ij = -1, ij_mix = -1, ip = -1, ip_mix = -1;
