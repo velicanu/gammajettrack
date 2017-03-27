@@ -15,6 +15,27 @@
 // Header file for the classes stored in the TTree if any.
 #include <vector>
 
+const double pi = 3.1415926535897932384;
+
+bool jet_type_is(std::string type, std::string jet_part) {
+  return (jet_part.compare(0, type.length(), type) == 0);
+}
+
+bool part_type_is(std::string type, std::string jet_part) {
+  return (jet_part.compare(jet_part.length() - type.length(), type.length(), type) == 0);
+}
+
+float getdr(float eta1, float phi1, float eta2 , float phi2) {
+  float dphi = acos(cos(phi1 - phi2));
+  float deta = eta1 - eta2;
+  return sqrt((deta * deta) + (dphi * dphi));
+}
+
+void float_to_int(float* p1 , int* p2 , int count) {
+  for (int i = 0; i < count; i++)
+    p2[i] = int(p1[i]);
+}
+
 class photonjettrack {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -32,81 +53,81 @@ public :
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           njet;
-   vector<float>   *jetptCorr;
-   vector<float>   *jetpt;
-   vector<float>   *jeteta;
-   vector<float>   *jetphi;
-   vector<float>   *gjetpt;
-   vector<float>   *gjeteta;
-   vector<float>   *gjetphi;
-   vector<float>   *chargedSum;
-   vector<int>     *subid;
+   std::vector<float>   *jetptCorr;
+   std::vector<float>   *jetpt;
+   std::vector<float>   *jeteta;
+   std::vector<float>   *jetphi;
+   std::vector<float>   *gjetpt;
+   std::vector<float>   *gjeteta;
+   std::vector<float>   *gjetphi;
+   std::vector<float>   *chargedSum;
+   std::vector<int>     *subid;
    Int_t           ngen;
-   vector<int>     *genmatchindex;
-   vector<float>   *genpt;
-   vector<float>   *geneta;
-   vector<float>   *genphi;
-   vector<int>     *gensubid;
+   std::vector<int>     *genmatchindex;
+   std::vector<float>   *genpt;
+   std::vector<float>   *geneta;
+   std::vector<float>   *genphi;
+   std::vector<int>     *gensubid;
    Int_t           nTrk;
-   vector<float>   *trkPt;
-   vector<float>   *trkEta;
-   vector<float>   *trkPhi;
-   vector<int>     *trkCharge;
-   vector<float>   *trkPtError;
-   vector<unsigned char> *trkNHit;
-   vector<unsigned char> *trkNlayer;
-   vector<bool>    *highPurity;
-   vector<float>   *trkChi2;
-   vector<unsigned char> *trkNdof;
-   vector<float>   *trkDxy1;
-   vector<float>   *trkDxyError1;
-   vector<float>   *trkDz1;
-   vector<float>   *trkDzError1;
-   vector<float>   *pfEcal;
-   vector<float>   *pfHcal;
-   vector<float>   *trkWeight;
+   std::vector<float>   *trkPt;
+   std::vector<float>   *trkEta;
+   std::vector<float>   *trkPhi;
+   std::vector<int>     *trkCharge;
+   std::vector<float>   *trkPtError;
+   std::vector<unsigned char> *trkNHit;
+   std::vector<unsigned char> *trkNlayer;
+   std::vector<bool>    *highPurity;
+   std::vector<float>   *trkChi2;
+   std::vector<unsigned char> *trkNdof;
+   std::vector<float>   *trkDxy1;
+   std::vector<float>   *trkDxyError1;
+   std::vector<float>   *trkDz1;
+   std::vector<float>   *trkDzError1;
+   std::vector<float>   *pfEcal;
+   std::vector<float>   *pfHcal;
+   std::vector<float>   *trkWeight;
    Int_t           mult;
-   vector<float>   *pt;
-   vector<float>   *eta;
-   vector<float>   *phi;
-   vector<int>     *pdg;
-   vector<int>     *chg;
-   vector<int>     *matchingID;
-   vector<int>     *sube;
+   std::vector<float>   *pt;
+   std::vector<float>   *eta;
+   std::vector<float>   *phi;
+   std::vector<int>     *pdg;
+   std::vector<int>     *chg;
+   std::vector<int>     *matchingID;
+   std::vector<int>     *sube;
    Int_t           nmix;
    Int_t           nlooped;
    Float_t         dvz_mix[24];   //[nmix]
    Int_t           dhiBin_mix[24];   //[nmix]
    Float_t         dhiEvtPlanes_mix[24];   //[nmix]
    Int_t           njet_mix;
-   vector<float>   *rawpt_mix;
-   vector<float>   *jetpt_mix;
-   vector<float>   *jeteta_mix;
-   vector<float>   *jetphi_mix;
-   vector<float>   *gjetpt_mix;
-   vector<float>   *gjeteta_mix;
-   vector<float>   *gjetphi_mix;
-   vector<float>   *chargedSum_mix;
-   vector<int>     *nmixEv_mix;
+   std::vector<float>   *rawpt_mix;
+   std::vector<float>   *jetpt_mix;
+   std::vector<float>   *jeteta_mix;
+   std::vector<float>   *jetphi_mix;
+   std::vector<float>   *gjetpt_mix;
+   std::vector<float>   *gjeteta_mix;
+   std::vector<float>   *gjetphi_mix;
+   std::vector<float>   *chargedSum_mix;
+   std::vector<int>     *nmixEv_mix;
    Int_t           ngen_mix;
-   vector<float>   *genpt_mix;
-   vector<float>   *geneta_mix;
-   vector<float>   *genphi_mix;
-   vector<int>     *gensubid_mix;
-   vector<int>     *genev_mix;
+   std::vector<float>   *genpt_mix;
+   std::vector<float>   *geneta_mix;
+   std::vector<float>   *genphi_mix;
+   std::vector<int>     *gensubid_mix;
+   std::vector<int>     *genev_mix;
    Int_t           nTrk_mix;
-   vector<float>   *trkFromEv_mix;
-   vector<float>   *trkPt_mix;
-   vector<float>   *trkEta_mix;
-   vector<float>   *trkPhi_mix;
-   vector<float>   *trkWeight_mix;
+   std::vector<float>   *trkFromEv_mix;
+   std::vector<float>   *trkPt_mix;
+   std::vector<float>   *trkEta_mix;
+   std::vector<float>   *trkPhi_mix;
+   std::vector<float>   *trkWeight_mix;
    Int_t           mult_mix;
-   vector<float>   *pt_mix;
-   vector<float>   *eta_mix;
-   vector<float>   *phi_mix;
-   vector<int>     *pdg_mix;
-   vector<int>     *chg_mix;
-   vector<int>     *nev_mix;
+   std::vector<float>   *pt_mix;
+   std::vector<float>   *eta_mix;
+   std::vector<float>   *phi_mix;
+   std::vector<int>     *pdg_mix;
+   std::vector<int>     *chg_mix;
+   std::vector<int>     *nev_mix;
    Float_t         phoE;
    Float_t         phoEt;
    Float_t         phoEtCorrected;
@@ -145,17 +166,17 @@ public :
    Int_t           phoNoise;
    Int_t           pho_genMatchedIndex;
    Int_t           nMC;
-   vector<int>     *mcPID;
-   vector<float>   *mcCalIsoDR04;
-   vector<int>     *mcStatus;
-   vector<float>   *mcEt;
-   vector<float>   *mcPt;
-   vector<float>   *mcEta;
-   vector<float>   *mcPhi;
-   vector<float>   *mcMomPt;
-   vector<float>   *mcMomEta;
-   vector<float>   *mcMomPhi;
-   vector<int>     *mcMomPID;
+   std::vector<int>     *mcPID;
+   std::vector<float>   *mcCalIsoDR04;
+   std::vector<int>     *mcStatus;
+   std::vector<float>   *mcEt;
+   std::vector<float>   *mcPt;
+   std::vector<float>   *mcEta;
+   std::vector<float>   *mcPhi;
+   std::vector<float>   *mcMomPt;
+   std::vector<float>   *mcMomEta;
+   std::vector<float>   *mcMomPhi;
+   std::vector<int>     *mcMomPID;
 
    // List of branches
    TBranch        *b_run;   //!
@@ -294,6 +315,7 @@ public :
 
    photonjettrack(std::string filename);
    virtual ~photonjettrack();
+   virtual void     jetshape(std::string label, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 3000, int jetptcut = 30, std::string jet_part = "", int trkptmin = 1, int gammaxi = 0);
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -309,7 +331,7 @@ photonjettrack::photonjettrack(std::string filename) : fChain(0)
 // used to generate this class and read the Tree.
    TFile* f = TFile::Open(filename.c_str());
    TTree* t = (TTree*)f->Get("pjtt");
-   Init(tree);
+   Init(t);
 }
 
 photonjettrack::~photonjettrack()
