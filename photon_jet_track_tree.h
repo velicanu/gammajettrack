@@ -10,6 +10,7 @@ const int nEventsToMix = 24;
 class photonJetTrackTree {
   public:
     photonJetTrackTree() {
+        isPP = 0;
         run = 0;
         evt = 0;
         lumi = 0;
@@ -84,6 +85,7 @@ class photonJetTrackTree {
     void create_tree(TTree* t);
     void clear_vectors();
 
+    int isPP;
     uint32_t run;
     unsigned long long evt;
     uint32_t lumi;
@@ -165,7 +167,7 @@ class photonJetTrackTree {
     std::vector<int> genev_mix;
 
     int nTrk_mix;
-    std::vector<float> trkFromEv_mix;
+    std::vector<int> trkFromEv_mix;
     std::vector<float> trkPt_mix;
     std::vector<float> trkEta_mix;
     std::vector<float> trkPhi_mix;
@@ -234,6 +236,7 @@ class photonJetTrackTree {
 };
 
 void photonJetTrackTree::create_tree(TTree* t) {
+    t->Branch("isPP", &isPP, "isPP/I");
     t->Branch("run", &run, "run/i");
     t->Branch("evt", &evt, "evt/l");
     t->Branch("lumi", &lumi, "lumi/i");

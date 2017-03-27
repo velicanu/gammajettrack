@@ -490,6 +490,15 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
       // Start looping through the mixed event starting where we left off, so we don't always mix same events
       const int nevent_mix = event_tree_mix->GetEntries();
       for (int iminbias = minbias_start; iminbias <= nevent_mix; ++iminbias) {
+        // this part lets us wrap around to the beginning if we reach the last event
+        if (iminbias == nevent_mix) {
+          wraparound = true;
+          iminbias = -1;
+          continue;
+        }
+        if (wraparound && iminbias == minbias_start) break; // came back to start, done mixing
+        nlooped++;
+
         event_tree_mix->GetEntry(iminbias);
         if (fabs(vz_mix) > 15) continue;
         skim_tree_mix->GetEntry(iminbias);
@@ -501,15 +510,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         } else { // pp event selection
           if (pPAprimaryVertexFilter_mix < 1 || pBeamScrapingFilter_mix < 1)  continue;
         }
-
-        // this part lets us wrap around to the beginning if we reach the last event
-        if (iminbias == nevent_mix) {
-          wraparound = true;
-          iminbias = -1;
-          continue;
-        }
-        if (wraparound && iminbias == minbias_start) break; // came back to start, done mixing
-        nlooped++;
 
         //! (2.51) HiBin, vz, eventplane selection
         if (abs(hiBin - hiBin_mix) > 0) continue;
@@ -614,11 +614,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
         pjtt.dhiEvtPlanes_mix[nmix] = dphi_evplane;
 
-        pjtt.njet_mix = njet_mix;
-        pjtt.ngen_mix = ngen_mix;
-        pjtt.nTrk_mix = nTrk_mix;
-        pjtt.mult_mix = mult_mix;
-
         minbias_end = iminbias;
         nmix++;
 
@@ -628,9 +623,15 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
       pjtt.nmix = nmix;
       pjtt.nlooped = nlooped;
+
+      pjtt.njet_mix = njet_mix;
+      pjtt.ngen_mix = ngen_mix;
+      pjtt.nTrk_mix = nTrk_mix;
+      pjtt.mult_mix = mult_mix;
     }
     //! End minbias mixing
 
+    pjtt.isPP = isPP;
     pjtt.hiBin = hiBin;
     pjtt.vz = vz;
     pjtt.hiNevtPlane = hiNevtPlane;
