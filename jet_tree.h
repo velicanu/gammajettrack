@@ -14,6 +14,7 @@ class jetTree {
         refpt = 0;
         refeta = 0;
         refphi = 0;
+        refparton_flavor = 0;
         subid = 0;
         chargedSum = 0;
 
@@ -43,6 +44,7 @@ class jetTree {
     float* refpt;
     float* refeta;
     float* refphi;
+    int* refparton_flavor;
     int* subid;
     float* chargedSum;
 
@@ -56,11 +58,12 @@ class jetTree {
 void jetTree::init_memory() {
     rawpt = (float*) malloc(sizeof(float) * 300);
     jtpt = (float*) malloc(sizeof(float) * 300);
-    refpt = (float*) malloc(sizeof(float) * 300);
     jteta = (float*) malloc(sizeof(float) * 300);
-    refeta = (float*) malloc(sizeof(float) * 300);
     jtphi = (float*) malloc(sizeof(float) * 300);
+    refpt = (float*) malloc(sizeof(float) * 300);
+    refeta = (float*) malloc(sizeof(float) * 300);
     refphi = (float*) malloc(sizeof(float) * 300);
+    refparton_flavor = (int*) malloc(sizeof(int) * 300);
     subid = (int*) malloc(sizeof(int) * 300);
     chargedSum = (float*) malloc(sizeof(float) * 300);
 
@@ -78,6 +81,7 @@ void jetTree::clear_memory() {
     free(refpt);
     free(refeta);
     free(refphi);
+    free(refparton_flavor);
     free(subid);
     free(chargedSum);
 
@@ -98,8 +102,9 @@ void jetTree::read_tree(TTree* t) {
     t->SetBranchStatus("refpt", 1);
     t->SetBranchStatus("refeta", 1);
     t->SetBranchStatus("refphi", 1);
-    t->SetBranchStatus("subid", 1);
+    t->SetBranchStatus("refparton_flavor", 1);
     t->SetBranchStatus("chargedSum", 1);
+    t->SetBranchStatus("subid", 1);
 
     t->SetBranchStatus("ngen", 1);
     t->SetBranchStatus("genpt", 1);
@@ -115,8 +120,9 @@ void jetTree::read_tree(TTree* t) {
     t->SetBranchAddress("refpt", refpt);
     t->SetBranchAddress("refeta", refeta);
     t->SetBranchAddress("refphi", refphi);
-    t->SetBranchAddress("subid", subid);
+    t->SetBranchAddress("refparton_flavor", refparton_flavor);
     t->SetBranchAddress("chargedSum", chargedSum);
+    t->SetBranchAddress("subid", subid);
 
     t->SetBranchAddress("ngen", &ngen);
     t->SetBranchAddress("genpt", genpt);

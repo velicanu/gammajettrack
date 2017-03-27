@@ -104,6 +104,7 @@ class photonJetTrackTree {
     std::vector<float> gjetpt;
     std::vector<float> gjeteta;
     std::vector<float> gjetphi;
+    std::vector<int> gjetflavor;
     std::vector<float> chargedSum;
     std::vector<int> subid;
 
@@ -255,6 +256,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("gjetpt", &gjetpt);
     t->Branch("gjeteta", &gjeteta);
     t->Branch("gjetphi", &gjetphi);
+    t->Branch("gjetflavor", &gjetflavor);
     t->Branch("chargedSum", &chargedSum);
     t->Branch("subid", &subid);
 
@@ -394,6 +396,7 @@ void photonJetTrackTree::clear_vectors() {
     gjetpt.clear();
     gjeteta.clear();
     gjetphi.clear();
+    gjetflavor.clear();
     chargedSum.clear();
     subid.clear();
 

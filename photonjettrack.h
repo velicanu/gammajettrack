@@ -197,6 +197,7 @@ public :
    std::vector<float>   *gjetpt;
    std::vector<float>   *gjeteta;
    std::vector<float>   *gjetphi;
+   std::vector<int>   *gjetflavor;
    std::vector<float>   *chargedSum;
    std::vector<int>     *subid;
    Int_t           ngen;
@@ -332,6 +333,7 @@ public :
    TBranch        *b_gjetpt;   //!
    TBranch        *b_gjeteta;   //!
    TBranch        *b_gjetphi;   //!
+   TBranch        *b_gjetflavor;   //!
    TBranch        *b_chargedSum;   //!
    TBranch        *b_subid;   //!
    TBranch        *b_ngen;   //!
@@ -515,6 +517,7 @@ void photonjettrack::Init(TTree *tree)
    gjetpt = 0;
    gjeteta = 0;
    gjetphi = 0;
+   gjetflavor = 0;
    chargedSum = 0;
    subid = 0;
    genmatchindex = 0;
@@ -604,6 +607,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("gjetpt", &gjetpt, &b_gjetpt);
    fChain->SetBranchAddress("gjeteta", &gjeteta, &b_gjeteta);
    fChain->SetBranchAddress("gjetphi", &gjetphi, &b_gjetphi);
+   fChain->SetBranchAddress("gjetflavor", &gjetflavor, &b_gjetflavor);
    fChain->SetBranchAddress("chargedSum", &chargedSum, &b_chargedSum);
    fChain->SetBranchAddress("subid", &subid, &b_subid);
    fChain->SetBranchAddress("ngen", &ngen, &b_ngen);

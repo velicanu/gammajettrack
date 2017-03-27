@@ -383,6 +383,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.gjetpt.push_back(jt.refpt[ij]);
         pjtt.gjeteta.push_back(jt.refeta[ij]);
         pjtt.gjetphi.push_back(jt.refphi[ij]);
+        pjtt.gjetflavor.push_back(jt.refparton_flavor[ij]);
         pjtt.subid.push_back(jt.subid[ij]);
         pjtt.chargedSum.push_back(jt.chargedSum[ij]);
         njet++;
