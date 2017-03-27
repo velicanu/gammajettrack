@@ -12,6 +12,8 @@
 #include <TChain.h>
 #include <TFile.h>
 
+#include "TMath.h"
+
 // Header file for the classes stored in the TTree if any.
 #include <vector>
 
@@ -34,6 +36,141 @@ float getdr(float eta1, float phi1, float eta2 , float phi2) {
 void float_to_int(float* p1 , int* p2 , int count) {
   for (int i = 0; i < count; i++)
     p2[i] = int(p1[i]);
+}
+
+// Smearing parameters
+// pp resolution
+std::vector<double> CSN_PP = {0.06, 0.91, 0};
+std::vector<double> CSN_phi_PP = {7.72 / 100000000, 0.1222, 0.5818};
+
+// HI resolution
+// 0-30 %
+std::vector<double> CSN_HI_cent0030 = {0.06, 1.23, 7.38};
+std::vector<double> CSN_phi_HI_cent0030 = { -1.303 / 1000000, 0.1651, 1.864};
+// 30-100 %
+std::vector<double> CSN_HI_cent30100 = {0.06, 1.23, 2.1};
+std::vector<double> CSN_phi_HI_cent30100 = { -2.013 / 100000000, 0.1646, 1.04};
+
+// 0-10 %
+std::vector<double> CSN_HI_cent0010 = {0.06, 1.23, 8.38};
+std::vector<double> CSN_phi_HI_cent0010 = { -3.18781 / 10000000, 0.125911, 2.23898};
+// 10-30 %
+std::vector<double> CSN_HI_cent1030 = {0.06, 1.23, 5.88};
+std::vector<double> CSN_phi_HI_cent1030 = {1.14344 / 100000, 0.179847, 1.56128};
+// 30-50 %
+std::vector<double> CSN_HI_cent3050 = {0.06, 1.23, 3.24};
+std::vector<double> CSN_phi_HI_cent3050 = {0.0145775, 0.1222, 1.21751};
+// 50-100 %
+std::vector<double> CSN_HI_cent50100 = {0.06, 1.23, 0};
+std::vector<double> CSN_phi_HI_cent50100 = { -0.0073078, 0.168879, 0.798885};
+
+// CSN vectors
+std::vector<double>* CSN_vector[4] = {&CSN_HI_cent0010, &CSN_HI_cent1030, &CSN_HI_cent3050, &CSN_HI_cent50100};
+std::vector<double>* CSN_phi_vector[4] = {&CSN_phi_HI_cent0010, &CSN_phi_HI_cent1030, &CSN_phi_HI_cent3050, &CSN_phi_HI_cent50100};
+
+int getResolutionBin(int centmin) {
+  if (centmin == 0)
+    return 0;
+  else if (centmin == 20)
+    return 1;
+  else if (centmin == 60)
+    return 2;
+  else if (centmin == 100)
+    return 3;
+  else
+    return 0;
+}
+
+double getResolutionHI(float jtpt, int resolutionBin) {
+  std::vector<double>* CSN_HI = CSN_vector[resolutionBin];
+  double sigma = TMath::Sqrt(
+    (CSN_HI->at(0) * CSN_HI->at(0)) +
+    (CSN_HI->at(1) * CSN_HI->at(1)) / jtpt +
+    (CSN_HI->at(2) * CSN_HI->at(2)) / (jtpt * jtpt)
+  );
+
+  return sigma;
+}
+
+double getPhiResolutionHI(float jtpt, int resolutionBin) {
+  std::vector<double>* CSN_HI = CSN_phi_vector[resolutionBin];
+  double sigma = TMath::Sqrt(
+    (CSN_HI->at(0) * CSN_HI->at(0)) +
+    (CSN_HI->at(1) * CSN_HI->at(1)) / jtpt +
+    (CSN_HI->at(2) * CSN_HI->at(2)) / (jtpt * jtpt)
+  );
+
+  return sigma;
+}
+
+double getResolutionPP(float jtpt) {
+  return TMath::Sqrt(
+    (CSN_PP[0] * CSN_PP[0]) +
+    (CSN_PP[1] * CSN_PP[1]) / jtpt +
+    (CSN_PP[2] * CSN_PP[2]) / (jtpt * jtpt)
+  );
+}
+
+double getPhiResolutionPP(float jtpt) {
+  return TMath::Sqrt(
+    (CSN_phi_PP[0] * CSN_phi_PP[0]) +
+    (CSN_phi_PP[1] * CSN_phi_PP[1]) / jtpt +
+    (CSN_phi_PP[2] * CSN_phi_PP[2]) / (jtpt * jtpt)
+  );
+}
+
+float getSigmaRelPt(int hiBin, float jetpt) {
+  if (hiBin < 20)
+    return TMath::Sqrt(
+      (CSN_HI_cent0010.at(0) * CSN_HI_cent0010.at(0) - CSN_PP.at(0) * CSN_PP.at(0)) +
+      (CSN_HI_cent0010.at(1) * CSN_HI_cent0010.at(1) - CSN_PP.at(1) * CSN_PP.at(1)) / jetpt +
+      (CSN_HI_cent0010.at(2) * CSN_HI_cent0010.at(2) - CSN_PP.at(2) * CSN_PP.at(2)) / (jetpt * jetpt)
+    );
+  else if (20 <= hiBin && hiBin < 60)
+    return TMath::Sqrt(
+      (CSN_HI_cent1030.at(0) * CSN_HI_cent1030.at(0) - CSN_PP.at(0) * CSN_PP.at(0)) +
+      (CSN_HI_cent1030.at(1) * CSN_HI_cent1030.at(1) - CSN_PP.at(1) * CSN_PP.at(1)) / jetpt +
+      (CSN_HI_cent1030.at(2) * CSN_HI_cent1030.at(2) - CSN_PP.at(2) * CSN_PP.at(2)) / (jetpt * jetpt)
+    );
+  else if (60 <= hiBin && hiBin < 100)
+    return TMath::Sqrt(
+      (CSN_HI_cent3050.at(0) * CSN_HI_cent3050.at(0) - CSN_PP.at(0) * CSN_PP.at(0)) +
+      (CSN_HI_cent3050.at(1) * CSN_HI_cent3050.at(1) - CSN_PP.at(1) * CSN_PP.at(1)) / jetpt +
+      (CSN_HI_cent3050.at(2) * CSN_HI_cent3050.at(2) - CSN_PP.at(2) * CSN_PP.at(2)) / (jetpt * jetpt)
+    );
+  else
+    return TMath::Sqrt(
+      (CSN_HI_cent50100.at(0) * CSN_HI_cent50100.at(0) - CSN_PP.at(0) * CSN_PP.at(0)) +
+      (CSN_HI_cent50100.at(1) * CSN_HI_cent50100.at(1) - CSN_PP.at(1) * CSN_PP.at(1)) / jetpt +
+      (CSN_HI_cent50100.at(2) * CSN_HI_cent50100.at(2) - CSN_PP.at(2) * CSN_PP.at(2)) / (jetpt * jetpt)
+    );
+}
+
+float getSigmaRelPhi(int hiBin, float jetpt) {
+  if (hiBin < 20)
+    return TMath::Sqrt(
+      (CSN_phi_HI_cent0010.at(0) * CSN_phi_HI_cent0010.at(0) - CSN_phi_PP.at(0) * CSN_phi_PP.at(0)) +
+      (CSN_phi_HI_cent0010.at(1) * CSN_phi_HI_cent0010.at(1) - CSN_phi_PP.at(1) * CSN_phi_PP.at(1)) / jetpt +
+      (CSN_phi_HI_cent0010.at(2) * CSN_phi_HI_cent0010.at(2) - CSN_phi_PP.at(2) * CSN_phi_PP.at(2)) / (jetpt * jetpt)
+    );
+  else if (20 <= hiBin && hiBin < 60)
+    return TMath::Sqrt(
+      (CSN_phi_HI_cent1030.at(0) * CSN_phi_HI_cent1030.at(0) - CSN_phi_PP.at(0) * CSN_phi_PP.at(0)) +
+      (CSN_phi_HI_cent1030.at(1) * CSN_phi_HI_cent1030.at(1) - CSN_phi_PP.at(1) * CSN_phi_PP.at(1)) / jetpt +
+      (CSN_phi_HI_cent1030.at(2) * CSN_phi_HI_cent1030.at(2) - CSN_phi_PP.at(2) * CSN_phi_PP.at(2)) / (jetpt * jetpt)
+    );
+  else if (60 <= hiBin && hiBin < 100)
+    return TMath::Sqrt(
+      (CSN_phi_HI_cent3050.at(0) * CSN_phi_HI_cent3050.at(0) - CSN_phi_PP.at(0) * CSN_phi_PP.at(0)) +
+      (CSN_phi_HI_cent3050.at(1) * CSN_phi_HI_cent3050.at(1) - CSN_phi_PP.at(1) * CSN_phi_PP.at(1)) / jetpt +
+      (CSN_phi_HI_cent3050.at(2) * CSN_phi_HI_cent3050.at(2) - CSN_phi_PP.at(2) * CSN_phi_PP.at(2)) / (jetpt * jetpt)
+    );
+  else
+    return TMath::Sqrt(
+      (CSN_phi_HI_cent50100.at(0) * CSN_phi_HI_cent50100.at(0) - CSN_phi_PP.at(0) * CSN_phi_PP.at(0)) +
+      (CSN_phi_HI_cent50100.at(1) * CSN_phi_HI_cent50100.at(1) - CSN_phi_PP.at(1) * CSN_phi_PP.at(1)) / jetpt +
+      (CSN_phi_HI_cent50100.at(2) * CSN_phi_HI_cent50100.at(2) - CSN_phi_PP.at(2) * CSN_phi_PP.at(2)) / (jetpt * jetpt)
+    );
 }
 
 class photonjettrack {
@@ -320,7 +457,6 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
