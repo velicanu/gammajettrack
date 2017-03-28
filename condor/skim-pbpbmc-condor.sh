@@ -24,6 +24,7 @@ Rank         = Mips
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 transfer_input_files = gammajetSkim.exe,residuals.tgz
+#noop_job = !( stringListMember("\$(Process)","") )
 
 Queue $JOBS
 EOF
