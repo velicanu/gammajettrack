@@ -7,14 +7,6 @@
 
 TRandom3 smear_rand(12345);
 
-std::vector<int> trkFromEv_mix_int;
-
-void float_to_int(std::vector<float>* vfloat, std::vector<int>& vint) {
-  vint.clear();
-  for (std::size_t i = 0; i < vfloat->size(); ++i)
-    vint.push_back(int((*vfloat)[i]));
-}
-
 float getTrkWeight(int trkindex, float* trkweight, std::string jet_part) {
   if (part_type_is("gen", jet_part) || part_type_is("gen0", jet_part))
     return 1;
@@ -27,11 +19,11 @@ float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string jet_
   return (*trkweight)[trkindex];
 }
 
-void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys) {
+void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int doJERsys) {
   return;
 }
 
-void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string jet_part, int trkptmin, int gammaxi) {
+void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi) {
   bool isMC;
   TFile* fvzweight = TFile::Open("fvzweight.root");
   TH1D* hvzweight = (TH1D*)fvzweight->Get("hvzdata");
@@ -75,9 +67,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
   std::vector<int> p_ev_mix;
 
   std::vector<float> j_pt;
+  std::vector<float> j_pt_mix;
   std::vector<float> p_pt;
   std::vector<float> p_pt_mix;
-  std::vector<float> j_pt_mix;
   std::vector<float> j_eta;
   std::vector<float> j_eta_mix;
   std::vector<float> p_eta;
@@ -96,8 +88,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     if (ientry < 0) break;
 
     fChain->GetEntry(jentry);
-    float_to_int(trkFromEv_mix, trkFromEv_mix_int);
+
     //! (2.1) Event selections
+    // if (nmix < 12) continue;
     if (!isPP) {
       if (hiBin < centmin || hiBin >= centmax) continue;
     }
@@ -155,7 +148,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       p_pt_mix = *trkPt_mix;
       p_eta_mix = *trkEta_mix;
       p_phi_mix = *trkPhi_mix;
-      p_ev_mix = trkFromEv_mix_int;
+      p_ev_mix = *trkFromEv_mix;
     } else {
       nip = mult;
       p_pt = *pt;
@@ -253,11 +246,13 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
         // raw jet ue
         float nmixedUEevents = (nmix + 2) / 3;
         for (ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
+          if ((p_ev_mix[ip_mix]) % 3 != 0) continue;
+
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
           if (p_pt_mix[ip_mix] < trkptmin) continue;
-          if ((p_ev_mix[ip_mix]) % 3 != 0) continue;
+
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
           float dr = sqrt((dphi * dphi) + (deta * deta));
@@ -295,10 +290,11 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
+        if (j_ev_mix[ij_mix] % 3 != 1) continue;
+
         tmpjetpt = j_pt_mix[ij_mix] * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi_mix[ij_mix] + smear_rand.Gaus(0, res_phi);
 
-        if (j_ev_mix[ij_mix] % 3 != 1) continue;
         if (tmpjetpt < jetptcut) continue;
         if (fabs(tmpjeteta) > 1.6) continue;
         if (acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8) continue;
@@ -316,6 +312,8 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
         // mix jet
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
+          if (j_ev_mix[ij_mix] != p_ev_mix[ip_mix]) continue; // tracks and jet come from same mixed event
+
           if (part_type_is("gen0", jet_part)) {
             if ((*sube)[ip_mix] != 0) continue;
             if ((*chg_mix)[ip_mix] == 0) continue;
@@ -324,7 +322,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
           if (p_pt_mix[ip_mix] < trkptmin) continue;
-          if (j_ev_mix[ij_mix] != p_ev_mix[ip_mix]) continue; // tracks and jet come from same mixed event
+
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
           float dr = sqrt((dphi * dphi) + (deta * deta));
@@ -344,11 +342,13 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
         // mix jet ue
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
+          if (j_ev_mix[ij_mix] != (p_ev_mix[ip_mix] + 1)) continue;
+
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
           if (p_pt_mix[ip_mix] < trkptmin) continue;
-          if (j_ev_mix[ij_mix] != (p_ev_mix[ip_mix] + 1)) continue;
+
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
           float dr = sqrt((dphi * dphi) + (deta * deta));
@@ -373,7 +373,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
 int main(int argc, char* argv[]) {
   if (argc > 12 || argc < 3) {
-    printf("usage: ./jetshape <input> <label> [centmin centmax] [phoetmin] [phoetmax] [jet_part] [trkptmin] [gammaxi]\n");
+    printf("usage: ./jetshape <input> <label> [centmin centmax] [phoetmin] [phoetmax] [jetptcut] [jet_part] [trkptmin] [gammaxi]\n");
     return 1;
   }
 
@@ -387,13 +387,13 @@ int main(int argc, char* argv[]) {
   else if (argc == 7)
     t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]));
   else if (argc == 8)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]));
   else if (argc == 9)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8]);
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8]);
   else if (argc == 10)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]));
   else if (argc == 11)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atoi(argv[7]), argv[8], std::atoi(argv[9]), std::atoi(argv[10]));
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]));
 
   return 0;
 }

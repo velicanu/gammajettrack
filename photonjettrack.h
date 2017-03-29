@@ -254,7 +254,7 @@ public :
    std::vector<int>     *gensubid_mix;
    std::vector<int>     *genev_mix;
    Int_t           nTrk_mix;
-   std::vector<float>   *trkFromEv_mix;
+   std::vector<int>   *trkFromEv_mix;
    std::vector<float>   *trkPt_mix;
    std::vector<float>   *trkEta_mix;
    std::vector<float>   *trkPhi_mix;
@@ -454,8 +454,8 @@ public :
 
    photonjettrack(std::string filename);
    virtual ~photonjettrack();
-   virtual void     jetshape(std::string label, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 3000, int jetptcut = 30, std::string jet_part = "", int trkptmin = 1, int gammaxi = 0);
-   virtual void     ffgammajet(std::string label, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, int jetptcut = 30, std::string gen = "", int checkjetid = 1, int trkptmin = 1, int gammaxi = 0, int doJERsys = 0);
+   virtual void     jetshape(std::string label, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 3000, float jetptcut = 30, std::string jet_part = "", float trkptmin = 1, int gammaxi = 0);
+   virtual void     ffgammajet(std::string label, int centmin = -1, int centmax = 200, float phoetmin = 100, float phoetmax = 300, float jetptcut = 30, std::string gen = "", int checkjetid = 1, float trkptmin = 1, int gammaxi = 0, int doJERsys = 0);
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);

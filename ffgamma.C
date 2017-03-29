@@ -8,14 +8,6 @@
 #include <algorithm>
 #include <typeinfo>
 
-std::vector<int> trkFromEv_mix_int;
-
-void float_to_int(std::vector<float>* vfloat, std::vector<int>& vint) {
-  vint.clear();
-  for (std::size_t i = 0; i < vfloat->size(); ++i)
-    vint.push_back(int((*vfloat)[i]));
-}
-
 /************************ code outline ********************************
 (1) Setup                                                             *
   (1.1) Smearing functions for pp                                     *
@@ -58,10 +50,10 @@ float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string gen)
   return (*trkweight)[trkindex];
 }
 
-void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string jet_part, int trkptmin, int gammaxi) { return; }
+void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi) { return; }
 
 // this function does the raw FF analysis and writes histograms to output file
-void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, int jetptcut, std::string gen, int checkjetid, int trkptmin, int gammaxi, int doJERsys)
+void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int doJERsys)
 {
   bool ismc;
   TFile * fvzweight = TFile::Open("fvzweight.root");
@@ -136,7 +128,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     if (ientry < 0) break;
 
     nb = fChain->GetEntry(jentry);   nbytes += nb;
-    float_to_int(trkFromEv_mix, trkFromEv_mix_int);
 //! (2.1) Event selections
     if(!isPP)
     {
@@ -198,7 +189,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       p_pt_mix = *trkPt_mix;
       p_eta_mix = *trkEta_mix;
       p_phi_mix = *trkPhi_mix;
-      p_ev_mix = trkFromEv_mix_int;
+      p_ev_mix = *trkFromEv_mix;
     }
     else if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
       nip = mult;
@@ -457,13 +448,13 @@ int main(int argc, char *argv[])
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]));
   }
   if (argc==11) {
-    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]));
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atof(argv[10]));
   }
   if (argc==12) {
-    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]),std::atoi(argv[11]));
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atof(argv[10]),std::atoi(argv[11]));
   }
   if (argc==13) {
-    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atoi(argv[10]),std::atoi(argv[11]),std::atoi(argv[12]));
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atof(argv[10]),std::atoi(argv[11]),std::atoi(argv[12]));
   }
   // cout<<argc<<endl;
   return 0;
