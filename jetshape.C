@@ -246,11 +246,10 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
         // raw jet ue
         float nmixedUEevents = (nmix + 2) / 3;
         for (ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-          if ((p_ev_mix[ip_mix]) % 3 != 0) continue;
-
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
+          if ((p_ev_mix[ip_mix]) % 3 != 0) continue;
           if (p_pt_mix[ip_mix] < trkptmin) continue;
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
@@ -312,8 +311,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
         // mix jet
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-          if (j_ev_mix[ij_mix] != p_ev_mix[ip_mix]) continue; // tracks and jet come from same mixed event
-
           if (part_type_is("gen0", jet_part)) {
             if ((*sube)[ip_mix] != 0) continue;
             if ((*chg_mix)[ip_mix] == 0) continue;
@@ -321,6 +318,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
+          if (j_ev_mix[ij_mix] != p_ev_mix[ip_mix]) continue; // tracks and jet come from same mixed event
           if (p_pt_mix[ip_mix] < trkptmin) continue;
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
@@ -342,11 +340,10 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
         // mix jet ue
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-          if (j_ev_mix[ij_mix] != (p_ev_mix[ip_mix] + 1)) continue;
-
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
+          if (j_ev_mix[ij_mix] != (p_ev_mix[ip_mix] + 1)) continue;
           if (p_pt_mix[ip_mix] < trkptmin) continue;
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
