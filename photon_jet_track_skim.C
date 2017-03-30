@@ -111,11 +111,13 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   trackTree tt(track_tree);
 
   TTree* genpart_tree = (TTree*)finput->Get("HiGenParticleAna/hi");
-  if (!genpart_tree) { printf("Could not access track tree!\n"); isMC = false; }
-  genpart_tree->SetBranchStatus("*", 0);
-  genpartTree gpt(genpart_tree);
-
-
+  if (!genpart_tree) { printf("Could not access gen tree!\n"); isMC = false; }
+  genpartTree gpt;
+  if(isMC) 
+  {
+    genpart_tree->SetBranchStatus("*", 0);
+    gpt.read_tree(genpart_tree);
+  }
   /**********************************************************
   * OPEN MINBIAS MIXING FILE
   **********************************************************/
@@ -234,7 +236,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     if (weight == 1) pjtt.weight = weight;
 
     hlt_tree->GetEntry(j);
-    if (j % 10 == 0) { printf("processing event: %i / %i\n", j, nevents); }
+    if (j % 10 == 0) { printf("processing event: %i / %i\n", j, end); }
     if (j == end) { printf("done: %i\n", end); break; }
 
     if (fabs(vz) > 15) continue;
