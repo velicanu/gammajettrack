@@ -16,14 +16,17 @@ g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exi
 echo running closure histograms
 for i in ${@:6}
 do
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170328.root pbpbmc 0 20 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170328.root pbpbmc 20 60 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170328.root pbpbmc 60 100 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170328.root pbpbmc 100 200 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170331.root pbpbmc 0 20 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170331.root pbpbmc 20 60 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170331.root pbpbmc 60 100 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170331.root pbpbmc 100 200 $1 $2 $3 $i $4 $5 &
   wait
 
   hadd -f closure_${1}_gxi${5}_${i}_js.root pbpbmc_${i}_${1}_*_*.root
   rm pbpbmc_${i}_${1}_*_*.root
 done
 
-./run-js-plot.sh $@
+hadd -f closure_${1}_gxi${5}_js_merged.root closure_${1}_gxi${5}_*_js.root
+./draw_js pbpbmc closure_${1}_gxi${5}_js_merged.root closure_${1}_gxi${5}_js_final.root ${@:6}
+
+./run-js-plot.sh $1 $2 $3 $4 $5 pbpbmc closure ${@:6}
