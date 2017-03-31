@@ -288,12 +288,11 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
       }
-      float nmixedUEevents = (nmix+2)/3;
+      float nmixedUEevents = (nmix+1)/2;
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       {
         if(p_pt_mix[ip_mix]<trkptmin) continue;
-        if((p_ev_mix[ip_mix])%3!=0) continue;
-        if(((int)p_ev_mix[ip_mix])%3!=0) continue;
+        if((p_ev_mix[ip_mix])%2!=0) continue;
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
           if((*chg_mix)[ip_mix]==0) continue;
         }
@@ -317,7 +316,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     }
 
 //! (2.4) Mix jet loop
-    float nmixedjetevents = (nmix+1)/3;
+    float nmixedjetevents = nmix/2;
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
@@ -338,7 +337,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         tmpjetpt *= smearFactor;
       }
 
-      if( j_ev_mix[ij_mix]%3!= 1) continue;
+      if( j_ev_mix[ij_mix]%2!= 1) continue;
       if( tmpjetpt<jetptcut ) continue; //jet pt Cut
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
