@@ -35,8 +35,8 @@ if [[ $FILE =~ [0-9]*Flt30 ]]; then
             ;;
     esac
     echo "pthat: $PTHAT, weight: ${WEIGHT}"
-    echo ./gammajetSkim.exe $FILE ${1}.root akPu3PFJetAnalyzer 0 $WEIGHT /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root
-    ./gammajetSkim.exe $FILE ${1}.root akPu3PFJetAnalyzer 0 $WEIGHT /mnt/hadoop/cms/store/user/velicanu/Merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root
+    echo ./gammajetSkim.exe $FILE ${1}.root akPu3PFJetAnalyzer 0 $WEIGHT /mnt/hadoop/cms/store/user/biran/photon-jet-track/PbPb-MB-Hydjet-Cymbal-170331.root
+    ./gammajetSkim.exe $FILE ${1}.root akPu3PFJetAnalyzer 0 $WEIGHT /mnt/hadoop/cms/store/user/biran/photon-jet-track/PbPb-MB-Hydjet-Cymbal-170331.root
     mv ${1}.root ${3}
 
     ls | grep -v .out | grep -v .err | grep -v .log | grep -v _condor_stdout | grep -v _condor_stderr | xargs rm -rf
