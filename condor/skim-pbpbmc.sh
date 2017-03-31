@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [[ $# -lt 4 ]]; then
+    echo "don't run this locally! run skim-pbpbmc-condor.sh instead!"
     echo "usage: ./skim-pbpbmc.sh [n] [input list] [output dir] [residuals]"
     exit 1
 fi

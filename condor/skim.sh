@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [[ $# -lt 5 ]]; then
+    echo "don't run this locally! run ./skim-condor.sh instead!"
     echo "usage: ./skim.sh [n] [0/1] [input list] [output dir] [residuals] [[mixing list]]"
     exit 1
 fi
