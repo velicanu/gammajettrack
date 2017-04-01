@@ -358,7 +358,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     // Adjust centBin
     centBin = std::min(centBin, 3);
-
     //! (2.3) Begin jet cuts and selection
     jet_tree->GetEntry(j);
 
@@ -476,6 +475,12 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.sube.push_back((*gpt.sube)[igenp]);
       }
     }
+    pjtt.nmix = 0;
+    pjtt.nlooped = 0;
+    pjtt.njet_mix = 0;
+    pjtt.ngen_mix = 0;
+    pjtt.nTrk_mix = 0;
+    pjtt.mult_mix = 0;
 
     //! (2.5) Begin minbias mixing criteria machinery
     if (!mixing_file.empty() && mixing_file.compare("null") != 0) {
