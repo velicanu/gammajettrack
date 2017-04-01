@@ -242,7 +242,8 @@ void gammajetSkim(TString infilename="HiForest.root", TString outfilename="Zeven
 
   // next two lines are for event mixing for data with condor so each photon file starts
   // at a different index in the minbias mix tree that is random but deterministic
-  unsigned int filehash = std::hash<std::string>()(infilename.Data()) % 2147483647;
+  // unsigned int filehash = std::hash<std::string>()(infilename.Data()) % 2147483647;
+  uint32_t filehash = std::hash<std::string>()(infilename.Data()) % UINT32_MAX;
   srand(filehash); // seed with filehash to always mix consistently and randomly
   int minbiasstart = 0;
 
