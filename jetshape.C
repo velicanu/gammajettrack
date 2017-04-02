@@ -232,10 +232,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
           if (p_pt[ip] < trkptmin) continue;
           float dphi = acos(cos(tmpjetphi - p_phi[ip]));
           float deta = fabs(tmpjeteta - p_eta[ip]);
-          float dr = sqrt((dphi * dphi) + (deta * deta));
-          if (dr < 1) {
+          float deltar = sqrt((dphi * dphi) + (deta * deta));
+          if (deltar < 1) {
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
-            float deltar = getdr(p_eta[ip], p_phi[ip], tmpjeteta, tmpjetphi);
             if (signal) { hgammaffxi->Fill(deltar, p_pt[ip] / refpt * weight * getTrkWeight(ip, trkWeight, jet_part) * smear_weight); }
             if (sideband) { hgammaffxisideband->Fill(deltar, p_pt[ip] / refpt * weight * getTrkWeight(ip, trkWeight, jet_part) * smear_weight); }
           }
@@ -244,20 +243,19 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
         if (part_type_is("gen0", jet_part)) continue;
 
         // raw jet ue
-        float nmixedUEevents = (nmix + 2) / 3;
+        float nmixedUEevents = (nmix + 1) / 2;
         for (ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
           if (part_type_is("gen", jet_part)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
           }
-          if ((p_ev_mix[ip_mix]) % 3 != 0) continue;
+          if ((p_ev_mix[ip_mix]) % 2 != 0) continue;
           if (p_pt_mix[ip_mix] < trkptmin) continue;
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
-          float dr = sqrt((dphi * dphi) + (deta * deta));
-          if (dr < 1) {
+          float deltar = sqrt((dphi * dphi) + (deta * deta));
+          if (deltar < 1) {
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
-            float deltar = getdr(p_eta_mix[ip_mix], p_phi_mix[ip_mix], tmpjeteta, tmpjetphi);
             if (signal) { hgammaffxiuemix->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, jet_part) * smear_weight / nmixedUEevents); }
             if (sideband) { hgammaffxiuemixsideband->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, jet_part) * smear_weight / nmixedUEevents); }
           }
@@ -270,7 +268,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     if (part_type_is("gen0", jet_part)) continue;
 
     //! (2.4) Mix jet loop
-    float nmixedjetevents = (nmix + 1) / 3;
+    float nmixedjetevents = nmix / 2;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
       float tmpjeteta = j_eta_mix[ij_mix];
@@ -289,7 +287,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
-        if (j_ev_mix[ij_mix] % 3 != 1) continue;
+        if (j_ev_mix[ij_mix] % 2 != 1) continue;
 
         tmpjetpt = j_pt_mix[ij_mix] * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi_mix[ij_mix] + smear_rand.Gaus(0, res_phi);
@@ -323,10 +321,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
-          float dr = sqrt((dphi * dphi) + (deta * deta));
-          if (dr < 1) {
+          float deltar = sqrt((dphi * dphi) + (deta * deta));
+          if (deltar < 1) {
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
-            float deltar = getdr(p_eta_mix[ip_mix], p_phi_mix[ip_mix], tmpjeteta, tmpjetphi);
             if (signal) {
               hgammaffxijetmix->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, jet_part) * smear_weight / nmixedjetevents);
             }
@@ -348,10 +345,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
-          float dr = sqrt((dphi * dphi) + (deta * deta));
-          if (dr < 1) {
+          float deltar = sqrt((dphi * dphi) + (deta * deta));
+          if (deltar < 1) {
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
-            float deltar = getdr(p_eta_mix[ip_mix], p_phi_mix[ip_mix], tmpjeteta, tmpjetphi);
             if (signal) {
               hgammaffxijetmixue->Fill(deltar, p_pt_mix[ip_mix] / refpt * weight * getTrkWeight(ip_mix, trkWeight_mix, jet_part) * smear_weight / nmixedjetevents);
             }
