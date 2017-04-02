@@ -57,7 +57,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   event_tree->SetBranchStatus("*", 0);
   int hiBin;
   float vz;
-  int hiNevtPlane;
   float hiEvtPlanes[29];
   _SET_BRANCH_ADDRESS(event_tree, run, pjtt.run);
   _SET_BRANCH_ADDRESS(event_tree, evt, pjtt.evt);
@@ -65,7 +64,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
   _SET_BRANCH_ADDRESS(event_tree, weight, pjtt.weight);
-  _SET_BRANCH_ADDRESS(event_tree, hiNevtPlane, hiNevtPlane);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
@@ -113,8 +111,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   TTree* genpart_tree = (TTree*)finput->Get("HiGenParticleAna/hi");
   if (!genpart_tree) { printf("Could not access gen tree!\n"); isMC = false; }
   genpartTree gpt;
-  if(isMC) 
-  {
+  if (isMC) {
     genpart_tree->SetBranchStatus("*", 0);
     gpt.read_tree(genpart_tree);
   }
@@ -475,25 +472,19 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.sube.push_back((*gpt.sube)[igenp]);
       }
     }
-    pjtt.nmix = 0;
-    pjtt.nlooped = 0;
-    pjtt.njet_mix = 0;
-    pjtt.ngen_mix = 0;
-    pjtt.nTrk_mix = 0;
-    pjtt.mult_mix = 0;
+
+    int nmix = 0;
+    int nlooped = 0;
+    int njet_mix = 0;
+    int ngen_mix = 0;
+    int nTrk_mix = 0;
+    int mult_mix = 0;
 
     //! (2.5) Begin minbias mixing criteria machinery
     if (!mixing_file.empty() && mixing_file.compare("null") != 0) {
       int minbias_end = minbias_start;
 
-      int nmix = 0;
-      int nlooped = 0;
       bool wraparound = false;
-
-      int njet_mix = 0;
-      int ngen_mix = 0;
-      int nTrk_mix = 0;
-      int mult_mix = 0;
 
       // Start looping through the mixed event starting where we left off, so we don't always mix same events
       const int nevent_mix = event_tree_mix->GetEntries();
@@ -628,21 +619,19 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         if (nmix >= nEventsToMix) break; // done mixing
       }
       minbias_start = minbias_end;
-
-      pjtt.nmix = nmix;
-      pjtt.nlooped = nlooped;
-
-      pjtt.njet_mix = njet_mix;
-      pjtt.ngen_mix = ngen_mix;
-      pjtt.nTrk_mix = nTrk_mix;
-      pjtt.mult_mix = mult_mix;
     }
     //! End minbias mixing
+
+    pjtt.nmix = nmix;
+    pjtt.nlooped = nlooped;
+    pjtt.njet_mix = njet_mix;
+    pjtt.ngen_mix = ngen_mix;
+    pjtt.nTrk_mix = nTrk_mix;
+    pjtt.mult_mix = mult_mix;
 
     pjtt.isPP = isPP;
     pjtt.hiBin = hiBin;
     pjtt.vz = vz;
-    pjtt.hiNevtPlane = hiNevtPlane;
     memcpy(pjtt.hiEvtPlanes, hiEvtPlanes, 29 * sizeof(float));
 
     outtree->Fill();

@@ -18,8 +18,6 @@ class photonJetTrackTree {
         vz = -99;
         weight = -1;
 
-        hiNevtPlane = -1;
-
         njet = 0;
         ngen = 0;
         nTrk = 0;
@@ -93,7 +91,6 @@ class photonJetTrackTree {
     float vz;
     float weight;
 
-    int hiNevtPlane;
     float hiEvtPlanes[29];
 
     int njet;
@@ -245,8 +242,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("vz", &vz, "vz/F");
     t->Branch("weight", &weight, "weight/F");
 
-    t->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
-    t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
+    t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[29]/F");
 
     t->Branch("njet", &njet, "njet/I");
     t->Branch("jetptCorr", &jetptCorr);
