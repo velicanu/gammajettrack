@@ -181,6 +181,7 @@ public :
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
    // Declaration of leaf types
+   int             isPP;
    UInt_t          run;
    ULong64_t       evt;
    UInt_t          lumi;
@@ -335,6 +336,7 @@ public :
    std::vector<int>     *mcMomPID;
 
    // List of branches
+   TBranch        *b_isPP;   //!
    TBranch        *b_run;   //!
    TBranch        *b_evt;   //!
    TBranch        *b_lumi;   //!
@@ -646,6 +648,7 @@ void photonjettrack::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   fChain->SetBranchAddress("isPP", &isPP, &b_isPP);
    fChain->SetBranchAddress("run", &run, &b_run);
    fChain->SetBranchAddress("evt", &evt, &b_evt);
    fChain->SetBranchAddress("lumi", &lumi, &b_lumi);

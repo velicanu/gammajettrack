@@ -79,8 +79,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
   std::vector<float> p_phi;
   std::vector<float> p_phi_mix;
 
-  int isPP = 0;
-
   //! (2) Loop
   for (int64_t jentry = 0; jentry < nentries; jentry++) {
     if (jentry % 10000 == 0) { printf("%li/%li\n", jentry, nentries); }
