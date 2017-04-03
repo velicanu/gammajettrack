@@ -384,6 +384,15 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.gjetflavor.push_back(jt.refparton_flavor[ij]);
         pjtt.subid.push_back(jt.subid[ij]);
         pjtt.chargedSum.push_back(jt.chargedSum[ij]);
+        pjtt.neutralSum.push_back(jt.neutralSum[ij]);
+        pjtt.photonSum.push_back(jt.photonSum[ij]);
+        pjtt.chargedMax.push_back(jt.chargedMax[ij]);
+        pjtt.chargedN.push_back(jt.chargedN[ij]);
+        pjtt.neutralN.push_back(jt.neutralN[ij]);
+        pjtt.photonN.push_back(jt.photonN[ij]);
+        pjtt.eN.push_back(jt.eN[ij]);
+        pjtt.muN.push_back(jt.muN[ij]);
+        pjtt.jetID.push_back(jt.goodJet(ij));
         njet++;
       }
     }
@@ -551,6 +560,15 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           pjtt.gjeteta_mix.push_back(jt_mix.refeta[ijetmix]);
           pjtt.gjetphi_mix.push_back(jt_mix.refphi[ijetmix]);
           pjtt.chargedSum_mix.push_back(jt_mix.chargedSum[ijetmix]);
+          pjtt.neutralSum_mix.push_back(jt_mix.neutralSum[ijetmix]);
+          pjtt.photonSum_mix.push_back(jt_mix.photonSum[ijetmix]);
+          pjtt.chargedMax_mix.push_back(jt_mix.chargedMax[ijetmix]);
+          pjtt.chargedN_mix.push_back(jt_mix.chargedN[ijetmix]);
+          pjtt.neutralN_mix.push_back(jt_mix.neutralN[ijetmix]);
+          pjtt.photonN_mix.push_back(jt_mix.photonN[ijetmix]);
+          pjtt.eN_mix.push_back(jt_mix.eN[ijetmix]);
+          pjtt.muN_mix.push_back(jt_mix.muN[ijetmix]);
+          pjtt.jetID_mix.push_back(jt_mix.goodJet(ijetmix));
           pjtt.nmixEv_mix.push_back(nmix);
           njet_mix++;
         }
