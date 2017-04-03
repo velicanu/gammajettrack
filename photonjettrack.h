@@ -239,6 +239,7 @@ public :
    Float_t         dhiEvtPlanes_mix[24];   //[nmix]
    Int_t           njet_mix;
    std::vector<float>   *rawpt_mix;
+   std::vector<float>   *jetptCorr_mix;
    std::vector<float>   *jetpt_mix;
    std::vector<float>   *jeteta_mix;
    std::vector<float>   *jetphi_mix;
@@ -375,6 +376,7 @@ public :
    TBranch        *b_dhiEvtPlanes_mix;   //!
    TBranch        *b_njet_mix;   //!
    TBranch        *b_rawpt_mix;   //!
+   TBranch        *b_jetptCorr_mix;   //!
    TBranch        *b_jetpt_mix;   //!
    TBranch        *b_jeteta_mix;   //!
    TBranch        *b_jetphi_mix;   //!
@@ -550,6 +552,7 @@ void photonjettrack::Init(TTree *tree)
    matchingID = 0;
    sube = 0;
    rawpt_mix = 0;
+   jetptCorr_mix = 0;
    jetpt_mix = 0;
    jeteta_mix = 0;
    jetphi_mix = 0;
@@ -649,6 +652,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("dhiEvtPlanes_mix", dhiEvtPlanes_mix, &b_dhiEvtPlanes_mix);
    fChain->SetBranchAddress("njet_mix", &njet_mix, &b_njet_mix);
    fChain->SetBranchAddress("rawpt_mix", &rawpt_mix, &b_rawpt_mix);
+   fChain->SetBranchAddress("jetptCorr_mix", &jetptCorr_mix, &b_jetptCorr_mix);
    fChain->SetBranchAddress("jetpt_mix", &jetpt_mix, &b_jetpt_mix);
    fChain->SetBranchAddress("jeteta_mix", &jeteta_mix, &b_jeteta_mix);
    fChain->SetBranchAddress("jetphi_mix", &jetphi_mix, &b_jetphi_mix);

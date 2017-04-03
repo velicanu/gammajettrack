@@ -148,6 +148,7 @@ class photonJetTrackTree {
 
     int njet_mix;
     std::vector<float> rawpt_mix;
+    std::vector<float> jetptCorr_mix;
     std::vector<float> jetpt_mix;
     std::vector<float> jeteta_mix;
     std::vector<float> jetphi_mix;
@@ -299,7 +300,9 @@ void photonJetTrackTree::create_tree(TTree* t) {
 
     t->Branch("njet_mix", &njet_mix, "njet_mix/I");
     t->Branch("rawpt_mix", &rawpt_mix);
+    t->Branch("jetptCorr_mix", &jetptCorr_mix);
     t->Branch("jetpt_mix", &jetpt_mix);
+    t->Branch("jetptCorr_mix", &jetptCorr_mix);
     t->Branch("jeteta_mix", &jeteta_mix);
     t->Branch("jetphi_mix", &jetphi_mix);
     t->Branch("gjetpt_mix", &gjetpt_mix);
@@ -429,6 +432,7 @@ void photonJetTrackTree::clear_vectors() {
     sube.clear();
 
     rawpt_mix.clear();
+    jetptCorr_mix.clear();
     jetpt_mix.clear();
     jeteta_mix.clear();
     jetphi_mix.clear();

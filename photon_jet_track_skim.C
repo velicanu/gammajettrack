@@ -542,7 +542,8 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
           jetpt_corr_mix = jet_corr->get_corrected_pt(jetpt_corr_mix, jt_mix.jteta[ijetmix]);
           if (jetpt_corr_mix < 30) continue; // njet_mix is not incremented
-          pjtt.jetpt_mix.push_back(jetpt_corr_mix);
+          pjtt.jetptCorr_mix.push_back(jetpt_corr_mix);
+          pjtt.jetpt_mix.push_back(jt_mix.jtpt[ijetmix]);
           pjtt.rawpt_mix.push_back(jt_mix.rawpt[ijetmix]);
           pjtt.jeteta_mix.push_back(jt_mix.jteta[ijetmix]);
           pjtt.jetphi_mix.push_back(jt_mix.jtphi[ijetmix]);
