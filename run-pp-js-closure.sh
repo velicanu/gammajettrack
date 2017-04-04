@@ -16,10 +16,10 @@ g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exi
 echo running closure histograms
 for i in ${@:6}
 do
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170403.root ppmc 0 20 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170403.root ppmc 20 60 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170403.root ppmc 60 100 $1 $2 $3 $i $4 $5 &
-  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170403.root ppmc 100 200 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170404.root ppmc 0 20 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170404.root ppmc 20 60 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170404.root ppmc 60 100 $1 $2 $3 $i $4 $5 &
+  ./jetshape /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170404.root ppmc 100 200 $1 $2 $3 $i $4 $5 &
   wait
 
   hadd -f ppclosure_${1}_gxi${5}_${i}_js.root ppmc_${i}_${1}_*_*.root

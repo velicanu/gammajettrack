@@ -24,10 +24,10 @@ Rank         = Mips
 +AccountingGroup = "group_cmshi.$(whoami)"
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = gammajetSkim.exe,residuals.tgz
+transfer_input_files = gammajetSkim.exe,residuals.tgz,$2
 #noop_job = !( stringListMember("\$(Process)","") )
 
 Queue $JOBS
 EOF
 
-#condor_submit skim.condor
+condor_submit skim.condor

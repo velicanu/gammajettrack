@@ -7,12 +7,6 @@
 
 TRandom3 smear_rand(12345);
 
-float getTrkWeight(int trkindex, float* trkweight, std::string jet_part) {
-  if (part_type_is("gen", jet_part) || part_type_is("gen0", jet_part))
-    return 1;
-  return trkweight[trkindex];
-}
-
 float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string jet_part) {
   if (part_type_is("gen", jet_part) || part_type_is("gen0", jet_part))
     return 1;
@@ -24,18 +18,17 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
 }
 
 void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi) {
-  bool isMC;
-  TFile* fvzweight = TFile::Open("fvzweight.root");
-  TH1D* hvzweight = (TH1D*)fvzweight->Get("hvzdata");
-  TFile* fcentweight = TFile::Open("fcentweight.root");
-  TH1D* hcentweight = (TH1D*)fcentweight->Get(Form("hcentdata_%d_%d", centmin, centmax));
+  // bool isMC;
+  // TFile* fvzweight = TFile::Open("fvzweight.root");
+  // TH1D* hvzweight = (TH1D*)fvzweight->Get("hvzdata");
+  // TFile* fcentweight = TFile::Open("fcentweight.root");
+  // TH1D* hcentweight = (TH1D*)fcentweight->Get(Form("hcentdata_%d_%d", centmin, centmax));
 
   if (fChain == 0) return;
   int64_t nentries = fChain->GetEntriesFast();
   TFile* fout = new TFile(Form("%s_%s_%d_%d_%d.root", label.data(), jet_part.data(), (int)phoetmin, abs(centmin), abs(centmax)), "recreate");
 
   TH1D* hphoSigmaIEtaIEta_2012 = new TH1D(Form("hphoSigmaIEtaIEta_2012_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 40, 0, 0.02);
-  TH1D* hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";genjet p_{T};"), 20, 0, 500);
   TH1D* hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
   TH1D* hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
   TH1D* hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";jet p_{T};"), 20, 0, 500);
@@ -88,7 +81,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     fChain->GetEntry(jentry);
 
     //! (2.1) Event selections
-    // if (nmix < 12) continue;
     if (!isPP) {
       if (hiBin < centmin || hiBin >= centmax) continue;
     }
@@ -104,10 +96,10 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       phoetsideband->Fill(phoEtCorrected);
     }
 
-    isMC = (weight != 0);
+    // isMC = (weight != 0);
     weight = 1;
-    if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 
     hvz->Fill(vz, weight);
     hcent->Fill(hiBin, weight);
@@ -121,7 +113,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       j_eta = *jeteta;
       j_phi = *jetphi;
       nij_mix = njet_mix;
-      j_pt_mix = *jetpt_mix;
+      j_pt_mix = *jetptCorr_mix;
       j_eta_mix = *jeteta_mix;
       j_phi_mix = *jetphi_mix;
       j_ev_mix = *nmixEv_mix;
@@ -163,6 +155,12 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     for (ij = 0; ij < nij; ij++) {
       if (jet_type_is("gen0", jet_part)) {
         if ((*gensubid)[ij] != 0) continue;
+      }
+      if (jet_type_is("bkg", jet_part) || jet_type_is("subbkg", jet_part)) {
+        if ((*gensubid)[ij] == 0) continue;
+      }
+      if (jet_type_is("idreco", jet_part)) {
+        if (!(*jetID)[ij]) continue;
       }
 
       float tmpjetpt = j_pt[ij];
@@ -207,7 +205,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
         if (signal) {
           hjetpt->Fill(tmpjetpt, smear_weight);
-          hgenjetpt->Fill(tmpjetpt, smear_weight);
           njets_perevent++;
           xjgsignal->Fill(tmpjetpt / phoEtCorrected, smear_weight);
         }
@@ -238,6 +235,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
           }
         }
 
+        if (isPP) continue;
         if (part_type_is("gen0", jet_part)) continue;
 
         // raw jet ue
@@ -263,11 +261,18 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
     if (isPP) continue;
     if (jet_type_is("gen0", jet_part)) continue;
+    if (jet_type_is("bkg", jet_part)) continue;
     if (part_type_is("gen0", jet_part)) continue;
 
     //! (2.4) Mix jet loop
     float nmixedjetevents = nmix / 2;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
+      if (j_ev_mix[ij_mix] % 2 != 1) continue;
+
+      if (jet_type_is("idreco", jet_part)) {
+        if (!(*jetID_mix)[ij_mix]) continue;
+      }
+
       float tmpjetpt = j_pt_mix[ij_mix];
       float tmpjeteta = j_eta_mix[ij_mix];
       float tmpjetphi = j_phi_mix[ij_mix];
@@ -285,8 +290,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
-        if (j_ev_mix[ij_mix] % 2 != 1) continue;
-
         tmpjetpt = j_pt_mix[ij_mix] * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi_mix[ij_mix] + smear_rand.Gaus(0, res_phi);
 

@@ -63,7 +63,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   _SET_BRANCH_ADDRESS(event_tree, lumi, pjtt.lumi);
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
-  _SET_BRANCH_ADDRESS(event_tree, weight, pjtt.weight);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
@@ -230,10 +229,10 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     skim_tree->GetEntry(j);
     event_tree->GetEntry(j);
-    if (weight == 1) pjtt.weight = weight;
+    pjtt.weight = weight;
 
     hlt_tree->GetEntry(j);
-    if (j % 10 == 0) { printf("processing event: %i / %i\n", j, end); }
+    if (j % 100 == 0) { printf("processing event: %i / %i\n", j, end); }
     if (j == end) { printf("done: %i\n", end); break; }
 
     if (fabs(vz) > 15) continue;
