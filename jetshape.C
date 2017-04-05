@@ -107,7 +107,7 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     int njets_perevent = 0;
     int njets_permixevent = 0;
 
-    if (jet_type_is("reco", jet_part)) {
+    if (jet_type_is("reco", jet_part) || jet_type_is("sreco", jet_part) || jet_type_is("idreco", jet_part) || jet_type_is("sidreco", jet_part)) {
       nij = njet;
       j_pt = *jetptCorr;
       j_eta = *jeteta;
@@ -161,6 +161,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       }
       if (jet_type_is("idreco", jet_part)) {
         if (!(*jetID)[ij]) continue;
+      }
+      if (jet_type_is("sidreco", jet_part)) {
+        if ((*subid)[ij]) continue;
       }
 
       float tmpjetpt = j_pt[ij];
@@ -271,6 +274,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
       if (jet_type_is("idreco", jet_part)) {
         if (!(*jetID_mix)[ij_mix]) continue;
+      }
+      if (jet_type_is("sidreco", jet_part)) {
+        if ((*subid_mix)[ij_mix]) continue;
       }
 
       float tmpjetpt = j_pt_mix[ij_mix];

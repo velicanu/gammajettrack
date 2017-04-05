@@ -2,11 +2,14 @@
 
 if [ $# -lt 8 ]; then
   echo "Usage: ./run-js-plot.sh <phoetmin> <phoetmax> <jetptmin> <trkptmin> <gammaxi> <sample> <label> <types...>"
-  echo "Example: ./run-js-plot.sh 60 1000 30 1 0 pbpbmc closure sgengen sgenreco recogen recoreco gen0gen0 recogen0"
+  echo "Example: ./run-js-plot.sh 60 1000 30 1 0 pbpbmc closure sgengen sgenreco recogen recoreco"
   exit 1
 fi
 
 set -x
+
+hadd -f ${7}_${1}_gxi${5}_js_merged.root ${7}_${1}_gxi${5}_*_js.root
+./draw_js ${6} ${7}_${1}_gxi${5}_js_merged.root ${7}_${1}_gxi${5}_js_final.root ${@:8}
 
 cat > jsplot.list <<EOF
 EOF

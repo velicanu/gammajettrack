@@ -29,7 +29,4 @@ do
   rm pbpbmc_${i}_${1}_*_*.root
 done
 
-hadd -f closure_${1}_gxi${5}_js_merged.root closure_${1}_gxi${5}_*_js.root
-./draw_js pbpbmc closure_${1}_gxi${5}_js_merged.root closure_${1}_gxi${5}_js_final.root ${@:6}
-
 ./run-js-plot.sh $1 $2 $3 $4 $5 pbpbmc closure ${@:6}
