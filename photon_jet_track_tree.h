@@ -95,6 +95,7 @@ class photonJetTrackTree {
 
     int njet;
     std::vector<float> jetptCorr;
+    std::vector<float> jetptCorr_zjet;
     std::vector<float> jetpt;
     std::vector<float> jeteta;
     std::vector<float> jetphi;
@@ -103,6 +104,7 @@ class photonJetTrackTree {
     std::vector<float> gjetphi;
     std::vector<int> subid;
     std::vector<int> gjetflavor;
+    std::vector<float> rawpt;
     std::vector<float> chargedSum;
     std::vector<float> neutralSum;
     std::vector<float> photonSum;
@@ -157,8 +159,8 @@ class photonJetTrackTree {
     float dhiEvtPlanes_mix[nEventsToMix];
 
     int njet_mix;
-    std::vector<float> rawpt_mix;
     std::vector<float> jetptCorr_mix;
+    std::vector<float> jetptCorr_zjet_mix;
     std::vector<float> jetpt_mix;
     std::vector<float> jeteta_mix;
     std::vector<float> jetphi_mix;
@@ -166,6 +168,7 @@ class photonJetTrackTree {
     std::vector<float> gjeteta_mix;
     std::vector<float> gjetphi_mix;
     std::vector<int> subid_mix;
+    std::vector<float> rawpt_mix;
     std::vector<float> chargedSum_mix;
     std::vector<float> neutralSum_mix;
     std::vector<float> photonSum_mix;
@@ -268,6 +271,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
 
     t->Branch("njet", &njet, "njet/I");
     t->Branch("jetptCorr", &jetptCorr);
+    t->Branch("jetptCorr_zjet", &jetptCorr_zjet);
     t->Branch("jetpt", &jetpt);
     t->Branch("jeteta", &jeteta);
     t->Branch("jetphi", &jetphi);
@@ -276,6 +280,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("gjetphi", &gjetphi);
     t->Branch("subid", &subid);
     t->Branch("gjetflavor", &gjetflavor);
+    t->Branch("rawpt", &rawpt);
     t->Branch("chargedSum", &chargedSum);
     t->Branch("neutralSum", &neutralSum);
     t->Branch("photonSum", &photonSum);
@@ -330,16 +335,16 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("dhiEvtPlanes_mix", dhiEvtPlanes_mix, "dhiEvtPlanes_mix[nmix]/F");
 
     t->Branch("njet_mix", &njet_mix, "njet_mix/I");
-    t->Branch("rawpt_mix", &rawpt_mix);
     t->Branch("jetptCorr_mix", &jetptCorr_mix);
+    t->Branch("jetptCorr_zjet_mix", &jetptCorr_zjet_mix);
     t->Branch("jetpt_mix", &jetpt_mix);
-    t->Branch("jetptCorr_mix", &jetptCorr_mix);
     t->Branch("jeteta_mix", &jeteta_mix);
     t->Branch("jetphi_mix", &jetphi_mix);
     t->Branch("gjetpt_mix", &gjetpt_mix);
     t->Branch("gjeteta_mix", &gjeteta_mix);
     t->Branch("gjetphi_mix", &gjetphi_mix);
     t->Branch("subid_mix", &subid_mix);
+    t->Branch("rawpt_mix", &rawpt_mix);
     t->Branch("chargedSum_mix", &chargedSum_mix);
     t->Branch("neutralSum_mix", &neutralSum_mix);
     t->Branch("photonSum_mix", &photonSum_mix);
@@ -431,6 +436,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
 
 void photonJetTrackTree::clear_vectors() {
     jetptCorr.clear();
+    jetptCorr_zjet.clear();
     jetpt.clear();
     jeteta.clear();
     jetphi.clear();
@@ -439,6 +445,7 @@ void photonJetTrackTree::clear_vectors() {
     gjetphi.clear();
     subid.clear();
     gjetflavor.clear();
+    rawpt.clear();
     chargedSum.clear();
     neutralSum.clear();
     photonSum.clear();
@@ -483,8 +490,8 @@ void photonJetTrackTree::clear_vectors() {
     matchingID.clear();
     sube.clear();
 
-    rawpt_mix.clear();
     jetptCorr_mix.clear();
+    jetptCorr_zjet_mix.clear();
     jetpt_mix.clear();
     jeteta_mix.clear();
     jetphi_mix.clear();
@@ -492,6 +499,7 @@ void photonJetTrackTree::clear_vectors() {
     gjeteta_mix.clear();
     gjetphi_mix.clear();
     subid_mix.clear();
+    rawpt_mix.clear();
     chargedSum_mix.clear();
     neutralSum_mix.clear();
     photonSum_mix.clear();
