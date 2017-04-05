@@ -558,6 +558,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           pjtt.gjetpt_mix.push_back(jt_mix.refpt[ijetmix]);
           pjtt.gjeteta_mix.push_back(jt_mix.refeta[ijetmix]);
           pjtt.gjetphi_mix.push_back(jt_mix.refphi[ijetmix]);
+          pjtt.subid_mix.push_back(jt_mix.subid[ijetmix]);
           pjtt.chargedSum_mix.push_back(jt_mix.chargedSum[ijetmix]);
           pjtt.neutralSum_mix.push_back(jt_mix.neutralSum[ijetmix]);
           pjtt.photonSum_mix.push_back(jt_mix.photonSum[ijetmix]);
