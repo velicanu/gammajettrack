@@ -176,7 +176,7 @@ class photonJetTrackTree {
     std::vector<int> photonN_mix;
     std::vector<int> eN_mix;
     std::vector<int> muN_mix;
-    std::vector<int> jetID_mix;
+    std::vector<bool> jetID_mix;
     std::vector<int> nmixEv_mix;
 
     int ngen_mix;
