@@ -23,6 +23,4 @@ wait
 hadd -f pbpbdata_${1}_gxi${5}_recoreco_js.root pbpbdata_recoreco_${1}_*_*.root
 rm pbpbdata_recoreco_${1}_*_*.root
 
-./draw_js pbpbdata pbpbdata_${1}_gxi${5}_recoreco_js.root pbpbdata_${1}_gxi${5}_js_final.root recoreco
-
 ./run-js-plot.sh $@ pbpbdata pbpbdata recoreco

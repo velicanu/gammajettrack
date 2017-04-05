@@ -41,7 +41,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   TTree* outtree = new TTree("pjtt", "photon jet track tree");
   photonJetTrackTree pjtt(outtree);
 
-
   /**********************************************************
   * OPEN INPUT FILES
   **********************************************************/
@@ -58,12 +57,14 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   int hiBin;
   float vz;
   float hiEvtPlanes[29];
+  float pthat;
   _SET_BRANCH_ADDRESS(event_tree, run, pjtt.run);
   _SET_BRANCH_ADDRESS(event_tree, evt, pjtt.evt);
   _SET_BRANCH_ADDRESS(event_tree, lumi, pjtt.lumi);
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
+  _SET_BRANCH_ADDRESS(event_tree, pthat, pthat);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
   if (!skim_tree) { printf("Could not access skim tree!\n"); return 1; }
@@ -229,7 +230,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     skim_tree->GetEntry(j);
     event_tree->GetEntry(j);
-    pjtt.weight = weight;
 
     hlt_tree->GetEntry(j);
     if (j % 100 == 0) { printf("processing event: %i / %i\n", j, end); }
@@ -308,6 +308,19 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     }
 
     if (!passed) continue;
+
+    if (pthat >= 14.95 && pthat < 30.)
+      pjtt.weight = 0.999328;
+    else if (pthat >= 30. && pthat < 50.)
+      pjtt.weight = 0.447420;
+    else if (pthat >= 50. && pthat < 80.)
+      pjtt.weight = 0.153135;
+    else if (pthat >= 80. && pthat < 120.)
+      pjtt.weight = 0.042342;
+    else if (pthat >= 120.)
+      pjtt.weight = 0.012907;
+    else
+      pjtt.weight = 0;
 
     pjtt.phoE = (*pt.phoE)[maxPhoIndex];
     pjtt.phoEt = (*pt.phoEt)[maxPhoIndex];
