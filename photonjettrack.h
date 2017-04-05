@@ -191,6 +191,7 @@ public :
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           njet;
    std::vector<float>   *jetptCorr;
+   std::vector<float>   *jetptCorr_zjet;
    std::vector<float>   *jetpt;
    std::vector<float>   *jeteta;
    std::vector<float>   *jetphi;
@@ -199,6 +200,7 @@ public :
    std::vector<float>   *gjetphi;
    std::vector<int>     *subid;
    std::vector<int>   *gjetflavor;
+   std::vector<float>   *rawpt;
    std::vector<float>   *chargedSum;
    std::vector<float>   *neutralSum;
    std::vector<float>   *photonSum;
@@ -247,8 +249,8 @@ public :
    Int_t           dhiBin_mix[24];   //[nmix]
    Float_t         dhiEvtPlanes_mix[24];   //[nmix]
    Int_t           njet_mix;
-   std::vector<float>   *rawpt_mix;
    std::vector<float>   *jetptCorr_mix;
+   std::vector<float>   *jetptCorr_zjet_mix;
    std::vector<float>   *jetpt_mix;
    std::vector<float>   *jeteta_mix;
    std::vector<float>   *jetphi_mix;
@@ -256,6 +258,7 @@ public :
    std::vector<float>   *gjeteta_mix;
    std::vector<float>   *gjetphi_mix;
    std::vector<int>   *subid_mix;
+   std::vector<float>   *rawpt_mix;
    std::vector<float>   *chargedSum_mix;
    std::vector<float>   *neutralSum_mix;
    std::vector<float>   *photonSum_mix;
@@ -347,6 +350,7 @@ public :
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_njet;   //!
    TBranch        *b_jetptCorr;   //!
+   TBranch        *b_jetptCorr_zjet;   //!
    TBranch        *b_jetpt;   //!
    TBranch        *b_jeteta;   //!
    TBranch        *b_jetphi;   //!
@@ -355,6 +359,7 @@ public :
    TBranch        *b_gjetphi;   //!
    TBranch        *b_subid;   //!
    TBranch        *b_gjetflavor;   //!
+   TBranch        *b_rawpt;   //!
    TBranch        *b_chargedSum;   //!
    TBranch        *b_neutralSum;   //!
    TBranch        *b_photonSum;   //!
@@ -403,8 +408,8 @@ public :
    TBranch        *b_dhiBin_mix;   //!
    TBranch        *b_dhiEvtPlanes_mix;   //!
    TBranch        *b_njet_mix;   //!
-   TBranch        *b_rawpt_mix;   //!
    TBranch        *b_jetptCorr_mix;   //!
+   TBranch        *b_jetptCorr_zjet_mix;   //!
    TBranch        *b_jetpt_mix;   //!
    TBranch        *b_jeteta_mix;   //!
    TBranch        *b_jetphi_mix;   //!
@@ -412,6 +417,7 @@ public :
    TBranch        *b_gjeteta_mix;   //!
    TBranch        *b_gjetphi_mix;   //!
    TBranch        *b_subid_mix;   //!
+   TBranch        *b_rawpt_mix;   //!
    TBranch        *b_chargedSum_mix;   //!
    TBranch        *b_neutralSum_mix;   //!
    TBranch        *b_photonSum_mix;   //!
@@ -551,6 +557,7 @@ void photonjettrack::Init(TTree *tree)
 
    // Set object pointer
    jetptCorr = 0;
+   jetptCorr_zjet = 0;
    jetpt = 0;
    jeteta = 0;
    jetphi = 0;
@@ -559,6 +566,7 @@ void photonjettrack::Init(TTree *tree)
    gjetphi = 0;
    subid = 0;
    gjetflavor = 0;
+   rawpt = 0;
    chargedSum = 0;
    neutralSum = 0;
    photonSum = 0;
@@ -598,8 +606,8 @@ void photonjettrack::Init(TTree *tree)
    chg = 0;
    matchingID = 0;
    sube = 0;
-   rawpt_mix = 0;
    jetptCorr_mix = 0;
+   jetptCorr_zjet_mix = 0;
    jetpt_mix = 0;
    jeteta_mix = 0;
    jetphi_mix = 0;
@@ -607,6 +615,7 @@ void photonjettrack::Init(TTree *tree)
    gjeteta_mix = 0;
    gjetphi_mix = 0;
    subid_mix = 0;
+   rawpt_mix = 0;
    chargedSum_mix = 0;
    neutralSum_mix = 0;
    photonSum_mix = 0;
@@ -661,6 +670,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("njet", &njet, &b_njet);
    fChain->SetBranchAddress("jetptCorr", &jetptCorr, &b_jetptCorr);
+   fChain->SetBranchAddress("jetptCorr_zjet", &jetptCorr_zjet, &b_jetptCorr_zjet);
    fChain->SetBranchAddress("jetpt", &jetpt, &b_jetpt);
    fChain->SetBranchAddress("jeteta", &jeteta, &b_jeteta);
    fChain->SetBranchAddress("jetphi", &jetphi, &b_jetphi);
@@ -669,6 +679,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("gjetphi", &gjetphi, &b_gjetphi);
    fChain->SetBranchAddress("subid", &subid, &b_subid);
    fChain->SetBranchAddress("gjetflavor", &gjetflavor, &b_gjetflavor);
+   fChain->SetBranchAddress("rawpt", &rawpt, &b_rawpt);
    fChain->SetBranchAddress("chargedSum", &chargedSum, &b_chargedSum);
    fChain->SetBranchAddress("neutralSum", &neutralSum, &b_neutralSum);
    fChain->SetBranchAddress("photonSum", &photonSum, &b_photonSum);
@@ -717,8 +728,8 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("dhiBin_mix", dhiBin_mix, &b_dhiBin_mix);
    fChain->SetBranchAddress("dhiEvtPlanes_mix", dhiEvtPlanes_mix, &b_dhiEvtPlanes_mix);
    fChain->SetBranchAddress("njet_mix", &njet_mix, &b_njet_mix);
-   fChain->SetBranchAddress("rawpt_mix", &rawpt_mix, &b_rawpt_mix);
    fChain->SetBranchAddress("jetptCorr_mix", &jetptCorr_mix, &b_jetptCorr_mix);
+   fChain->SetBranchAddress("jetptCorr_zjet_mix", &jetptCorr_zjet_mix, &b_jetptCorr_zjet_mix);
    fChain->SetBranchAddress("jetpt_mix", &jetpt_mix, &b_jetpt_mix);
    fChain->SetBranchAddress("jeteta_mix", &jeteta_mix, &b_jeteta_mix);
    fChain->SetBranchAddress("jetphi_mix", &jetphi_mix, &b_jetphi_mix);
@@ -726,6 +737,7 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("gjeteta_mix", &gjeteta_mix, &b_gjeteta_mix);
    fChain->SetBranchAddress("gjetphi_mix", &gjetphi_mix, &b_gjetphi_mix);
    fChain->SetBranchAddress("subid_mix", &subid_mix, &b_subid_mix);
+   fChain->SetBranchAddress("rawpt_mix", &rawpt_mix, &b_rawpt_mix);
    fChain->SetBranchAddress("chargedSum_mix", &chargedSum_mix, &b_chargedSum_mix);
    fChain->SetBranchAddress("neutralSum_mix", &neutralSum_mix, &b_neutralSum_mix);
    fChain->SetBranchAddress("photonSum_mix", &photonSum_mix, &b_photonSum_mix);

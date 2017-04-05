@@ -392,25 +392,28 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     for (int ij = 0; ij < jt.nref; ij++) {
       if (jt.jtpt[ij] > jetptmin && fabs(jt.jteta[ij]) < 2 && acos(cos(jt.jtphi[ij] - pjtt.phoPhi)) > 7 * pi / 8) {
+        float jetpt_corr = jt.jtpt[ij];
+        float jetpt_corr_zjet = jt.jtpt[ij];
+
         // jet energy correction
         double xmin, xmax;
         jetResidualFunction[centBin]->GetRange(xmin, xmax);
-        float jetpt_corr = jt.jtpt[ij];
         if (jetpt_corr > xmin && jetpt_corr < xmax) {
           jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr);
         }
 
-        int etaBin = 0;
-        if (abs(jt.jteta[ij]) < 0.5) etaBin = 0;
-        else if (abs(jt.jteta[ij]) < 1.0) etaBin = 1;
-        else if (abs(jt.jteta[ij]) < 1.6) etaBin = 2;
+        if (isHI) {
+          int etaBin = 0;
+          if (abs(jt.jteta[ij]) < 0.5) etaBin = 0;
+          else if (abs(jt.jteta[ij]) < 1.0) etaBin = 1;
+          else if (abs(jt.jteta[ij]) < 1.6) etaBin = 2;
 
-        // zjet jet energy correction
-        double xmin_zjet, xmax_zjet;
-        zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
-        float jetpt_corr_zjet = jt.jtpt[ij];
-        if (jetpt_corr_zjet > xmin_zjet && jetpt_corr_zjet < xmax_zjet) {
-          jetpt_corr_zjet = jetpt_corr_zjet / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet);
+          // zjet jet energy correction
+          double xmin_zjet, xmax_zjet;
+          zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
+          if (jetpt_corr_zjet > xmin_zjet && jetpt_corr_zjet < xmax_zjet) {
+            jetpt_corr_zjet = jetpt_corr_zjet / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet);
+          }
         }
 
         jetpt_corr = jet_corr->get_corrected_pt(jetpt_corr, jt.jteta[ij]);
@@ -586,30 +589,33 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           if (fabs(jt_mix.jteta[ijetmix]) > 2) continue;
           if (acos(cos(jt_mix.jtphi[ijetmix] - pjtt.phoPhi)) < 7 * pi / 8) continue;
 
+          float jetpt_corr_mix = jt_mix.jtpt[ijetmix];
+          float jetpt_corr_zjet_mix = jt_mix.jtpt[ijetmix];
+
           // jet energy correction
           double xmin, xmax;
           jetResidualFunction[centBin]->GetRange(xmin, xmax);
-          float jetpt_corr_mix = jt_mix.jtpt[ijetmix];
           if (jetpt_corr_mix > xmin && jetpt_corr_mix < xmax) {
             jetpt_corr_mix = jetpt_corr_mix / jetResidualFunction[centBin]->Eval(jetpt_corr_mix);
           }
 
-          int etaBin = 0;
-          if (abs(jt_mix.jteta[ijetmix]) < 0.5) etaBin = 0;
-          else if (abs(jt_mix.jteta[ijetmix]) < 1.0) etaBin = 1;
-          else if (abs(jt_mix.jteta[ijetmix]) < 1.6) etaBin = 2;
+          if (isHI) {
+            int etaBin = 0;
+            if (abs(jt_mix.jteta[ijetmix]) < 0.5) etaBin = 0;
+            else if (abs(jt_mix.jteta[ijetmix]) < 1.0) etaBin = 1;
+            else if (abs(jt_mix.jteta[ijetmix]) < 1.6) etaBin = 2;
 
-          // zjet jet energy correction
-          double xmin_zjet, xmax_zjet;
-          zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
-          float jetpt_corr_zjet_mix = jt_mix.jtpt[ijetmix];
-          if (jetpt_corr_zjet_mix > xmin_zjet && jetpt_corr_zjet_mix < xmax_zjet) {
-            jetpt_corr_zjet_mix = jetpt_corr_zjet_mix / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet_mix);
+            // zjet jet energy correction
+            double xmin_zjet, xmax_zjet;
+            zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
+            if (jetpt_corr_zjet_mix > xmin_zjet && jetpt_corr_zjet_mix < xmax_zjet) {
+              jetpt_corr_zjet_mix = jetpt_corr_zjet_mix / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet_mix);
+            }
           }
 
           jetpt_corr_mix = jet_corr->get_corrected_pt(jetpt_corr_mix, jt_mix.jteta[ijetmix]);
           jetpt_corr_zjet_mix = jet_corr->get_corrected_pt(jetpt_corr_zjet_mix, jt_mix.jteta[ijetmix]);
-          if (jetpt_corr_mix < 30) continue; // njet_mix is not incremented
+          if (jetpt_corr_mix < 30 && jetpt_corr_zjet_mix < 30) continue; // njet_mix is not incremented
 
           pjtt.jetptCorr_mix.push_back(jetpt_corr_mix);
           pjtt.jetptCorr_zjet_mix.push_back(jetpt_corr_zjet_mix);
