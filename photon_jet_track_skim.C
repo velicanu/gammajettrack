@@ -204,7 +204,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   L2L3ResidualWFits* jet_corr = new L2L3ResidualWFits();
   jet_corr->setL2L3Residual(3, 3, false);
 
-  TF1* jetResidualFunction[4];
+  TF1* jetResidualFunction[4] = {0};
   if (isHI) {
     TFile* jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
     jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
@@ -213,6 +213,23 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
   } else {
     jetResidualFunction[0] = new TF1("f1_p", "(1+.5/x)", 5, 300);
+  }
+
+  TF1* zjet_jec[4][3] = {0};
+  if (isHI) {
+    TFile* zjet_jec_file = TFile::Open("Corrections/corrFile_jecConfigZJet_NoCorr_LINX_PYTHIA_HYDJET_7Over8PIDPhiCut_20170118.root");
+    zjet_jec[3][0] = (TF1*)zjet_jec_file->Get("corr_Eta0p0to0p5_Inc_FitMean_akPu3PF_Cent50to100_c");
+    zjet_jec[3][1] = (TF1*)zjet_jec_file->Get("corr_Eta0p5to1p0_Inc_FitMean_akPu3PF_Cent50to100_c");
+    zjet_jec[3][2] = (TF1*)zjet_jec_file->Get("corr_Eta1p0to1p6_Inc_FitMean_akPu3PF_Cent50to100_c");
+    zjet_jec[2][0] = (TF1*)zjet_jec_file->Get("corr_Eta0p0to0p5_Inc_FitMean_akPu3PF_Cent30to50_c");
+    zjet_jec[2][1] = (TF1*)zjet_jec_file->Get("corr_Eta0p5to1p0_Inc_FitMean_akPu3PF_Cent30to50_c");
+    zjet_jec[2][2] = (TF1*)zjet_jec_file->Get("corr_Eta1p0to1p6_Inc_FitMean_akPu3PF_Cent30to50_c");
+    zjet_jec[1][0] = (TF1*)zjet_jec_file->Get("corr_Eta0p0to0p5_Inc_FitMean_akPu3PF_Cent10to30_c");
+    zjet_jec[1][1] = (TF1*)zjet_jec_file->Get("corr_Eta0p5to1p0_Inc_FitMean_akPu3PF_Cent10to30_c");
+    zjet_jec[1][2] = (TF1*)zjet_jec_file->Get("corr_Eta1p0to1p6_Inc_FitMean_akPu3PF_Cent10to30_c");
+    zjet_jec[0][0] = (TF1*)zjet_jec_file->Get("corr_Eta0p0to0p5_Inc_FitMean_akPu3PF_Cent0to10_c");
+    zjet_jec[0][1] = (TF1*)zjet_jec_file->Get("corr_Eta0p5to1p0_Inc_FitMean_akPu3PF_Cent0to10_c");
+    zjet_jec[0][2] = (TF1*)zjet_jec_file->Get("corr_Eta1p0to1p6_Inc_FitMean_akPu3PF_Cent0to10_c");
   }
 
   TrkCorr* trkCorr;
@@ -375,18 +392,36 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     for (int ij = 0; ij < jt.nref; ij++) {
       if (jt.jtpt[ij] > jetptmin && fabs(jt.jteta[ij]) < 2 && acos(cos(jt.jtphi[ij] - pjtt.phoPhi)) > 7 * pi / 8) {
+        float jetpt_corr = jt.jtpt[ij];
+        float jetpt_corr_zjet = jt.jtpt[ij];
+
         // jet energy correction
         double xmin, xmax;
         jetResidualFunction[centBin]->GetRange(xmin, xmax);
-        float jetpt_corr = jt.jtpt[ij];
         if (jetpt_corr > xmin && jetpt_corr < xmax) {
           jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr);
         }
 
+        if (isHI) {
+          int etaBin = 0;
+          if (abs(jt.jteta[ij]) < 0.5) etaBin = 0;
+          else if (abs(jt.jteta[ij]) < 1.0) etaBin = 1;
+          else if (abs(jt.jteta[ij]) < 1.6) etaBin = 2;
+
+          // zjet jet energy correction
+          double xmin_zjet, xmax_zjet;
+          zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
+          if (jetpt_corr_zjet > xmin_zjet && jetpt_corr_zjet < xmax_zjet) {
+            jetpt_corr_zjet = jetpt_corr_zjet / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet);
+          }
+        }
+
         jetpt_corr = jet_corr->get_corrected_pt(jetpt_corr, jt.jteta[ij]);
-        if (jetpt_corr < 30) continue; // njet is not incremented
+        jetpt_corr_zjet = jet_corr->get_corrected_pt(jetpt_corr_zjet, jt.jteta[ij]);
+        if (jetpt_corr < 30 && jetpt_corr_zjet < 30) continue; // njet is not incremented
 
         pjtt.jetptCorr.push_back(jetpt_corr);
+        pjtt.jetptCorr_zjet.push_back(jetpt_corr_zjet);
         pjtt.jetpt.push_back(jt.jtpt[ij]);
         pjtt.jeteta.push_back(jt.jteta[ij]);
         pjtt.jetphi.push_back(jt.jtphi[ij]);
@@ -395,6 +430,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.gjetphi.push_back(jt.refphi[ij]);
         pjtt.gjetflavor.push_back(jt.refparton_flavor[ij]);
         pjtt.subid.push_back(jt.subid[ij]);
+        pjtt.rawpt.push_back(jt.rawpt[ij]);
         pjtt.chargedSum.push_back(jt.chargedSum[ij]);
         pjtt.neutralSum.push_back(jt.neutralSum[ij]);
         pjtt.photonSum.push_back(jt.photonSum[ij]);
@@ -553,25 +589,44 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           if (fabs(jt_mix.jteta[ijetmix]) > 2) continue;
           if (acos(cos(jt_mix.jtphi[ijetmix] - pjtt.phoPhi)) < 7 * pi / 8) continue;
 
+          float jetpt_corr_mix = jt_mix.jtpt[ijetmix];
+          float jetpt_corr_zjet_mix = jt_mix.jtpt[ijetmix];
+
           // jet energy correction
           double xmin, xmax;
           jetResidualFunction[centBin]->GetRange(xmin, xmax);
-          float jetpt_corr_mix = jt_mix.jtpt[ijetmix];
           if (jetpt_corr_mix > xmin && jetpt_corr_mix < xmax) {
             jetpt_corr_mix = jetpt_corr_mix / jetResidualFunction[centBin]->Eval(jetpt_corr_mix);
           }
 
+          if (isHI) {
+            int etaBin = 0;
+            if (abs(jt_mix.jteta[ijetmix]) < 0.5) etaBin = 0;
+            else if (abs(jt_mix.jteta[ijetmix]) < 1.0) etaBin = 1;
+            else if (abs(jt_mix.jteta[ijetmix]) < 1.6) etaBin = 2;
+
+            // zjet jet energy correction
+            double xmin_zjet, xmax_zjet;
+            zjet_jec[centBin][etaBin]->GetRange(xmin_zjet, xmax_zjet);
+            if (jetpt_corr_zjet_mix > xmin_zjet && jetpt_corr_zjet_mix < xmax_zjet) {
+              jetpt_corr_zjet_mix = jetpt_corr_zjet_mix / zjet_jec[centBin][etaBin]->Eval(jetpt_corr_zjet_mix);
+            }
+          }
+
           jetpt_corr_mix = jet_corr->get_corrected_pt(jetpt_corr_mix, jt_mix.jteta[ijetmix]);
-          if (jetpt_corr_mix < 30) continue; // njet_mix is not incremented
+          jetpt_corr_zjet_mix = jet_corr->get_corrected_pt(jetpt_corr_zjet_mix, jt_mix.jteta[ijetmix]);
+          if (jetpt_corr_mix < 30 && jetpt_corr_zjet_mix < 30) continue; // njet_mix is not incremented
+
           pjtt.jetptCorr_mix.push_back(jetpt_corr_mix);
+          pjtt.jetptCorr_zjet_mix.push_back(jetpt_corr_zjet_mix);
           pjtt.jetpt_mix.push_back(jt_mix.jtpt[ijetmix]);
-          pjtt.rawpt_mix.push_back(jt_mix.rawpt[ijetmix]);
           pjtt.jeteta_mix.push_back(jt_mix.jteta[ijetmix]);
           pjtt.jetphi_mix.push_back(jt_mix.jtphi[ijetmix]);
           pjtt.gjetpt_mix.push_back(jt_mix.refpt[ijetmix]);
           pjtt.gjeteta_mix.push_back(jt_mix.refeta[ijetmix]);
           pjtt.gjetphi_mix.push_back(jt_mix.refphi[ijetmix]);
           pjtt.subid_mix.push_back(jt_mix.subid[ijetmix]);
+          pjtt.rawpt_mix.push_back(jt_mix.rawpt[ijetmix]);
           pjtt.chargedSum_mix.push_back(jt_mix.chargedSum[ijetmix]);
           pjtt.neutralSum_mix.push_back(jt_mix.neutralSum[ijetmix]);
           pjtt.photonSum_mix.push_back(jt_mix.photonSum[ijetmix]);
