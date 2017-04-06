@@ -729,6 +729,8 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   foutput->Write("", TObject::kOverwrite);
   foutput->Close();
 
+  printf("done\n");
+
   return 0;
 }
 
