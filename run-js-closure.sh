@@ -2,7 +2,7 @@
 
 if [ $# -lt 6 ]; then
   echo "Usage: ./run-js-closure.sh <phoetmin> <phoetmax> <jetptmin> <trkptmin> <gammaxi> <types...>"
-  echo "Example: ./run-js-closure.sh 60 1000 30 1 0 sgengen sgenreco recogen recoreco gen0gen0 recogen0"
+  echo "Example: ./run-js-closure.sh 60 1000 30 1 0 sgengen sgenreco recogen recoreco gengen"
   exit 1
 fi
 
@@ -25,8 +25,8 @@ wait
 
 for i in ${@:6}
 do
-  hadd -f closure_${1}_gxi${5}_${i}_js.root pbpbmc_${i}_${1}_*_*.root
-  rm pbpbmc_${i}_${1}_*_*.root
+  hadd -f closure_${1}_${3}_gxi${5}_${i}_js.root pbpbmc_${i}_${1}_${3}_*_*.root
+  rm pbpbmc_${i}_${1}_${3}_*_*.root
 done
 
 ./run-js-plot.sh $1 $2 $3 $4 $5 pbpbmc closure ${@:6}

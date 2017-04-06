@@ -2,39 +2,65 @@
 #include "TH1.h"
 #include "TMath.h"
 
+#include <vector>
 #include <string>
 
-
 // Photon pT > 60
-float purity_pbpbdata[4] = {0.681689, 0.730339, 0.775276, 0.825922};
-float purity_pbpbmc[4] = {0.922658, 0.957185, 0.973422, 0.982594};
-float purity_ppdata[4] = {0.841322, 0.841322, 0.841322, 0.841322};
-float purity_ppmc[4] = {0.984076, 0.984076, 0.984076, 0.984076};
+std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+std::vector<float> purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
+std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
 
+// photon pT > 80
+std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
+std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
+std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
 
-/*
-// Photon pT 80 - 100
-float purity_pbpbdata[4] = {0.67868, 0.725783, 0.771699, 0.850336};
-float purity_pbpbmc[4] = {0.94023, 0.937177, 0.958919, 0.978493};
-float purity_ppdata[4] = {0.858868, 0.858868, 0.858868, 0.858868};
-*/
-
-/*
 // Photon pT > 100
-float purity_pbpbdata[4] = {0.700252, 0.792531, 0.821031, 0.797929};
-float purity_pbpbmc[4] = {0.888486, 0.950618, 0.97097, 0.980991};
-float purity_ppdata[4] = {0.851183, 0.851183, 0.851183, 0.851183};
-*/
+std::vector<float> purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
+std::vector<float> purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
+std::vector<float> purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
+std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
 
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
-int draw_js(std::string sample, const char* type, const char* fname, const char* outfname) {
+int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin) {
     TFile* finput = new TFile(fname, "read");
 
     TFile* fout = new TFile(outfname, "update");
 
     TH1::SetDefaultSumw2();
+
+    std::vector<float> purity_pbpbdata;
+    std::vector<float> purity_pbpbmc;
+    std::vector<float> purity_ppdata;
+    std::vector<float> purity_ppmc;
+
+    switch (phoetmin) {
+        case 60:
+            purity_pbpbdata = purity_pbpbdata_60;
+            purity_pbpbmc = purity_pbpbmc_60;
+            purity_ppdata = purity_ppdata_60;
+            purity_ppmc = purity_ppmc_60;
+            break;
+        case 80:
+            purity_pbpbdata = purity_pbpbdata_80;
+            purity_pbpbmc = purity_pbpbmc_80;
+            purity_ppdata = purity_ppdata_80;
+            purity_ppmc = purity_ppmc_80;
+            break;
+        case 100:
+            purity_pbpbdata = purity_pbpbdata_100;
+            purity_pbpbmc = purity_pbpbmc_100;
+            purity_ppdata = purity_ppdata_100;
+            purity_ppmc = purity_ppmc_100;
+            break;
+        default:
+            printf("no purity values available!\n");
+            return 1;
+    }
 
     float purity[4];
     for (int i=0; i<4; ++i) {
@@ -124,9 +150,9 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
 }
 
 int main(int argc, char* argv[]) {
-    if (argc > 4)
-        for (int i=4; i<argc; ++i)
-            draw_js(argv[1], argv[i], argv[2], argv[3]);
+    if (argc > 5)
+        for (int i=5; i<argc; ++i)
+            draw_js(argv[1], argv[i], argv[2], argv[3], atoi(argv[4]));
 
     return 0;
 }
