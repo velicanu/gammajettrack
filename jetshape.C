@@ -97,7 +97,6 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
     }
 
     // isMC = (weight != 0);
-    weight = 1;
     // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
     // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 
@@ -114,6 +113,16 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       j_phi = *jetphi;
       nij_mix = njet_mix;
       j_pt_mix = *jetptCorr_mix;
+      j_eta_mix = *jeteta_mix;
+      j_phi_mix = *jetphi_mix;
+      j_ev_mix = *nmixEv_mix;
+    } else if (jet_type_is("zreco", jet_part)) {
+      nij = njet;
+      j_pt = *jetptCorr_zjet;
+      j_eta = *jeteta;
+      j_phi = *jetphi;
+      nij_mix = njet_mix;
+      j_pt_mix = *jetptCorr_zjet_mix;
       j_eta_mix = *jeteta_mix;
       j_phi_mix = *jetphi_mix;
       j_ev_mix = *nmixEv_mix;
