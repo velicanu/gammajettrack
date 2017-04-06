@@ -18,11 +18,9 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
 }
 
 void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi) {
-  // bool isMC;
-  // TFile* fvzweight = TFile::Open("fvzweight.root");
-  // TH1D* hvzweight = (TH1D*)fvzweight->Get("hvzdata");
-  // TFile* fcentweight = TFile::Open("fcentweight.root");
-  // TH1D* hcentweight = (TH1D*)fcentweight->Get(Form("hcentdata_%d_%d", centmin, centmax));
+  TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
+  TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
+  TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
   if (fChain == 0) return;
   int64_t nentries = fChain->GetEntriesFast();
@@ -96,9 +94,9 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
       phoetsideband->Fill(phoEtCorrected);
     }
 
-    // isMC = (weight != 0);
-    // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    bool isMC = (weight != 0);
+    if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 
     hvz->Fill(vz, weight);
     hcent->Fill(hiBin, weight);
