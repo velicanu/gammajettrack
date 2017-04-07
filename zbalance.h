@@ -24,11 +24,11 @@ class ztree {
 
    // Declaration of leaf types
    Int_t           ngen_mix;
-   Float_t         genpt_mix[11];   //[ngen_mix]
-   Float_t         geneta_mix[11];   //[ngen_mix]
-   Float_t         genphi_mix[11];   //[ngen_mix]
-   Int_t           gensubid_mix[11];   //[ngen_mix]
-   Int_t           genev_mix[11];   //[ngen_mix]
+   Float_t         genpt_mix[201];   //[ngen_mix]
+   Float_t         geneta_mix[201];   //[ngen_mix]
+   Float_t         genphi_mix[201];   //[ngen_mix]
+   Int_t           gensubid_mix[201];   //[ngen_mix]
+   Int_t           genev_mix[201];   //[ngen_mix]
 
 
    Int_t           isPP;
@@ -63,12 +63,12 @@ class ztree {
    Int_t           matchingID[12000];   //[mult]
    Int_t           sube[12000];   //[mult]
    Int_t           mult_mix;
-   Float_t         pt_mix[40000];   //[mult_mix]
-   Float_t         eta_mix[40000];   //[mult_mix]
-   Float_t         phi_mix[40000];   //[mult_mix]
-   Int_t           pdg_mix[40000];   //[mult_mix]
-   Int_t           chg_mix[40000];   //[mult_mix]
-   Int_t           nev_mix[40000];   //[mult_mix]
+   Float_t         pt_mix[60000];   //[mult_mix]
+   Float_t         eta_mix[60000];   //[mult_mix]
+   Float_t         phi_mix[60000];   //[mult_mix]
+   Int_t           pdg_mix[60000];   //[mult_mix]
+   Int_t           chg_mix[60000];   //[mult_mix]
+   Int_t           nev_mix[60000];   //[mult_mix]
    Int_t           njet_smeared;
    Float_t         jetpt_smeared0020[800];   //[njet_smeared]
    Float_t         jeteta_smeared0020[800];   //[njet_smeared]
