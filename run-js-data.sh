@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 5 ]; then
-  echo "Usage: ./run-js-data.sh <phoetmin> <phoetmax> <jetptmin> <trkptmin> <gammaxi> [pp only]"
+  echo "Usage: ./run-js-data.sh <phoetmin> <phoetmax> <jetptmin> <trkptmin> <gammaxi> [pp only] [draw pbpb/pp]"
   echo "Example: ./run-js-data.sh 60 1000 30 1 0"
   exit 1
 fi
@@ -13,7 +13,7 @@ g++ jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o jetshape || e
 g++ draw_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_js || exit 1
 g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exit 1
 
-if [[ $6 -eq 1 ]]; then
+if [[ $6 -ne 1 ]]; then
     echo running on pbpb data
     ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root pbpbdata 0 20 $1 $2 $3 recoreco $4 $5 &
     ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root pbpbdata 20 60 $1 $2 $3 recoreco $4 $5 &
@@ -38,3 +38,7 @@ hadd -f ppdata_${1}_${3}_gxi${5}_srecoreco_js.root ppdata_srecoreco_${1}_${3}_*_
 rm ppdata_srecoreco_${1}_${3}_*_*.root
 
 ./run-js-plot.sh $1 $2 $3 $4 $5 ppdata ppdata srecoreco
+
+if [[ $7 -eq 1 ]]; then
+    ./run-js-plot.sh $1 $2 $3 $4 $5 data data data
+fi
