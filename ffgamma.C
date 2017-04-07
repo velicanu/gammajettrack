@@ -233,7 +233,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         tmpjetpt *= smearFactor;
       }
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
-      // dogensmearing = false;
+      dogensmearing = false;
       if (dogensmearing) {
         int resolutionBin = getResolutionBin(centmin);
         float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
@@ -270,7 +270,9 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
         if(gen.compare("gengen0")==0) {
           if((*sube)[ip]!=0) continue;
-        }
+        } else if(gen.compare("gengen")==0) {
+	  if((*sube)[ip]==0) continue;
+	}
 
         if(p_pt[ip]<trkptmin) continue;
         float dphi = acos( cos(tmpjetphi - p_phi[ip]));
@@ -284,6 +286,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
+	  xi = p_pt[ip]*cos(angle);
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
@@ -307,6 +310,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
+	  xi = p_pt_mix[ip_mix]*cos(angle);
           if(signal) {
             hgammaffxiuemix->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
@@ -329,7 +333,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       }
       float smearFactor = 1;
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
-      // dogensmearing = false;
+      dogensmearing = false;
       if (dogensmearing) {
         int resolutionBin = getResolutionBin(centmin);
         float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
@@ -373,7 +377,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
-//! 1-2: rjet_mix rtrk_mix
+	  xi = p_pt_mix[ip_mix]*cos(angle);
           if(signal) {
             hgammaffxijetmix->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
@@ -401,7 +405,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
-//! 1-4: rjet_mix rtrk_mix
+	  xi = p_pt_mix[ip_mix]*cos(angle);
           if(signal) {
             hgammaffxijetmixue->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
