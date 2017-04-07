@@ -8,8 +8,8 @@ fi
 
 set -x
 
-hadd -f ${7}_${1}_gxi${5}_js_merged.root ${7}_${1}_gxi${5}_*_js.root
-./draw_js ${6} ${7}_${1}_gxi${5}_js_merged.root ${7}_${1}_gxi${5}_js_final.root ${@:8}
+hadd -f ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_*_js.root
+./draw_js ${6} ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_js_final.root ${1} ${@:8}
 
 cat > jsplot.list <<EOF
 EOF
@@ -22,5 +22,5 @@ do
   echo -e "hjs_final_${6}_${i}_100_200" >> jsplot.list
 done
 
-./plot_js ${7}_${1}_gxi${5}_js_final.root ${7}_gxi${5}_${1} jsplot.list 1
+./plot_js ${7}_${1}_${3}_gxi${5}_js_final.root ${7}_gxi${5}_${1}_${3} jsplot.list 1
 rm jsplot.list
