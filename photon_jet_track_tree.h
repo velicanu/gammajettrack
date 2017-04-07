@@ -16,6 +16,7 @@ class photonJetTrackTree {
         lumi = 0;
         hiBin = -1;
         vz = -99;
+        hiNpix = -1;
         weight = -1;
 
         njet = 0;
@@ -89,6 +90,7 @@ class photonJetTrackTree {
     uint32_t lumi;
     int hiBin;
     float vz;
+    int hiNpix;
     float weight;
 
     float hiEvtPlanes[29];
@@ -157,6 +159,7 @@ class photonJetTrackTree {
     float dvz_mix[nEventsToMix];
     int dhiBin_mix[nEventsToMix];
     float dhiEvtPlanes_mix[nEventsToMix];
+    int dhiNpix_mix[nEventsToMix];
 
     int njet_mix;
     std::vector<float> jetptCorr_mix;
@@ -265,6 +268,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("lumi", &lumi, "lumi/i");
     t->Branch("hiBin", &hiBin, "hiBin/I");
     t->Branch("vz", &vz, "vz/F");
+    t->Branch("hiNpix", &hiNpix, "hiNpix/I");
     t->Branch("weight", &weight, "weight/F");
 
     t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[29]/F");
@@ -333,6 +337,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("dvz_mix", dvz_mix, "dvz_mix[nmix]/F");
     t->Branch("dhiBin_mix", dhiBin_mix, "dhiBin_mix[nmix]/I");
     t->Branch("dhiEvtPlanes_mix", dhiEvtPlanes_mix, "dhiEvtPlanes_mix[nmix]/F");
+    t->Branch("dhiNpix_mix", dhiNpix_mix, "dhiNpix_mix[nmix]/I");
 
     t->Branch("njet_mix", &njet_mix, "njet_mix/I");
     t->Branch("jetptCorr_mix", &jetptCorr_mix);
