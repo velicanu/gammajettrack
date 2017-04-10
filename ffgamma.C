@@ -117,7 +117,8 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   std::vector<float> j_phi_mix;
   std::vector<float> p_phi;
   std::vector<float> p_phi_mix;
-
+  float ntrkmix[24] = {0};
+  float ntrkjetmix[24] = {0};
   int isPP = 0;
 
 //! (2) Loop
@@ -261,8 +262,8 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
-
-      if(gen.compare("recogen")==0) {}
+      
+      float ntrksig = 0;
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -273,6 +274,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
 
         if(p_pt[ip]<trkptmin) continue;
+	ntrksig += 1;  // signal event multiplicity
         float dphi = acos( cos(tmpjetphi - p_phi[ip]));
         float deta = fabs( tmpjeteta - p_eta[ip]);
         float dr = sqrt((dphi*dphi)+(deta*deta));
@@ -289,6 +291,18 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
       }
       float nmixedUEevents = (nmix+1)/2;
+      for(int imix = 0 ; imix < 24 ; imix++) {
+	ntrkmix[imix] = 0;
+      }
+      for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
+      {
+        if(p_pt_mix[ip_mix]<trkptmin) continue;
+        if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
+          if((*chg_mix)[ip_mix]==0) continue;
+        }
+	ntrkmix[p_ev_mix[ip_mix]] += 1;  // mix event multiplicty
+      }
+
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       {
         if(p_pt_mix[ip_mix]<trkptmin) continue;
@@ -308,9 +322,9 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
           if(signal) {
-            hgammaffxiuemix->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
+            hgammaffxiuemix->Fill(xi,(ntrksig/ntrkmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
-          if(sideband) { hgammaffxiuemixsideband->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
+          if(sideband) { hgammaffxiuemixsideband->Fill(xi,(ntrksig/ntrkmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
         }
       }
     }
@@ -355,6 +369,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       // jetmix
+      float ntrkjetsig = 0;
       for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       { // mix reco jet mix reco track
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -362,7 +377,8 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
         if(p_pt_mix[ip_mix]<trkptmin) continue;
         if(j_ev_mix[ij_mix]!=p_ev_mix[ip_mix]) continue; // tracks and jet come from same mixed event
-        float dphi = acos( cos(tmpjetphi - p_phi_mix[ip_mix]));
+        ntrkjetsig += 1;
+	float dphi = acos( cos(tmpjetphi - p_phi_mix[ip_mix]));
         float deta = fabs( tmpjeteta - p_eta_mix[ip_mix]);
         float dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
@@ -383,6 +399,19 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
       }
       // jetmixue
+      for(int imix = 0 ; imix < 24 ; imix++)
+      {
+	ntrkjetmix[imix] = 0;
+      }
+      for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
+      { // mix reco jet mix reco track
+        if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
+          if((*chg_mix)[ip_mix]==0) continue;
+        }
+        if(p_pt_mix[ip_mix]<trkptmin) continue;
+        if(j_ev_mix[ij_mix]!=(p_ev_mix[ip_mix]+1)) continue;
+	ntrkjetmix[p_ev_mix[ip_mix]] += 1;
+      }
       for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       { // mix reco jet mix reco track
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -403,10 +432,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
           if(signal) {
-            hgammaffxijetmixue->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixue->Fill(xi,(ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
           if(sideband) {
-            hgammaffxijetmixuesideband->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixuesideband->Fill(xi,(ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
         }
       }
