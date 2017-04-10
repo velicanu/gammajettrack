@@ -326,10 +326,12 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
+	  float ntrkweight = 1;
+	  if(ntrkmix[p_ev_mix[ip_mix]] > 0) ntrkweight = (ntrksig/ntrkmix[p_ev_mix[ip_mix]]);
           if(signal) {
-            hgammaffxiuemix->Fill(xi,(ntrksig/ntrkmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
+            hgammaffxiuemix->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
-          if(sideband) { hgammaffxiuemixsideband->Fill(xi,(ntrksig/ntrkmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
+          if(sideband) { hgammaffxiuemixsideband->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
         }
       }
     }
@@ -440,17 +442,17 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
-//! 1-4: rjet_mix rtrk_mix
+	  float ntrkweight = 1;
+	  if(ntrkmix[p_ev_mix[ip_mix]] > 0) ntrkweight = (ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]]);
           if(signal) {
-            hgammaffxijetmixue->Fill(xi,(ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixue->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
           if(sideband) {
-            hgammaffxijetmixuesideband->Fill(xi,(ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]])*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixuesideband->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
         }
       }
     }
-    // if(something) break;
   }
   fout->Write();
   fout->Close();
