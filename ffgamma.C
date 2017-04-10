@@ -88,6 +88,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   // TH1D * hnjetperevt = new TH1D(Form("hnjetperevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
   // TH1D * hnjetpermixevt = new TH1D(Form("hnjetpermixevt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";nJets per mixed event;"),20,0.5,20.5); // Raw FF after cuts (1.0)
   TH1D * hnmixsignal = new TH1D(Form("hnmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
+  TH1D * hntrksig = new TH1D(Form("hntrksig_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
+  TH1D * hntrkuemix = new TH1D(Form("hntrkuemix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
+  TH1D * hntrkjetmix = new TH1D(Form("hntrkjetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
+  TH1D * hntrkjetue = new TH1D(Form("hntrkjetue_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * hnmixsideband = new TH1D(Form("hnmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";#xi=ln(1/z);"),1,0,2); // Raw FF after cuts (1.0)
   TH1D * xjgsignal = new TH1D(Form("xjgsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
   TH1D * xjgmixsignal = new TH1D(Form("xjgmixsignal_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";xjg;"),16,0,2); // xjg crosscheck
@@ -117,8 +121,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   std::vector<float> j_phi_mix;
   std::vector<float> p_phi;
   std::vector<float> p_phi_mix;
-  float ntrkmix[24] = {0};
-  float ntrkjetmix[24] = {0};
   int isPP = 0;
 
 //! (2) Loop
@@ -263,7 +265,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       
-      float ntrksig = 0;
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -292,13 +293,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
         {
-	  ntrksig += 1;  // signal event multiplicity
+	  hntrksig->Fill(1);
         }
       }
       float nmixedUEevents = (nmix+1)/2;
-      for(int imix = 0 ; imix < 24 ; imix++) {
-	ntrkmix[imix] = 0;
-      }
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       {
         if(p_pt_mix[ip_mix]<trkptmin) continue;
@@ -310,7 +308,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         float dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
         {
-	  ntrkmix[p_ev_mix[ip_mix]] += 1;  // mix event multiplicty
+	  hntrkuemix->Fill(1);
 	}
       }
 
@@ -332,12 +330,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
-	  float ntrkweight = 1;
-	  if(ntrkmix[p_ev_mix[ip_mix]] > 0 && ntrksig>0 ) ntrkweight = (ntrksig/ntrkmix[p_ev_mix[ip_mix]]);
           if(signal) {
-            hgammaffxiuemix->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
+            hgammaffxiuemix->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
-          if(sideband) { hgammaffxiuemixsideband->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
+          if(sideband) { hgammaffxiuemixsideband->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents); }
         }
       }
     }
@@ -382,7 +378,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       // jetmix
-      float ntrkjetsig = 0;
       for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       { // mix reco jet mix reco track
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -413,14 +408,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
 	{
-	  ntrkjetsig += 1;
+	  hntrkjetmix->Fill(1);
 	}
       }
       // jetmixue
-      for(int imix = 0 ; imix < 24 ; imix++)
-      {
-	ntrkjetmix[imix] = 0;
-      }
       for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       { // mix reco jet mix reco track
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -433,7 +424,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         float dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
         {
-	  ntrkjetmix[p_ev_mix[ip_mix]] += 1;
+	  hntrkjetue->Fill(1);
 	}
       }
       for(int ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
@@ -454,13 +445,11 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
-	  float ntrkweight = 1;
-	  if(ntrkjetmix[p_ev_mix[ip_mix]] > 0 && ntrkjetsig>0 ) ntrkweight = (ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]]);
           if(signal) {
-            hgammaffxijetmixue->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixue->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
           if(sideband) {
-            hgammaffxijetmixuesideband->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
+            hgammaffxijetmixuesideband->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
         }
       }
