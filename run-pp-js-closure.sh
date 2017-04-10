@@ -25,8 +25,8 @@ wait
 
 for i in ${@:6}
 do
-  hadd -f closure_${1}_${3}_gxi${5}_${i}_js.root ppmc_${i}_${1}_${3}_*_*.root
+  hadd -f closure_ppmc_${1}_${3}_gxi${5}_${i}_js.root ppmc_${i}_${1}_${3}_*_*.root
   rm ppmc_${i}_${1}_${3}_*_*.root
 done
 
-./run-js-plot.sh $1 $2 $3 $4 $5 ppmc closure ${@:6}
+./run-js-plot.sh $1 $2 $3 $4 $5 ppmc closure_ppmc ${@:6}

@@ -8,13 +8,15 @@ fi
 
 set -x
 
+if [ -f "jsplot.list" ]; then
+    rm jsplot.list
+fi
+touch jsplot.list
+
 if [ $6 = "data" ]; then
     hadd -f data_${1}_${3}_gxi${5}_js_merged.root ppdata_${1}_${3}_gxi${5}_srecoreco_js.root pbpbdata_${1}_${3}_gxi${5}_recoreco_js.root
     ./draw_js pbpbdata data_${1}_${3}_gxi${5}_js_merged.root data_${1}_${3}_gxi${5}_js_final.root ${1} recoreco
     ./draw_js ppdata data_${1}_${3}_gxi${5}_js_merged.root data_${1}_${3}_gxi${5}_js_final.root ${1} srecoreco
-
-    rm jsplot.list
-    touch jsplot.list
 
     echo -e "pp (smeared)" >> jsplot.list
     echo -e "hjs_final_ppdata_srecoreco_0_20" >> jsplot.list
@@ -31,9 +33,6 @@ if [ $6 = "data" ]; then
 else
     hadd -f ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_*_js.root
     ./draw_js ${6} ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_js_final.root ${1} ${@:8}
-
-    rm jsplot.list
-    touch jsplot.list
 
     for i in ${@:8}
     do
