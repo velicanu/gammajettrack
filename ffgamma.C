@@ -333,7 +333,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
 	  float ntrkweight = 1;
-	  if(ntrkmix[p_ev_mix[ip_mix]] > 0) ntrkweight = (ntrksig/ntrkmix[p_ev_mix[ip_mix]]);
+	  if(ntrkmix[p_ev_mix[ip_mix]] > 0 && ntrksig>0 ) ntrkweight = (ntrksig/ntrkmix[p_ev_mix[ip_mix]]);
           if(signal) {
             hgammaffxiuemix->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
           }
@@ -455,7 +455,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
           float xi = log(1.0/z);
 	  float ntrkweight = 1;
-	  if(ntrkmix[p_ev_mix[ip_mix]] > 0) ntrkweight = (ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]]);
+	  if(ntrkjetmix[p_ev_mix[ip_mix]] > 0 && ntrkjetsig>0 ) ntrkweight = (ntrkjetsig/ntrkjetmix[p_ev_mix[ip_mix]]);
           if(signal) {
             hgammaffxijetmixue->Fill(xi,ntrkweight*weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedjetevents);
           }
