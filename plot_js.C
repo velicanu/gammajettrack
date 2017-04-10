@@ -33,6 +33,9 @@ void sethin12002() {
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
+double binning[15] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 1.0};
+float scale[14] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 2., 2., 4.};
+
 int rows = 1;
 int columns = 4;
 
@@ -46,7 +49,7 @@ void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0) {
+int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0, int phoetmin = 60, int jetptmin = 30) {
     sethin12002();
     oldjs_0_20->SetMarkerColor(kBlue);
     oldjs_0_20->SetLineColor(kBlue);
@@ -65,8 +68,8 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     if (hist_names.size() % 5) return 1;
 
     std::size_t layers = hist_names.size() / 5;
-    if (draw_ratio)
-        rows = 2;
+    if (layers < 2) draw_ratio = 0;
+    if (draw_ratio) rows = 2;
 
     float margin = 0.2; // left/bottom margins (with labels)
     float edge = 0.12;    // right/top edges (no labels)
@@ -81,13 +84,19 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
     TH1D* h1[4][layers] = {0};
+    TH1D* h1_orig[4][layers] = {0};
     TH1D* hratio[4][layers-1] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
         gPad->SetLogy();
 
         for (std::size_t k=0; k<layers; ++k) {
-            h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
+            h1_orig[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
+            h1[i][k] = (TH1D*)h1_orig[i][k]->Rebin(14, Form("%s_rebin", hist_names[5*k+i+1].c_str()), binning);
+            for (int b=0; b<14; ++b) {
+                h1[i][k]->SetBinContent(b+1, h1[i][k]->GetBinContent(b+1)/scale[b]);
+                h1[i][k]->SetBinError(b+1, h1[i][k]->GetBinError(b+1)/scale[b]);
+            }
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
             if (draw_lt_0_3)
@@ -185,7 +194,7 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, Form("p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > %i GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > %i GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}", jetptmin, phoetmin));
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
@@ -397,8 +406,12 @@ int main(int argc, char* argv[]) {
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]));
     else if (argc == 6)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
+    else if (argc == 7)
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
+    else if (argc == 8)
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
     else
-        printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio> < draw r<0.3 >\n");
+        printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio> < draw r<0.3 > <phoetmin> <jetptmin>\n");
 
     return 1;
 }

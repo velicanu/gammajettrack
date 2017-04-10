@@ -27,7 +27,7 @@ if [ $6 = "data" ]; then
     echo -e "hjs_final_pbpbdata_recoreco_60_100" >> jsplot.list
     echo -e "hjs_final_pbpbdata_recoreco_100_200" >> jsplot.list
 
-    ./plot_js data_${1}_${3}_gxi${5}_js_final.root data_gxi${5}_${1}_${3} jsplot.list 1
+    ./plot_js data_${1}_${3}_gxi${5}_js_final.root data_gxi${5}_${1}_${3} jsplot.list 1 0 $1 $3
 else
     hadd -f ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_*_js.root
     ./draw_js ${6} ${7}_${1}_${3}_gxi${5}_js_merged.root ${7}_${1}_${3}_gxi${5}_js_final.root ${1} ${@:8}
@@ -44,7 +44,7 @@ else
       echo -e "hjs_final_${6}_${i}_100_200" >> jsplot.list
     done
 
-    ./plot_js ${7}_${1}_${3}_gxi${5}_js_final.root ${7}_gxi${5}_${1}_${3} jsplot.list 1
+    ./plot_js ${7}_${1}_${3}_gxi${5}_js_final.root ${7}_gxi${5}_${1}_${3} jsplot.list 1 0 $1 $3
 fi
 
 rm jsplot.list
