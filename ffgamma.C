@@ -308,7 +308,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         float dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
         {
-	  hntrkuemix->Fill(1);
+	  hntrkuemix->Fill(1,1.0/nmixedUEevents);
 	}
       }
 
