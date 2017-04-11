@@ -13,7 +13,7 @@
 #include "error_bands.h"
 
 std::string sys_types[7] = {
-    "jes_up", "jes_down", "purity_up", "purity_down", "jer", "pes", "tracking"
+    "jes_up", "jes_down", "jer", "pes", "purity_up", "purity_down", "tracking"
 };
 
 std::string fit_funcs[7] = {
@@ -21,11 +21,11 @@ std::string fit_funcs[7] = {
 };
 
 int options[7] = {
-    4, 0, 4, 0, 0, 0, 0
+    4, 0, 0, 0, 4, 0, 0
 };
 
 int special[7] = {
-    0, 1, 0, 1, 0, 0, 0
+    0, 1, 0, 0, 0, 1, 0
 };
 
 int calc_systematics(const char* nominal_file, const char* filelist, const char* histlist, const char* label) {
@@ -102,7 +102,7 @@ int calc_systematics(const char* nominal_file, const char* filelist, const char*
             total_sys_vars[i]->get_total()->Draw();
         }
 
-        c1[i]->SaveAs(Form("figs/systematics/sys_%s-%s.png", hist_list[i].c_str(), label));
+        c1[i]->SaveAs(Form("sys_%s-%s.png", hist_list[i].c_str(), label));
     }
 
     fout->Write("", TObject::kOverwrite);

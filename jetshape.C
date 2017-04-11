@@ -4,6 +4,7 @@
 #include "photonjettrack.h"
 
 #define _NSMEAR 1
+#define _NSMEAR_JER 1
 
 TRandom3 smear_rand(12345);
 
@@ -17,28 +18,37 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
   return;
 }
 
-void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string genlevel, float trkptmin, int gammaxi) {
+// systematic:
+// 1: JES_UP
+// 2: JES_DOWN
+// 3: JER
+// 4: PES
+// 5: ISO
+
+void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string genlevel, float trkptmin, int gammaxi, std::string label, int systematic) {
   // TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
   // TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
   // TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
+  bool isMC = (weight != 1);
+
   if (fChain == 0) return;
   int64_t nentries = fChain->GetEntriesFast();
-  TFile* fout = new TFile(Form("%s_%s_%d_%d_%d_%d.root", label.data(), genlevel.data(), (int)phoetmin, (int)jetptcut, abs(centmin), abs(centmax)), "recreate");
+  TFile* fout = new TFile(Form("%s_%s_%s_%d_%d_%i_%d_%d.root", label.data(), sample.data(), genlevel.data(), (int)phoetmin, (int)jetptcut, gammaxi, abs(centmin), abs(centmax)), "recreate");
 
-  TH1D* hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
-  TH1D* hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
-  TH1D* hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
-  TH1D* hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
+  TH1D* hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
+  TH1D* hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
+  TH1D* hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
+  TH1D* hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";jet p_{T};", 20, 0, 500);
 
-  TH1D* hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxisideband = new TH1D(Form("hgammaffxisideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxijetmix = new TH1D(Form("hgammaffxijetmix_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxijetmixsideband = new TH1D(Form("hgammaffxijetmixsideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxijetmixue = new TH1D(Form("hgammaffxijetmixue_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxijetmixuesideband = new TH1D(Form("hgammaffxijetmixuesideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxiuemix = new TH1D(Form("hgammaffxiuemix_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
-  TH1D* hgammaffxiuemixsideband = new TH1D(Form("hgammaffxiuemixsideband_%s_%s_%d_%d", label.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxi = new TH1D(Form("hgammaffxi_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxisideband = new TH1D(Form("hgammaffxisideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxijetmix = new TH1D(Form("hgammaffxijetmix_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxijetmixsideband = new TH1D(Form("hgammaffxijetmixsideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxijetmixue = new TH1D(Form("hgammaffxijetmixue_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxijetmixuesideband = new TH1D(Form("hgammaffxijetmixuesideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxiuemix = new TH1D(Form("hgammaffxiuemix_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  TH1D* hgammaffxiuemixsideband = new TH1D(Form("hgammaffxiuemixsideband_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
 
   // iterators
   int ij = -1, ij_mix = -1, ip = -1, ip_mix = -1;
@@ -67,18 +77,29 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 
     fChain->GetEntry(jentry);
 
+    if (systematic == 4) {
+      if (isPP) { ; }
+      else { phoEtCorrected = (hiBin < 60) ? phoEtCorrected * (90.94649 / 90.00079) : phoEtCorrected * (90.94943 / 90.64840); }
+    }
+
     //! (2.1) Event selections
     if (!isPP) {
       if (hiBin < centmin || hiBin >= centmax) continue;
     }
     if (phoNoise == 0) continue;
     if (phoEtCorrected < phoetmin || phoEtCorrected > phoetmax) continue;
-    bool signal = (phoSigmaIEtaIEta_2012 < 0.010);
-    bool sideband = (phoSigmaIEtaIEta_2012 > 0.011 && phoSigmaIEtaIEta_2012 < 0.017);
 
-    // bool isMC = (weight != 0);
+    if (_ISO) {
+      if (isMC)
+        if (pho_genMatchedIndex == -1 || (*mcCalIsoDR04)[pho_genMatchedIndex] > 5.0)
+          continue;
+    }
+
     // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
     // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+
+    bool signal = (phoSigmaIEtaIEta_2012 < 0.010);
+    bool sideband = (phoSigmaIEtaIEta_2012 > 0.011 && phoSigmaIEtaIEta_2012 < 0.017);
 
     if (jet_type_is("reco", genlevel) || jet_type_is("sreco", genlevel) || jet_type_is("idreco", genlevel) || jet_type_is("sidreco", genlevel)) {
       nij = njet;
@@ -176,10 +197,28 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
         }
       }
 
+      if (systematic == 3) nsmear *= _NSMEAR_JER;
+
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
         tmpjetpt = j_pt[ij] * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi[ij] + smear_rand.Gaus(0, res_phi);
+
+        if (systematic == 1) {
+          if (isPP) { tmpjetpt *= 1.02; }
+          else { tmpjetpt *= 1.05; }
+        }
+        if (systematic == 2) {
+          if (isPP) { tmpjetpt *= 0.98; }
+          else { tmpjetpt *= 0.95; }
+        }
+
+        if (systematic == 3) {
+          float jer_factor = 1.15;
+          int resolutionBin = getResolutionBin(centmin);
+          float initial_res = getResolutionHI(tmpjetpt, resolutionBin);
+          tmpjetpt *= smear_rand.Gaus(1, jer_factor * initial_res * sqrt(jer_factor * jer_factor - 1));
+        }
 
         //! jet selections
         if (tmpjetpt < jetptcut) continue;
@@ -269,10 +308,28 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
         nsmear = _NSMEAR;
       }
 
+      if (systematic == 3) nsmear *= _NSMEAR_JER;
+
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
         tmpjetpt = j_pt_mix[ij_mix] * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi_mix[ij_mix] + smear_rand.Gaus(0, res_phi);
+
+        if (systematic == 1) {
+          if (isPP) { tmpjetpt *= 1.02; }
+          else { tmpjetpt *= 1.05; }
+        }
+        if (systematic == 2) {
+          if (isPP) { tmpjetpt *= 0.98; }
+          else { tmpjetpt *= 0.95; }
+        }
+
+        if (systematic == 3) {
+          float jer_factor = 1.15;
+          int resolutionBin = getResolutionBin(centmin);
+          float initial_res = getResolutionHI(tmpjetpt, resolutionBin);
+          tmpjetpt *= smear_rand.Gaus(1, jer_factor * initial_res * sqrt(jer_factor * jer_factor - 1));
+        }
 
         if (tmpjetpt < jetptcut) continue;
         if (fabs(tmpjeteta) > 1.6) continue;
@@ -335,8 +392,8 @@ void photonjettrack::jetshape(std::string label, int centmin, int centmax, float
 }
 
 int main(int argc, char* argv[]) {
-  if (argc > 12 || argc < 3) {
-    printf("usage: ./jetshape <input> <label> [centmin centmax] [phoetmin] [phoetmax] [jetptcut] [genlevel] [trkptmin] [gammaxi]\n");
+  if (argc > 17 || argc < 3) {
+    printf("usage: ./jetshape [input] [sample] [centmin centmax] [phoetmin phoetmax] [jetptcut] [genlevel] [trkptmin] [gammaxi]\n");
     return 1;
   }
 
@@ -357,6 +414,18 @@ int main(int argc, char* argv[]) {
     t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]));
   else if (argc == 11)
     t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]));
+  else if (argc == 12)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11]);
+  else if (argc == 13)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]));
+  else if (argc == 14)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]));
+  else if (argc == 15)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]));
+  else if (argc == 16)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]), std::atoi(argv[15]));
+  else if (argc == 17)
+    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]), std::atoi(argv[15]), std::atoi(argv[16]));
 
   return 0;
 }
