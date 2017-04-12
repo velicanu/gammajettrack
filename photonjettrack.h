@@ -189,7 +189,6 @@ public :
    Float_t         vz;
    Float_t         weight;
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
-   Int_t           hiNpix;
    Int_t           njet;
    std::vector<float>   *jetptCorr;
    std::vector<float>   *jetptCorr_zjet;
@@ -249,7 +248,6 @@ public :
    Float_t         dvz_mix[24];   //[nmix]
    Int_t           dhiBin_mix[24];   //[nmix]
    Float_t         dhiEvtPlanes_mix[24];   //[nmix]
-   Int_t           dhiNpix_mix[24];
    Int_t           njet_mix;
    std::vector<float>   *jetptCorr_mix;
    std::vector<float>   *jetptCorr_zjet_mix;
@@ -348,7 +346,6 @@ public :
    TBranch        *b_lumi;   //!
    TBranch        *b_hiBin;   //!
    TBranch        *b_vz;   //!
-   TBranch        *b_hiNpix;   //!
    TBranch        *b_weight;   //!
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_njet;   //!
@@ -410,7 +407,6 @@ public :
    TBranch        *b_dvz_mix;   //!
    TBranch        *b_dhiBin_mix;   //!
    TBranch        *b_dhiEvtPlanes_mix;   //!
-   TBranch        *b_dhiNpix_mix;   //!
    TBranch        *b_njet_mix;   //!
    TBranch        *b_jetptCorr_mix;   //!
    TBranch        *b_jetptCorr_zjet_mix;   //!
@@ -670,7 +666,6 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("lumi", &lumi, &b_lumi);
    fChain->SetBranchAddress("hiBin", &hiBin, &b_hiBin);
    fChain->SetBranchAddress("vz", &vz, &b_vz);
-   fChain->SetBranchAddress("hiNpix", &hiNpix, &b_hiNpix);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("njet", &njet, &b_njet);
@@ -732,7 +727,6 @@ void photonjettrack::Init(TTree *tree)
    fChain->SetBranchAddress("dvz_mix", dvz_mix, &b_dvz_mix);
    fChain->SetBranchAddress("dhiBin_mix", dhiBin_mix, &b_dhiBin_mix);
    fChain->SetBranchAddress("dhiEvtPlanes_mix", dhiEvtPlanes_mix, &b_dhiEvtPlanes_mix);
-   fChain->SetBranchAddress("dhiNpix_mix", dhiNpix_mix, &b_dhiNpix_mix);
    fChain->SetBranchAddress("njet_mix", &njet_mix, &b_njet_mix);
    fChain->SetBranchAddress("jetptCorr_mix", &jetptCorr_mix, &b_jetptCorr_mix);
    fChain->SetBranchAddress("jetptCorr_zjet_mix", &jetptCorr_zjet_mix, &b_jetptCorr_zjet_mix);
