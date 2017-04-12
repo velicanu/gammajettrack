@@ -187,7 +187,7 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjs_final_raw[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
 
         // rebin large deltar
-        hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(14, Form("hjs_final_%s_raw", tag.c_str()), rebinning);
+        hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(14, Form("hjs_final_%s", tag.c_str()), rebinning);
 
         hjs_final[i]->Scale(1/hjs_final[i]->Integral(hjs_final[i]->FindBin(0.01), hjs_final[i]->FindBin(0.29)), "width");
 
