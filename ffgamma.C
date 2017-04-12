@@ -50,7 +50,7 @@ float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string gen)
   return (*trkweight)[trkindex];
 }
 
-void photonjettrack::jetshape(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi) { return; }
+void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi, std::string label, int systematic) { return; }
 
 // this function does the raw FF analysis and writes histograms to output file
 void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int doJERsys)

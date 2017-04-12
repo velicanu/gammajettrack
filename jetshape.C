@@ -89,7 +89,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     if (phoNoise == 0) continue;
     if (phoEtCorrected < phoetmin || phoEtCorrected > phoetmax) continue;
 
-    if (_ISO) {
+    if (systematic == 5) {
       if (isMC)
         if (pho_genMatchedIndex == -1 || (*mcCalIsoDR04)[pho_genMatchedIndex] > 5.0)
           continue;
@@ -392,7 +392,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 }
 
 int main(int argc, char* argv[]) {
-  if (argc > 17 || argc < 3) {
+  if (argc > 13 || argc < 3) {
     printf("usage: ./jetshape [input] [sample] [centmin centmax] [phoetmin phoetmax] [jetptcut] [genlevel] [trkptmin] [gammaxi]\n");
     return 1;
   }
@@ -418,14 +418,6 @@ int main(int argc, char* argv[]) {
     t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11]);
   else if (argc == 13)
     t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]));
-  else if (argc == 14)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]));
-  else if (argc == 15)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]));
-  else if (argc == 16)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]), std::atoi(argv[15]));
-  else if (argc == 17)
-    t->jetshape(argv[2], std::atoi(argv[3]), std::atoi(argv[4]), std::atof(argv[5]), std::atof(argv[6]), std::atof(argv[7]), argv[8], std::atof(argv[9]), std::atoi(argv[10]), argv[11], std::atoi(argv[12]), std::stoi(argv[13]), std::atoi(argv[14]), std::atoi(argv[15]), std::atoi(argv[16]));
 
   return 0;
 }
