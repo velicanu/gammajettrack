@@ -2,6 +2,7 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TF1.h"
+#include "TMath.h"
 
 #include "photon_jet_track_tree.h"
 #include "photon_tree.h"
