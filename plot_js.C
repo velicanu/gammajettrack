@@ -139,7 +139,7 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
                 hratio[i][r]->SetYTitle("Ratio");
 
                 set_axis_style(hratio[i][r], i, 1);
-                hratio[i][r]->SetAxisRange(0, 2, "Y");
+                hratio[i][r]->SetAxisRange(0, 3, "Y");
                 if (draw_lt_0_3)
                     hratio[i][r]->SetAxisRange(0, 0.3, "X");
 

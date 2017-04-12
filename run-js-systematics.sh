@@ -17,7 +17,7 @@ else
     exit 1
 fi
 
-SYSTEMATIC=(placeholder jes_up jes_down jer pes)
+SYSTEMATIC=(placeholder jes_up jes_down jer pes purity_up purity_down)
 
 set -x
 
@@ -37,6 +37,9 @@ do
 done
 wait
 
+./draw_js $6 data_data_${1}_${3}_gxi${5}_js_merged.root purity_up_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 1 $TYPE
+./draw_js $6 data_data_${1}_${3}_gxi${5}_js_merged.root purity_down_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 2 $TYPE
+
 if [ -f "systematics.list" ]; then
     rm systematics.list
 fi
@@ -48,14 +51,15 @@ do
     rm ${SYSTEMATIC[SYS]}_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
 
     hadd -f ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root
-    ./draw_js $6 ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} ${TYPE}
+    ./draw_js $6 ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
+done
 
+for SYS in 1 2 3 4 5 6
+do
     echo -e "${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root" >> systematics.list
 done
 
 # placeholder for systematics yet to be implemented
-echo $7 >> systematics.list
-echo $7 >> systematics.list
 echo $7 >> systematics.list
 
 if [ -f "hist.list" ]; then

@@ -5,79 +5,79 @@
 #include <vector>
 #include <string>
 
-#define _PURITY
-
-#ifdef _PURITY
-// Photon pT > 60
-std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
-std::vector<float> purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
-std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
-std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
-
-// photon pT > 80
-std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
-std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
-std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
-std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
-
-// Photon pT > 100
-std::vector<float> purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
-std::vector<float> purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
-std::vector<float> purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
-std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
-#endif
-
-#ifdef _PURITY_UP
-// Photon pT > 60
-std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
-std::vector<float> purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
-std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
-std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
-
-// photon pT > 80
-std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
-std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
-std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
-std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
-
-// Photon pT > 100
-std::vector<float> purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
-std::vector<float> purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
-std::vector<float> purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
-std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
-#endif
-
-#ifdef _PURITY_DOWN
-// Photon pT > 60
-std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
-std::vector<float> purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
-std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
-std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
-
-// photon pT > 80
-std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
-std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
-std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
-std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
-
-// Photon pT > 100
-std::vector<float> purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
-std::vector<float> purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
-std::vector<float> purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
-std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
-#endif
-
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
 double rebinning[12] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0};
 
-int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin) {
+int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
     TFile* finput = new TFile(fname, "read");
 
     TFile* fout = new TFile(outfname, "update");
 
     TH1::SetDefaultSumw2();
+
+    std::vector<float> purity_pbpbdata_60;
+    std::vector<float> purity_pbpbmc_60;
+    std::vector<float> purity_ppdata_60;
+    std::vector<float> purity_ppmc_60;
+
+    std::vector<float> purity_pbpbdata_80;
+    std::vector<float> purity_pbpbmc_80;
+    std::vector<float> purity_ppdata_80;
+    std::vector<float> purity_ppmc_80;
+
+    std::vector<float> purity_pbpbdata_100;
+    std::vector<float> purity_pbpbmc_100;
+    std::vector<float> purity_ppdata_100;
+    std::vector<float> purity_ppmc_100;
+
+    if (purity_group == 0) {
+        purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+        purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
+        purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+        purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
+
+        purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+        purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
+        purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
+        purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
+
+        purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
+        purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
+        purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
+        purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
+    } else if (purity_group == 1) {
+        purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+        purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
+        purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+        purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
+
+        purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+        purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
+        purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
+        purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
+
+        purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
+        purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
+        purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
+        purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
+    } else if (purity_group == 2) {
+        purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+        purity_pbpbmc_60 = {0.922658, 0.957185, 0.973422, 0.982594};
+        purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+        purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
+
+        purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+        purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
+        purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
+        purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
+
+        purity_pbpbdata_100 = {0.700252, 0.792531, 0.821031, 0.797929};
+        purity_pbpbmc_100 = {0.888486, 0.950618, 0.97097, 0.980991};
+        purity_ppdata_100 = {0.851183, 0.851183, 0.851183, 0.851183};
+        purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
+    }
 
     std::vector<float> purity_pbpbdata;
     std::vector<float> purity_pbpbmc;
@@ -202,9 +202,9 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
 }
 
 int main(int argc, char* argv[]) {
-    if (argc > 5)
-        for (int i=5; i<argc; ++i)
-            draw_js(argv[1], argv[i], argv[2], argv[3], atoi(argv[4]));
+    if (argc > 6)
+        for (int i=6; i<argc; ++i)
+            draw_js(argv[1], argv[i], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
 
     return 0;
 }
