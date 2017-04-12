@@ -10,7 +10,7 @@
 #include "genpart_tree.h"
 
 #include "L2L3ResidualWFits.h"
-#include "getTrkCorr.h"
+#include "trkCorr.h"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -238,7 +238,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
   TrkCorr* trkCorr;
   if (isHI)
-    trkCorr = new TrkCorr("Corrections/TrkCorr_Jun7_Iterative_PbPb_etaLT2p4/");
+    trkCorr = new TrkCorr("Corrections/TrkCorr_5020GeV_PbPb/inputCorr_v11_residual.root");
   else
     trkCorr = new TrkCorr("Corrections/TrkCorr_July22_Iterative_pp_eta2p4/");
 
@@ -756,7 +756,7 @@ float getTrkWeight(TrkCorr* trkCorr, int itrk, int hiBin, jetTree* jt_trkcorr, t
     if (rmin * rmin > R) rmin = TMath::Power(R, 0.5);
   }
 
-  return trkCorr->getTrkCorr(tt->trkPt[itrk], tt->trkEta[itrk], tt->trkPhi[itrk], hiBin, rmin);
+  return trkCorr->getTrkCorr(tt->trkPt[itrk], tt->trkEta[itrk], tt->trkPhi[itrk], hiBin);
 }
 
 int main(int argc, char* argv[]) {
