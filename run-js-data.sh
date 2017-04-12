@@ -2,7 +2,7 @@
 
 if [ $# -lt 5 ]; then
   echo "Usage: ./run-js-data.sh [phoetmin] [phoetmax] [jetptmin] [trkptmin] [gammaxi] [pp only] [draw pbpb/pp]"
-  echo "Example: ./run-js-data.sh 60 1000 30 1 0"
+  echo "Example: ./run-js-data.sh 80 1000 40 1 0 0 1"
   exit 1
 fi
 

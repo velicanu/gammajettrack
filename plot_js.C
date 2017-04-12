@@ -11,30 +11,10 @@
 #include <vector>
 #include <string>
 
-float x[] = {0.025,0.075,0.125,0.175,0.225,0.275};
-float y[] = {12.636,4.560,1.318,0.707,0.486,0.294};
-float ypp[] = {12.636,4.560,1.318,0.707,0.486,0.294};
-float ex[] = {0.025,0.025,0.025,0.025,0.025,0.025};
-float ey[] = {0.050,0.028,0.012,0.009,0.009,0.009};
-float eypp[] = {0.050,0.028,0.012,0.009,0.009,0.009};
-
-TGraphErrors* oldjs_0_20 = new TGraphErrors(6,x,y,ex,ey);
-TGraphErrors* oldjspp_0_20 = new TGraphErrors(6,x,ypp,ex,eypp);
-
-void sethin12002() {
-  x[0]=0.025, ypp[0]=12.363, ex[0]=0.025, eypp[0]=0.0233;
-  x[1]=0.075, ypp[1]=4.754, ex[1]=0.025, eypp[1]=0.0134;
-  x[2]=0.125, ypp[2]=1.528, ex[2]=0.025, eypp[2]=0.006;
-  x[3]=0.175, ypp[3]=0.736, ex[3]=0.025, eypp[3]=0.004;
-  x[4]=0.225, ypp[4]=0.402, ex[4]=0.025, eypp[4]=0.002;
-  x[5]=0.275, ypp[5]=0.217, ex[5]=0.025, eypp[5]=0.002;
-}
+#include "error_bands.h"
 
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
-
-double binning[15] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 1.0};
-float scale[14] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 2., 2., 4.};
 
 int rows = 1;
 int columns = 4;
@@ -45,19 +25,13 @@ typedef struct box_t {
 
 void divide_canvas(TCanvas* c1, int rows, int columns, float margin, float edge, float row_scale_factor, float column_scale_factor);
 void set_hist_style(TH1D* h1, int k);
+void set_data_style(TH1D* h1, int k);
 void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0, int phoetmin = 60, int jetptmin = 30) {
-    sethin12002();
-    oldjs_0_20->SetMarkerColor(kBlue);
-    oldjs_0_20->SetLineColor(kBlue);
-    oldjspp_0_20->SetMarkerColor(kViolet);
-    oldjspp_0_20->SetLineColor(kViolet);
-    oldjspp_0_20->SetLineStyle(3);
-
-    TFile* finput = new TFile(ffinal, "read");
+int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "") {
+    TFile* finput = new TFile(input, "read");
 
     std::vector<std::string> hist_names;
     std::ifstream file_stream(hist_list);
@@ -66,6 +40,18 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     while (std::getline(file_stream, line))
         hist_names.push_back(line);
     if (hist_names.size() % 5) return 1;
+
+    TFile* fsys = 0;
+    TH1D* hsys[4][2] = {0};
+    if (sys != NULL && sys[0] != '\0') {
+        fsys = new TFile(sys, "read");
+        for (int i=0; i<4; ++i) {
+            hsys[i][0] = (TH1D*)fsys->Get((hist_names[i+1] + "_systematics").c_str());
+            hsys[i][1] = (TH1D*)fsys->Get((hist_names[i+6] + "_systematics").c_str());
+        }
+    }
+    TGraph* gr = new TGraph();
+    gr->SetFillStyle(1001);
 
     std::size_t layers = hist_names.size() / 5;
     if (layers < 2) draw_ratio = 0;
@@ -84,30 +70,27 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
     TH1D* h1[4][layers] = {0};
-    TH1D* h1_orig[4][layers] = {0};
     TH1D* hratio[4][layers-1] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
         gPad->SetLogy();
 
         for (std::size_t k=0; k<layers; ++k) {
-            h1_orig[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
-            h1[i][k] = (TH1D*)h1_orig[i][k]->Rebin(14, Form("%s_rebin", hist_names[5*k+i+1].c_str()), binning);
-            for (int b=0; b<14; ++b) {
-                h1[i][k]->SetBinContent(b+1, h1[i][k]->GetBinContent(b+1)/scale[b]);
-                h1[i][k]->SetBinError(b+1, h1[i][k]->GetBinError(b+1)/scale[b]);
-            }
-            set_hist_style(h1[i][k], k);
+            h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
+            if (sys == NULL || sys[0] == '\0') { set_hist_style(h1[i][k], k); }
+            else { set_data_style(h1[i][k], k); }
             set_axis_style(h1[i][k], i, 0);
             if (draw_lt_0_3)
                 h1[i][k]->SetAxisRange(0, 0.3, "X");
         }
 
         h1[i][0]->Draw();
-        // if (i==0) oldjs_0_20->Draw("pe same");
-        // if (i==0) oldjspp_0_20->Draw("pe same");
+        gr->SetFillColorAlpha(46, 0.7);
+        if (hsys[i][1]) draw_sys_unc(gr, h1[i][1], hsys[i][1]);
         for (std::size_t l=1; l<layers; ++l)
             h1[i][l]->Draw("same");
+        gr->SetFillColorAlpha(38, 0.7);
+        if (hsys[i][0]) draw_sys_unc(gr, h1[i][0], hsys[i][0]);
         h1[i][0]->Draw("same");
 
         TLatex* centInfo = new TLatex();
@@ -143,8 +126,6 @@ int plot_js(const char* ffinal, const char* plot_name, const char* hist_list, in
 
             for (std::size_t m=0; m<layers; ++m)
                 l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pl");
-            // l1->AddEntry(oldjs_0_20, "HIN-12-002 PbPb", "pl");
-            // l1->AddEntry(oldjspp_0_20, "HIN-12-002 pp", "pl");
 
             l1->Draw();
         }
@@ -304,6 +285,25 @@ void set_hist_style(TH1D* h1, int k) {
     }
 }
 
+void set_data_style(TH1D* h1, int k) {
+    h1->SetStats(0);
+
+    switch (k) {
+        case 0:
+            h1->SetLineColor(1);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(20);
+            h1->SetMarkerColor(1);
+            break;
+        case 1:
+            h1->SetLineColor(1);
+            h1->SetMarkerSize(0.64);
+            h1->SetMarkerStyle(24);
+            h1->SetMarkerColor(1);
+            break;
+    }
+}
+
 void set_axis_style(TH1D* h1, int i, int j) {
     h1->SetAxisRange(0.05, 50, "Y");
     h1->SetNdivisions(609);
@@ -410,8 +410,10 @@ int main(int argc, char* argv[]) {
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
     else if (argc == 8)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+    else if (argc == 9)
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), argv[8]);
     else
-        printf("./plot_js <ROOT file> <plot file name> <histogram list> <draw ratio> < draw r<0.3 > <phoetmin> <jetptmin>\n");
+        printf("./plot_js [input] [output] [histogram list] [draw ratio] [draw r < 0.3 only] [phoetmin] [jetptmin] [systematics file]\n");
 
     return 1;
 }

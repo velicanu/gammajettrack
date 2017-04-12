@@ -57,7 +57,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   int hiBin;
   float vz;
   float hiEvtPlanes[29];
-  int hiNpix;
   float pthat;
   _SET_BRANCH_ADDRESS(event_tree, run, pjtt.run);
   _SET_BRANCH_ADDRESS(event_tree, evt, pjtt.evt);
@@ -65,7 +64,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
-  _SET_BRANCH_ADDRESS(event_tree, hiNpix, hiNpix);
   _SET_BRANCH_ADDRESS(event_tree, pthat, pthat);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
@@ -136,7 +134,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   int hiBin_mix;
   float vz_mix;
   float hiEvtPlanes_mix[29];
-  int hiNpix_mix;
 
   int pcollisionEventSelection_mix;
   int HBHENoiseFilterResultRun2Loose_mix;
@@ -152,7 +149,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     _SET_BRANCH_ADDRESS(event_tree_mix, hiBin, hiBin_mix);
     _SET_BRANCH_ADDRESS(event_tree_mix, vz, vz_mix);
     _SET_BRANCH_ADDRESS(event_tree_mix, hiEvtPlanes, hiEvtPlanes_mix);
-    _SET_BRANCH_ADDRESS(event_tree_mix, hiNpix, hiNpix_mix);
 
     skim_tree_mix = (TTree*)fmixing->Get("skimanalysis/HltTree");
     if (!skim_tree_mix) { printf("Could not access skim tree!\n"); return 1; }
@@ -572,9 +568,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         }
 
         //! (2.51) HiBin, vz, eventplane selection
-        // if (abs(hiBin - hiBin_mix) > 0) continue;
-        // if (hiBin - hiBin_mix > 0 || hiBin - hiBin_mix < -5) continue;
-        if (hiNpix / (float)abs(hiNpix - hiNpix_mix) < 10.) continue;
+        if (abs(hiBin - hiBin_mix) > 0) continue;
         if (fabs(vz - vz_mix) > 1) continue;
         float dphi_evplane = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
         if (dphi_evplane > TMath::Pi() / 16.0) continue;
@@ -705,7 +699,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.dvz_mix[nmix] = fabs(vz - vz_mix);
         pjtt.dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
         pjtt.dhiEvtPlanes_mix[nmix] = dphi_evplane;
-        pjtt.dhiNpix_mix[nmix] = abs(hiNpix - hiNpix_mix);
 
         minbias_end = iminbias;
         nmix++;
@@ -727,7 +720,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     pjtt.hiBin = hiBin;
     pjtt.vz = vz;
     memcpy(pjtt.hiEvtPlanes, hiEvtPlanes, 29 * sizeof(float));
-    pjtt.hiNpix = hiNpix;
 
     outtree->Fill();
   }

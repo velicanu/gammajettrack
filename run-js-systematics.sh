@@ -7,10 +7,10 @@ if [ $# -lt 7 ]; then
 fi
 
 if [ $6 = "pbpbdata" ]; then
-    SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170406.root"
+    SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root"
     TYPE="recoreco"
 elif [ $6 = "ppdata" ]; then
-    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root"
+    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170405.root"
     TYPE="srecoreco"
 else
     echo "invalid sample"
@@ -67,7 +67,7 @@ echo -e "hjs_final_${6}_${TYPE}_20_60" >> hist.list
 echo -e "hjs_final_${6}_${TYPE}_60_100" >> hist.list
 echo -e "hjs_final_${6}_${TYPE}_100_200" >> hist.list
 
-./calc_systematics $7 systematics.list hist.list ${6}_sys
+./calc_systematics $7 systematics.list hist.list data_${1}_${3}_gxi${5}
 
 rm systematics.list
 rm hist.list
