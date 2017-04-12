@@ -61,7 +61,7 @@ int calc_systematics(const char* nominal_file, const char* filelist, const char*
     for (std::size_t i=0; i<nfiles; ++i)
         fsys[i] = new TFile(file_list[i].c_str(), "read");
 
-    TFile* fout = new TFile(Form("rootfiles/%s-systematics.root", label), "recreate");
+    TFile* fout = new TFile(Form("rootfiles/%s-systematics.root", label), "update");
 
     total_sys_var_t* total_sys_vars[nhists] = {0};
     sys_var_t* sys_vars[nhists][nfiles] = {0};
@@ -71,18 +71,18 @@ int calc_systematics(const char* nominal_file, const char* filelist, const char*
         for (std::size_t j=0; j<nfiles; ++j) {
             sys_vars[i][j] = new sys_var_t(hist_list[i], sys_types[j], hnominals[i], (TH1F*)fsys[j]->Get(hist_list[i].c_str()));
             sys_vars[i][j]->fit_sys(fit_funcs[j].c_str(), "pol2");
-            // sys_vars[i][j]->write();
+            sys_vars[i][j]->write();
 
             if (special[j]) {
                 sys_var_t* tmp_sys_var = sys_vars[i][j];
                 sys_vars[i][j] = new sys_var_t(sys_vars[i][j-1], tmp_sys_var);
                 sys_vars[i][j]->fit_sys(fit_funcs[j].c_str(), "pol2");
-                // sys_vars[i][j]->write();
+                sys_vars[i][j]->write();
             }
 
             total_sys_vars[i]->add_sys_var(sys_vars[i][j], options[j]);
         }
-        // total_sys_vars[i]->write();
+        total_sys_vars[i]->write();
     }
 
     for (std::size_t i=0; i<nfiles; ++i)

@@ -30,6 +30,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
   // TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
   // TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
+  if (weight == 0) weight = 1;
   bool isMC = (weight != 1);
 
   if (fChain == 0) return;

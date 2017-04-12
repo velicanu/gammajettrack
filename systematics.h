@@ -163,11 +163,11 @@ void sys_var_t::fit_sys(std::string diff_fit_func, std::string ratio_fit_func) {
 
 void sys_var_t::write() {
     hnominal->Write("", TObject::kOverwrite);
-    hvariation->Write("", TObject::kOverwrite);
+    if (hvariation) hvariation->Write("", TObject::kOverwrite);
 
-    hdiff->Write("", TObject::kOverwrite);
+    if (hdiff) hdiff->Write("", TObject::kOverwrite);
     hdiff_abs->Write("", TObject::kOverwrite);
-    hratio->Write("", TObject::kOverwrite);
+    if (hratio) hratio->Write("", TObject::kOverwrite);
     hratio_abs->Write("", TObject::kOverwrite);
 
     fdiff->Write("", TObject::kOverwrite);

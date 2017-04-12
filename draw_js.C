@@ -70,6 +70,8 @@ std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
+double rebinning[15] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 1.0};
+
 int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin) {
     TFile* finput = new TFile(fname, "read");
 
@@ -141,6 +143,7 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
     TH1D* hjs_signal[4] = {0};
     TH1D* hjs_sideband[4] = {0};
 
+    TH1D* hjs_final_raw[4] = {0};
     TH1D* hjs_final[4] = {0};
 
     for (int i=0; i<4; ++i) {
@@ -178,14 +181,18 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjs_sideband[i]->Add(hjs_jet_sb_sub[i], -1);
         hjs_sideband[i]->Scale(1.0/(hjetpt_sb[i]->Integral() - hjetpt_mix_sb[i]->Integral()));
 
-        hjs_final[i] = (TH1D*)hjs_signal[i]->Clone(Form("hjs_final_%s", tag.c_str()));
+        hjs_final_raw[i] = (TH1D*)hjs_signal[i]->Clone(Form("hjs_final_%s_raw", tag.c_str()));
 
-        hjs_final[i]->Scale(1.0/purity[i]);
-        hjs_final[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
+        hjs_final_raw[i]->Scale(1.0/purity[i]);
+        hjs_final_raw[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
+
+        // rebin large deltar
+        hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(14, Form("hjs_final_%s_raw", tag.c_str()), rebinning);
 
         hjs_final[i]->Scale(1/hjs_final[i]->Integral(hjs_final[i]->FindBin(0.01), hjs_final[i]->FindBin(0.29)), "width");
 
         hjs_final[i]->SetYTitle("#rho(r)");
+
     }
 
     fout->Write("", TObject::kOverwrite);
