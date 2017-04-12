@@ -70,7 +70,7 @@ std::vector<float> purity_ppmc_100 = {0.989016, 0.989016, 0.989016, 0.989016};
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
-double rebinning[15] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 1.0};
+double rebinning[12] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0};
 
 int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin) {
     TFile* finput = new TFile(fname, "read");
@@ -187,7 +187,7 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjs_final_raw[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
 
         // rebin large deltar
-        hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(14, Form("hjs_final_%s", tag.c_str()), rebinning);
+        hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(11, Form("hjs_final_%s", tag.c_str()), rebinning);
 
         hjs_final[i]->Scale(1/hjs_final[i]->Integral(hjs_final[i]->FindBin(0.01), hjs_final[i]->FindBin(0.29)), "width");
 
