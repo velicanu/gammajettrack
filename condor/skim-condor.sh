@@ -25,9 +25,54 @@ Rank         = Mips
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 transfer_input_files = gammajetSkim.exe,residuals.tgz,$2
-#noop_job = !( stringListMember("\$(Process)","") )
+#noop_job = !( stringListMember("\$(Process)","__FAILED__") )
 
 Queue $JOBS
 EOF
 
-condor_submit skim.condor
+cat > skim.sh <<EOF
+#!/bin/bash
+
+tar -xzvf \$5
+
+FILE=\$(head -n\$((\$1+1)) \$3 | tail -n1)
+case \$2 in
+    0)
+        JETALGO=akPu3PFJetAnalyzer
+        ISPP=0
+        NMIX=\$((\$1%40))
+        NMIX=\$((\$NMIX+1))
+        MIXFILE=\$(head -n\${NMIX} \$6 | tail -n1)
+        ;;
+    1)
+        JETALGO=akPu3PFJetAnalyzer
+        ISPP=0
+        MIXFILE=/mnt/hadoop/cms/store/user/biran/photon-jet-track/PbPb-MB-Hydjet-Cymbal-170331.root
+        ;;
+    2)
+        JETALGO=ak3PFJetAnalyzer
+        ISPP=1
+        MXIFILE=""
+        ;;
+    3)
+        JETALGO=ak3PFJetAnalyzer
+        ISPP=1
+        MIXFILE=""
+        ;;
+    *)
+        echo "bad option"
+        exit 1
+        ;;
+esac
+
+echo ./gammajetSkim.exe \$FILE \${1}.root \$JETALGO \$ISPP 1 \$MIXFILE
+./gammajetSkim.exe \$FILE \${1}.root \$JETALGO \$ISPP 1 \$MIXFILE
+
+if [[ \$? -eq 0 ]]; then
+    mv \${1}.root \${4}
+fi
+
+ls | grep -v .out | grep -v .err | grep -v .log | grep -v _condor_stdout | grep -v _condor_stderr | xargs rm -rf
+EOF
+
+#condor_submit skim.condor

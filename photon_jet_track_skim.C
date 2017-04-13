@@ -326,18 +326,22 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     if (!passed) continue;
 
-    if (pthat >= 14.95 && pthat < 30.)
-      pjtt.weight = 0.999328;
-    else if (pthat >= 30. && pthat < 50.)
-      pjtt.weight = 0.447420;
-    else if (pthat >= 50. && pthat < 80.)
-      pjtt.weight = 0.153135;
-    else if (pthat >= 80. && pthat < 120.)
-      pjtt.weight = 0.042342;
-    else if (pthat >= 120.)
-      pjtt.weight = 0.012907;
-    else
-      pjtt.weight = 0;
+    if (isHI && isMC) {
+      if (pthat >= 14.95 && pthat < 30.)
+        pjtt.weight = 0.999328;
+      else if (pthat >= 30. && pthat < 50.)
+        pjtt.weight = 0.447420;
+      else if (pthat >= 50. && pthat < 80.)
+        pjtt.weight = 0.153135;
+      else if (pthat >= 80. && pthat < 120.)
+        pjtt.weight = 0.042342;
+      else if (pthat >= 120.)
+        pjtt.weight = 0.012907;
+      else
+        pjtt.weight = 0;
+    } else {
+        pjtt.weight = 1;
+    }
 
     pjtt.phoE = (*pt.phoE)[maxPhoIndex];
     pjtt.phoEt = (*pt.phoEt)[maxPhoIndex];
