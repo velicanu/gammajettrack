@@ -9,9 +9,13 @@ fi
 if [ $6 = "pbpbdata" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root"
     TYPE="recoreco"
+    MCSKIM=""
+    MCSAMPLE="pbpbmc"
 elif [ $6 = "ppdata" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170405.root"
     TYPE="srecoreco"
+    MCSKIM=""
+    MCSAMPLE="ppmc"
 else
     echo "invalid sample"
     exit 1
@@ -26,6 +30,7 @@ g++ jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o jetshape || e
 g++ draw_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_js || exit 1
 g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exit 1
 g++ calc_systematics.C $(root-config --cflags --libs) -Werror -Wall -O2 -o calc_systematics || exit 1
+g++ calc_iso_systematics.C $(root-config --cflags --libs) -Werror -Wall -O2 -o calc_iso_systematics || exit 1
 
 for SYS in 1 2 3 4
 do
@@ -47,14 +52,35 @@ if [ $6 = "pbpbdata" ]; then
     ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170413-UIC.root $6 100 200 $1 $2 $3 $TYPE $4 $5 tracking 0 &
     wait
 
-    hadd -f tracking_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root ${SYSTEMATIC[SYS]}_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
+    hadd -f tracking_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root tracking_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
     rm tracking_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
-
     hadd -f tracking_${6}_${1}_${3}_gxi${5}_js_merged.root tracking_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root
     ./draw_js $6 tracking_${6}_${1}_${3}_gxi${5}_js_merged.root tracking_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
 else
     cp $7 tracking_${6}_${1}_${3}_gxi${5}_js_final.root
 fi
+
+./jetshape $MCSKIM $MCSAMPLE 0 20 $1 $2 $3 $TYPE $4 $5 nominal_iso 0 &
+./jetshape $MCSKIM $MCSAMPLE 20 60 $1 $2 $3 $TYPE $4 $5 nominal_iso 0 &
+./jetshape $MCSKIM $MCSAMPLE 60 100 $1 $2 $3 $TYPE $4 $5 nominal_iso 0 &
+./jetshape $MCSKIM $MCSAMPLE 100 200 $1 $2 $3 $TYPE $4 $5 nominal_iso 0 &
+./jetshape $MCSKIM $MCSAMPLE 0 20 $1 $2 $3 $TYPE $4 $5 iso 5 &
+./jetshape $MCSKIM $MCSAMPLE 20 60 $1 $2 $3 $TYPE $4 $5 iso 5 &
+./jetshape $MCSKIM $MCSAMPLE 60 100 $1 $2 $3 $TYPE $4 $5 iso 5 &
+./jetshape $MCSKIM $MCSAMPLE 100 200 $1 $2 $3 $TYPE $4 $5 iso 5 &
+wait
+
+hadd -f nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_${TYPE}_js.root nominal_iso_${MCSAMPLE}_${TYPE}_${1}_${3}_${5}_*_*.root
+rm nominal_iso_${MCSAMPLE}_${TYPE}_${1}_${3}_${5}_*_*.root
+hadd -f nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_${TYPE}_js.root
+./draw_js $MCSAMPLE nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
+
+hadd -f iso_${MCSAMPLE}_${1}_${3}_gxi${5}_${TYPE}_js.root iso_${MCSAMPLE}_${TYPE}_${1}_${3}_${5}_*_*.root
+rm iso_${MCSAMPLE}_${TYPE}_${1}_${3}_${5}_*_*.root
+hadd -f iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_${TYPE}_js.root
+./draw_js $MCSAMPLE iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
+
+./calc_iso_systematics nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root data_data_${1}_${3}_gxi${5}_js_final.root $MCSAMPLE $6 $TYPE $1 $3 $5
 
 SYSLIST=systematics_${1}_${3}_${5}_${6}.list
 if [ -f $SYSLIST ]; then
@@ -66,12 +92,11 @@ for SYS in 1 2 3 4
 do
     hadd -f ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root ${SYSTEMATIC[SYS]}_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
     rm ${SYSTEMATIC[SYS]}_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
-
     hadd -f ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root
     ./draw_js $6 ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
 done
 
-for SYS in 1 2 3 4 5 6 7
+for SYS in 1 2 3 4 5 6 7 8
 do
     echo -e "${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root" >> $SYSLIST
 done

@@ -12,20 +12,20 @@
 #include "systematics.h"
 #include "error_bands.h"
 
-std::string sys_types[7] = {
-    "jes_up", "jes_down", "jer", "pes", "purity_up", "purity_down", "tracking"
+std::string sys_types[8] = {
+    "jes_up", "jes_down", "jer", "pes", "purity_up", "purity_down", "tracking", "iso"
 };
 
-std::string fit_funcs[7] = {
-    "pol2", "pol2", "pol2", "pol2", "pol2", "pol2", "pol2"
+std::string fit_funcs[8] = {
+    "pol2", "pol2", "pol2", "pol2", "pol2", "pol2", "pol2", "pol2"
 };
 
-int options[7] = {
-    4, 0, 0, 0, 4, 0, 0
+int options[8] = {
+    4, 0, 0, 0, 4, 0, 0, 0
 };
 
-int special[7] = {
-    0, 1, 0, 0, 0, 1, 0
+int special[8] = {
+    0, 1, 0, 0, 0, 1, 0, 0
 };
 
 int calc_systematics(const char* nominal_file, const char* filelist, const char* histlist, const char* label) {
@@ -61,7 +61,7 @@ int calc_systematics(const char* nominal_file, const char* filelist, const char*
     for (std::size_t i=0; i<nfiles; ++i)
         fsys[i] = new TFile(file_list[i].c_str(), "read");
 
-    TFile* fout = new TFile(Form("rootfiles/%s-systematics.root", label), "update");
+    TFile* fout = new TFile(Form("%s-systematics.root", label), "update");
 
     total_sys_var_t* total_sys_vars[nhists] = {0};
     sys_var_t* sys_vars[nhists][nfiles] = {0};
