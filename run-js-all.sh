@@ -22,22 +22,23 @@ echo "running systematics"
 ./run-js-systematics.sh $@ ppdata data_ppdata_${1}_${3}_gxi${5}_js_final.root
 
 echo "plotting final results"
-if [ -f "plot.list" ]; then
-    rm plot.list
+PLOTLIST=plot_${1}_${3}_${5}_final.list
+if [ -f $PLOTLIST ]; then
+    rm $PLOTLIST
 fi
-touch plot.list
+touch $PLOTLIST
 
-echo -e "pp (smeared)" >> plot.list
-echo -e "hjs_final_ppdata_srecoreco_0_20" >> plot.list
-echo -e "hjs_final_ppdata_srecoreco_20_60" >> plot.list
-echo -e "hjs_final_ppdata_srecoreco_60_100" >> plot.list
-echo -e "hjs_final_ppdata_srecoreco_100_200" >> plot.list
-echo -e "PbPb" >> plot.list
-echo -e "hjs_final_pbpbdata_recoreco_0_20" >> plot.list
-echo -e "hjs_final_pbpbdata_recoreco_20_60" >> plot.list
-echo -e "hjs_final_pbpbdata_recoreco_60_100" >> plot.list
-echo -e "hjs_final_pbpbdata_recoreco_100_200" >> plot.list
+echo -e "pp (smeared)" >> $PLOTLIST
+echo -e "hjs_final_ppdata_srecoreco_0_20" >> $PLOTLIST
+echo -e "hjs_final_ppdata_srecoreco_20_60" >> $PLOTLIST
+echo -e "hjs_final_ppdata_srecoreco_60_100" >> $PLOTLIST
+echo -e "hjs_final_ppdata_srecoreco_100_200" >> $PLOTLIST
+echo -e "PbPb" >> $PLOTLIST
+echo -e "hjs_final_pbpbdata_recoreco_0_20" >> $PLOTLIST
+echo -e "hjs_final_pbpbdata_recoreco_20_60" >> $PLOTLIST
+echo -e "hjs_final_pbpbdata_recoreco_60_100" >> $PLOTLIST
+echo -e "hjs_final_pbpbdata_recoreco_100_200" >> $PLOTLIST
 
-./plot_js data_data_${1}_${3}_gxi${5}_js_final.root final_js_${1}_${3}_gxi${5} plot.list 1 0 $1 $3 rootfiles/data_${1}_${3}_gxi${5}-systematics.root
+./plot_js data_data_${1}_${3}_gxi${5}_js_final.root final_js_${1}_${3}_gxi${5} $PLOTLIST 1 0 $1 $3 rootfiles/data_${1}_${3}_gxi${5}-systematics.root
 
-rm plot.list
+rm $PLOTLIST

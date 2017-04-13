@@ -17,7 +17,7 @@ else
     exit 1
 fi
 
-SYSTEMATIC=(placeholder jes_up jes_down jer pes purity_up purity_down)
+SYSTEMATIC=(placeholder jes_up jes_down jer pes purity_up purity_down tracking)
 
 set -x
 
@@ -29,7 +29,6 @@ g++ calc_systematics.C $(root-config --cflags --libs) -Werror -Wall -O2 -o calc_
 
 for SYS in 1 2 3 4
 do
-    echo running closure histograms
     ./jetshape $SKIM $6 0 20 $1 $2 $3 $TYPE $4 $5 ${SYSTEMATIC[SYS]} $SYS &
     ./jetshape $SKIM $6 20 60 $1 $2 $3 $TYPE $4 $5 ${SYSTEMATIC[SYS]} $SYS &
     ./jetshape $SKIM $6 60 100 $1 $2 $3 $TYPE $4 $5 ${SYSTEMATIC[SYS]} $SYS &
@@ -40,10 +39,28 @@ wait
 ./draw_js $6 data_data_${1}_${3}_gxi${5}_js_merged.root purity_up_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 1 $TYPE
 ./draw_js $6 data_data_${1}_${3}_gxi${5}_js_merged.root purity_down_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 2 $TYPE
 
-if [ -f "systematics.list" ]; then
-    rm systematics.list
+if [ $6 = "pbpbdata" ]; then
+    echo "running tracking systematics"
+    ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170413-UIC.root $6 0 20 $1 $2 $3 $TYPE $4 $5 tracking 0 &
+    ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170413-UIC.root $6 20 60 $1 $2 $3 $TYPE $4 $5 tracking 0 &
+    ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170413-UIC.root $6 60 100 $1 $2 $3 $TYPE $4 $5 tracking 0 &
+    ./jetshape /export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170413-UIC.root $6 100 200 $1 $2 $3 $TYPE $4 $5 tracking 0 &
+    wait
+
+    hadd -f tracking_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root ${SYSTEMATIC[SYS]}_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
+    rm tracking_${6}_${TYPE}_${1}_${3}_${5}_*_*.root
+
+    hadd -f tracking_${6}_${1}_${3}_gxi${5}_js_merged.root tracking_${6}_${1}_${3}_gxi${5}_${TYPE}_js.root
+    ./draw_js $6 tracking_${6}_${1}_${3}_gxi${5}_js_merged.root tracking_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
+else
+    cp $7 tracking_${6}_${1}_${3}_gxi${5}_js_final.root
 fi
-touch systematics.list
+
+SYSLIST=systematics_${1}_${3}_${5}_${6}.list
+if [ -f $SYSLIST ]; then
+    rm $SYSLIST
+fi
+touch $SYSLIST
 
 for SYS in 1 2 3 4
 do
@@ -54,24 +71,25 @@ do
     ./draw_js $6 ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_merged.root ${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
 done
 
-for SYS in 1 2 3 4 5 6
+for SYS in 1 2 3 4 5 6 7
 do
-    echo -e "${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root" >> systematics.list
+    echo -e "${SYSTEMATIC[SYS]}_${6}_${1}_${3}_gxi${5}_js_final.root" >> $SYSLIST
 done
 
 # placeholder for systematics yet to be implemented
-echo $7 >> systematics.list
+# none
 
-if [ -f "hist.list" ]; then
-    rm hist.list
+HISTLIST=hist_${1}_${3}_${5}_${6}.list
+if [ -f $HISTLIST ]; then
+    rm $HISTLIST
 fi
-touch hist.list
-echo -e "hjs_final_${6}_${TYPE}_0_20" >> hist.list
-echo -e "hjs_final_${6}_${TYPE}_20_60" >> hist.list
-echo -e "hjs_final_${6}_${TYPE}_60_100" >> hist.list
-echo -e "hjs_final_${6}_${TYPE}_100_200" >> hist.list
+touch $HISTLIST
+echo -e "hjs_final_${6}_${TYPE}_0_20" >> $HISTLIST
+echo -e "hjs_final_${6}_${TYPE}_20_60" >> $HISTLIST
+echo -e "hjs_final_${6}_${TYPE}_60_100" >> $HISTLIST
+echo -e "hjs_final_${6}_${TYPE}_100_200" >> $HISTLIST
 
-./calc_systematics $7 systematics.list hist.list data_${1}_${3}_gxi${5}
+./calc_systematics $7 $SYSLIST $HISTLIST data_${1}_${3}_gxi${5}
 
-rm systematics.list
-rm hist.list
+rm $SYSLIST
+rm $HISTLIST
