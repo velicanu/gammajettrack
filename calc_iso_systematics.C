@@ -28,9 +28,9 @@ int calc_iso_systematics(const char* nominal, const char* variation, const char*
     TFile* foutput = new TFile(Form("iso_%s_%i_%i_gxi%i_js_final.root", output_sample, phoetmin, jetptmin, gammaxi), "recreate");
     TH1D* houtput[4] = {0};
     houtput[0] = (TH1D*)hdata[0]->Clone(Form("hjs_final_%s_%s_0_20", output_sample, type));
-    houtput[1] = (TH1D*)hdata[1]->Clone(Form("hjs_final_%s_%s_0_20", output_sample, type));
-    houtput[2] = (TH1D*)hdata[2]->Clone(Form("hjs_final_%s_%s_0_20", output_sample, type));
-    houtput[3] = (TH1D*)hdata[3]->Clone(Form("hjs_final_%s_%s_0_20", output_sample, type));
+    houtput[1] = (TH1D*)hdata[1]->Clone(Form("hjs_final_%s_%s_20_60", output_sample, type));
+    houtput[2] = (TH1D*)hdata[2]->Clone(Form("hjs_final_%s_%s_60_100", output_sample, type));
+    houtput[3] = (TH1D*)hdata[3]->Clone(Form("hjs_final_%s_%s_100_200", output_sample, type));
 
     for (int i=0; i<4; ++i) {
         hvariation[i]->Divide(hnominal[i]);

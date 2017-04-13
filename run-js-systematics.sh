@@ -9,19 +9,19 @@ fi
 if [ $6 = "pbpbdata" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root"
     TYPE="recoreco"
-    MCSKIM=""
+    MCSKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170405.root"
     MCSAMPLE="pbpbmc"
 elif [ $6 = "ppdata" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170405.root"
     TYPE="srecoreco"
-    MCSKIM=""
+    MCSKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170405.root"
     MCSAMPLE="ppmc"
 else
     echo "invalid sample"
     exit 1
 fi
 
-SYSTEMATIC=(placeholder jes_up jes_down jer pes purity_up purity_down tracking)
+SYSTEMATIC=(placeholder jes_up jes_down jer pes purity_up purity_down tracking iso)
 
 set -x
 
