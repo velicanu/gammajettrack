@@ -7,14 +7,14 @@ if [ $# -lt 7 ]; then
 fi
 
 if [ $6 = "pbpbdata" ]; then
-    SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170405.root"
+    SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170407.root"
     TYPE="recoreco"
-    MCSKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170405.root"
+    MCSKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170406.root"
     MCSAMPLE="pbpbmc"
 elif [ $6 = "ppdata" ]; then
-    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170405.root"
+    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root"
     TYPE="srecoreco"
-    MCSKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170405.root"
+    MCSKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170406.root"
     MCSAMPLE="ppmc"
 else
     echo "invalid sample"
@@ -80,7 +80,7 @@ rm iso_${MCSAMPLE}_${TYPE}_${1}_${3}_${5}_*_*.root
 hadd -f iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_${TYPE}_js.root
 ./draw_js $MCSAMPLE iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_merged.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${TYPE}
 
-./calc_iso_systematics nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root data_data_${1}_${3}_gxi${5}_js_final.root $MCSAMPLE $6 $TYPE $1 $3 $5
+./calc_iso_systematics nominal_iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root iso_${MCSAMPLE}_${1}_${3}_gxi${5}_js_final.root $7 $MCSAMPLE $6 $TYPE $1 $3 $5
 
 SYSLIST=systematics_${1}_${3}_${5}_${6}.list
 if [ -f $SYSLIST ]; then

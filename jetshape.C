@@ -30,8 +30,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
   // TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
   // TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
-  if (weight == 0) weight = 1;
-  bool isMC = (weight != 1);
+  bool isMC = (sample.find("mc") != std::string::npos);
 
   if (fChain == 0) return;
   int64_t nentries = fChain->GetEntriesFast();
@@ -77,6 +76,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     if (ientry < 0) break;
 
     fChain->GetEntry(jentry);
+    if (weight == 0) weight = 1;
 
     if (systematic == 4) {
       if (isPP) { ; }
