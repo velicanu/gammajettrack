@@ -111,7 +111,7 @@ sys_var_t::sys_var_t(std::string label, std::string type, TH1F* hnominal, TH1F* 
 
 sys_var_t::sys_var_t(sys_var_t* sys_var1, sys_var_t* sys_var2) {
     this->label = sys_var1->label;
-    this->type = sys_var1->type + "_plus_down";
+    this->type = sys_var1->type + "_plus";
     this->hist_name = this->label + "_" + this->type;
     this->hnominal = (TH1F*)sys_var1->hnominal->Clone(Form("%s_nominal", this->hist_name.c_str()));
     this->hvariation = 0;

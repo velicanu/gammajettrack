@@ -15,12 +15,12 @@ else
     exit 1
 fi
 
-set -x
-
 echo "compiling macros..."
 g++ jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o jetshape || exit 1
 g++ draw_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_js || exit 1
 g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exit 1
+
+set -x
 
 echo running closure histograms
 for i in ${@:8}

@@ -20,10 +20,14 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
 
 // systematic:
 // 1: JES_UP
-// 2: JES_DOWN
-// 3: JER
-// 4: PES
-// 5: ISO
+// 2: JES_UP_MINUS
+// 3: JES_DOWN_PLUS
+// 4: JES_DOWN
+// 5: JER_MINUS_MINUS
+// 6: JER_MINUS
+// 7: JER
+// 8: PES
+// 9: ISO
 
 void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string genlevel, float trkptmin, int gammaxi, std::string label, int systematic) {
   // TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
@@ -78,7 +82,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     fChain->GetEntry(jentry);
     if (weight == 0) weight = 1;
 
-    if (systematic == 4) {
+    if (systematic == 8) {
       if (isPP) { ; }
       else { phoEtCorrected = (hiBin < 60) ? phoEtCorrected * (90.94649 / 90.00079) : phoEtCorrected * (90.94943 / 90.64840); }
     }
@@ -90,7 +94,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     if (phoNoise == 0) continue;
     if (phoEtCorrected < phoetmin || phoEtCorrected > phoetmax) continue;
 
-    if (systematic == 5) {
+    if (systematic == 9) {
       if (isMC)
         if (pho_genMatchedIndex == -1 || (*mcCalIsoDR04)[pho_genMatchedIndex] > 5.0)
           continue;
@@ -198,7 +202,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         }
       }
 
-      if (systematic == 3) nsmear *= _NSMEAR_JER;
+      if (systematic == 5 || systematic == 6 || systematic == 7) nsmear *= _NSMEAR_JER;
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
@@ -210,12 +214,23 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           else { tmpjetpt *= 1.05; }
         }
         if (systematic == 2) {
+          if (isPP) { tmpjetpt *= 1.01; }
+          else { tmpjetpt *= 1.025; }
+        }
+        if (systematic == 3) {
+          if (isPP) { tmpjetpt *= 0.99; }
+          else { tmpjetpt *= 0.975; }
+        }
+        if (systematic == 4) {
           if (isPP) { tmpjetpt *= 0.98; }
           else { tmpjetpt *= 0.95; }
         }
 
-        if (systematic == 3) {
-          float jer_factor = 1.15;
+        if (systematic == 5 || systematic == 6 || systematic == 7) {
+          float jer_factor = 1.;
+          if (systematic == 5) { jer_factor = 1.05; }
+          else if (systematic == 6) { jer_factor = 1.10; }
+          else if (systematic == 7) { jer_factor = 1.15; }
           int resolutionBin = getResolutionBin(centmin);
           float initial_res = getResolutionHI(tmpjetpt, resolutionBin);
           tmpjetpt *= smear_rand.Gaus(1, jer_factor * initial_res * sqrt(jer_factor * jer_factor - 1));
@@ -309,7 +324,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         nsmear = _NSMEAR;
       }
 
-      if (systematic == 3) nsmear *= _NSMEAR_JER;
+      if (systematic == 5 || systematic == 6 || systematic == 7) nsmear *= _NSMEAR_JER;
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
@@ -321,12 +336,23 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           else { tmpjetpt *= 1.05; }
         }
         if (systematic == 2) {
+          if (isPP) { tmpjetpt *= 1.01; }
+          else { tmpjetpt *= 1.025; }
+        }
+        if (systematic == 3) {
+          if (isPP) { tmpjetpt *= 0.99; }
+          else { tmpjetpt *= 0.975; }
+        }
+        if (systematic == 4) {
           if (isPP) { tmpjetpt *= 0.98; }
           else { tmpjetpt *= 0.95; }
         }
 
-        if (systematic == 3) {
-          float jer_factor = 1.15;
+        if (systematic == 5 || systematic == 6 || systematic == 7) {
+          float jer_factor = 1.;
+          if (systematic == 5) { jer_factor = 1.05; }
+          else if (systematic == 6) { jer_factor = 1.10; }
+          else if (systematic == 7) { jer_factor = 1.15; }
           int resolutionBin = getResolutionBin(centmin);
           float initial_res = getResolutionHI(tmpjetpt, resolutionBin);
           tmpjetpt *= smear_rand.Gaus(1, jer_factor * initial_res * sqrt(jer_factor * jer_factor - 1));
