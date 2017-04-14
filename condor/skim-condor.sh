@@ -6,6 +6,8 @@ if [[ $# -ne 5 ]]; then
     exit 1
 fi
 
+rm logs/*
+
 mkdir -p $3
 
 JOBS=$(cat $2 | wc -l)
@@ -75,4 +77,4 @@ fi
 ls | grep -v .out | grep -v .err | grep -v .log | grep -v _condor_stdout | grep -v _condor_stderr | xargs rm -rf
 EOF
 
-#condor_submit skim.condor
+condor_submit skim.condor

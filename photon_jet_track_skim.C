@@ -140,7 +140,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   int pPAprimaryVertexFilter_mix;
   int pBeamScrapingFilter_mix;
 
-  if (!mixing_file.empty() && mixing_file.compare("null") != 0) {
+  if (!isPP && !mixing_file.empty() && mixing_file.compare("null") != 0) {
     fmixing = TFile::Open(mixing_file.c_str(), "read");
 
     event_tree_mix = (TTree*)fmixing->Get("hiEvtAnalyzer/HiTree");
@@ -542,7 +542,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     int mult_mix = 0;
 
     //! (2.5) Begin minbias mixing criteria machinery
-    if (!mixing_file.empty() && mixing_file.compare("null") != 0) {
+    if (!isPP && !mixing_file.empty() && mixing_file.compare("null") != 0) {
       int minbias_end = minbias_start;
 
       bool wraparound = false;
