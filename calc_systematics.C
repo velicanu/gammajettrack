@@ -28,6 +28,10 @@ int special[8] = {
     0, 1, 0, 0, 0, 1, 0, 0
 };
 
+std::string sys_labels[8] = {
+    "JES", "JES", "JER", "photon energy", "photon purity", "photon purity", "tracking", "photon isolation"
+};
+
 int calc_systematics(const char* nominal_file, const char* filelist, const char* histlist, const char* label) {
     TH1::AddDirectory(kFALSE);
     TH1::SetDefaultSumw2(kTRUE);
@@ -90,15 +94,23 @@ int calc_systematics(const char* nominal_file, const char* filelist, const char*
 
     TCanvas* c1[nhists] = {0};
     for (std::size_t i=0; i<nhists; ++i) {
-        c1[i] = new TCanvas(Form("sys_%s", hist_list[i].c_str()), "", 900, 600);
+        c1[i] = new TCanvas(Form("sys_%s", hist_list[i].c_str()), "", 900, 900);
 
+        int p = 1;
         c1[i]->Divide(3, 3);
         for (std::size_t j=0; j<nfiles; ++j) {
-            c1[i]->cd(j+1);
-            sys_vars[i][j]->get_diff_abs()->Draw();
+            c1[i]->cd(p);
+            if (options[j] != 4) {
+                sys_vars[i][j]->get_diff_abs()->SetStats(0);
+                sys_vars[i][j]->get_diff_abs()->SetTitle(sys_labels[j].c_str());
+                sys_vars[i][j]->get_diff_abs()->Draw("hist e");
+                ++p;
+            }
         }
-        if (nfiles < 9) {
-            c1[i]->cd(nfiles + 1);
+        if (p < 10) {
+            c1[i]->cd(p);
+            total_sys_vars[i]->get_total()->SetStats(0);
+            total_sys_vars[i]->get_total()->SetTitle("total systematics");
             total_sys_vars[i]->get_total()->Draw();
         }
 
