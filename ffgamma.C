@@ -118,7 +118,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   std::vector<float> p_phi;
   std::vector<float> p_phi_mix;
 
-  int isPP = 0;
 
 //! (2) Loop
   Long64_t nbytes = 0, nb = 0;

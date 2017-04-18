@@ -21,7 +21,8 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   TFile *_file0 = TFile::Open(Form("closure_pp_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   // return;
   const static int ncentbins = 4;
-  const int yaxismax = 2;
+  const float yaxismax = 1.5;
+  const float yaxismin = 0.5;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
@@ -48,7 +49,7 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
 
   for (int icent = 0; icent < ncentbins; icent++) {
     call->cd(2+icent);
-    dummy_ppsub[icent] = new TH2D(Form("dummy_ppsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,0,yaxismax);
+    dummy_ppsub[icent] = new TH2D(Form("dummy_ppsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,yaxismin,yaxismax);
     dummy_ppsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_ppsub[icent]->GetXaxis()->CenterTitle();
     dummy_ppsub[icent]->GetYaxis()->CenterTitle();
@@ -195,7 +196,7 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   }
 
   call->cd(1);
-  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,0,yaxismax);
+  TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,yaxismin,yaxismax);
   gStyle->SetFrameLineColor(0);
   axis_dummy->UseCurrentStyle();
   axis_dummy->Draw("FB BB A");
@@ -209,8 +210,8 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   ldndxi->Draw();
 
   const int nlabels = 5;
-  float fylabels[] = {0,0.5,1,1.5,2};
-  string sylabels[] = {"0",".5","1","1.5","2"};
+  float fylabels[] = {0.6,0.8,1,1.2,1.4};
+  string sylabels[] = {"0.6","0.8","1.0","1.2","1.4"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
