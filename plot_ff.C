@@ -58,15 +58,14 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
     TH1D* h1_sys[4][2] = {0};
-    h1_sys[0][0] = (TH1D*)fsysfile->Get("pbpbdata_0_20");
-    h1_sys[1][0] = (TH1D*)fsysfile->Get("pbpbdata_20_60");
-    h1_sys[2][0] = (TH1D*)fsysfile->Get("pbpbdata_60_100");
-    h1_sys[3][0] = (TH1D*)fsysfile->Get("pbpbdata_100_200");
-    h1_sys[0][1] = (TH1D*)fsysfile->Get("ppdata_0_20");
-    h1_sys[1][1] = (TH1D*)fsysfile->Get("ppdata_20_60");
-    h1_sys[2][1] = (TH1D*)fsysfile->Get("ppdata_60_100");
-    h1_sys[3][1] = (TH1D*)fsysfile->Get("ppdata_100_200");
-
+    h1_sys[0][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_0_20_systematics");
+    h1_sys[1][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_20_60_systematics");
+    h1_sys[2][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_60_100_systematics");
+    h1_sys[3][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_100_200_systematics");
+    h1_sys[0][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_0_20_systematics");
+    h1_sys[1][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_20_60_systematics");
+    h1_sys[2][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_60_100_systematics");
+    h1_sys[3][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_100_200_systematics");
     TH1D* h1[4][2] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
