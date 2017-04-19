@@ -203,7 +203,8 @@ total_sys_var_t::total_sys_var_t(const total_sys_var_t& total_sys_var) {
 total_sys_var_t::total_sys_var_t(std::string label, TH1F* hnominal) {
     this->label = label;
     this->hnominal = (TH1F*)hnominal->Clone(Form("%s_nominal", label.c_str()));
-    this->hsystematics = new TH1F(Form("%s_systematics", label.c_str()), "", hnominal->GetNbinsX(), hnominal->GetXaxis()->GetXbins()->GetArray());
+    this->hsystematics = (TH1F*)hnominal->Clone(Form("%s_systematics", label.c_str()));
+    this->hsystematics->Reset("ICES");
 }
 
 total_sys_var_t::~total_sys_var_t() {};
