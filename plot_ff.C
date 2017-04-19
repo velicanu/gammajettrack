@@ -10,6 +10,8 @@
 #include <vector>
 #include <string>
 
+#include "error_bands.h"
+
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
@@ -25,7 +27,6 @@ void set_hist_style(TH1D* h1, int k);
 void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
-void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
 int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag = "", int gammaxi=-1) {
     TFile* finput = new TFile(fresults, "read");
@@ -82,13 +83,13 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             else            h1[i][k]->SetYTitle("dN/d#xi_{jet}");
         }
 
-        TBox* sys_box_pp = new TBox();
+        TGraph* sys_box_pp = new TGraph();
         sys_box_pp->SetFillStyle(1001);
         sys_box_pp->SetFillColorAlpha(30, 0.7);
         draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
         h1[i][1]->Draw("e x0");
 
-        TBox* sys_box_PbPb = new TBox();
+        TGraph* sys_box_PbPb = new TGraph();
         sys_box_PbPb->SetFillStyle(1001);
         sys_box_PbPb->SetFillColorAlpha(46, 0.7);
         draw_sys_unc(sys_box_PbPb, h1[i][0], h1_sys[i][0]);
@@ -266,18 +267,26 @@ void set_axis_style(TH1D* h1, int i, int j) {
     y_axis->SetTitleSize(16);
 
     if (j == rows - 1) {
-        x_axis->SetTitleOffset(1.0);
+        if (rows == 1)
+            x_axis->SetTitleOffset(1.0);
+        else
+            x_axis->SetTitleOffset(1.8);
         x_axis->CenterTitle();
     } else {
         x_axis->SetTitleOffset(999);
+        x_axis->SetLabelOffset(999);
         x_axis->SetTitle("");
     }
 
     if (i == 0) {
-        y_axis->SetTitleOffset(1.15);
+        if (rows == 1)
+            y_axis->SetTitleOffset(1.15);
+        else
+            y_axis->SetTitleOffset(2.4);
         y_axis->CenterTitle();
     } else {
         y_axis->SetTitleOffset(999);
+        y_axis->SetLabelOffset(999);
         y_axis->SetTitle("");
     }
 }
