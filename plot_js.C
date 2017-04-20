@@ -41,9 +41,12 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
         hist_names.push_back(line);
     if (hist_names.size() % 5) return 1;
 
+    bool is_data_plot = (sys != NULL && sys[0] != '\0');
+
     TFile* fsys = 0;
     TH1D* hsys[4][2] = {0};
-    if (sys != NULL && sys[0] != '\0') {
+    TH1D* hsys_ratio[4] = {0};
+    if (is_data_plot) {
         fsys = new TFile(sys, "read");
         for (int i=0; i<4; ++i) {
             hsys[i][0] = (TH1D*)fsys->Get((hist_names[i+1] + "_systematics").c_str());
@@ -77,18 +80,23 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
 
         for (std::size_t k=0; k<layers; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
-            if (sys == NULL || sys[0] == '\0') { set_hist_style(h1[i][k], k); }
-            else { set_data_style(h1[i][k], k); }
+            if (is_data_plot)
+                set_data_style(h1[i][k], k);
+            else
+                set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
+
             if (draw_lt_0_3)
                 h1[i][k]->SetAxisRange(0, 0.3, "X");
         }
 
         h1[i][0]->Draw();
+
         gr->SetFillColorAlpha(46, 0.7);
         if (hsys[i][1]) draw_sys_unc(gr, h1[i][1], hsys[i][1]);
         for (std::size_t l=1; l<layers; ++l)
             h1[i][l]->Draw("same");
+
         gr->SetFillColorAlpha(38, 0.7);
         if (hsys[i][0]) draw_sys_unc(gr, h1[i][0], hsys[i][0]);
         h1[i][0]->Draw("same");
@@ -118,14 +126,19 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
         }
 
         if (i == 1) {
-            TLegend* l1 = new TLegend(0.25, 0.54, 0.54, 0.54+layers*0.05);
+            TLegend* l1 = new TLegend(0.25, 0.84-layers*0.05, 0.54, 0.84);
             l1->SetTextFont(43);
             l1->SetTextSize(15);
             l1->SetBorderSize(0);
             l1->SetFillStyle(0);
 
-            for (std::size_t m=0; m<layers; ++m)
-                l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pl");
+            if (is_data_plot) {
+                l1->AddEntry(h1[0][1], hist_names[5].c_str(), "pl");
+                l1->AddEntry(h1[0][0], hist_names[0].c_str(), "pl");
+            } else {
+                for (std::size_t m=0; m<layers; ++m)
+                    l1->AddEntry(h1[0][m], hist_names[5*m].c_str(), "pl");
+            }
 
             l1->Draw();
         }
@@ -144,6 +157,15 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
                     hratio[i][r]->SetAxisRange(0, 0.3, "X");
 
                 hratio[i][r]->Draw("same");
+            }
+
+            if (is_data_plot) {
+                hsys_ratio[i] = (TH1D*)hsys[i][1]->Clone(Form("hsys_ratio_%i", i));
+                hsys_ratio[i]->Divide(h1[i][0]);
+                gr->SetFillColorAlpha(46, 0.7);
+                draw_sys_unc(gr, hratio[i][1], hsys_ratio[i]);
+
+                hratio[i][1]->Draw("same");
             }
 
             TLine* line1 = new TLine(0, 1, 1, 1);
