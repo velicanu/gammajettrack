@@ -6,14 +6,15 @@ if [ $# -lt 8 ]; then
   exit 1
 fi
 
+g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exit 1
+
 PLOTLIST=jsplot_${1}_${3}_${5}_${6}_${7}.list
-
-set -x
-
 if [ -f $PLOTLIST ]; then
     rm $PLOTLIST
 fi
 touch $PLOTLIST
+
+set -x
 
 if [ $8 = "data" ]; then
     hadd -f data_data_${1}_${3}_gxi${5}_js_merged.root data_ppdata_${1}_${3}_gxi${5}_srecoreco_js.root data_pbpbdata_${1}_${3}_gxi${5}_recoreco_js.root
