@@ -114,12 +114,14 @@ sys_var_t::sys_var_t(sys_var_t* sys_var1, sys_var_t* sys_var2) {
     this->type = sys_var1->type + "_plus";
     this->hist_name = this->label + "_" + this->type;
     this->hnominal = (TH1F*)sys_var1->hnominal->Clone(Form("%s_nominal", this->hist_name.c_str()));
-    this->hvariation = 0;
+    this->hvariation = (TH1F*)this->hnominal->Clone(Form("%s_variation", this->hist_name.c_str()));
 
     this->hdiff_abs = (TH1F*)sys_var1->hdiff_abs->Clone(Form("%s_diff_abs", this->hist_name.c_str()));
     th1_max_of_2_th1(sys_var1->hdiff_abs, sys_var2->hdiff_abs, this->hdiff_abs);
     this->hratio_abs = (TH1F*)sys_var1->hratio_abs->Clone(Form("%s_ratio_abs", this->hist_name.c_str()));
     th1_max_of_2_th1(sys_var1->hratio_abs, sys_var2->hratio_abs, this->hratio_abs);
+
+    this->hvariation->Add(this->hdiff_abs);
 }
 
 sys_var_t::~sys_var_t() {};
