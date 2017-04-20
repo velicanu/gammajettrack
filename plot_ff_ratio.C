@@ -27,7 +27,7 @@ void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys);
 
-int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const char* tag) {
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const char* tag = "", int gammaxi=-1, int phoetmin=60, int phoetmax=1000, int jetptmin = 30) {
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -58,14 +58,14 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const
     divide_canvas(c1, rows, columns, margin, edge, row_scale_factor, column_scale_factor);
 
     TH1D* h1_sys[4][2] = {0};
-    h1_sys[0][0] = (TH1D*)fsysfile->Get("pbpbdata_0_20");
-    h1_sys[1][0] = (TH1D*)fsysfile->Get("pbpbdata_20_60");
-    h1_sys[2][0] = (TH1D*)fsysfile->Get("pbpbdata_60_100");
-    h1_sys[3][0] = (TH1D*)fsysfile->Get("pbpbdata_100_200");
-    h1_sys[0][1] = (TH1D*)fsysfile->Get("ppdata_0_20");
-    h1_sys[1][1] = (TH1D*)fsysfile->Get("ppdata_20_60");
-    h1_sys[2][1] = (TH1D*)fsysfile->Get("ppdata_60_100");
-    h1_sys[3][1] = (TH1D*)fsysfile->Get("ppdata_100_200");
+    h1_sys[0][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_0_20_systematics");
+    h1_sys[1][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_20_60_systematics");
+    h1_sys[2][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_60_100_systematics");
+    h1_sys[3][0] = (TH1D*)fsysfile->Get("hff_final_pbpbdata_recoreco_100_200_systematics");
+    h1_sys[0][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_0_20_systematics");
+    h1_sys[1][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_20_60_systematics");
+    h1_sys[2][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_60_100_systematics");
+    h1_sys[3][1] = (TH1D*)fsysfile->Get("hff_final_ppdata_recoreco_100_200_systematics");
 
     TH1D* h1[4][2] = {0};
     for (int i=0; i<4; ++i) {
@@ -75,6 +75,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
+	    if(gammaxi==1)  h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
+	    else            h1[i][k]->SetYTitle("dN/d#xi_{jet}");
         }
         h1_sys[i][0]->Divide(h1[i][1]);
         TBox* sys_box_pp = new TBox();
@@ -83,6 +85,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const
         sys_box_pp->SetFillColor(30);
         // draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
         // h1[i][1]->Draw("e x0");
+        h1[i][0]->Divide(h1[i][1]);
         h1[i][0]->Draw(" e x0");
 
         TBox* sys_box_PbPb = new TBox();
@@ -161,7 +164,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, const
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, Form("anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > %d GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > %d GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}",jetptmin,phoetmin));
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
@@ -357,9 +360,10 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 
 int main(int argc, char* argv[]) {
     if (argc == 5)
-        return plot_ff(argv[1], argv[2], argv[3], argv[4]);
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]));
+    else if(argc == 10)
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5], std::atoi(argv[6]), std::atoi(argv[7]), std::atoi(argv[8]), std::atoi(argv[9]));
     else
-        printf("./plot_ff <results file> <sys file> <plot name>\n");
-
-    return 1;
+      printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
+      return 1;
 }
