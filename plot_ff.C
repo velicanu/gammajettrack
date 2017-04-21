@@ -98,10 +98,6 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
         TGraph* sys_box_pp = new TGraph();
         sys_box_pp->SetFillStyle(1001);
         sys_box_pp->SetFillColorAlpha(30, 0.7);
-	for(int ix = 0 ; ix < 10 ; ix++)
-	{
-	  std::cout<<h1_sys[i][1]->GetBinContent(ix)<<std::endl;
-	}
         draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
         // h1[i][1]->Draw("e x0");
 
