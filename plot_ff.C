@@ -29,7 +29,7 @@ void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const std::string tag = "", int gammaxi=-1, int phoetmin=60, int phoetmax=1000, int jetptmin = 30) {
+int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const std::string tag = "", int gammaxi=-1, int phoetmin=60, int phoetmax=1000, int jetptmin = 30, int ratio = 0) {
     TFile* finput = new TFile(fresults, "read");
 
     TFile* fsysfile = new TFile(fsys, "read");
@@ -40,15 +40,15 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     if(tag.compare("jes")==0)    systag="jes_03_plus_plus_diff_abs";
     if(tag.compare("pes")==0)    systag="pes_03_plus_plus_diff_abs";
     if(tag.compare("trk")==0)    systag="trk_diff_abs";
-    if(tag.compare("purity")==0) systag="pes_03_plus_plus_diff_abs";
+    if(tag.compare("purity")==0) systag="purity_up_plus_plus_plus_diff_abs";
 
     std::vector<std::string> hist_names = {
-        "PbPb Data",                            // Legend label
+        "PbPb",                            // Legend label
         "hgammaffxi_pbpbdata_recoreco_0_20",
         "hgammaffxi_pbpbdata_recoreco_20_60",
         "hgammaffxi_pbpbdata_recoreco_60_100",
         "hgammaffxi_pbpbdata_recoreco_100_200",
-        "pp Data",
+        "pp",
         "hgammaffxi_ppdata_recoreco_0_20",
         "hgammaffxi_ppdata_recoreco_20_60",
         "hgammaffxi_ppdata_recoreco_60_100",
@@ -91,15 +91,25 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
                 h1[i][k]->SetAxisRange(0.001, 10, "Y");
             if(gammaxi==1)  h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
             else            h1[i][k]->SetYTitle("dN/d#xi_{jet}");
+	    if(ratio==1)    h1[i][k]->SetYTitle("Ratio");
         }
-        h1[i][0]->Draw("e x0");
-        h1[i][1]->Draw("same e x0");
+	h1[i][0]->Draw("e x0");
+	if(ratio ==0 )
+	{
+	  h1[i][1]->Draw("same e x0");
+	} else {
+	  h1_sys[i][0]->Divide(h1[i][1]);
+	}
+        TLine * lone = new TLine(0,1,5,1);
+        lone->SetLineStyle(9);
+        if(ratio==1) lone->Draw();
 
         TGraph* sys_box_pp = new TGraph();
         sys_box_pp->SetFillStyle(1001);
-        sys_box_pp->SetFillColorAlpha(30, 0.7);
-        draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
+        sys_box_pp->SetFillColorAlpha(38, 0.7);
+        if(ratio ==0) draw_sys_unc(sys_box_pp, h1[i][1], h1_sys[i][1]);
         // h1[i][1]->Draw("e x0");
+
 
         TGraph* sys_box_PbPb = new TGraph();
         sys_box_PbPb->SetFillStyle(1001);
@@ -119,6 +129,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
         box_t info_box = (box_t) {0, 0, 0.96, 0.9};
         adjust_coordinates(info_box, margin, edge, i, 0);
         centInfo->DrawLatexNDC(info_box.x2, info_box.y2, Form("%i - %i%%", min_hiBin[i]/2, max_hiBin[i]/2));
+
+	h1[i][0]->Draw("same e x0");
 
         if (i == 0) {
             TLatex* latexCMS = new TLatex();
@@ -147,8 +159,15 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 
 	    std::string legstring = tag;
 	    if(tag.compare("all")==0)    legstring="";
-            for (std::size_t m=0; m<2; ++m)
-	      l1->AddEntry(h1[0][m], Form("%s %s",hist_names[5*m].c_str(),legstring.data()), "pf");
+            if(ratio==0)
+	    {
+	      for (std::size_t m=0; m<2; ++m)
+		l1->AddEntry(h1[0][m], Form("%s Data %s",hist_names[5*m].c_str(),legstring.data()), "pf");
+	    } else {
+	      for (std::size_t m=0; m<1; ++m)
+		l1->AddEntry(h1[0][m], Form("%s/%s %s",hist_names[5*m].c_str(),hist_names[5*(m+1)].c_str(),tag.data()), "pf");
+
+	    }
 
             l1->Draw();
         }
@@ -170,13 +189,13 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     lumiLatex->SetTextFont(43);
     lumiLatex->SetTextSize(15);
     lumiLatex->SetTextAlign(31);
-    lumiLatex->DrawLatexNDC(1-canvas_right_margin-0.01, canvas_top_edge, "PbPb 404 #mub^{-1}, pp 25.8 pb^{-1}");
+    lumiLatex->DrawLatexNDC(1-canvas_right_margin-0.01, canvas_top_edge, "PbPb 404 #mub^{-1}, pp 27.4 pb^{-1}");
 
     TLatex* infoLatex = new TLatex();
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, "p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > 30 GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > 60 GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}");
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, Form("p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > %d GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > %d GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}",jetptmin,phoetmin));
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
@@ -381,8 +400,8 @@ void draw_sys_unc(TBox* box, TH1* h1, TH1* h1_sys) {
 int main(int argc, char* argv[]) {
     if (argc == 5)
       return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]));
-    else if(argc == 10)
-      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5], std::atoi(argv[6]), std::atoi(argv[7]), std::atoi(argv[8]), std::atoi(argv[9]));
+    else if(argc == 11)
+      return plot_ff(argv[1], argv[2], argv[3], std::atoi(argv[4]), argv[5], std::atoi(argv[6]), std::atoi(argv[7]), std::atoi(argv[8]), std::atoi(argv[9]), std::atoi(argv[10]));
     else
       printf("./plot_ff <results file> <sys file> <plot name> <log scale> <tag>\n");
       return 1;
