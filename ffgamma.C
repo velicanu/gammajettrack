@@ -53,8 +53,16 @@ float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string gen)
 void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string jet_part, float trkptmin, int gammaxi, std::string label, int systematic) { return; }
 
 // this function does the raw FF analysis and writes histograms to output file
-void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int doJERsys)
+void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor)
 {
+  float phoScale = 1;
+  if ( whichSys == 4 ) {        //pes0
+    if ( centmin < 60 )  phoScale -= 0.01 * sysScaleFactor;
+    if ( centmin >= 60 ) phoScale -= 0.005 * sysScaleFactor;
+  } else if ( whichSys == 5 ) { //pes1
+    if ( centmin < 60 )  phoScale += 0.01 * sysScaleFactor;
+    if ( centmin >= 60 ) phoScale += 0.005 * sysScaleFactor;
+  }
   bool ismc;
   TFile * fvzweight = TFile::Open("fvzweight.root");
   TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
@@ -137,12 +145,12 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     // if( gen.compare("gengen")==0 && mcMomPID!=-999 ) continue ; // prompt gen photon cut
     bool signal = (phoSigmaIEtaIEta_2012<0.010);
     bool sideband = (phoSigmaIEtaIEta_2012>0.011 && phoSigmaIEtaIEta_2012<0.017);
-    if( phoEt/phoCorr<phoetmin || phoEt/phoCorr>phoetmax) continue;
+    if( phoEtCorrected*phoScale<phoetmin || phoEtCorrected*phoScale>phoetmax) continue;
     if(signal) {
-      phoetsignal->Fill(phoEtCorrected);
+      phoetsignal->Fill(phoEtCorrected*phoScale);
     }
     if(sideband) {
-      phoetsideband->Fill(phoEtCorrected);
+      phoetsideband->Fill(phoEtCorrected*phoScale);
     }
 
     ismc = (weight!=0);
@@ -206,22 +214,33 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     for (ij = 0; ij < nij; ij++) {
       if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 ) continue;
       float tmpjetpt = j_pt[ij];
+      if ( whichSys == 2 ) // jes0
+      {
+	tmpjetpt *= (1-(0.05*sysScaleFactor));
+      } else if ( whichSys == 3 ) { //jes1
+	tmpjetpt *= (1+(0.05*sysScaleFactor));
+      }
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
       float tmpjetphi = j_phi[ij];
+      if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0) {
+        // tmpjetpt *= smeargenpt(isPP,hiBin);
+        // tmpjeteta *= smeargeneta(isPP,hiBin);
+        // tmpjetphi *= smeargenphi(isPP,hiBin);
+      }
 
 //! apply smearing if pp
       if (isPP) {
-	float res_pt = getSigmaRelPt(centmin, tmpjetpt);
-	float res_phi = getSigmaRelPhi(centmin, tmpjetpt);
+        float res_pt = getSigmaRelPt(centmin, tmpjetpt);
+        float res_phi = getSigmaRelPhi(centmin, tmpjetpt);
         tmpjetpt *= randSmearing.Gaus(1, res_pt);
         tmpjetphi += randSmearing.Gaus(0, res_phi);
       }
 
-     // apply JER systematic uncertainty for PbPb
+      // apply JER systematic uncertainty for PbPb
       float smearFactor = 1;
-      if (doJERsys) {
-        float SF = 1 + 0.15;
+      if ( whichSys == 1 ) { // do JER systematics
+        float SF = 1 + (0.15*sysScaleFactor);
         int resolutionBin = getResolutionBin(centmin);
         float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
         smearFactor = randSmearing.Gaus(1, SF* initialResolution * sqrt(SF*SF - 1));
@@ -246,11 +265,11 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         hjetpt->Fill(tmpjetpt);
         hgenjetpt->Fill(tmpjetpt);
         njets_perevent++;
-        xjgsignal->Fill(tmpjetpt/phoEtCorrected);
+        xjgsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       if(sideband) {
         hjetptsideband->Fill(tmpjetpt);
-        xjgsideband->Fill(tmpjetpt/phoEtCorrected);
+        xjgsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012);
       TLorentzVector vjet;
@@ -277,7 +296,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           vtrack.SetPtEtaPhiM(p_pt[ip],p_eta[ip],p_phi[ip],0);
           float angle = vjet.Angle(vtrack.Vect());
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
-          if(gammaxi==1) z = p_pt[ip]*cos(angle)/phoEtCorrected;
+          if(gammaxi==1) z = p_pt[ip]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
@@ -300,7 +319,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           vtrack.SetPtEtaPhiM(p_pt_mix[ip_mix],p_eta_mix[ip_mix],p_phi_mix[ip_mix],0);
           float angle = vjet.Angle(vtrack.Vect());
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
-          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
+          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
           if(signal) {
             hgammaffxiuemix->Fill(xi,weight*getTrkWeight(ip_mix,trkWeight_mix,gen)/nmixedUEevents);
@@ -315,6 +334,12 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
+      if ( whichSys == 2 ) // jes0
+      {
+	tmpjetpt *= (1-(0.05*sysScaleFactor));
+      } else if ( whichSys == 3 ) { //jes0
+	tmpjetpt *= (1+(0.05*sysScaleFactor));
+      }
       float tmpjeteta = j_eta_mix[ij_mix];
       float tmpjetphi = j_phi_mix[ij_mix];
       if( gen.compare("gengen")==0  || gen.compare("genreco")==0  || gen.compare("gengen0")==0) {
@@ -323,6 +348,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         // tmpjetphi *= smeargenphi(isPP,hiBin);
       }
       float smearFactor = 1;
+      if ( whichSys == 1 ) { // do JER systematics
+        float SF = 1 + (0.15*sysScaleFactor);
+        int resolutionBin = getResolutionBin(centmin);
+        float initialResolution = getResolutionHI(tmpjetpt, resolutionBin);
+        smearFactor = randSmearing.Gaus(1, SF* initialResolution * sqrt(SF*SF - 1));
+        tmpjetpt *= smearFactor;
+      }
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
       dogensmearing = false;
       if (dogensmearing) {
@@ -340,12 +372,12 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
-        xjgmixsignal->Fill(tmpjetpt/phoEtCorrected,1/nmixedjetevents);
+        xjgmixsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       if(sideband) {
         hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents);
         hnmixsideband->Fill(1);
-        xjgmixsideband->Fill(tmpjetpt/phoEtCorrected,1/nmixedjetevents);
+        xjgmixsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       TLorentzVector vjet;
       vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
@@ -366,7 +398,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           vtrackmix.SetPtEtaPhiM(p_pt_mix[ip_mix],p_eta_mix[ip_mix],p_phi_mix[ip_mix],0);
           float angle = vjet.Angle(vtrackmix.Vect());
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
-          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
+          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
 //! 1-2: rjet_mix rtrk_mix
           if(signal) {
@@ -394,7 +426,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           vtrackmix.SetPtEtaPhiM(p_pt_mix[ip_mix],p_eta_mix[ip_mix],p_phi_mix[ip_mix],0);
           float angle = vjet.Angle(vtrackmix.Vect());
           float z = p_pt_mix[ip_mix]*cos(angle)/tmpjetpt;
-          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/phoEtCorrected;
+          if(gammaxi==1) z = p_pt_mix[ip_mix]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
 //! 1-4: rjet_mix rtrk_mix
           if(signal) {
@@ -414,7 +446,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
 
 int main(int argc, char *argv[])
 {
-  if(argc > 12 || argc < 3 )
+  if(argc > 14 || argc < 3 )
   {
     std::cout<<"usage: ./ffgamma.exe <infilename> <outfilename> [centmin centmax] [phoetmin] [phoetmax] [gen] [checkjetid] [trkptmin]"<<std::endl;
     exit(1);
@@ -449,6 +481,9 @@ int main(int argc, char *argv[])
   }
   if (argc==13) {
     t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atof(argv[10]),std::atoi(argv[11]),std::atoi(argv[12]));
+  }
+  if (argc==14) {
+    t->ffgammajet(argv[2],std::atoi(argv[3]),std::atoi(argv[4]),std::atof(argv[5]),std::atof(argv[6]),std::atoi(argv[7]),argv[8],std::atoi(argv[9]),std::atof(argv[10]),std::atoi(argv[11]),std::atoi(argv[12]),std::atof(argv[13]));
   }
   // cout<<argc<<endl;
   return 0;
