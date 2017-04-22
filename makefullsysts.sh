@@ -7,6 +7,8 @@ if [[ $# -lt 2 ]]; then
     exit 1
 fi
 
+g++ ffgamma.C $(root-config --cflags --libs)  -Wall -O2 -o ffgamma.exe
+
 mkdir -p v3syst
 
 # nominal jet & gamma xi
