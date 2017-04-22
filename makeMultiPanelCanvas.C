@@ -1,3 +1,5 @@
+#ifndef _MAKEMULTIPANEL_
+#define _MAKEMULTIPANEL_
 #if !defined(__CINT__) || defined(__MAKECINT__)
 #include "TCanvas.h"
 #include "TError.h"
@@ -81,3 +83,5 @@ void makeMultiPanelCanvas(TCanvas*& canv,
       }
    }
 }
+
+#endif
