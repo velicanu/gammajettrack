@@ -41,12 +41,12 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     if(tag.compare("purity")==0) systag="pes_03_plus_plus_diff_abs";
     
     std::vector<std::string> hist_names = {
-        "PbPb Data",                            // Legend label
+        "PbPb",                            // Legend label
         "hgammaffxi_pbpbdata_recoreco_0_20",
         "hgammaffxi_pbpbdata_recoreco_20_60",
         "hgammaffxi_pbpbdata_recoreco_60_100",
         "hgammaffxi_pbpbdata_recoreco_100_200",
-        "pp Data",
+        "pp",
         "hgammaffxi_ppdata_recoreco_0_20",
         "hgammaffxi_ppdata_recoreco_20_60",
         "hgammaffxi_ppdata_recoreco_60_100",
@@ -83,8 +83,8 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
-	    if(gammaxi==1)  h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
-	    else            h1[i][k]->SetYTitle("dN/d#xi_{jet}");
+	    if(gammaxi==1)  h1[i][k]->SetYTitle("Ratio");
+	    else            h1[i][k]->SetYTitle("Ratio");
         }
         h1_sys[i][0]->Divide(h1[i][1]);
         TBox* sys_box_pp = new TBox();
@@ -142,8 +142,10 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             l1->SetBorderSize(0);
             l1->SetFillStyle(0);
 
+	    std::string legstring = tag;
+	    if(tag.compare("all")==0)    legstring="";
             for (std::size_t m=0; m<1; ++m)
-	      l1->AddEntry(h1[0][m], Form("%s %s",hist_names[5*m].c_str(),tag.data()), "pf");
+	      l1->AddEntry(h1[0][m], Form("%s/%s %s",hist_names[5*m].c_str(),hist_names[5*(m+1)].c_str(),tag.data()), "pf");
 
             l1->Draw();
         }
@@ -171,7 +173,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     infoLatex->SetTextFont(43);
     infoLatex->SetTextSize(15);
     infoLatex->SetTextAlign(21);
-    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, Form("anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > %d GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > %d GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}",jetptmin,phoetmin));
+    infoLatex->DrawLatexNDC((canvas_left_margin+1-canvas_right_margin)/2, canvas_top_edge, Form("p_{T}^{trk} > 1 GeV/c, anti-k_{T} Jet R = 0.3, p_{T}^{Jet} > %d GeV/c, #left|#eta^{Jet}#right| < 1.6, p_{T}^{#gamma} > %d GeV/c, #Delta#phi_{J#gamma} > #frac{7#pi}{8}",jetptmin,phoetmin));
 
     cover_axis(margin, edge, column_scale_factor, row_scale_factor);
 
