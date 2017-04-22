@@ -201,16 +201,20 @@ void drawpp4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   axis_dummy->Draw("FB BB A");
 
   TLatex * ldndxi;
-  if(gammaxi==0) ldndxi = new TLatex(0.4,0.4,"dN/d#xi_{jet} 1/nJet");
-  else           ldndxi = new TLatex(0.4,0.4,"dN/d#xi_{#gamma} 1/nJet");
+  if(do_divide==0) {
+    if(gammaxi==0) ldndxi = new TLatex(0.4,0.4,"dN/d#xi_{jet} 1/nJet");
+    else           ldndxi = new TLatex(0.4,0.4,"dN/d#xi_{#gamma} 1/nJet");
+  } else {
+    ldndxi = new TLatex(0.4,0.4,"Ratio");
+  }
   ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
   ldndxi->Draw();
 
   const int nlabels = 5;
-  float fylabels[] = {0,0.5,1,1.5,2};
-  string sylabels[] = {"0",".5","1","1.5","2"};
+  float fylabels[] = {0.6,0.8,1.0,1.2,1.4};
+  string sylabels[] = {"0.6","0.8","1.0","1.2","1.4"};
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
