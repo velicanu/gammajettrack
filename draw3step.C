@@ -1,25 +1,33 @@
 #include "makeMultiPanelCanvas.C"
-// float allpuritypbpb[] = {0.725758, 0.720249, 0.753094, 0.703853, 0.730487, 0.756007, 0.741809, 0.737945, 0.725995, 0.786819, 0.704426, 0.743147, 0.775786, 0.827101, 0.715906, 0.710863, 0.739059, 0.687001, 0.719965, 0.743805, 0.720358, 0.724734, 0.719121, 0.758637, 0.699659, 0.73539, 0.76691, 0.731031, 0.730948, 0.717619, 0.786722, 0.695959, 0.733827, 0.771255, 0.836782, 0.749695, 0.739283, 0.788322, 0.711966, 0.763817, 0.786493, 0.816522, 0.733207, 0.719114, 0.785248, 0.705784, 0.734519, 0.769831, 0.84767, 0.772594, 0.766181, 0.802428, 0.720997, 0.80606, 0.822834, 0.774406};
-float allpuritypbpb[] = {0.993726, 0.955315, 0.991229, 0.854225, 0.973306, 0.980582, 0.988449, 0.986054, 0.952847, 0.984198, 0.922658, 0.957185, 0.973422, 0.982594, 0.976893, 0.93106, 0.984969, 0.8665, 0.941894, 0.967524, 0.980811, 0.983979, 0.945551, 0.984607, 0.912695, 0.959751, 0.961879, 0.984414, 0.977239, 0.939816, 0.980922, 0.930161, 0.940143, 0.971658, 0.980188, 0.980883, 0.94691, 0.979708, 0.92439, 0.957436, 0.96544, 0.980661, 0.972143, 0.924975, 0.97486, 0.94023, 0.937177, 0.958919, 0.978493, 0.978195, 0.941443, 0.981761, 0.888486, 0.950618, 0.97097, 0.980991};
-// float allpuritypp[] = {0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244};
-float allpuritypp[] = {0.993726, 0.955315, 0.991229, 0.854225, 0.973306, 0.980582, 0.988449, 0.986054, 0.952847, 0.984198, 0.922658, 0.957185, 0.973422, 0.982594, 0.976893, 0.93106, 0.984969, 0.8665, 0.941894, 0.967524, 0.980811, 0.983979, 0.945551, 0.984607, 0.912695, 0.959751, 0.961879, 0.984414, 0.977239, 0.939816, 0.980922, 0.930161, 0.940143, 0.971658, 0.980188, 0.980883, 0.94691, 0.979708, 0.92439, 0.957436, 0.96544, 0.980661, 0.972143, 0.924975, 0.97486, 0.94023, 0.937177, 0.958919, 0.978493, 0.978195, 0.941443, 0.981761, 0.888486, 0.950618, 0.97097, 0.980991};
-float getpurity(float phoetmin, float hibinmin, bool ispp)
+
+std::vector<float> purity_pbpbmc_60  = {0.922658, 0.957185, 0.973422, 0.982594};
+std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
+std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
+std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
+
+float getpurity(float phoetmin, int centbin, bool ispp)
 {
-  int row = -1;
-  int col = -1;
-  if(phoetmin==40)  row = 0;
-  if(phoetmin==60)  row = 1;
-  if(phoetmin==100) row = 7;
-  if(hibinmin==0)   col = 3;
-  if(hibinmin==20)  col = 4;
-  if(hibinmin==60)  col = 5;
-  if(hibinmin==100) col = 6;
-  if(row>-1 && col > -1 && ispp) return allpuritypp[row*7+col];
-  if(row>-1 && col > -1 && !ispp) return allpuritypbpb[row*7+col];
+  if(phoetmin==60) {
+    if(ispp) {
+      return purity_ppmc_60[0];
+    } else {
+      return purity_pbpbmc_60[centbin];
+    }
+  } else if(phoetmin==80) {
+    if(ispp) {
+      return purity_ppmc_80[0];
+    } else {
+      return purity_pbpbmc_80[centbin];
+    }
+  } else {
+    std::cout<<"pho et currently not implemented"<<endl;
+    exit(1);
+  }
   return 1; //no purity applied
 }
 
 void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
+  gStyle->SetFrameLineColor(0);
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   TFile *_fout = new TFile("pbpbmcff.root","recreate");
   const static int ncentbins = 4;
@@ -55,7 +63,11 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
 
   for (int icent = 0; icent < ncentbins; icent++) {
     call->cd(2+icent);
-    dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi;dN/d#xi",1,0.01,4.99,1,yaxismin,yaxismax);
+    if(gammaxi==0) {
+      dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi_{jet};dN/d#xi",1,0.01,4.99,1,yaxismin,yaxismax);
+    } else {
+      dummy_pbpbsub[icent] = new TH2D(Form("dummy_pbpbsub_%d_%d",centmins[icent],centmaxs[icent]),";#xi_{#gamma};dN/d#xi",1,0.01,4.99,1,yaxismin,yaxismax);
+    }
     dummy_pbpbsub[icent]->GetXaxis()->SetTitleOffset(0.8);
     dummy_pbpbsub[icent]->GetXaxis()->CenterTitle();
     dummy_pbpbsub[icent]->GetYaxis()->CenterTitle();
@@ -113,8 +125,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffsideband_pbpbmc_recoreco[icent]->SetMarkerColor(kGreen);
     // rawffsideband_pbpbmc_recoreco[icent]->Draw("same");
 
-    float purity   = getpurity(phoetmin,centmins[icent],false);
-    float pppurity = getpurity(phoetmin,centmins[icent],true);
+    float purity   = getpurity(phoetmin,icent,false);
+    float pppurity = getpurity(phoetmin,icent,true);
     rawff_pbpbmc_recoreco[icent]->Scale(1.0/purity);
     rawffsideband_pbpbmc_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbmc_recoreco[icent]->Add(rawffsideband_pbpbmc_recoreco[icent]);
@@ -158,7 +170,7 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"recoreco bkg-sub","p");
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gengen0[icent],"gengen0 sube==0","l");
       } else {
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"recoreco nkg-sub/gengen0 sube==0","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_recoreco[icent],"recoreco bkg-sub/genen0","p");
         leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbmc_gengen0[icent],"","");
       }
       // leg_ff_pbpbsub[icent]->AddEntry(rawffjetmix_pbpbmc_recoreco[icent],"Jet Mix FF","p");
@@ -186,27 +198,54 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
 
   call->cd(1);
   TH2D * axis_dummy = new TH2D("axis_dummy","",1,0.01,4.99,1,yaxismin,yaxismax);
-  gStyle->SetFrameLineColor(0);
   axis_dummy->UseCurrentStyle();
+  // axis_dummy->Draw("COLA");
   axis_dummy->Draw("FB BB A");
 
   TLatex * ldndxi;
-  if(gammaxi==0)
-    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet}");
-  else
-    ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma}");
-  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+  if(do_divide==1) {
+    ldndxi = new TLatex(0.4,0.5,"Ratio");
+  } else {
+    if(gammaxi==0)
+      ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet}");
+    else
+      ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma}");
+  }
+  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.4);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
 
-  float labelspace = (yaxismax-yaxismin) / 4.0;
-  const int nlabels = int(yaxismax/labelspace);
+  const int nlabels = 5;
+  std::vector<float> fylabels;
+  std::vector<string> sylabels;
+
+  if(do_divide==1) {
+    fylabels = {0.6,0.8,1.0,1.2,1.4};
+    sylabels = {"0.6","0.8","1.0","1.2","1.4"};
+  } else {
+    fylabels = {0,1,2,3,4};
+    sylabels = {"0","1","2","3","4"};
+  }
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
-    laxis[ilatex] = new TLatex(2.,ilatex*labelspace-(0.1*(yaxismax-yaxismin)/4.0),Form("%2.1f",ilatex*labelspace));
-    laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.2);
+    if(do_divide==0) {
+      laxis[ilatex] = new TLatex(3,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+      laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
+    } else {
+      laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+      laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.15);
+    }
     laxis[ilatex]->Draw();
   }
+
+  // float labelspace = (yaxismax-yaxismin) / 4.0;
+  // const int nlabels = int(yaxismax/labelspace);
+  // TLatex * laxis[nlabels];
+  // for (int ilatex = 0; ilatex < nlabels; ilatex++) {
+  //   laxis[ilatex] = new TLatex(2.,ilatex*labelspace-(0.1*(yaxismax-yaxismin)/4.0),Form("%2.1f",ilatex*labelspace));
+  //   laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.2);
+  //   laxis[ilatex]->Draw();
+  // }
   ldndxi->Draw();
   if(do_divide==0) {
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
