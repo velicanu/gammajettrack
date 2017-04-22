@@ -230,12 +230,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       }
 
 //! apply smearing if pp
-      if(isPP)
-      {
-        // tmpjetpt = getSmearedPt(ij*100,centmin);
-        // tmpjeteta = getSmearedEta(ijet*100,centmin);
-        // tmpjetphi = getSmearedPhi(ij*100,centmin);
+      if (isPP) {
+        float res_pt = getSigmaRelPt(centmin, tmpjetpt);
+        float res_phi = getSigmaRelPhi(centmin, tmpjetpt);
+        tmpjetpt *= randSmearing.Gaus(1, res_pt);
+        tmpjetphi += randSmearing.Gaus(0, res_phi);
       }
+
       // apply JER systematic uncertainty for PbPb
       float smearFactor = 1;
       if ( whichSys == 1 ) { // do JER systematics
