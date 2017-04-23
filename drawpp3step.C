@@ -1,24 +1,14 @@
 #include "makeMultiPanelCanvas.C"
 
-std::vector<float> purity_pbpbmc_60  = {0.922658, 0.957185, 0.973422, 0.982594};
 std::vector<float> purity_ppmc_60 = {0.984076, 0.984076, 0.984076, 0.984076};
-std::vector<float> purity_pbpbmc_80 = {0.92439, 0.957436, 0.96544, 0.980661};
 std::vector<float> purity_ppmc_80 = {0.986312, 0.986312, 0.986312, 0.986312};
 
-float getpurity(float phoetmin, int centbin, bool ispp)
+float getpppurity(float phoetmin, int centbin)
 {
   if(phoetmin==60) {
-    if(ispp) {
-      return purity_ppmc_60[0];
-    } else {
-      return purity_ppmc_60[centbin];
-    }
+    return purity_ppmc_60[0];
   } else if(phoetmin==80) {
-    if(ispp) {
-      return purity_ppmc_80[0];
-    } else {
-      return purity_ppmc_80[centbin];
-    }
+    return purity_ppmc_80[0];
   } else {
     std::cout<<"pho et currently not implemented"<<endl;
     exit(1);
@@ -85,8 +75,7 @@ void drawpp3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffsideband_ppmc_recoreco[icent]->SetMarkerColor(kGreen);
     // rawffsideband_ppmc_recoreco[icent]->Draw("same");
 
-    float purity   = getpurity(phoetmin,icent,false);
-    float pppurity = getpurity(phoetmin,icent,true);
+    float purity   = getpppurity(phoetmin,icent);
     rawff_ppmc_recoreco[icent]->Scale(1.0/purity);
     rawffsideband_ppmc_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_ppmc_recoreco[icent]->Add(rawffsideband_ppmc_recoreco[icent]);
@@ -186,10 +175,10 @@ void drawpp3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
     if(do_divide==0) {
-      laxis[ilatex] = new TLatex(3,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+      laxis[ilatex] = new TLatex(3,fylabels[ilatex]-0.2,Form("%s",sylabels[ilatex].data()));
       laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.3);
     } else {
-      laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.01,Form("%s",sylabels[ilatex].data()));
+      laxis[ilatex] = new TLatex(2,fylabels[ilatex]-0.03,Form("%s",sylabels[ilatex].data()));
       laxis[ilatex]->SetTextSize(laxis[ilatex]->GetTextSize()*1.15);
     }
     laxis[ilatex]->Draw();
@@ -205,11 +194,11 @@ void drawpp3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   // }
   ldndxi->Draw();
   if(do_divide==0) {
-    call->SaveAs(Form("finalff_%d_%d_jetpt%d_ppmc_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
-    call->SaveAs(Form("finalff_%d_%d_jetpt%d_ppmc_recoreco_%d.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_ppmc_recoreco_gammaxi%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_ppmc_recoreco_gammaxi%d.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   } else {
-    call->SaveAs(Form("finalff_%d_%d_jetpt%d_ppmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
-    call->SaveAs(Form("finalff_%d_%d_jetpt%d_ppmc_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_ppmc_recoreco_gammaxi%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
+    call->SaveAs(Form("finalff_%d_%d_gen_jetpt%d_ppmc_recoreco_gammaxi%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
   // _fout->Write();
   _fout->Save();
