@@ -223,11 +223,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
       float tmpjetphi = j_phi[ij];
-      if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0) {
-        // tmpjetpt *= smeargenpt(isPP,hiBin);
-        // tmpjeteta *= smeargeneta(isPP,hiBin);
-        // tmpjetphi *= smeargenphi(isPP,hiBin);
-      }
 
 //! apply smearing if pp
       if (isPP) {

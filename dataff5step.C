@@ -1,52 +1,29 @@
 #include "makeMultiPanelCanvas.C"
 
 //nominal
-float allpuritypbpb[] = { 0.704402, 0.695052, 0.745314, 0.670393, 0.712452, 0.747344, 0.737428,
-                          0.725267, 0.708896, 0.785853, 0.681689, 0.730339, 0.775276, 0.825922,
-                          0.692733, 0.684606, 0.730031, 0.654991, 0.700615, 0.733907, 0.714753,
-                          0.707091, 0.699483, 0.748273, 0.672784, 0.722749, 0.754953, 0.726901,
-                          0.719437, 0.702283, 0.785353, 0.676977, 0.721539, 0.77048, 0.835029,
-                          0.737224, 0.721948, 0.789327, 0.685621, 0.751769, 0.787902, 0.816627,
-                          0.722065, 0.702349, 0.787935, 0.67868, 0.725783, 0.771699, 0.850336,
-                          0.758906, 0.749149, 0.799366, 0.700252, 0.792531, 0.821031, 0.797929
-                          };
-float allpuritypp[] = {   0.820859, 0.820859, 0.820859, 0.820859, 0.820859, 0.820859, 0.820859,
-                          0.841322, 0.841322, 0.841322, 0.841322, 0.841322, 0.841322, 0.841322,
-                          0.819149, 0.819149, 0.819149, 0.819149, 0.819149, 0.819149, 0.819149,
-                          0.827423, 0.827423, 0.827423, 0.827423, 0.827423, 0.827423, 0.827423,
-                          0.841746, 0.841746, 0.841746, 0.841746, 0.841746, 0.841746, 0.841746,
-                          0.853694, 0.853694, 0.853694, 0.853694, 0.853694, 0.853694, 0.853694,
-                          0.858868, 0.858868, 0.858868, 0.858868, 0.858868, 0.858868, 0.858868,
-                          0.851183, 0.851183, 0.851183, 0.851183, 0.851183, 0.851183, 0.851183
-                          };
-// //up
-float allpuritypbpb1[] = {0.786483, 0.781925, 0.808699, 0.765789, 0.792815, 0.812663, 0.794217, 0.802484, 0.798719, 0.823989, 0.784649, 0.80838, 0.82018, 0.839167, 0.780588, 0.775496, 0.802794, 0.753684, 0.786004, 0.807622, 0.783555, 0.785176, 0.779132, 0.812662, 0.760196, 0.79591, 0.819588, 0.785941, 0.799376, 0.79425, 0.827123, 0.788432, 0.798401, 0.821262, 0.847832, 0.810702, 0.810325, 0.817984, 0.781683, 0.831584, 0.818722, 0.815832, 0.802133, 0.799319, 0.821158, 0.767797, 0.820925, 0.816056, 0.848964, 0.823743, 0.826856, 0.821099, 0.803847, 0.851806, 0.833434, 0.862138};
-float allpuritypp1[] = {0.860179, 0.860179, 0.860179, 0.860179, 0.860179, 0.860179, 0.860179, 0.868365, 0.868365, 0.868365, 0.868365, 0.868365, 0.868365, 0.868365, 0.859561, 0.859561, 0.859561, 0.859561, 0.859561, 0.859561, 0.859561, 0.864276, 0.864276, 0.864276, 0.864276, 0.864276, 0.864276, 0.864276, 0.871913, 0.871913, 0.871913, 0.871913, 0.871913, 0.871913, 0.871913, 0.868697, 0.868697, 0.868697, 0.868697, 0.868697, 0.868697, 0.868697, 0.872612, 0.872612, 0.872612, 0.872612, 0.872612, 0.872612, 0.872612, 0.867851, 0.867851, 0.867851, 0.867851, 0.867851, 0.867851, 0.867851};
-// // down
-float allpuritypbpb0[] = {0.58137, 0.570472, 0.640496, 0.552295, 0.589878, 0.641163, 0.641338, 0.62773, 0.61566, 0.686854, 0.583795, 0.644241, 0.680084, 0.724226, 0.55868, 0.547463, 0.623272, 0.542794, 0.559101, 0.627778, 0.616984, 0.576336, 0.564139, 0.644103, 0.514229, 0.608187, 0.642481, 0.660722, 0.615156, 0.59956, 0.691904, 0.573649, 0.625162, 0.668078, 0.765202, 0.654963, 0.647691, 0.689322, 0.597215, 0.691554, 0.724679, 0.694852, 0.645085, 0.643222, 0.668429, 0.597739, 0.677045, 0.689128, 0.815539, 0.680725, 0.66682, 0.776057, 0.670596, 0.727152, 0.837721, 0.712363};
-float allpuritypp0[] = {0.763177, 0.763177, 0.763177, 0.763177, 0.763177, 0.763177, 0.763177, 0.808331, 0.808331, 0.808331, 0.808331, 0.808331, 0.808331, 0.808331, 0.756098, 0.756098, 0.756098, 0.756098, 0.756098, 0.756098, 0.756098, 0.776145, 0.776145, 0.776145, 0.776145, 0.776145, 0.776145, 0.776145, 0.804209, 0.804209, 0.804209, 0.804209, 0.804209, 0.804209, 0.804209, 0.836072, 0.836072, 0.836072, 0.836072, 0.836072, 0.836072, 0.836072, 0.838053, 0.838053, 0.838053, 0.838053, 0.838053, 0.838053, 0.838053, 0.8459, 0.8459, 0.8459, 0.8459, 0.8459, 0.8459, 0.8459};
 
+std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
 
-float getpurity(float phoetmin, float hibinmin, bool ispp, int whichpurity)
+float getpurity(float phoetmin, int centbin, bool ispp)
 {
-  int row = -1;
-  int col = -1;
-  if(phoetmin==40)  row = 0;
-  if(phoetmin==60)  row = 1;
-  if(phoetmin==100) row = 7;
-  if(hibinmin==0)   col = 3;
-  if(hibinmin==20)  col = 4;
-  if(hibinmin==60)  col = 5;
-  if(hibinmin==100) col = 6;
-  if(whichpurity==1) {
-    if(row>-1 && col > -1 && ispp) return allpuritypp1[row*7+col];
-    if(row>-1 && col > -1 && !ispp) return allpuritypbpb1[row*7+col];
-  } else if(whichpurity==-1) {
-    if(row>-1 && col > -1 && ispp) return allpuritypp0[row*7+col];
-    if(row>-1 && col > -1 && !ispp) return allpuritypbpb0[row*7+col];
+  if(phoetmin==60) {
+    if(ispp) {
+      return purity_ppdata_60[0];
+    } else {
+      return purity_pbpbdata_60[centbin];
+    }
+  } else if(phoetmin==80) {
+    if(ispp) {
+      return purity_ppdata_80[0];
+    } else {
+      return purity_pbpbdata_80[centbin];
+    }
   } else {
-    if(row>-1 && col > -1 && ispp) return allpuritypp[row*7+col];
-    if(row>-1 && col > -1 && !ispp) return allpuritypbpb[row*7+col];
+    std::cout<<"pho et currently not implemented"<<endl;
+    exit(1);
   }
   return 1; //no purity applied
 }
@@ -149,7 +126,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffsideband_pbpbdata_recoreco[icent]->SetMarkerColor(kGreen);
     // rawffsideband_pbpbdata_recoreco[icent]->Draw("same");
 
-    float purity   = getpurity(phoetmin,centmins[icent],false,whichpurity);
+    float purity   = getpurity(phoetmin,icent,false);
     rawff_pbpbdata_recoreco[icent]->Scale(1.0/purity);
     rawffsideband_pbpbdata_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbdata_recoreco[icent]->Add(rawffsideband_pbpbdata_recoreco[icent]);
@@ -177,7 +154,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawff_ppdata_recoreco[icent]->Scale(1.0/nrawjets);
     rawffsideband_ppdata_recoreco[icent]->Scale(1.0/nrawjetssideband);
 
-    float pppurity = getpurity(phoetmin,centmins[icent],true,whichpurity);
+    float pppurity = getpurity(phoetmin,icent,true);
     rawff_ppdata_recoreco[icent]->Scale(1.0/pppurity);
     rawffsideband_ppdata_recoreco[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
     rawff_ppdata_recoreco[icent]->Add(rawffsideband_ppdata_recoreco[icent]);
