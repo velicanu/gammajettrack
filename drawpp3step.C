@@ -135,7 +135,7 @@ void drawpp3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     }
     else if(icent==3)
     {
-      leg_ff_ppsub[icent]->AddEntry(rawff_ppmc_recoreco[icent],"Pythia+Hydjet","");
+      leg_ff_ppsub[icent]->AddEntry(rawff_ppmc_recoreco[icent],"Pythia","");
       leg_ff_ppsub[icent]->AddEntry(rawff_ppmc_recoreco[icent],"#sigma_{i#eta#eta}<0.10","");
     }
     leg_ff_ppsub[icent]->AddEntry(rawff_ppmc_recoreco[icent],Form("%s",cents[icent].data()),"");
