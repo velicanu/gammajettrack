@@ -14,7 +14,7 @@ float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string genl
   return (*trkweight)[trkindex];
 }
 
-void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int doJERsys) {
+void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor) {
   return;
 }
 
