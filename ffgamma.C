@@ -313,15 +313,17 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if(hiBin > 20) icent  = 1;
       if(hiBin > 60) icent  = 2;
       if(hiBin > 100) icent = 3;
-      if(!isPP && haslowxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
+      if(gen.compare("recogen")==0 || gen.compare("recoreco")==0) {
 	hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+      }
+      if(!isPP && haslowxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
 	tmpjetpt /= lowxicorr[icent];
 	hjetptratio->Fill(tmpjetpt/gjetpt->at(ij));
-	hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
       } else if(!isPP && hasmidxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
-	hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
 	tmpjetpt /= midxicorr[icent];
 	hjetptratiom->Fill(tmpjetpt/gjetpt->at(ij));
+      }
+      if(gen.compare("recogen")==0 || gen.compare("recoreco")==0) {
 	hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
       }
       for(ip = 0 ; ip < nip ; ++ip)
