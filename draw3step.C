@@ -18,6 +18,8 @@ float getpurity(float phoetmin, int centbin)
 }
 
 void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
+  // float uescale[] = {1,1,1,1};
+  float uescale[] = {1,1, 0.97, 0.87};
   gStyle->SetFrameLineColor(0);
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   TFile *_fout = new TFile("pbpbmcff.root","recreate");
@@ -73,7 +75,7 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmix_pbpbmc_recoreco[icent]->Sumw2();
     rawffjetmixue_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixue_pbpbmc_recoreco[icent]->Sumw2();
-    rawffue_pbpbmc_recoreco[icent]->Scale(-1);
+    rawffue_pbpbmc_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixue_pbpbmc_recoreco[icent]->Scale(-1);
     rawff_pbpbmc_recoreco[icent]->Add(rawffue_pbpbmc_recoreco[icent]);
     rawffjetmix_pbpbmc_recoreco[icent]->Add(rawffjetmixue_pbpbmc_recoreco[icent]);
@@ -98,7 +100,7 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmixsideband_pbpbmc_recoreco[icent]->Sumw2();
     rawffjetmixuesideband_pbpbmc_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixuesideband_pbpbmc_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixuesideband_pbpbmc_recoreco[icent]->Sumw2();
-    rawffuesideband_pbpbmc_recoreco[icent]->Scale(-1);
+    rawffuesideband_pbpbmc_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixuesideband_pbpbmc_recoreco[icent]->Scale(-1);
     rawffsideband_pbpbmc_recoreco[icent]->Add(rawffuesideband_pbpbmc_recoreco[icent]);
     rawffjetmixsideband_pbpbmc_recoreco[icent]->Add(rawffjetmixuesideband_pbpbmc_recoreco[icent]);
