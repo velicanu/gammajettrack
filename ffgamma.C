@@ -2,6 +2,7 @@
 
 #include <TRandom3.h>
 #include <TH1.h>
+#include <TH2.h>
 #include "TLorentzVector.h"
 
 #include <iostream>
@@ -39,6 +40,9 @@ Gen Jet Gen Trk inclusive: (mixgen)
 **********************************************************************/
 
 TRandom3 randSmearing(12345);    // random number seed should be fixed or reproducible
+
+float lowxicorr[] = {1.073 , 1.079 , 1.083 , 1.074};
+float midxicorr[] = {1.0514 , 1.0478 , 1.0483 , 1.0471};
 
 float getTrkWeight(int trkindex, float * trkweight, std::string gen) {
   if(gen.compare("gengen")==0 || gen.compare("gengen0")==0 || gen.compare("recogen")==0) return 1;
@@ -80,6 +84,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   TH1D * hgenjetpt = new TH1D(Form("hgenjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet p_{T};"),20,0,500);
   // TH1D * hgenjetpt_mix = new TH1D(Form("hgenjetpt_mix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";genjet_mix p_{T};"),20,0,500);
   TH1D * hjetpt = new TH1D(Form("hjetpt_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
+  TH2D * hjecvsxi     = new TH2D(Form("hjecvsxi_%s_%s_%d_%d",    tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";max #xi;jet/gjet p_{T}"),10,0,5,100,0,2);
+  TH2D * hjecvsxicorr = new TH2D(Form("hjecvsxicorr_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";max #xi;jet/gjet p_{T}"),10,0,5,100,0,2);
+  TH1D * hjetptratio = new TH1D(Form("hjetptratio_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet/gjet p_{T};"),100,0,2);
+  TH1D * hjetptratiom = new TH1D(Form("hjetptratiom_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet/gjet p_{T};"),100,0,2);
   TH1D * hjetptjetmix = new TH1D(Form("hjetptjetmix_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptsideband = new TH1D(Form("hjetptsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
   TH1D * hjetptjetmixsideband = new TH1D(Form("hjetptjetmixsideband_%s_%s_%d_%d",tag.data(),s_alpha.data(),abs(centmin),abs(centmax)),Form(";jet p_{T};"),20,0,500);
@@ -270,8 +278,52 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
+      
+      bool haslowxi = false;
+      bool hasmidxi = false;
+      float maxxi = -999;
+      for(ip = 0 ; ip < nip ; ++ip)
+      {
+        if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
+          if((*chg)[ip]==0) continue;
+        }
+        if(gen.compare("gengen0")==0) {
+          if((*sube)[ip]!=0) continue;
+        }
 
-      if(gen.compare("recogen")==0) {}
+        if(p_pt[ip]<trkptmin) continue;
+        float dphi = acos( cos(tmpjetphi - p_phi[ip]));
+        float deta = fabs( tmpjeteta - p_eta[ip]);
+        float dr = sqrt((dphi*dphi)+(deta*deta));
+        if(dr<0.3)
+        {
+          TLorentzVector vtrack;
+          vtrack.SetPtEtaPhiM(p_pt[ip],p_eta[ip],p_phi[ip],0);
+          float angle = vjet.Angle(vtrack.Vect());
+          float z = p_pt[ip]*cos(angle)/tmpjetpt;
+          if(gammaxi==1) z = p_pt[ip]*cos(angle)/(phoEtCorrected*phoScale);
+          float xi = log(1.0/z);
+	  if(xi>maxxi) maxxi = xi;
+	  if(xi<1) haslowxi = true;
+	  if(xi<2 && xi>1) hasmidxi = true;
+        }
+      }
+      if(haslowxi) hasmidxi = false;
+      int icent = 0;
+      if(hiBin > 20) icent  = 1;
+      if(hiBin > 60) icent  = 2;
+      if(hiBin > 100) icent = 3;
+      if(!isPP && haslowxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
+	hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+	tmpjetpt /= lowxicorr[icent];
+	hjetptratio->Fill(tmpjetpt/gjetpt->at(ij));
+	hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+      } else if(!isPP && hasmidxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
+	hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+	tmpjetpt /= midxicorr[icent];
+	hjetptratiom->Fill(tmpjetpt/gjetpt->at(ij));
+	hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+      }
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -296,6 +348,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           if(signal) { hgammaffxi->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
           if(sideband) { hgammaffxisideband->Fill(xi,weight*getTrkWeight(ip,trkWeight,gen)); }
         }
+      }
+
+      if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 ) {
+	
       }
       float nmixedUEevents = (nmix+1)/2;
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
