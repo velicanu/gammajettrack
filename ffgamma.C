@@ -281,7 +281,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       
       bool haslowxi = false;
       bool hasmidxi = false;
-      float maxxi = -999;
+      float maxxi = 999;
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -303,7 +303,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
-	  if(xi>maxxi) maxxi = xi;
+	  if(xi<maxxi) maxxi = xi;
 	  if(xi<1) haslowxi = true;
 	  if(xi<2 && xi>1) hasmidxi = true;
         }
@@ -350,9 +350,6 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
       }
 
-      if( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 ) {
-	
-      }
       float nmixedUEevents = (nmix+1)/2;
       for(ip_mix = 0 ; ip_mix < nip_mix ; ++ip_mix)
       {
