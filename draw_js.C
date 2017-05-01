@@ -222,7 +222,6 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjs_final[i]->Scale(1/hjs_final[i]->Integral(hjs_final[i]->FindBin(0.01), hjs_final[i]->FindBin(0.29)), "width");
 
         hjs_final[i]->SetYTitle("#rho(r)");
-
     }
 
     fout->Write("", TObject::kOverwrite);

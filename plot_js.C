@@ -30,7 +30,7 @@ void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int draw_lt_0_3 = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "") {
+int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int gammaxi = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "", int draw_jetcone_only = 0) {
     TFile* finput = new TFile(input, "read");
 
     std::vector<std::string> hist_names;
@@ -86,7 +86,11 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
                 set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
 
-            if (draw_lt_0_3)
+            if (gammaxi)
+                h1[i][k]->SetYTitle("#rho_{#gamma} (r)");
+            else
+                h1[i][k]->SetYTitle("#rho_{jet} (r)");
+            if (draw_jetcone_only)
                 h1[i][k]->SetAxisRange(0, 0.3, "X");
         }
 
@@ -153,7 +157,7 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
 
                 set_axis_style(hratio[i][r], i, 1);
                 hratio[i][r]->SetAxisRange(0, 3, "Y");
-                if (draw_lt_0_3)
+                if (draw_jetcone_only)
                     hratio[i][r]->SetAxisRange(0, 0.3, "X");
 
                 hratio[i][r]->Draw("same");
@@ -434,8 +438,10 @@ int main(int argc, char* argv[]) {
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
     else if (argc == 9)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), argv[8]);
+    else if (argc == 10)
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), argv[8], atoi(argv[9]));
     else
-        printf("./plot_js [input] [output] [histogram list] [draw ratio] [draw r < 0.3 only] [phoetmin] [jetptmin] [systematics file]\n");
+        printf("./plot_js [input] [output] [histogram list] [draw ratio] [gammaxi] [phoetmin] [jetptmin] [systematics file] [draw r < 0.3]\n");
 
     return 1;
 }

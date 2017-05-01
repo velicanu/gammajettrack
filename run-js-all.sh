@@ -41,6 +41,6 @@ echo -e "hjs_final_pbpbdata_recoreco_20_60" >> $PLOTLIST
 echo -e "hjs_final_pbpbdata_recoreco_60_100" >> $PLOTLIST
 echo -e "hjs_final_pbpbdata_recoreco_100_200" >> $PLOTLIST
 
-./plot_js data_data_${1}_${3}_gxi${5}_js_final.root final_js_${1}_${3}_gxi${5} $PLOTLIST 1 0 $1 $3 data_${1}_${3}_gxi${5}-systematics.root
+./plot_js data_data_${1}_${3}_gxi${5}_js_final.root final_js_${1}_${3}_gxi${5} $PLOTLIST 1 $5 $1 $3 data_${1}_${3}_gxi${5}-systematics.root
 
 rm $PLOTLIST
