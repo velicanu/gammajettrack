@@ -1,5 +1,6 @@
 #include "TRandom3.h"
 #include "TH1.h"
+#include "TLorentzVector.h"
 
 #include "photonjettrack.h"
 
@@ -7,6 +8,9 @@
 #define _NSMEAR_JER 1
 
 TRandom3 smear_rand(12345);
+
+float lowxi_jec[4] = {1.073, 1.079, 1.083, 1.074};
+float midxi_jec[4] = {1.0514, 1.0478, 1.0483, 1.0471};
 
 float getTrkWeight(int trkindex, std::vector<float>* trkweight, std::string genlevel) {
   if (part_type_is("gen", genlevel) || part_type_is("gen0", genlevel))
@@ -160,6 +164,9 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
       p_ev_mix = *nev_mix;
     }
 
+    // apply fix to gamma-jet jec
+    float jec_fix = isPP ? 0.99 : 0.98;
+
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
       if (jet_type_is("gen0", genlevel)) {
@@ -206,8 +213,56 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
-        tmpjetpt = j_pt[ij] * smear_rand.Gaus(1, res_pt);
+        tmpjetpt = j_pt[ij] * jec_fix * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi[ij] + smear_rand.Gaus(0, res_phi);
+
+        // apply ff-based jec
+        bool lowxijet = false;
+        bool midxijet = false;
+
+        TLorentzVector vjet;
+        vjet.SetPtEtaPhiM(tmpjetpt, tmpjeteta, tmpjetphi, 0);
+
+        for (ip = 0; ip < nip; ++ip) {
+          if (p_pt[ip] < trkptmin) continue;
+          if (part_type_is("gen0", genlevel)) {
+            if ((*sube)[ip] != 0) continue;
+            if ((*chg)[ip] == 0) continue;
+          }
+          if (part_type_is("gen", genlevel)) {
+            if ((*chg)[ip] == 0) continue;
+          }
+          if (part_type_is("bkg", genlevel)) {
+            if ((*sube)[ip] == 0) continue;
+            if ((*chg)[ip] == 0) continue;
+          }
+
+          float min_xi = 99.0;
+
+          float dphi = acos(cos(tmpjetphi - p_phi[ip]));
+          float deta = fabs(tmpjeteta - p_eta[ip]);
+          float deltar = sqrt((dphi * dphi) + (deta * deta));
+          if (deltar < 0.3) {
+            TLorentzVector vtrack;
+            vtrack.SetPtEtaPhiM(p_pt[ip], p_eta[ip], p_phi[ip], 0);
+            float angle = vjet.Angle(vtrack.Vect());
+            float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
+            float z = p_pt[ip] * cos(angle) / refpt;
+            float xi = log(1.0 / z);
+            if (xi < min_xi) min_xi = xi;
+            if (xi < 1) lowxijet = true;
+            if (xi < 2 && xi > 1) midxijet = true;
+          }
+        }
+
+        float xi_jec_corr = 1.0;
+        if (!isPP && jet_type_is("reco", genlevel)) {
+          int centBin = getResolutionBin(centmin);
+          if (lowxijet) xi_jec_corr = 1. / lowxi_jec[centBin];
+          else if (midxijet) xi_jec_corr = 1. / midxi_jec[centBin];
+        }
+
+        tmpjetpt *= xi_jec_corr;
 
         if (systematic == 1) {
           if (isPP) { tmpjetpt *= 1.02; }
@@ -328,7 +383,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
       float smear_weight = 1. / nsmear;
       for (int is = 0; is < nsmear; ++is) {
-        tmpjetpt = j_pt_mix[ij_mix] * smear_rand.Gaus(1, res_pt);
+        tmpjetpt = j_pt_mix[ij_mix] * jec_fix * smear_rand.Gaus(1, res_pt);
         tmpjetphi = j_phi_mix[ij_mix] + smear_rand.Gaus(0, res_phi);
 
         if (systematic == 1) {

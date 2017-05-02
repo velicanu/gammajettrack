@@ -38,7 +38,7 @@ do
         echo -e "hjs_final_${SAMPLE[SMPL]}data_${TYPE[SMPL]}_60_100_${SYSTEMATICS[SYS]}_variation" >> $HISTLIST
         echo -e "hjs_final_${SAMPLE[SMPL]}data_${TYPE[SMPL]}_100_200_${SYSTEMATICS[SYS]}_variation" >> $HISTLIST
 
-        ./plot_js /export/d00/scratch/biran/photon-jet-track/js_systematics/data_${1}_${3}_gxi${5}-systematics.root ${SYSTEMATICS[SYS]}_${SAMPLE[SMPL]}_plot_${1}_${2}_${3}_gxi${5} $HISTLIST 1 0 $1 $3
+        ./plot_js /export/d00/scratch/biran/photon-jet-track/js_systematics/data_${1}_${3}_gxi${5}-systematics.root ${SYSTEMATICS[SYS]}_${SAMPLE[SMPL]}_plot_${1}_${2}_${3}_gxi${5} $HISTLIST 1 $5 $1 $3
 
         rm $HISTLIST
     done

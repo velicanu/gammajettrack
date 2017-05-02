@@ -32,7 +32,7 @@ if [ $8 = "data" ]; then
     echo -e "hjs_final_pbpbdata_recoreco_60_100" >> $PLOTLIST
     echo -e "hjs_final_pbpbdata_recoreco_100_200" >> $PLOTLIST
 
-    ./plot_js data_data_${1}_${3}_gxi${5}_js_final.root data_data_gxi${5}_${1}_${3} $PLOTLIST 1 0 $1 $3
+    ./plot_js data_data_${1}_${3}_gxi${5}_js_final.root data_data_gxi${5}_${1}_${3} $PLOTLIST 1 $5 $1 $3
 else
     hadd -f ${7}_${6}_${1}_${3}_gxi${5}_js_merged.root ${7}_${6}_${1}_${3}_gxi${5}_*_js.root
     ./draw_js ${6} ${7}_${6}_${1}_${3}_gxi${5}_js_merged.root ${7}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${@:8}
@@ -46,7 +46,7 @@ else
       echo -e "hjs_final_${6}_${i}_100_200" >> $PLOTLIST
     done
 
-    ./plot_js ${7}_${6}_${1}_${3}_gxi${5}_js_final.root ${7}_${6}_gxi${5}_${1}_${3} $PLOTLIST 1 0 $1 $3
+    ./plot_js ${7}_${6}_${1}_${3}_gxi${5}_js_final.root ${7}_${6}_gxi${5}_${1}_${3} $PLOTLIST 1 $5 $1 $3
 fi
 
 rm $PLOTLIST
