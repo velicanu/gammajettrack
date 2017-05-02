@@ -29,7 +29,7 @@ float getpurity(float phoetmin, int centbin, bool ispp)
 }
 
 void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0, string inpath="./", string outfname = "outfile.root", int whichpurity = 0) {
-
+  float uescale[] = {1,1, 0.97, 0.87};
   TFile *_file0 = TFile::Open(Form("%sall_%d_%d_%d_gammaxi%d.root",inpath.data(),phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
@@ -83,7 +83,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffjetmix_pbpbdata_recoreco[icent]->Sumw2();
     rawffjetmixue_pbpbdata_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixue_pbpbdata_recoreco[icent]->Sumw2();
-    rawffue_pbpbdata_recoreco[icent]->Scale(-1);
+    rawffue_pbpbdata_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixue_pbpbdata_recoreco[icent]->Scale(-1);
     rawff_pbpbdata_recoreco[icent]->Add(rawffue_pbpbdata_recoreco[icent]);
     rawffjetmix_pbpbdata_recoreco[icent]->Add(rawffjetmixue_pbpbdata_recoreco[icent]);
@@ -108,7 +108,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffjetmixsideband_pbpbdata_recoreco[icent]->Sumw2();
     rawffjetmixuesideband_pbpbdata_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixuesideband_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixuesideband_pbpbdata_recoreco[icent]->Sumw2();
-    rawffuesideband_pbpbdata_recoreco[icent]->Scale(-1);
+    rawffuesideband_pbpbdata_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixuesideband_pbpbdata_recoreco[icent]->Scale(-1);
     rawffsideband_pbpbdata_recoreco[icent]->Add(rawffuesideband_pbpbdata_recoreco[icent]);
     rawffjetmixsideband_pbpbdata_recoreco[icent]->Add(rawffjetmixuesideband_pbpbdata_recoreco[icent]);
