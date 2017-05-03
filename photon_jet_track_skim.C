@@ -22,7 +22,7 @@ static const double pi = 3.141592653589793238462643383279502884;
 double getAngleToEP(double angle);
 float getTrkWeight(TrkCorr* trkCorr, int itrk, int hiBin, jetTree* jt_trkcorr, trackTree* tt);
 
-int photon_jet_track_skim(std::string input, std::string output, std::string jet_algo, bool isPP, float weight, std::string mixing_file = "", float jetptmin = 10, int start = 0, int end = -1) {
+int photon_jet_track_skim(std::string input, std::string output, std::string jet_algo = "akPu3PFJetAnalyzer", bool isPP = 0, float weight = 1, std::string mixing_file = "", float jetptmin = 10, int start = 0, int end = -1) {
   // start each file at a different index in the minbias mix tree
   // index is random but deterministic
   uint32_t filehash = std::hash<std::string>()(input) % UINT32_MAX;
@@ -34,15 +34,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   bool isMC = true;
 
   /**********************************************************
-  * CREATE OUTPUT TREE
-  **********************************************************/
-  TFile* foutput = new TFile(output.c_str(), "recreate");
-
-  TTree* outtree = new TTree("pjtt", "photon jet track tree");
-  photonJetTrackTree pjtt(outtree);
-
-  /**********************************************************
-  * OPEN INPUT FILES
+  * OPEN INPUT FILE
   **********************************************************/
   TFile* finput = TFile::Open(input.c_str(), "read");
 
@@ -50,6 +42,27 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   tree->SetBranchStatus(#branch, 1);                \
   tree->SetBranchAddress(#branch, &var);            \
 }
+
+  /**********************************************************
+  * CREATE OUTPUT TREE
+  **********************************************************/
+  TFile* foutput = new TFile(output.c_str(), "recreate");
+
+  TTree* outtree = new TTree("pjtt", "photon jet track tree");
+  photonJetTrackTree pjtt(outtree);
+
+  TTree* pfcand_tree = (TTree*)finput->Get("pfcandAnalyzer/pfTree");
+  pfcand_tree->SetBranchStatus("*", 0);
+  pfcand_tree->SetBranchStatus("nPFpart", 1);
+  pfcand_tree->SetBranchStatus("pfId", 1);
+  pfcand_tree->SetBranchStatus("pfPt", 1);
+  pfcand_tree->SetBranchStatus("pfEnergy", 1);
+  pfcand_tree->SetBranchStatus("pfEta", 1);
+  pfcand_tree->SetBranchStatus("pfPhi", 1);
+
+  TTree* outpfcand_tree = pfcand_tree->CloneTree(0);
+  outpfcand_tree->SetName("pfct");
+  outpfcand_tree->SetTitle("pf cand tree");
 
   TTree* event_tree = (TTree*)finput->Get("hiEvtAnalyzer/HiTree");
   if (!event_tree) { printf("Could not access event tree!\n"); return 1; }
@@ -115,6 +128,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     genpart_tree->SetBranchStatus("*", 0);
     gpt.read_tree(genpart_tree);
   }
+
   /**********************************************************
   * OPEN MINBIAS MIXING FILE
   **********************************************************/
@@ -251,7 +265,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     event_tree->GetEntry(j);
 
     hlt_tree->GetEntry(j);
-    if (j % 100 == 0) { printf("processing event: %i / %i\n", j, end); }
+    if (j % 500 == 0) { printf("processing event: %i / %i\n", j, end); }
     if (j == end) { printf("done: %i\n", end); break; }
 
     if (fabs(vz) > 15) continue;
@@ -728,10 +742,14 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     memcpy(pjtt.hiEvtPlanes, hiEvtPlanes, 29 * sizeof(float));
 
     outtree->Fill();
+
+    pfcand_tree->GetEntry(j);
+    outpfcand_tree->Fill();
   }
 
   foutput->cd();
   outtree->Write("", TObject::kOverwrite);
+  outpfcand_tree->Write("", TObject::kOverwrite);
   foutput->Write("", TObject::kOverwrite);
   foutput->Close();
 
@@ -758,7 +776,19 @@ float getTrkWeight(TrkCorr* trkCorr, int itrk, int hiBin, jetTree* jt_trkcorr, t
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 6)
+    if (argc < 3) {
+        printf("Usage: ./gammajetSkim.exe [[input]] [[output]] [jet algo] [isPP] [useless] [mix file] [jetptmin] [start] [end]\n");
+        printf("Testing: ./gammajetSkim.exe /mnt/hadoop/cms/store/user/katatar/official/Pythia8_AllQCDPhoton120Flt30_Hydjet_Cymbal_MB/HINPbPbWinter16DR-75X_mcRun2_HeavyIon_v14-v1-FOREST/170320_144030/0000/HiForestAOD_1.root test.root akPu3PFJetAnalyzer 0 1 /export/d00/scratch/biran/photon-jet-track/PbPb-MB-Hydjet-Cymbal-170331.root 30 0 20\n");
+        return 1;
+    }
+
+    if (argc == 3)
+        return photon_jet_track_skim(argv[1], argv[2]);
+    else if (argc == 4)
+        return photon_jet_track_skim(argv[1], argv[2], argv[3]);
+    else if (argc == 5)
+        return photon_jet_track_skim(argv[1], argv[2], argv[3], atoi(argv[4]));
+    else if (argc == 6)
         return photon_jet_track_skim(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
     else if (argc == 7)
         return photon_jet_track_skim(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), argv[6]);
