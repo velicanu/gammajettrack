@@ -252,8 +252,6 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   else
     trkCorr = new TrkCorr("Corrections/TrkCorr_July22_Iterative_pp_eta2p4/");
 
-  float JEC_scale_factor = isHI ? 0.98 : 0.99;
-
   /**********************************************************
   * BEGIN EVENT LOOP
   **********************************************************/
@@ -419,7 +417,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         double xmin, xmax;
         jetResidualFunction[centBin]->GetRange(xmin, xmax);
         if (jetpt_corr > xmin && jetpt_corr < xmax) {
-          jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr) * JEC_scale_factor;
+          jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr);
         }
 
         if (isHI) {
