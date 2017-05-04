@@ -61,5 +61,6 @@ v2syst/
 *.out
 *.app
 
-# Other
+# Temporary files
 *.swp
+.nfs*
