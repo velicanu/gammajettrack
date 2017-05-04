@@ -60,3 +60,6 @@ v2syst/
 *.exe
 *.out
 *.app
+
+# Other
+*.swp

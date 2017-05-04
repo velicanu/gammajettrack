@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -lt 5 ]; then
+if [ $# -ne 6 ]; then
   echo "Usage: ./run-js-data.sh [phoetmin] [phoetmax] [jetptmin] [trkptmin] [gammaxi] [which]"
   echo "       [which] - 0: both, 1: pp, 2: pbpb"
   echo "Example: ./run-js-data.sh 80 1000 40 1 0 0"

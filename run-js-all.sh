@@ -16,11 +16,25 @@ set -x
 
 if [[ $6 -ne 1 ]]; then
     echo "running data"
-    ./run-js-data.sh $@ 0 1
+    ./run-js-data.sh $@ 0
 
     echo "running systematics"
     ./run-js-systematics.sh $@ pbpbdata data_pbpbdata_${1}_${3}_gxi${5}_js_final.root
     ./run-js-systematics.sh $@ ppdata data_ppdata_${1}_${3}_gxi${5}_js_final.root
+fi
+
+DATAFILE=data_data_${1}_${3}_gxi${5}_js_final.root
+SYSFILE=data_${1}_${3}_gxi${5}-systematics.root
+
+if [[ $6 -eq 1 ]]; then
+    if [ ! -f $DATAFILE ]; then
+        echo "data file: $DATAFILE not found!"
+        exit 1
+    fi
+    if [ ! -f $SYSFILE ]; then
+        echo "systematics file: $SYSFILE not found!"
+        exit 1
+    fi
 fi
 
 echo "plotting final results"
