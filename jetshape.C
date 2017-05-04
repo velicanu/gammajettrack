@@ -388,7 +388,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
-          float deltar2 = sqrt((dphi * dphi) + (deta * deta));
+          float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
@@ -409,7 +409,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
           float dphi = acos(cos(tmpjetphi - p_phi_mix[ip_mix]));
           float deta = fabs(tmpjeteta - p_eta_mix[ip_mix]);
-          float deltar2 = sqrt((dphi * dphi) + (deta * deta));
+          float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
             float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
