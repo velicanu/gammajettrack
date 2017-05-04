@@ -69,6 +69,19 @@ std::vector<double> CSN_phi_HI_cent50100 = { -0.0073078, 0.168879, 0.798885};
 std::vector<double>* CSN_vector[4] = {&CSN_HI_cent0010, &CSN_HI_cent1030, &CSN_HI_cent3050, &CSN_HI_cent50100};
 std::vector<double>* CSN_phi_vector[4] = {&CSN_phi_HI_cent0010, &CSN_phi_HI_cent1030, &CSN_phi_HI_cent3050, &CSN_phi_HI_cent50100};
 
+int getCentralityBin(int centmin) {
+  if (centmin == 0)
+    return 0;
+  else if (centmin == 20)
+    return 1;
+  else if (centmin == 60)
+    return 2;
+  else if (centmin == 100)
+    return 3;
+  else
+    return 0;
+}
+
 int getResolutionBin(int centmin) {
   if (centmin == 0)
     return 0;
@@ -82,8 +95,8 @@ int getResolutionBin(int centmin) {
     return 0;
 }
 
-double getResolutionHI(float jtpt, int resolutionBin) {
-  std::vector<double>* CSN_HI = CSN_vector[resolutionBin];
+double getResolutionHI(float jtpt, int centBin) {
+  std::vector<double>* CSN_HI = CSN_vector[centBin];
   double sigma = TMath::Sqrt(
     (CSN_HI->at(0) * CSN_HI->at(0)) +
     (CSN_HI->at(1) * CSN_HI->at(1)) / jtpt +
@@ -93,8 +106,8 @@ double getResolutionHI(float jtpt, int resolutionBin) {
   return sigma;
 }
 
-double getPhiResolutionHI(float jtpt, int resolutionBin) {
-  std::vector<double>* CSN_HI = CSN_phi_vector[resolutionBin];
+double getPhiResolutionHI(float jtpt, int centBin) {
+  std::vector<double>* CSN_HI = CSN_phi_vector[centBin];
   double sigma = TMath::Sqrt(
     (CSN_HI->at(0) * CSN_HI->at(0)) +
     (CSN_HI->at(1) * CSN_HI->at(1)) / jtpt +
