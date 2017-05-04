@@ -62,6 +62,34 @@ elif [ $8 = "datamc" ]; then
     echo -e "hjs_final_pbpbdata_recoreco_100_200" >> $PLOTLIST
 
     ./plot_js data_mc_${1}_${3}_gxi${5}_js_final.root data_mc_gxi${5}_${1}_${3} $PLOTLIST 0 $5 $1 $3
+    rm $PLOTLIST
+
+    echo -e "pp MC" >> $PLOTLIST
+    echo -e "hjs_final_ppmc_recoreco_0_20" >> $PLOTLIST
+    echo -e "hjs_final_ppmc_recoreco_20_60" >> $PLOTLIST
+    echo -e "hjs_final_ppmc_recoreco_60_100" >> $PLOTLIST
+    echo -e "hjs_final_ppmc_recoreco_100_200" >> $PLOTLIST
+    echo -e "pp data" >> $PLOTLIST
+    echo -e "hjs_final_ppdata_recoreco_0_20" >> $PLOTLIST
+    echo -e "hjs_final_ppdata_recoreco_20_60" >> $PLOTLIST
+    echo -e "hjs_final_ppdata_recoreco_60_100" >> $PLOTLIST
+    echo -e "hjs_final_ppdata_recoreco_100_200" >> $PLOTLIST
+
+    ./plot_js data_mc_${1}_${3}_gxi${5}_js_final.root data_mc_gxi${5}_${1}_${3}_pp $PLOTLIST 1 $5 $1 $3
+    rm $PLOTLIST
+
+    echo -e "PbPb MC" >> $PLOTLIST
+    echo -e "hjs_final_pbpbmc_recoreco_0_20" >> $PLOTLIST
+    echo -e "hjs_final_pbpbmc_recoreco_20_60" >> $PLOTLIST
+    echo -e "hjs_final_pbpbmc_recoreco_60_100" >> $PLOTLIST
+    echo -e "hjs_final_pbpbmc_recoreco_100_200" >> $PLOTLIST
+    echo -e "PbPb data" >> $PLOTLIST
+    echo -e "hjs_final_pbpbdata_recoreco_0_20" >> $PLOTLIST
+    echo -e "hjs_final_pbpbdata_recoreco_20_60" >> $PLOTLIST
+    echo -e "hjs_final_pbpbdata_recoreco_60_100" >> $PLOTLIST
+    echo -e "hjs_final_pbpbdata_recoreco_100_200" >> $PLOTLIST
+
+    ./plot_js data_mc_${1}_${3}_gxi${5}_js_final.root data_mc_gxi${5}_${1}_${3}_pbpb $PLOTLIST 1 $5 $1 $3
 else
     hadd -f ${7}_${6}_${1}_${3}_gxi${5}_js_merged.root ${7}_${6}_${1}_${3}_gxi${5}_*_js.root
     ./draw_js ${6} ${7}_${6}_${1}_${3}_gxi${5}_js_merged.root ${7}_${6}_${1}_${3}_gxi${5}_js_final.root ${1} 0 ${@:8}
