@@ -36,7 +36,7 @@ void cover_axis(float margin, float edge, float column_scale_factor, float row_s
 // 2    - ff, 0 < xi < 5
 // 3    - ff, 0.5 < xi < 5
 
-int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int gammaxi = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "", int option = 0) {
+int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int gammaxi = 0, int phoetmin = 60, int jetptmin = 30, int option = 0, const char* sys = "") {
     TFile* finput = new TFile(input, "read");
 
     std::vector<std::string> hist_names;
@@ -474,9 +474,9 @@ int main(int argc, char* argv[]) {
     else if (argc == 8)
         return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
     else if (argc == 9)
-        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), argv[8]);
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), atoi(argv[8]));
     else if (argc == 10)
-        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), argv[8], atoi(argv[9]));
+        return plot_js(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), atoi(argv[8]), argv[9]);
     else
         printf("./plot_js [input] [output] [histogram list] [draw ratio] [gammaxi] [phoetmin] [jetptmin] [systematics file] [draw r < 0.3]\n");
 
