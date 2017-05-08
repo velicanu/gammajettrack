@@ -226,9 +226,9 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       float tmpjetpt = j_pt[ij];
       if ( whichSys == 2 ) // jes0
       {
-	tmpjetpt *= (1-(0.05*sysScaleFactor));
+        tmpjetpt *= (1-(0.05*sysScaleFactor));
       } else if ( whichSys == 3 ) { //jes1
-	tmpjetpt *= (1+(0.05*sysScaleFactor));
+        tmpjetpt *= (1+(0.05*sysScaleFactor));
       }
       // float tmpjetpt = gjetpt[ijet];
       float tmpjeteta = j_eta[ij];
@@ -280,7 +280,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
-      
+
       bool haslowxi = false;
       bool hasmidxi = false;
       float maxxi = 999;
@@ -300,16 +300,16 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         float dr = sqrt((dphi*dphi)+(deta*deta));
         if(dr<0.3)
         {
-	  if(p_pt[ip]>4) ntrkover4+=1;
+          if(p_pt[ip]>4) ntrkover4+=1;
           TLorentzVector vtrack;
           vtrack.SetPtEtaPhiM(p_pt[ip],p_eta[ip],p_phi[ip],0);
           float angle = vjet.Angle(vtrack.Vect());
           float z = p_pt[ip]*cos(angle)/tmpjetpt;
           if(gammaxi==1) z = p_pt[ip]*cos(angle)/(phoEtCorrected*phoScale);
           float xi = log(1.0/z);
-	  if(xi<maxxi) maxxi = xi;
-	  if(xi<1) haslowxi = true;
-	  if(xi<2 && xi>1) hasmidxi = true;
+          if(xi<maxxi) maxxi = xi;
+          if(xi<1) haslowxi = true;
+          if(xi<2 && xi>1) hasmidxi = true;
         }
       }
       if(haslowxi) hasmidxi = false;
@@ -318,19 +318,19 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if(hiBin > 60) icent  = 2;
       if(hiBin > 100) icent = 3;
       if(gen.compare("recogen")==0 || gen.compare("recoreco")==0) {
-	hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
-	hjecvsntrk->Fill(ntrkover4,tmpjetpt/gjetpt->at(ij));
-	hntrkvsxi->Fill(maxxi,ntrkover4);
+        hjecvsxi->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+        hjecvsntrk->Fill(ntrkover4,tmpjetpt/gjetpt->at(ij));
+        hntrkvsxi->Fill(maxxi,ntrkover4);
       }
       if(!isPP && haslowxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
-	tmpjetpt /= lowxicorr[icent];
-	hjetptratio->Fill(tmpjetpt/gjetpt->at(ij));
+        tmpjetpt /= lowxicorr[icent];
+        hjetptratio->Fill(tmpjetpt/gjetpt->at(ij));
       } else if(!isPP && hasmidxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
-	tmpjetpt /= midxicorr[icent];
-	hjetptratiom->Fill(tmpjetpt/gjetpt->at(ij));
+        tmpjetpt /= midxicorr[icent];
+        hjetptratiom->Fill(tmpjetpt/gjetpt->at(ij));
       }
       if(gen.compare("recogen")==0 || gen.compare("recoreco")==0) {
-	hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
+        hjecvsxicorr->Fill(maxxi,tmpjetpt/gjetpt->at(ij));
       }
       for(ip = 0 ; ip < nip ; ++ip)
       {
@@ -392,9 +392,9 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       float tmpjetpt = j_pt_mix[ij_mix];
       if ( whichSys == 2 ) // jes0
       {
-	tmpjetpt *= (1-(0.05*sysScaleFactor));
+        tmpjetpt *= (1-(0.05*sysScaleFactor));
       } else if ( whichSys == 3 ) { //jes0
-	tmpjetpt *= (1+(0.05*sysScaleFactor));
+        tmpjetpt *= (1+(0.05*sysScaleFactor));
       }
       float tmpjeteta = j_eta_mix[ij_mix];
       float tmpjetphi = j_phi_mix[ij_mix];
