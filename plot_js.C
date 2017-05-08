@@ -30,7 +30,13 @@ void set_axis_style(TH1D* h1, int i, int j);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
-int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int gammaxi = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "", int draw_jetcone_only = 0) {
+// options:
+// 0    - js, 0 < r < 1
+// 1    - js, 0 < r < 0.3
+// 2    - ff, 0 < xi < 5
+// 3    - ff, 0.5 < xi < 5
+
+int plot_js(const char* input, const char* plot_name, const char* hist_list, int draw_ratio = 0, int gammaxi = 0, int phoetmin = 60, int jetptmin = 30, const char* sys = "", int option = 0) {
     TFile* finput = new TFile(input, "read");
 
     std::vector<std::string> hist_names;
@@ -84,14 +90,31 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
                 set_data_style(h1[i][k], k);
             else
                 set_hist_style(h1[i][k], k);
+
             set_axis_style(h1[i][k], i, 0);
+            switch (option) {
+                case 0:
+                    h1[i][k]->SetAxisRange(0.05, 50, "Y");
+                    break;
+                case 1:
+                    h1[i][k]->SetAxisRange(0, 0.3, "X");
+                    h1[i][k]->SetAxisRange(0.05, 50, "Y");
+                    break;
+                case 2:
+                    h1[i][k]->SetAxisRange(0, 4, "Y");
+                    break;
+                case 3:
+                    h1[i][k]->SetAxisRange(0.5, 5, "X");
+                    h1[i][k]->SetAxisRange(0, 4, "Y");
+                    break;
+                default:
+                    break;
+            }
 
             if (gammaxi)
                 h1[i][k]->SetYTitle("#rho_{#gamma} (r)");
             else
                 h1[i][k]->SetYTitle("#rho_{jet} (r)");
-            if (draw_jetcone_only)
-                h1[i][k]->SetAxisRange(0, 0.3, "X");
         }
 
         h1[i][0]->Draw();
@@ -156,9 +179,24 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
                 hratio[i][r]->SetYTitle("Ratio");
 
                 set_axis_style(hratio[i][r], i, 1);
-                hratio[i][r]->SetAxisRange(0, 3, "Y");
-                if (draw_jetcone_only)
-                    hratio[i][r]->SetAxisRange(0, 0.3, "X");
+                switch (option) {
+                    case 0:
+                        hratio[i][r]->SetAxisRange(0, 3, "Y");
+                        break;
+                    case 1:
+                        hratio[i][r]->SetAxisRange(0, 0.3, "X");
+                        hratio[i][r]->SetAxisRange(0, 3, "Y");
+                        break;
+                    case 2:
+                        hratio[i][r]->SetAxisRange(0.5, 1.5, "Y");
+                        break;
+                    case 3:
+                        hratio[i][r]->SetAxisRange(0.5, 5, "X");
+                        hratio[i][r]->SetAxisRange(0.5, 1.5, "Y");
+                        break;
+                    default:
+                        break;
+                }
 
                 hratio[i][r]->Draw("same");
             }
@@ -331,7 +369,6 @@ void set_data_style(TH1D* h1, int k) {
 }
 
 void set_axis_style(TH1D* h1, int i, int j) {
-    h1->SetAxisRange(0.05, 50, "Y");
     h1->SetNdivisions(609);
 
     TAxis* x_axis = h1->GetXaxis();
