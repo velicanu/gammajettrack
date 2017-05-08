@@ -82,7 +82,13 @@ int plot_js(const char* input, const char* plot_name, const char* hist_list, int
     TH1D* hratio[4][layers-1] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
-        gPad->SetLogy();
+        switch (option) {
+            case 0: case 1:
+                gPad->SetLogy();
+                break;
+            default:
+                break;
+        }
 
         for (std::size_t k=0; k<layers; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
