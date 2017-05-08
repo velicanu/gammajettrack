@@ -123,8 +123,6 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     p_ev_mix = nev_mix;
   }
 
-  printf("%lx %lx\n", (uintptr_t)geneta, (uintptr_t)genphi);
-
   // main loop
   for (int64_t jentry = 0; jentry < nentries; jentry++) {
     if (jentry % 10000 == 0) { printf("%li/%li\n", jentry, nentries); }
@@ -230,7 +228,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           for (int ip = 0; ip < nip; ++ip) {
             if ((*p_pt)[ip] < trkptmin) continue;
             float dphi = acos(cos(tmpjetphi - (*p_phi)[ip]));
-            float deta = fabs(tmpjeteta - (*p_eta)[ip]);
+            float deta = tmpjeteta - (*p_eta)[ip];
             float deltar2 = (dphi * dphi) + (deta * deta);
             if (deltar2 < 0.09) {
               TLorentzVector vtrack;
@@ -281,7 +279,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           }
 
           float dphi = acos(cos(tmpjetphi - (*p_phi)[ip]));
-          float deta = fabs(tmpjeteta - (*p_eta)[ip]);
+          float deta = tmpjeteta - (*p_eta)[ip];
           float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
@@ -304,7 +302,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           }
 
           float dphi = acos(cos(tmpjetphi - (*p_phi_mix)[ip_mix]));
-          float deta = fabs(tmpjeteta - (*p_eta_mix)[ip_mix]);
+          float deta = tmpjeteta - (*p_eta_mix)[ip_mix];
           float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
@@ -380,7 +378,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           }
 
           float dphi = acos(cos(tmpjetphi - (*p_phi_mix)[ip_mix]));
-          float deta = fabs(tmpjeteta - (*p_eta_mix)[ip_mix]);
+          float deta = tmpjeteta - (*p_eta_mix)[ip_mix];
           float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
@@ -401,7 +399,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           }
 
           float dphi = acos(cos(tmpjetphi - (*p_phi_mix)[ip_mix]));
-          float deta = fabs(tmpjeteta - (*p_eta_mix)[ip_mix]);
+          float deta = tmpjeteta - (*p_eta_mix)[ip_mix];
           float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
