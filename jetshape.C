@@ -266,8 +266,8 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         if (fabs(tmpjeteta) > 1.6) continue;
         if (acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8) continue;
 
-        if (signal) { hjetpt->Fill(tmpjetpt, smear_weight); }
-        if (sideband) { hjetptsideband->Fill(tmpjetpt, smear_weight); }
+        if (signal) { hjetpt->Fill(tmpjetpt, weight * smear_weight); }
+        if (sideband) { hjetptsideband->Fill(tmpjetpt, weight * smear_weight); }
 
         // raw jets - jetshape
         for (int ip = 0; ip < nip; ++ip) {
@@ -363,8 +363,8 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         if (fabs(tmpjeteta) > 1.6) continue;
         if (acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8) continue;
 
-        if (signal) { hjetptjetmix->Fill(tmpjetpt, smear_weight / nmixedjetevents); }
-        if (sideband) { hjetptjetmixsideband->Fill(tmpjetpt, smear_weight / nmixedjetevents); }
+        if (signal) { hjetptjetmix->Fill(tmpjetpt, weight * smear_weight / nmixedjetevents); }
+        if (sideband) { hjetptjetmixsideband->Fill(tmpjetpt, weight * smear_weight / nmixedjetevents); }
 
         // mix jets - jetshape
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
