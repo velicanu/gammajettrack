@@ -212,6 +212,8 @@ int draw_ff(std::string sample, const char* type, const char* fname, const char*
 
         hff_final[i]->Scale(1.0/purity[i]);
         hff_final[i]->Add(hff_sideband[i], (purity[i] - 1.0)/purity[i]);
+
+        hff_final[i]->Scale(1.0/hff_final[i]->GetBinWidth(1));
     }
 
     fout->Write("", TObject::kOverwrite);
