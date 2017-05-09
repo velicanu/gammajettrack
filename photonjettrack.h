@@ -225,6 +225,7 @@ public :
    std::vector<int>   *eN;
    std::vector<int>   *muN;
    std::vector<bool>   *jetID;
+   std::vector<int>   *npfcand_4;
    Int_t           ngen;
    std::vector<int>     *genmatchindex;
    std::vector<float>   *genpt;
@@ -284,6 +285,7 @@ public :
    std::vector<int>   *muN_mix;
    std::vector<bool>   *jetID_mix;
    std::vector<int>     *nmixEv_mix;
+   std::vector<int>     *npfcand_4_mix;
    Int_t           ngen_mix;
    std::vector<float>   *genpt_mix;
    std::vector<float>   *geneta_mix;
@@ -384,6 +386,7 @@ public :
    TBranch        *b_eN;   //!
    TBranch        *b_muN;   //!
    TBranch        *b_jetID;   //!
+   TBranch        *b_npfcand_4;   //!
    TBranch        *b_ngen;   //!
    TBranch        *b_genmatchindex;   //!
    TBranch        *b_genpt;   //!
@@ -443,6 +446,7 @@ public :
    TBranch        *b_muN_mix;   //!
    TBranch        *b_jetID_mix;   //!
    TBranch        *b_nmixEv_mix;   //!
+   TBranch        *b_npfcand_4_mix;   //!
    TBranch        *b_ngen_mix;   //!
    TBranch        *b_genpt_mix;   //!
    TBranch        *b_geneta_mix;   //!
@@ -609,6 +613,7 @@ void photonjettrack::Init(TTree* tree, TTree* pfctree)
    eN = 0;
    muN = 0;
    jetID = 0;
+   npfcand_4 = 0;
    genmatchindex = 0;
    genpt = 0;
    geneta = 0;
@@ -659,6 +664,7 @@ void photonjettrack::Init(TTree* tree, TTree* pfctree)
    muN_mix = 0;
    jetID_mix = 0;
    nmixEv_mix = 0;
+   npfcand_4_mix = 0;
    genpt_mix = 0;
    geneta_mix = 0;
    genphi_mix = 0;
@@ -733,6 +739,7 @@ void photonjettrack::Init(TTree* tree, TTree* pfctree)
    fChain->SetBranchAddress("eN", &eN, &b_eN);
    fChain->SetBranchAddress("muN", &muN, &b_muN);
    fChain->SetBranchAddress("jetID", &jetID, &b_jetID);
+   fChain->SetBranchAddress("npfcand_4", &npfcand_4, &b_npfcand_4);
    fChain->SetBranchAddress("ngen", &ngen, &b_ngen);
    fChain->SetBranchAddress("genmatchindex", &genmatchindex, &b_genmatchindex);
    fChain->SetBranchAddress("genpt", &genpt, &b_genpt);
@@ -792,6 +799,7 @@ void photonjettrack::Init(TTree* tree, TTree* pfctree)
    fChain->SetBranchAddress("muN_mix", &muN_mix, &b_muN_mix);
    fChain->SetBranchAddress("jetID_mix", &jetID_mix, &b_jetID_mix);
    fChain->SetBranchAddress("nmixEv_mix", &nmixEv_mix, &b_nmixEv_mix);
+   fChain->SetBranchAddress("npfcand_4_mix", &npfcand_4_mix, &b_npfcand_4_mix);
    fChain->SetBranchAddress("ngen_mix", &ngen_mix, &b_ngen_mix);
    fChain->SetBranchAddress("genpt_mix", &genpt_mix, &b_genpt_mix);
    fChain->SetBranchAddress("geneta_mix", &geneta_mix, &b_geneta_mix);

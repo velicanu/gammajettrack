@@ -116,6 +116,7 @@ class photonJetTrackTree {
     std::vector<int> eN;
     std::vector<int> muN;
     std::vector<bool> jetID;
+    std::vector<int> npfcand_4;
 
     int ngen;
     std::vector<int> genmatchindex;
@@ -181,6 +182,7 @@ class photonJetTrackTree {
     std::vector<int> muN_mix;
     std::vector<bool> jetID_mix;
     std::vector<int> nmixEv_mix;
+    std::vector<int> npfcand_4_mix;
 
     int ngen_mix;
     std::vector<float> genpt_mix;
@@ -292,6 +294,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("eN", &eN);
     t->Branch("muN", &muN);
     t->Branch("jetID", &jetID);
+    t->Branch("npfcand_4", &npfcand_4);
 
     t->Branch("ngen", &ngen, "ngen/I");
     t->Branch("genmatchindex", &genmatchindex);
@@ -357,6 +360,7 @@ void photonJetTrackTree::create_tree(TTree* t) {
     t->Branch("muN_mix", &muN_mix);
     t->Branch("jetID_mix", &jetID_mix);
     t->Branch("nmixEv_mix", &nmixEv_mix);
+    t->Branch("npfcand_4_mix", &npfcand_4_mix);
 
     t->Branch("ngen_mix", &ngen_mix, "ngen_mix/I");
     t->Branch("genpt_mix", &genpt_mix);
@@ -457,6 +461,7 @@ void photonJetTrackTree::clear_vectors() {
     eN.clear();
     muN.clear();
     jetID.clear();
+    npfcand_4.clear();
 
     genmatchindex.clear();
     genpt.clear();
@@ -512,6 +517,7 @@ void photonJetTrackTree::clear_vectors() {
     muN_mix.clear();
     jetID_mix.clear();
     nmixEv_mix.clear();
+    npfcand_4_mix.clear();
 
     genpt_mix.clear();
     geneta_mix.clear();

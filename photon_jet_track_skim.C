@@ -8,6 +8,7 @@
 #include "jet_tree.h"
 #include "track_tree.h"
 #include "genpart_tree.h"
+#include "particleflow_tree.h"
 
 #include "L2L3ResidualWFits.h"
 #include "getTrkCorr.h"
@@ -129,6 +130,11 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     gpt.read_tree(genpart_tree);
   }
 
+  TTree* particleflow_tree = (TTree*)finput->Get("pfcandAnalyzer/pfTree");
+  if (!particleflow_tree) {printf("Could not access particle flow tree!\n"); return 1; }
+  particleflow_tree->SetBranchStatus("*", 0);
+  particleflowTree pft(particleflow_tree);
+
   /**********************************************************
   * OPEN MINBIAS MIXING FILE
   **********************************************************/
@@ -139,11 +145,13 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
   TTree* jet_tree_for_trk_corr_mix = 0;
   TTree* track_tree_mix = 0;
   TTree* genpart_tree_mix = 0;
+  TTree* particleflow_tree_mix = 0;
 
   jetTree jt_mix;
   jetTree jt_trkcorr_mix;
   trackTree tt_mix;
   genpartTree gpt_mix;
+  particleflowTree pft_mix;
 
   int hiBin_mix;
   float vz_mix;
@@ -193,6 +201,11 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
       genpart_tree_mix->SetBranchStatus("*", 0);
       gpt_mix.read_tree(genpart_tree_mix);
     }
+
+    particleflow_tree_mix = (TTree*)fmixing->Get("pfcandAnalyzer/pfTree");
+    if (!particleflow_tree_mix) { printf("Could not access particle flow tree!\n"); return 1; }
+    particleflow_tree_mix->SetBranchStatus("*", 0);
+    pft_mix.read_tree(particleflow_tree_mix);
   }
 
   /**********************************************************
@@ -263,7 +276,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     event_tree->GetEntry(j);
 
     hlt_tree->GetEntry(j);
-    if (j % 500 == 0) { printf("processing event: %i / %i\n", j, end); }
+    if (j % 1 == 0) { printf("processing event: %i / %i\n", j, end); }
     if (j == end) { printf("done: %i\n", end); break; }
 
     if (fabs(vz) > 15) continue;
@@ -404,9 +417,12 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     centBin = std::min(centBin, 3);
     //! (2.3) Begin jet cuts and selection
     jet_tree->GetEntry(j);
+    particleflow_tree->GetEntry(j);
 
     int njet = 0;
     int nTrk = 0;
+
+    printf("jet/particle flow\n");
 
     for (int ij = 0; ij < jt.nref; ij++) {
       if (jt.jtpt[ij] > jetptmin && fabs(jt.jteta[ij]) < 2 && acos(cos(jt.jtphi[ij] - pjtt.phoPhi)) > 7 * pi / 8) {
@@ -459,6 +475,8 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
         pjtt.eN.push_back(jt.eN[ij]);
         pjtt.muN.push_back(jt.muN[ij]);
         pjtt.jetID.push_back(jt.goodJet(ij));
+        printf("test\n");
+        pjtt.npfcand_4.push_back(pft.get_npfcand_4(&jt, ij));
         njet++;
       }
     }
@@ -555,6 +573,8 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     int nTrk_mix = 0;
     int mult_mix = 0;
 
+    printf("begin mixing\n");
+
     //! (2.5) Begin minbias mixing criteria machinery
     if (!isPP && !mixing_file.empty() && mixing_file.compare("null") != 0) {
       int minbias_end = minbias_start;
@@ -600,8 +620,11 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           if (jt_trkcorr_mix.jtpt[k] > maxJetPt_mix) maxJetPt_mix = jt_trkcorr_mix.jtpt[k];
         }
 
+        printf("  jet/particle flow\n");
+
         //! (2.52) Jets from mixed events
         jet_tree_mix->GetEntry(iminbias);
+        particleflow_tree_mix->GetEntry(iminbias);
         for (int ijetmix = 0; ijetmix < jt_mix.nref; ++ijetmix) {
           if (jt_mix.jtpt[ijetmix] < jetptmin) continue;
           if (fabs(jt_mix.jteta[ijetmix]) > 2) continue;
@@ -656,6 +679,8 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
           pjtt.muN_mix.push_back(jt_mix.muN[ijetmix]);
           pjtt.jetID_mix.push_back(jt_mix.goodJet(ijetmix));
           pjtt.nmixEv_mix.push_back(nmix);
+          pjtt.npfcand_4_mix.push_back(pft_mix.get_npfcand_4(&jt_mix, ijetmix));
+          printf("fill jet info, ij: %i, npfcand_4: %i\n", ijetmix, pjtt.npfcand_4_mix.back());
           njet_mix++;
         }
         if (isMC) {
