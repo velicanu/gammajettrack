@@ -127,7 +127,6 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
             purity_ppdata = purity_ppdata_80;
             purity_ppmc = purity_ppmc_80;
             break;
-        case 100:
         case 120:
             purity_pbpbdata = purity_pbpbdata_100;
             purity_pbpbmc = purity_pbpbmc_100;
@@ -153,25 +152,25 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
 
     TH1D* hjetpt[4] = {0};
     TH1D* hjetpt_mix[4] = {0};
-    TH1D* hjetpt_sb[4] = {0};
-    TH1D* hjetpt_mix_sb[4] = {0};
+    TH1D* hjetpt_bkg[4] = {0};
+    TH1D* hjetpt_mix_bkg[4] = {0};
 
     TH1D* hjs[4] = {0};
     TH1D* hjs_ue[4] = {0};
-    TH1D* hjs_jet[4] = {0};
-    TH1D* hjs_jet_ue[4] = {0};
-    TH1D* hjs_sb[4] = {0};
-    TH1D* hjs_ue_sb[4] = {0};
-    TH1D* hjs_jet_sb[4] = {0};
-    TH1D* hjs_jet_ue_sb[4] = {0};
+    TH1D* hjs_mix[4] = {0};
+    TH1D* hjs_mix_ue[4] = {0};
+    TH1D* hjs_bkg[4] = {0};
+    TH1D* hjs_ue_bkg[4] = {0};
+    TH1D* hjs_mix_bkg[4] = {0};
+    TH1D* hjs_mix_ue_bkg[4] = {0};
 
     TH1D* hjs_sub[4] = {0};
-    TH1D* hjs_jet_sub[4] = {0};
-    TH1D* hjs_sb_sub[4] = {0};
-    TH1D* hjs_jet_sb_sub[4] = {0};
+    TH1D* hjs_mix_sub[4] = {0};
+    TH1D* hjs_sub_bkg[4] = {0};
+    TH1D* hjs_mix_sub_bkg[4] = {0};
 
     TH1D* hjs_signal[4] = {0};
-    TH1D* hjs_sideband[4] = {0};
+    TH1D* hjs_background[4] = {0};
 
     TH1D* hjs_final_raw[4] = {0};
     TH1D* hjs_final[4] = {0};
@@ -180,41 +179,40 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         std::string tag = Form("%s_%s_%i_%i", sample.c_str(), type, min_hiBin[i], max_hiBin[i]);
 
         hjetpt[i] = (TH1D*)finput->Get(Form("hjetpt_%s", tag.c_str()));
-        hjetpt_mix[i] = (TH1D*)finput->Get(Form("hjetptjetmix_%s", tag.c_str()));
-        hjetpt_sb[i] = (TH1D*)finput->Get(Form("hjetptsideband_%s", tag.c_str()));
-        hjetpt_mix_sb[i] = (TH1D*)finput->Get(Form("hjetptjetmixsideband_%s", tag.c_str()));
+        hjetpt_mix[i] = (TH1D*)finput->Get(Form("hjetpt_mix_%s", tag.c_str()));
+        hjs[i] = (TH1D*)finput->Get(Form("hjetshape_%s", tag.c_str()));
+        hjs_ue[i] = (TH1D*)finput->Get(Form("hjetshape_ue_%s", tag.c_str()));
+        hjs_mix[i] = (TH1D*)finput->Get(Form("hjetshape_mix_%s", tag.c_str()));
+        hjs_mix_ue[i] = (TH1D*)finput->Get(Form("hjetshape_mix_ue_%s", tag.c_str()));
 
-        hjs[i] = (TH1D*)finput->Get(Form("hgammaffxi_%s", tag.c_str()));
-        hjs_ue[i] = (TH1D*)finput->Get(Form("hgammaffxiuemix_%s", tag.c_str()));
-        hjs_jet[i] = (TH1D*)finput->Get(Form("hgammaffxijetmix_%s", tag.c_str()));
-        hjs_jet_ue[i] = (TH1D*)finput->Get(Form("hgammaffxijetmixue_%s", tag.c_str()));
-        hjs_sb[i] = (TH1D*)finput->Get(Form("hgammaffxisideband_%s", tag.c_str()));
-        hjs_ue_sb[i] = (TH1D*)finput->Get(Form("hgammaffxiuemixsideband_%s", tag.c_str()));
-        hjs_jet_sb[i] = (TH1D*)finput->Get(Form("hgammaffxijetmixsideband_%s", tag.c_str()));
-        hjs_jet_ue_sb[i] = (TH1D*)finput->Get(Form("hgammaffxijetmixuesideband_%s", tag.c_str()));
+        hjetpt_bkg[i] = (TH1D*)finput->Get(Form("hjetpt_bkg_%s", tag.c_str()));
+        hjetpt_mix_bkg[i] = (TH1D*)finput->Get(Form("hjetpt_mix_bkg_%s", tag.c_str()));
+        hjs_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_bkg_%s", tag.c_str()));
+        hjs_ue_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_ue_bkg_%s", tag.c_str()));
+        hjs_mix_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_mix_bkg_%s", tag.c_str()));
+        hjs_mix_ue_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_mix_ue_bkg_%s", tag.c_str()));
 
         hjs_sub[i] = (TH1D*)hjs[i]->Clone(Form("hjs_sub_%s", tag.c_str()));
-        hjs_jet_sub[i] = (TH1D*)hjs_jet[i]->Clone(Form("hjs_jet_sub_%s", tag.c_str()));
-        hjs_sb_sub[i] = (TH1D*)hjs_sb[i]->Clone(Form("hjs_sb_sub_%s", tag.c_str()));
-        hjs_jet_sb_sub[i] = (TH1D*)hjs_jet_sb[i]->Clone(Form("hjs_jet_sb_sub_%s", tag.c_str()));
-
+        hjs_mix_sub[i] = (TH1D*)hjs_mix[i]->Clone(Form("hjs_mix_sub_%s", tag.c_str()));
         hjs_sub[i]->Add(hjs_ue[i], -1);
-        hjs_jet_sub[i]->Add(hjs_jet_ue[i], -1);
-        hjs_sb_sub[i]->Add(hjs_ue_sb[i], -1);
-        hjs_jet_sb_sub[i]->Add(hjs_jet_ue_sb[i], -1);
+        hjs_mix_sub[i]->Add(hjs_mix_ue[i], -1);
+
+        hjs_sub_bkg[i] = (TH1D*)hjs_bkg[i]->Clone(Form("hjs_sub_bkg_%s", tag.c_str()));
+        hjs_mix_sub_bkg[i] = (TH1D*)hjs_mix_bkg[i]->Clone(Form("hjs_mix_sub_bkg_%s", tag.c_str()));
+        hjs_sub_bkg[i]->Add(hjs_ue_bkg[i], -1);
+        hjs_mix_sub_bkg[i]->Add(hjs_mix_ue_bkg[i], -1);
 
         hjs_signal[i] = (TH1D*)hjs_sub[i]->Clone(Form("hjs_signal_%s", tag.c_str()));
-        hjs_sideband[i] = (TH1D*)hjs_sb_sub[i]->Clone(Form("hjs_sideband_%s", tag.c_str()));
-
-        hjs_signal[i]->Add(hjs_jet_sub[i], -1);
+        hjs_signal[i]->Add(hjs_mix_sub[i], -1);
         hjs_signal[i]->Scale(1.0/(hjetpt[i]->Integral() - hjetpt_mix[i]->Integral()));
-        hjs_sideband[i]->Add(hjs_jet_sb_sub[i], -1);
-        hjs_sideband[i]->Scale(1.0/(hjetpt_sb[i]->Integral() - hjetpt_mix_sb[i]->Integral()));
 
-        hjs_final_raw[i] = (TH1D*)hjs_signal[i]->Clone(Form("hjs_final_%s_raw", tag.c_str()));
+        hjs_background[i] = (TH1D*)hjs_sub_bkg[i]->Clone(Form("hjs_background_%s", tag.c_str()));
+        hjs_background[i]->Add(hjs_mix_sub_bkg[i], -1);
+        hjs_background[i]->Scale(1.0/(hjetpt_bkg[i]->Integral() - hjetpt_mix_bkg[i]->Integral()));
 
+        hjs_final_raw[i] = (TH1D*)hjs_signal[i]->Clone(Form("hjs_final_raw_%s", tag.c_str()));
         hjs_final_raw[i]->Scale(1.0/purity[i]);
-        hjs_final_raw[i]->Add(hjs_sideband[i], (purity[i] - 1.0)/purity[i]);
+        hjs_final_raw[i]->Add(hjs_background[i], (purity[i] - 1.0)/purity[i]);
 
         // rebin large deltar
         hjs_final[i] = (TH1D*)hjs_final_raw[i]->Rebin(8, Form("hjs_final_%s", tag.c_str()), rebinning);
