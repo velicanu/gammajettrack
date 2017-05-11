@@ -127,7 +127,7 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
             purity_ppdata = purity_ppdata_80;
             purity_ppmc = purity_ppmc_80;
             break;
-        case 120:
+        case 100:
             purity_pbpbdata = purity_pbpbdata_100;
             purity_pbpbmc = purity_pbpbmc_100;
             purity_ppdata = purity_ppdata_100;
