@@ -203,9 +203,12 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
     }
 
     particleflow_tree_mix = (TTree*)fmixing->Get("pfcandAnalyzer/pfTree");
-    if (!particleflow_tree_mix) { printf("Could not access particle flow tree!\n"); return 1; }
-    particleflow_tree_mix->SetBranchStatus("*", 0);
-    pft_mix.read_tree(particleflow_tree_mix);
+    if (!particleflow_tree_mix) {
+      printf("Could not access particle flow tree!\n");
+    } else {
+      particleflow_tree_mix->SetBranchStatus("*", 0);
+      pft_mix.read_tree(particleflow_tree_mix);
+    }
   }
 
   /**********************************************************
@@ -617,7 +620,7 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
         //! (2.52) Jets from mixed events
         jet_tree_mix->GetEntry(iminbias);
-        particleflow_tree_mix->GetEntry(iminbias);
+        if (particleflow_tree_mix) { particleflow_tree_mix->GetEntry(iminbias); }
         for (int ijetmix = 0; ijetmix < jt_mix.nref; ++ijetmix) {
           if (jt_mix.jtpt[ijetmix] < jetptmin) continue;
           if (fabs(jt_mix.jteta[ijetmix]) > 2) continue;
