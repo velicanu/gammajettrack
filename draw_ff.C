@@ -8,7 +8,9 @@
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
-int draw_ff(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
+float uescale[4] = {1, 1, 0.97, 0.87};
+
+int draw_ff(std::string sample, std::string type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
     TFile* finput = new TFile(fname, "read");
 
     TFile* fout = new TFile(outfname, "update");
@@ -126,7 +128,6 @@ int draw_ff(std::string sample, const char* type, const char* fname, const char*
             purity_ppmc = purity_ppmc_80;
             break;
         case 100:
-        case 120:
             purity_pbpbdata = purity_pbpbdata_100;
             purity_pbpbmc = purity_pbpbmc_100;
             purity_ppdata = purity_ppdata_100;
@@ -174,7 +175,7 @@ int draw_ff(std::string sample, const char* type, const char* fname, const char*
     TH1D* hff_final[4] = {0};
 
     for (int i=0; i<4; ++i) {
-        std::string tag = Form("%s_%s_%i_%i", sample.c_str(), type, min_hiBin[i], max_hiBin[i]);
+        std::string tag = Form("%s_%s_%i_%i", sample.c_str(), type.c_str(), min_hiBin[i], max_hiBin[i]);
 
         hjetpt[i] = (TH1D*)finput->Get(Form("hjetpt_%s", tag.c_str()));
         hjetpt_mix[i] = (TH1D*)finput->Get(Form("hjetptjetmix_%s", tag.c_str()));
@@ -195,9 +196,9 @@ int draw_ff(std::string sample, const char* type, const char* fname, const char*
         hff_sb_sub[i] = (TH1D*)hff_sb[i]->Clone(Form("hff_sb_sub_%s", tag.c_str()));
         hff_jet_sb_sub[i] = (TH1D*)hff_jet_sb[i]->Clone(Form("hff_jet_sb_sub_%s", tag.c_str()));
 
-        hff_sub[i]->Add(hff_ue[i], -1);
+        hff_sub[i]->Add(hff_ue[i], -1 * uescale[i]);
         hff_jet_sub[i]->Add(hff_jet_ue[i], -1);
-        hff_sb_sub[i]->Add(hff_ue_sb[i], -1);
+        hff_sb_sub[i]->Add(hff_ue_sb[i], -1 * uescale[i]);
         hff_jet_sb_sub[i]->Add(hff_jet_ue_sb[i], -1);
 
         hff_signal[i] = (TH1D*)hff_sub[i]->Clone(Form("hff_signal_%s", tag.c_str()));
@@ -212,6 +213,8 @@ int draw_ff(std::string sample, const char* type, const char* fname, const char*
 
         hff_final[i]->Scale(1.0/purity[i]);
         hff_final[i]->Add(hff_sideband[i], (purity[i] - 1.0)/purity[i]);
+
+        hff_final[i]->Scale(1.0/hff_final[i]->GetBinWidth(1));
     }
 
     fout->Write("", TObject::kOverwrite);
