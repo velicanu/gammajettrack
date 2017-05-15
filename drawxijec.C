@@ -18,7 +18,7 @@
 	TH1D * hxijec = new TH1D(Form("hxijec%s_%d_%d",corr.data(),phoetmin[phobin],icent),Form(";%s   jet/gjet p_{T};%s   #gamma E_{T}>%d   jet p_{T}>%d",scent[icent].data(),corr.data(),phoetmin[phobin],jetptmin[phobin]),10,0,5);
 	gStyle->SetOptStat(1);
 	for(int ixi = 0 ; ixi < 10 ; ixi++) {
-	  hjec[icent][ixi] = hjecvsxi[icent]->ProjectionY(Form("jec_%d_%d_%d",centmin[icent],centmax[icent],ixi),ixi,ixi+1);
+	  hjec[icent][ixi] = hjecvsxi[icent]->ProjectionY(Form("jec_%d_%d_%d",centmin[icent],centmax[icent],ixi),ixi+1,ixi+2);
 	  cout<<Form("jec_%d_%d_%d: ",centmin[icent],centmax[icent],ixi)<<hjec[icent][ixi]->GetMean()<<endl;
 	  c1[icent][ixi]  = new TCanvas();
 	  hjec[icent][ixi]->GetXaxis()->SetTitle(Form("%s   jet/gjet p_{T}   %2.1f<#xi<%2.1f",scent[icent].data(),ixi/2.0,(ixi+1)/2.0));
