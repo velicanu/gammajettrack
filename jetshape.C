@@ -58,6 +58,10 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
   hjetshape_mix_ue[0] = new TH1D(Form("hjetshape_mix_ue_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
   hjetshape_mix_ue[1] = new TH1D(Form("hjetshape_mix_ue_bkg_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
 
+  TH1D* hjetshape_mix_signal[2];
+  hjetshape_mix_signal[0] = new TH1D(Form("hjetshape_mix_signal_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+  hjetshape_mix_signal[1] = new TH1D(Form("hjetshape_mix_signal_bkg_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
+
   std::vector<float> sys_table = isPP ? sys_table_pp : sys_table_pbpb;
 
   // generic pointers
@@ -417,6 +421,27 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
             hjetshape_mix[background]->Fill(deltar, (*p_pt_mix)[ip_mix] / refpt * weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet);
+            hjetshape_mix_signal[background]->Fill(deltar, (*p_pt_mix)[ip_mix] / refpt * weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet);
+          }
+        }
+
+        // mix signal - jetshape
+        for (int ip = 0; ip < nip; ++ip) {
+          if ((*p_pt)[ip] < trkptmin) continue;
+          if (part_type_is("gen0", genlevel)) {
+            if ((*sube)[ip] != 0) continue;
+            if ((*chg)[ip] == 0) continue;
+          }
+          if (part_type_is("gen", genlevel)) {
+            if ((*chg)[ip] == 0) continue;
+          }
+
+          float dphi = acos(cos(tmpjetphi - (*p_pt)[ip]));
+          float deta = tmpjeteta - (*p_eta)[ip];
+          float deltar2 = (dphi * dphi) + (deta * deta);
+          if (deltar2 < 1) {
+            float deltar = sqrt(deltar2);
+            hjetshape_mix_signal[background]->Fill(deltar, (*p_pt)[ip] / refpt * weight * (*p_weight)[ip] * smear_weight / nmixedevents_jet);
           }
         }
 
