@@ -182,25 +182,25 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         hjetpt_mix[i] = (TH1D*)finput->Get(Form("hjetpt_mix_%s", tag.c_str()));
         hjs[i] = (TH1D*)finput->Get(Form("hjetshape_%s", tag.c_str()));
         hjs_ue[i] = (TH1D*)finput->Get(Form("hjetshape_ue_%s", tag.c_str()));
-        hjs_mix[i] = (TH1D*)finput->Get(Form("hjetshape_mix_%s", tag.c_str()));
+        hjs_mix[i] = (TH1D*)finput->Get(Form("hjetshape_mix_signal_%s", tag.c_str()));
         hjs_mix_ue[i] = (TH1D*)finput->Get(Form("hjetshape_mix_ue_%s", tag.c_str()));
 
         hjetpt_bkg[i] = (TH1D*)finput->Get(Form("hjetpt_bkg_%s", tag.c_str()));
         hjetpt_mix_bkg[i] = (TH1D*)finput->Get(Form("hjetpt_mix_bkg_%s", tag.c_str()));
         hjs_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_bkg_%s", tag.c_str()));
         hjs_ue_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_ue_bkg_%s", tag.c_str()));
-        hjs_mix_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_mix_bkg_%s", tag.c_str()));
+        hjs_mix_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_mix_signal_bkg_%s", tag.c_str()));
         hjs_mix_ue_bkg[i] = (TH1D*)finput->Get(Form("hjetshape_mix_ue_bkg_%s", tag.c_str()));
 
         hjs_sub[i] = (TH1D*)hjs[i]->Clone(Form("hjs_sub_%s", tag.c_str()));
         hjs_mix_sub[i] = (TH1D*)hjs_mix[i]->Clone(Form("hjs_mix_sub_%s", tag.c_str()));
         hjs_sub[i]->Add(hjs_ue[i], -1);
-        hjs_mix_sub[i]->Add(hjs_mix_ue[i], -1);
+        hjs_mix_sub[i]->Add(hjs_mix_ue[i], -2);
 
         hjs_sub_bkg[i] = (TH1D*)hjs_bkg[i]->Clone(Form("hjs_sub_bkg_%s", tag.c_str()));
         hjs_mix_sub_bkg[i] = (TH1D*)hjs_mix_bkg[i]->Clone(Form("hjs_mix_sub_bkg_%s", tag.c_str()));
         hjs_sub_bkg[i]->Add(hjs_ue_bkg[i], -1);
-        hjs_mix_sub_bkg[i]->Add(hjs_mix_ue_bkg[i], -1);
+        hjs_mix_sub_bkg[i]->Add(hjs_mix_ue_bkg[i], -2);
 
         hjs_signal[i] = (TH1D*)hjs_sub[i]->Clone(Form("hjs_signal_%s", tag.c_str()));
         hjs_signal[i]->Add(hjs_mix_sub[i], -1);
