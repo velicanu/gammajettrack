@@ -10,7 +10,7 @@ fi
 echo "compiling macros..."
 g++ jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o jetshape || exit 1
 g++ draw_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_js || exit 1
-g++ plot_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_js || exit 1
+g++ plot_results.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_results || exit 1
 
 PBPBSKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-Data-skim-170509.root"
 PPSKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170509.root"
