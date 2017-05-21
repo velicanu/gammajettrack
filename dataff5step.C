@@ -232,8 +232,8 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
       rawff_ppdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{#gamma}");
       rawff_ppdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{#gamma}=-ln(p_{T}^{trk}/E_{T}^{#gamma})");
     }
-    rawff_pbpbdata_recoreco[icent]->Write();
-    rawff_ppdata_recoreco[icent]->Write();
+    // rawff_pbpbdata_recoreco[icent]->Write();
+    // rawff_ppdata_recoreco[icent]->Write();
 
   }
 
@@ -268,5 +268,5 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
   //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   // }
-  outf->Close();
+  // outf->Close();
 }
