@@ -140,6 +140,9 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     fChain->GetEntry(jentry);
     pfChain->GetEntry(jentry);
 
+    // check for number of mixed events
+    if (nmix < 3) continue;
+
     // event selections
     if (!isPP) { if (hiBin < centmin || hiBin >= centmax) continue; }
     if (phoNoise == 0) continue;
@@ -304,9 +307,9 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         if (part_type_is("gen0", genlevel)) continue;
 
         // raw jets - underlying event jetshape
-        int nmixedevents_ue = (nmix + 1) / 2;
+        int nmixedevents_ue = (nmix + 2) / 3;
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-          if (((*p_ev_mix)[ip_mix]) % 2 != 0) continue;
+          if (((*p_ev_mix)[ip_mix]) % 3 != 0) continue;
           if ((*p_pt_mix)[ip_mix] < trkptmin) continue;
           if (part_type_is("gen", genlevel)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
@@ -327,9 +330,9 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     if (jet_type_is("gen0", genlevel)) continue;
 
     // mix jet loop
-    int nmixedevents_jet = nmix / 2;
+    int nmixedevents_jet = nmix - (nmix + 2) / 3;
     for (int ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
-      if ((*j_ev_mix)[ij_mix] % 2 != 1) continue;
+      if ((*j_ev_mix)[ij_mix] % 3 == 0) continue;
 
       float tmpjetpt = (*j_pt_mix)[ij_mix];
       float tmpjeteta = (*j_eta_mix)[ij_mix];
@@ -449,7 +452,8 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
         // mix jets - underlying event jetshape
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
-          if ((*j_ev_mix)[ij_mix] != ((*p_ev_mix)[ip_mix] + 1)) continue;
+          if ((*p_ev_mix)[ip_mix] % 3 == 0) continue;
+          if ((*j_ev_mix)[ij_mix] == (*p_ev_mix)[ip_mix]) continue;
           if ((*p_pt_mix)[ip_mix] < trkptmin) continue;
           if (part_type_is("gen", genlevel)) {
             if ((*chg_mix)[ip_mix] == 0) continue;
@@ -460,7 +464,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
           float deltar2 = (dphi * dphi) + (deta * deta);
           if (deltar2 < 1) {
             float deltar = sqrt(deltar2);
-            hjetshape_mix_ue[background]->Fill(deltar, (*p_pt_mix)[ip_mix] / refpt * weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet);
+            hjetshape_mix_ue[background]->Fill(deltar, (*p_pt_mix)[ip_mix] / refpt * weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet / (nmixedevents_jet - 1));
           }
         }
       }

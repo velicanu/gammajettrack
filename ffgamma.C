@@ -224,6 +224,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     for (ij = 0; ij < nij; ij++) {
       if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 ) continue;
       float tmpjetpt = j_pt[ij];
+      tmpjetpt *= 0.98;
       if ( whichSys == 2 ) // jes0
       {
         tmpjetpt *= (1-(0.05*sysScaleFactor));
@@ -252,6 +253,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         tmpjetpt *= smearFactor;
       }
       bool dogensmearing = ( gen.compare("gengen")==0  || gen.compare("genreco")==0 || gen.compare("gengen0")==0 );
+
       // dogensmearing = false;
       if (dogensmearing) {
         int resolutionBin = getResolutionBin(centmin);
@@ -323,10 +325,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         hntrkvsxi->Fill(maxxi,ntrkover4);
       }
       if(!isPP && haslowxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
-        tmpjetpt /= lowxicorr[icent];
+        // tmpjetpt /= lowxicorr[icent];
         hjetptratio->Fill(tmpjetpt/gjetpt->at(ij));
       } else if(!isPP && hasmidxi && (gen.compare("recogen")==0 || gen.compare("recoreco")==0)) {
-        tmpjetpt /= midxicorr[icent];
+        // tmpjetpt /= midxicorr[icent];
         hjetptratiom->Fill(tmpjetpt/gjetpt->at(ij));
       }
       if(gen.compare("recogen")==0 || gen.compare("recoreco")==0) {
@@ -390,6 +392,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
+      tmpjetpt *= 0.98;
       if ( whichSys == 2 ) // jes0
       {
         tmpjetpt *= (1-(0.05*sysScaleFactor));
