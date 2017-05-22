@@ -85,7 +85,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
   std::vector<float>* p_phi_mix;
   std::vector<float>* p_weight_mix;
 
-  std::vector<float> dummy_trkweight(50000, 1);
+  std::vector<float> dummy_trkweight(125000, 1);
 
   if (jet_type_is("reco", genlevel) || jet_type_is("sreco", genlevel)) {
     j_pt = jetptCorr;
