@@ -42,7 +42,7 @@ case \$2 in
     0)
         JETALGO=akPu3PFJetAnalyzer
         ISPP=0
-        NMIX=\$((\$1%40))
+        NMIX=\$((\$1%4))
         NMIX=\$((\$NMIX+1))
         MIXFILE=\$(head -n\${NMIX} \$6 | tail -n1)
         ;;
