@@ -140,7 +140,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     pfChain->GetEntry(jentry);
 
     // check for number of mixed events
-    if (nmix < 3) continue;
+    if (!isPP && nmix < 3) continue;
 
     // event selections
     if (!isPP) { if (hiBin < centmin || hiBin >= centmax) continue; }

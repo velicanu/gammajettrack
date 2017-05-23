@@ -31,9 +31,9 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
 // 9: ISO
 
 void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string genlevel, float trkptmin, int gammaxi, std::string label, int systematic) {
-  // TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
-  // TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
-  // TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
+  TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
+  TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
+  TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
   bool isMC = (sample.find("mc") != std::string::npos);
 
@@ -144,7 +144,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     pfChain->GetEntry(jentry);
 
     // check for number of mixed events
-    if (nmix < 3) continue;
+    if (!isPP && nmix < 3) continue;
 
     // event selections
     if (!isPP) { if (hiBin < centmin || hiBin >= centmax) continue; }
@@ -167,8 +167,8 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     // apply fix to gamma-jet jec
     float jec_fix = isPP ? 0.99 : 0.98;
 
-    // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 
     int centBin = getCentralityBin(centmin);
 
