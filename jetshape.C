@@ -62,6 +62,9 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
   hjetshape_mix_signal[0] = new TH1D(Form("hjetshape_mix_signal_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
   hjetshape_mix_signal[1] = new TH1D(Form("hjetshape_mix_signal_bkg_%s_%s_%d_%d", sample.data(), genlevel.data(), abs(centmin), abs(centmax)), ";r;#rho(r)", 20, 0, 1);
 
+  // TFile* fffjec = new TFile(Form("ffjec_%i_%i.root", (int)phoetmin, (int)jetptcut), "read");
+  // TH1D* hffjec = (TH1D*)fffjec->Get(Form("hffjec_%i_%i", abs(centmin), abs(centmax)));
+
   std::vector<float> sys_table = isPP ? sys_table_pp : sys_table_pbpb;
 
   // generic pointers
@@ -264,6 +267,11 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         //   else if (midxijet) tmpjetpt = tmpjetpt / midxi_jec[centBin];
         // }
 
+        // if (!isPP && jet_type_is("reco", genlevel)) {
+        //   if ((*npfcand_4)[ij] >= hffjec->GetBinLowEdge(1) && (*npfcand_4)[ij] < hffjec->GetBinLowEdge(hffjec->GetNbinsX() + 1))
+        //     tmpjetpt = tmpjetpt / hffjec->GetBinContent(hffjec->FindBin((*npfcand_4)[ij]));
+        // }
+
         switch (systematic) {
           case 1: case 2: case 3: case 4:
             tmpjetpt = tmpjetpt * sys_table[systematic];
@@ -388,6 +396,11 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
         //   if (lowxijet) tmpjetpt = tmpjetpt / lowxi_jec[centBin];
         //   else if (midxijet) tmpjetpt = tmpjetpt / midxi_jec[centBin];
+        // }
+
+        // if (!isPP && jet_type_is("reco", genlevel)) {
+        //   if ((*npfcand_4_mix)[ij_mix] >= hffjec->GetBinLowEdge(1) && (*npfcand_4_mix)[ij_mix] < hffjec->GetBinLowEdge(hffjec->GetNbinsX() + 1))
+        //     tmpjetpt = tmpjetpt / hffjec->GetBinContent(hffjec->FindBin((*npfcand_4_mix)[ij_mix]));
         // }
 
         switch (systematic) {
