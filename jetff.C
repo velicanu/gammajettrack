@@ -458,7 +458,7 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
             float angle = vjet.Angle(vtrack.Vect());
             float z = (*p_pt_mix)[ip_mix] * cos(angle) / refpt;
             float xi = log(1.0 / z);
-            hgammaffxijetmixue[background]->Fill(xi, weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet);
+            hgammaffxijetmixue[background]->Fill(xi, weight * (*p_weight_mix)[ip_mix] * smear_weight / nmixedevents_jet / (nmixedevents_jet - 1));
           }
         }
       }
