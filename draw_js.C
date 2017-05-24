@@ -10,6 +10,8 @@ int max_hiBin[4] = {20, 60, 100, 200};
 
 double rebinning[9] = {0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0};
 
+float uescale[4] = {0.997, 0.99, 0.96, 0.8};
+
 int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
     TFile* finput = new TFile(fname, "read");
 
@@ -194,12 +196,12 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
 
         hjs_sub[i] = (TH1D*)hjs[i]->Clone(Form("hjs_sub_%s", tag.c_str()));
         hjs_mix_sub[i] = (TH1D*)hjs_mix[i]->Clone(Form("hjs_mix_sub_%s", tag.c_str()));
-        hjs_sub[i]->Add(hjs_ue[i], -1);
+        hjs_sub[i]->Add(hjs_ue[i], -1 * uescale[i]);
         hjs_mix_sub[i]->Add(hjs_mix_ue[i], -2);
 
         hjs_sub_bkg[i] = (TH1D*)hjs_bkg[i]->Clone(Form("hjs_sub_bkg_%s", tag.c_str()));
         hjs_mix_sub_bkg[i] = (TH1D*)hjs_mix_bkg[i]->Clone(Form("hjs_mix_sub_bkg_%s", tag.c_str()));
-        hjs_sub_bkg[i]->Add(hjs_ue_bkg[i], -1);
+        hjs_sub_bkg[i]->Add(hjs_ue_bkg[i], -1 * uescale[i]);
         hjs_mix_sub_bkg[i]->Add(hjs_mix_ue_bkg[i], -2);
 
         hjs_signal[i] = (TH1D*)hjs_sub[i]->Clone(Form("hjs_signal_%s", tag.c_str()));
