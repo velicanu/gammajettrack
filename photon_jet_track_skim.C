@@ -356,19 +356,34 @@ int photon_jet_track_skim(std::string input, std::string output, std::string jet
 
     if (!passed) continue;
 
-    if (isHI && isMC) {
-      if (pthat >= 14.95 && pthat < 30.)
-        pjtt.weight = 0.999328;
-      else if (pthat >= 30. && pthat < 50.)
-        pjtt.weight = 0.447420;
-      else if (pthat >= 50. && pthat < 80.)
-        pjtt.weight = 0.153135;
-      else if (pthat >= 80. && pthat < 120.)
-        pjtt.weight = 0.042342;
-      else if (pthat >= 120.)
-        pjtt.weight = 0.012907;
-      else
-        pjtt.weight = 0;
+    if (isMC) {
+      if (isHI) {
+        if (pthat >= 14.95 && pthat < 30.)
+          pjtt.weight = 0.999328;
+        else if (pthat >= 30. && pthat < 50.)
+          pjtt.weight = 0.447420;
+        else if (pthat >= 50. && pthat < 80.)
+          pjtt.weight = 0.153135;
+        else if (pthat >= 80. && pthat < 120.)
+          pjtt.weight = 0.042342;
+        else if (pthat >= 120.)
+          pjtt.weight = 0.012907;
+        else
+          pjtt.weight = 0;
+      } else {
+        if (pthat >= 14.95 && pthat < 30.)
+          pjtt.weight = 0.998988;
+        else if (pthat >= 30. && pthat < 50.)
+          pjtt.weight = 0.091897;
+        else if (pthat >= 50. && pthat < 80.)
+          pjtt.weight = 0.019585;
+        else if (pthat >= 80. && pthat < 120.)
+          pjtt.weight = 0.004078;
+        else if (pthat >= 120.)
+          pjtt.weight = 0.002891;
+        else
+          pjtt.weight = 0;
+      }
     } else {
         pjtt.weight = 1;
     }
