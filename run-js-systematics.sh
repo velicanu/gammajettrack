@@ -14,7 +14,7 @@ if [ $6 = "pbpbdata" ]; then
 elif [ $6 = "ppdata" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170519.root"
     TYPE="srecoreco"
-    MCSKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root"
+    MCSKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root"
     MCSAMPLE="ppmc"
 else
     echo "invalid sample"

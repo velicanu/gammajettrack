@@ -2,14 +2,14 @@
 
 if [ $# -lt 8 ]; then
   echo "Usage: ./run-js-closure.sh [phoetmin] [phoetmax] [jetptmin] [trkptmin] [gammaxi] [sample] [label] [types...]"
-  echo "Example: ./run-js-closure.sh 80 1000 40 1 0 pbpbmc closure sgengen sgenreco recogen recoreco"
+  echo "Example: ./run-js-closure.sh 80 1000 40 1 0 pbpbmc jsclosure sgengen sgenreco recogen recoreco"
   exit 1
 fi
 
 if [ $6 = "pbpbmc" ]; then
     SKIM="/export/d00/scratch/biran/photon-jet-track/PbPb-MC-skim-170519.root"
 elif [ $6 = "ppmc" ]; then
-    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root"
+    SKIM="/export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root"
 else
     echo "invalid sample"
     exit 1
@@ -17,8 +17,6 @@ fi
 
 echo "compiling macros..."
 g++ jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o jetshape || exit 1
-g++ draw_js.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_js || exit 1
-g++ plot_results.C $(root-config --cflags --libs) -Werror -Wall -O2 -o plot_results || exit 1
 
 set -x
 
