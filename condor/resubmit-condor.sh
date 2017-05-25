@@ -13,6 +13,13 @@ do
                 RESUBMIT="${RESUBMIT},${PROCESS}"
             fi
         fi
+    else
+        PROCESS=$(basename $FILE .out)
+        if [ "$RESUBMIT" = "" ]; then
+            RESUBMIT=$PROCESS
+        else
+            RESUBMIT="${RESUBMIT},${PROCESS}"
+        fi
     fi
 done
 
@@ -23,4 +30,4 @@ sed -i "s/__FAILED__/$RESUBMIT/g" skim.condor
 condor_submit skim.condor
 
 # reset skim.condor
-sed -i 's/.*noop.*/#noop_job = !( stringListMember("\$(Process)","__FAILED__") )/' skim.condor
+sed -i 's/.*noop_job.*/#noop_job = !( stringListMember("\$(Process)","__FAILED__") )/' skim.condor
