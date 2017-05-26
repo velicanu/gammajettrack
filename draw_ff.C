@@ -8,7 +8,7 @@
 int min_hiBin[4] = {0, 20, 60, 100};
 int max_hiBin[4] = {20, 60, 100, 200};
 
-float uescale[4] = {1, 1, 0.97, 0.87};
+float uescale[4] = {0.997, 0.99, 0.96, 0.85};
 
 int draw_ff(std::string sample, std::string type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
     TFile* finput = new TFile(fname, "read");

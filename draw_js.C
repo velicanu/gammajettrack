@@ -10,8 +10,6 @@ int max_hiBin[4] = {20, 60, 100, 200};
 
 double rebinning[9] = {0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 1.0};
 
-float uescale[4] = {0.997, 0.99, 0.96, 0.8};
-
 int draw_js(std::string sample, const char* type, const char* fname, const char* outfname, int phoetmin, int purity_group) {
     TFile* finput = new TFile(fname, "read");
 
@@ -151,6 +149,11 @@ int draw_js(std::string sample, const char* type, const char* fname, const char*
         else if (sample == "ppmc")
             purity[i] = purity_ppmc[i];
     }
+
+    float uescale[4] = {0.997, 0.99, 0.96, 0.85};
+    if (sample == "pbpbdata" || sample == "ppdata")
+        for (int i=0; i<4; ++i)
+            uescale[i] = 1.0;
 
     TH1D* hjetpt[4] = {0};
     TH1D* hjetpt_mix[4] = {0};

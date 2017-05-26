@@ -31,9 +31,9 @@ void photonjettrack::ffgammajet(std::string label, int centmin, int centmax, flo
 // 9: ISO
 
 void photonjettrack::jetshape(std::string sample, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string genlevel, float trkptmin, int gammaxi, std::string label, int systematic) {
-  TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
-  TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
-  TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
+  // TFile* fweight = (isPP) ? TFile::Open("pp-weights.root") : TFile::Open("PbPb-weights.root");
+  // TH1D* hvzweight = (TH1D*)fweight->Get("hvz");
+  // TH1D* hcentweight = (TH1D*)fweight->Get("hcent");
 
   bool isMC = (sample.find("mc") != std::string::npos);
 
@@ -167,8 +167,8 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
     // apply fix to gamma-jet jec
     float jec_fix = isPP ? 0.99 : 0.98;
 
-    if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    // if (isMC) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    // if (isMC && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 
     int centBin = getCentralityBin(centmin);
 
@@ -240,12 +240,10 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
         // apply ff-based jec
         // if (!isPP && jet_type_is("reco", genlevel)) {
-        //   bool lowxijet = false;
-        //   bool midxijet = false;
-
         //   TLorentzVector vjet;
         //   vjet.SetPtEtaPhiM(tmpjetpt, tmpjeteta, tmpjetphi, 0);
 
+        //   float min_xi = 99.;
         //   for (int ip = 0; ip < nip; ++ip) {
         //     if ((*p_pt)[ip] < trkptmin) continue;
         //     float dphi = acos(cos(tmpjetphi - (*p_phi)[ip]));
@@ -258,13 +256,12 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         //       float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
         //       float z = (*p_pt)[ip] * cos(angle) / refpt;
         //       float xi = log(1.0 / z);
-        //       if (xi < 1) { lowxijet = true; break; }
-        //       if (xi < 2) midxijet = true;
+        //       if (xi < min_xi) min_xi = xi;
         //     }
         //   }
 
-        //   if (lowxijet) tmpjetpt = tmpjetpt / lowxi_jec[centBin];
-        //   else if (midxijet) tmpjetpt = tmpjetpt / midxi_jec[centBin];
+        //   if (min_xi >= hffjec->GetBinLowEdge(1) && min_xi < hffjec->GetBinLowEdge(hffjec->GetNbinsX() + 1))
+        //     tmpjetpt = tmpjetpt / hffjec->GetBinContent(hffjec->FindBin(min_xi));
         // }
 
         // if (!isPP && jet_type_is("reco", genlevel)) {
@@ -371,12 +368,10 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 
         // apply ff-based jec
         // if (!isPP && jet_type_is("reco", genlevel)) {
-        //   bool lowxijet = false;
-        //   bool midxijet = false;
-
         //   TLorentzVector vjet;
         //   vjet.SetPtEtaPhiM(tmpjetpt, tmpjeteta, tmpjetphi, 0);
 
+        //   float min_xi = 99.;
         //   for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
         //     if ((*p_pt_mix)[ip_mix] < trkptmin) continue;
         //     float dphi = acos(cos(tmpjetphi - (*p_phi_mix)[ip_mix]));
@@ -389,13 +384,12 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
         //       float refpt = gammaxi ? phoEtCorrected : tmpjetpt;
         //       float z = (*p_pt_mix)[ip_mix] * cos(angle) / refpt;
         //       float xi = log(1.0 / z);
-        //       if (xi < 1) { lowxijet = true; break; }
-        //       if (xi < 2) midxijet = true;
+        //       if (xi < min_xi) min_xi = xi;
         //     }
         //   }
 
-        //   if (lowxijet) tmpjetpt = tmpjetpt / lowxi_jec[centBin];
-        //   else if (midxijet) tmpjetpt = tmpjetpt / midxi_jec[centBin];
+        //   if (min_xi >= hffjec->GetBinLowEdge(1) && min_xi < hffjec->GetBinLowEdge(hffjec->GetNbinsX() + 1))
+        //     tmpjetpt = tmpjetpt / hffjec->GetBinContent(hffjec->FindBin(min_xi));
         // }
 
         // if (!isPP && jet_type_is("reco", genlevel)) {
