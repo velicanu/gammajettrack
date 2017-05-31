@@ -85,6 +85,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 
         for (int k=0; k<2; ++k) {
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
+	    h1[i][k]->SetBinContent(1,-999);
             set_hist_style(h1[i][k], k);
             set_axis_style(h1[i][k], i, 0);
             if (draw_log_scale)
