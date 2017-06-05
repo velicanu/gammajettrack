@@ -89,6 +89,8 @@ void drawpp3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     float ngenjets = hgenjetpt_ppmc_gengen0[icent]->Integral();
     rawff_ppmc_gengen0[icent]->Scale(1/ngenjets);
 
+    rawff_ppmc_recoreco[icent]->SetBinContent(1,999);
+    rawff_ppmc_gengen0[icent]->SetBinContent(1,-999);
     if(do_divide==0) {
       rawff_ppmc_recoreco[icent]->Draw("same");
       rawff_ppmc_gengen0[icent]->Draw("hist same");
