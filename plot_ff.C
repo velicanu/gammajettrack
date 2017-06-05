@@ -34,6 +34,12 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 
     TFile* fsysfile = new TFile(fsys, "read");
 
+    float olddatay[10] = { 0.04026 , 0.3153 , 0.8085 , 1.3881 , 1.8831 , 2.1877 , 2.2316 , 2.1016 , 1.6635 , 0.7050 };
+    TH1D * hold = new TH1D("hold","",10,0,5);
+    for( int iold = 0 ; iold < 10 ; iold++ ) {
+      hold->SetBinContent(iold+1,olddatay[iold]);
+    }
+
     std::string systag;
     if(tag.compare("all")==0)    systag="systematics";
     if(tag.compare("jer")==0)    systag="jer_03_plus_plus_diff_abs";
@@ -100,6 +106,10 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	  h1[i][1]->Draw("same e x0");
 	} else {
 	  h1_sys[i][0]->Divide(h1[i][1]);
+	}
+	if(i==0) {
+	  hold->SetLineColor(kBlue);
+	  hold->Draw("same l");
 	}
         TLine * lone = new TLine(0,1,5,1);
         lone->SetLineStyle(9);
@@ -280,7 +290,7 @@ void set_hist_style(TH1D* h1, int k) {
 }
 
 void set_axis_style(TH1D* h1, int i, int j) {
-    h1->SetAxisRange(0, 3, "Y");
+    h1->SetAxisRange(0, 6, "Y");
     h1->SetNdivisions(609);
 
     TAxis* x_axis = h1->GetXaxis();

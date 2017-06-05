@@ -32,7 +32,7 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   float uescale[] = {1,1, 0.97, 0.87};
   TFile *_file0 = TFile::Open(Form("%sall_%d_%d_%d_gammaxi%d.root",inpath.data(),phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
-  const int yaxismax = 4;
+  const int yaxismax = 8;
   float binwidth = 5.000000e-01;
   int centmins[] = {0,20,60,100,140};
   int centmaxs[] = {20,60,100,200,200};
@@ -163,6 +163,8 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawff_pbpbdata_recoreco[icent]->SetMarkerSize(2);
     rawff_ppdata_recoreco[icent]->SetMarkerSize(2);
 
+    rawff_pbpbdata_recoreco[icent]->Scale(1/binwidth);
+    rawff_ppdata_recoreco[icent]->Scale(1/binwidth);
 
     if(do_divide==0) {
       rawff_pbpbdata_recoreco[icent]->Draw("same");
