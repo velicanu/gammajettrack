@@ -1,24 +1,36 @@
 #include "makeMultiPanelCanvas.C"
-float allpuritypbpb[] = {0.725758, 0.720249, 0.753094, 0.703853, 0.730487, 0.756007, 0.741809, 0.737945, 0.725995, 0.786819, 0.704426, 0.743147, 0.775786, 0.827101, 0.715906, 0.710863, 0.739059, 0.687001, 0.719965, 0.743805, 0.720358, 0.724734, 0.719121, 0.758637, 0.699659, 0.73539, 0.76691, 0.731031, 0.730948, 0.717619, 0.786722, 0.695959, 0.733827, 0.771255, 0.836782, 0.749695, 0.739283, 0.788322, 0.711966, 0.763817, 0.786493, 0.816522, 0.733207, 0.719114, 0.785248, 0.705784, 0.734519, 0.769831, 0.84767, 0.772594, 0.766181, 0.802428, 0.720997, 0.80606, 0.822834, 0.774406};
-float allpuritypp[] = {0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.823368, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.846154, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.820975, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.830048, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.846293, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.859037, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.863744, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244, 0.857244};
-float getpurity(float phoetmin, float hibinmin, bool ispp)
+
+//nominal
+
+std::vector<float> purity_pbpbdata_60 = {0.681689, 0.730339, 0.775276, 0.825922};
+std::vector<float> purity_ppdata_60 = {0.841322, 0.841322, 0.841322, 0.841322};
+std::vector<float> purity_pbpbdata_80 = {0.685621, 0.751769, 0.787902, 0.816627};
+std::vector<float> purity_ppdata_80 = {0.853694, 0.853694, 0.853694, 0.853694};
+
+float getpurity(float phoetmin, int centbin, bool ispp)
 {
-  int row = -1;
-  int col = -1;
-  if(phoetmin==40)  row = 0;
-  if(phoetmin==60)  row = 1;
-  if(phoetmin==100) row = 7;
-  if(hibinmin==0)   col = 3;
-  if(hibinmin==20)  col = 4;
-  if(hibinmin==60)  col = 5;
-  if(hibinmin==100) col = 6;
-  if(row>-1 && col > -1 && ispp) return allpuritypp[row*7+col];
-  if(row>-1 && col > -1 && !ispp) return allpuritypbpb[row*7+col];
+  if(phoetmin==60) {
+    if(ispp) {
+      return purity_ppdata_60[0];
+    } else {
+      return purity_pbpbdata_60[centbin];
+    }
+  } else if(phoetmin==80) {
+    if(ispp) {
+      return purity_ppdata_80[0];
+    } else {
+      return purity_pbpbdata_80[centbin];
+    }
+  } else {
+    std::cout<<"pho et currently not implemented"<<endl;
+    exit(1);
+  }
   return 1; //no purity applied
 }
 
-void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0) {
-  TFile *_file0 = TFile::Open(Form("all_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
+void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide = 0, int gammaxi = 0, string inpath="./", string outfname = "outfile.root", int whichpurity = 0) {
+  float uescale[] = {1,1, 0.97, 0.87};
+  TFile *_file0 = TFile::Open(Form("%sall_%d_%d_%d_gammaxi%d.root",inpath.data(),phoetmin,phoetmax,jetptmin,gammaxi));
   const static int ncentbins = 4;
   const int yaxismax = 4;
   float binwidth = 5.000000e-01;
@@ -49,6 +61,8 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
   TH2D * dummy_pbpbsub[ncentbins];
   TLegend * leg_ff_pbpbsub[ncentbins];
 
+  TFile * outf = new TFile(outfname.data(),"recreate");
+
   TCanvas * call = new TCanvas("call","",1600,500);
   makeMultiPanelCanvas(call,ncentbins+1,1,0.02,0.0,-6,0.2,0.04);
 
@@ -69,7 +83,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffjetmix_pbpbdata_recoreco[icent]->Sumw2();
     rawffjetmixue_pbpbdata_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixue_pbpbdata_recoreco[icent]->Sumw2();
-    rawffue_pbpbdata_recoreco[icent]->Scale(-1);
+    rawffue_pbpbdata_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixue_pbpbdata_recoreco[icent]->Scale(-1);
     rawff_pbpbdata_recoreco[icent]->Add(rawffue_pbpbdata_recoreco[icent]);
     rawffjetmix_pbpbdata_recoreco[icent]->Add(rawffjetmixue_pbpbdata_recoreco[icent]);
@@ -94,7 +108,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffjetmixsideband_pbpbdata_recoreco[icent]->Sumw2();
     rawffjetmixuesideband_pbpbdata_recoreco[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixuesideband_pbpbdata_recoreco_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixuesideband_pbpbdata_recoreco[icent]->Sumw2();
-    rawffuesideband_pbpbdata_recoreco[icent]->Scale(-1);
+    rawffuesideband_pbpbdata_recoreco[icent]->Scale(-1*uescale[icent]);
     rawffjetmixuesideband_pbpbdata_recoreco[icent]->Scale(-1);
     rawffsideband_pbpbdata_recoreco[icent]->Add(rawffuesideband_pbpbdata_recoreco[icent]);
     rawffjetmixsideband_pbpbdata_recoreco[icent]->Add(rawffjetmixuesideband_pbpbdata_recoreco[icent]);
@@ -112,7 +126,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawffsideband_pbpbdata_recoreco[icent]->SetMarkerColor(kGreen);
     // rawffsideband_pbpbdata_recoreco[icent]->Draw("same");
 
-    float purity   = getpurity(phoetmin,centmins[icent],false);
+    float purity   = getpurity(phoetmin,icent,false);
     rawff_pbpbdata_recoreco[icent]->Scale(1.0/purity);
     rawffsideband_pbpbdata_recoreco[icent]->Scale(-1.0*(1.0-purity)/purity);
     rawff_pbpbdata_recoreco[icent]->Add(rawffsideband_pbpbdata_recoreco[icent]);
@@ -140,16 +154,20 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     rawff_ppdata_recoreco[icent]->Scale(1.0/nrawjets);
     rawffsideband_ppdata_recoreco[icent]->Scale(1.0/nrawjetssideband);
 
-    float pppurity = getpurity(phoetmin,centmins[icent],true);
-    // rawff_ppdata_recoreco[icent]->Scale(1.0/pppurity);
-    // rawffsideband_ppdata_recoreco[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
-    // rawff_ppdata_recoreco[icent]->Add(rawffsideband_ppdata_recoreco[icent]);
+    float pppurity = getpurity(phoetmin,icent,true);
+    rawff_ppdata_recoreco[icent]->Scale(1.0/pppurity);
+    rawffsideband_ppdata_recoreco[icent]->Scale(-1.0*(1.0-pppurity)/pppurity);
+    rawff_ppdata_recoreco[icent]->Add(rawffsideband_ppdata_recoreco[icent]);
+
+
+    rawff_pbpbdata_recoreco[icent]->SetMarkerSize(2);
+    rawff_ppdata_recoreco[icent]->SetMarkerSize(2);
 
 
     if(do_divide==0) {
       rawff_pbpbdata_recoreco[icent]->Draw("same");
       rawff_ppdata_recoreco[icent]->SetMarkerColor(kRed);
-      rawff_ppdata_recoreco[icent]->Draw("same");
+      // rawff_ppdata_recoreco[icent]->Draw("same");
     } else {
       rawff_pbpbdata_recoreco[icent]->Divide(rawff_ppdata_recoreco[icent]);
       rawff_pbpbdata_recoreco[icent]->Draw("same");
@@ -174,10 +192,10 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     if(icent==0)
     {
       if(do_divide==0) {
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"PbPb FF presideband","p");
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco[icent],"pp FF presideband","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"Final PbPb FF","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco[icent],"","");
       } else {
-        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"PbPb/pp FF presideband","p");
+        leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],"PbPb/pp FF","p");
         leg_ff_pbpbsub[icent]->AddEntry(rawff_ppdata_recoreco[icent],"","");
       }
       // leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_gengen[icent],"Gen FF","l");
@@ -202,6 +220,21 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     }
     leg_ff_pbpbsub[icent]->AddEntry(rawff_pbpbdata_recoreco[icent],Form("%s",cents[icent].data()),"");
     leg_ff_pbpbsub[icent]->Draw();
+
+    if(gammaxi==0) {
+      rawff_pbpbdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{jet}");
+      rawff_pbpbdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{jet}=-ln(p_{T}^{trk}/p_{T}^{jet})");
+      rawff_ppdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{jet}");
+      rawff_ppdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{jet}=-ln(p_{T}^{trk}/p_{T}^{jet})");
+    } else {
+      rawff_pbpbdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{#gamma}");
+      rawff_pbpbdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{#gamma}=-ln(p_{T}^{trk}/E_{T}^{#gamma})");
+      rawff_ppdata_recoreco[icent]->GetYaxis()->SetTitle("dN/d#xi_{#gamma}");
+      rawff_ppdata_recoreco[icent]->GetXaxis()->SetTitle("#xi_{#gamma}=-ln(p_{T}^{trk}/E_{T}^{#gamma})");
+    }
+    // rawff_pbpbdata_recoreco[icent]->Write();
+    // rawff_ppdata_recoreco[icent]->Write();
+
   }
 
   call->cd(1);
@@ -215,7 +248,7 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{jet}");
   else
     ldndxi = new TLatex(0.4,0.5,"dN/d#xi_{#gamma}");
-  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.2);
+  ldndxi->SetTextSize(ldndxi->GetTextSize()*1.4);
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
 
@@ -228,9 +261,12 @@ void dataff4step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
     laxis[ilatex]->Draw();
   }
   ldndxi->Draw();
-  if(do_divide==0) {
-    call->SaveAs(Form("rawminsjetff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
-  } else {
-    call->SaveAs(Form("rawminsjetff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
-  }
+  // if(do_divide==0) {
+  //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d.png",phoetmin,phoetmax,jetptmin,gammaxi));
+  //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
+  // } else {
+  //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
+  //   call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbdata_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
+  // }
+  // outf->Close();
 }
