@@ -246,9 +246,9 @@ public :
    std::vector<int>     *sube;
    Int_t           nmix;
    Int_t           nlooped;
-   Float_t         dvz_mix[24];   //[nmix]
-   Int_t           dhiBin_mix[24];   //[nmix]
-   Float_t         dhiEvtPlanes_mix[24];   //[nmix]
+   Float_t         dvz_mix[60];   //[nmix]
+   Int_t           dhiBin_mix[60];   //[nmix]
+   Float_t         dhiEvtPlanes_mix[60];   //[nmix]
    Int_t           njet_mix;
    std::vector<float>   *jetptCorr_mix;
    std::vector<float>   *jetptCorr_zjet_mix;
