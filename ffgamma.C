@@ -162,9 +162,9 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     }
 
     ismc = (weight!=0);
-    weight=1;
-    if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    // weight=1;
+    // if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    // if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
 
     hvz->Fill(vz,weight);
@@ -222,7 +222,8 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     for (ij = 0; ij < nij; ij++) {
       if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 ) continue;
       float tmpjetpt = j_pt[ij];
-      tmpjetpt *= 0.98; 
+      if(isPP) tmpjetpt *= 0.99; 
+      else     tmpjetpt *= 0.98; 
       if ( whichSys == 2 ) // jes0
       {
 	tmpjetpt *= (1-(0.05*sysScaleFactor));
@@ -266,13 +267,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       // exit(1);
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
-        hjetpt->Fill(tmpjetpt);
-        hgenjetpt->Fill(tmpjetpt);
+        hjetpt->Fill(tmpjetpt,weight);
+        hgenjetpt->Fill(tmpjetpt,weight);
         njets_perevent++;
         xjgsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       if(sideband) {
-        hjetptsideband->Fill(tmpjetpt);
+        hjetptsideband->Fill(tmpjetpt,weight);
         xjgsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012);
@@ -385,7 +386,8 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
-      tmpjetpt *= 0.98;
+      if(isPP)  tmpjetpt *= 0.99;
+      else      tmpjetpt *= 0.98;
       if ( whichSys == 2 ) // jes0
       {
 	tmpjetpt *= (1-(0.05*sysScaleFactor));
@@ -421,13 +423,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       if(signal) {
-        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt,weight/nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       if(sideband) {
-        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents);
+        hjetptjetmixsideband->Fill(tmpjetpt,weight/nmixedjetevents);
         hnmixsideband->Fill(1);
         xjgmixsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }

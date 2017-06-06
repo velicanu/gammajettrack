@@ -8,10 +8,10 @@ fi
 echo running closure histograms
 for i in ${@:7}
 do
-  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root ppmc 0 20 $1 $2 $3 $i $4 $5 $6 &
-  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root ppmc 20 60 $1 $2 $3 $i $4 $5 $6 &
-  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root ppmc 60 100 $1 $2 $3 $i $4 $5 $6 &
-  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170519.root ppmc 100 200 $1 $2 $3 $i $4 $5 $6 &
+  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root ppmc 0 20 $1 $2 $3 $i $4 $5 $6 &
+  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root ppmc 20 60 $1 $2 $3 $i $4 $5 $6 &
+  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root ppmc 60 100 $1 $2 $3 $i $4 $5 $6 &
+  ./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-MC-skim-170524.root ppmc 100 200 $1 $2 $3 $i $4 $5 $6 &
 done
 wait
 
