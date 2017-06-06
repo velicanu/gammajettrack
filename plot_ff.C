@@ -25,7 +25,7 @@ typedef struct box_t {
 
 void divide_canvas(TCanvas* c1, int rows, int columns, float margin, float edge, float row_scale_factor, float column_scale_factor);
 void set_hist_style(TH1D* h1, int k);
-void set_axis_style(TH1D* h1, int i, int j);
+void set_axis_style(TH1D* h1, int i, int j, int ratio);
 void adjust_coordinates(box_t& box, float margin, float edge, int i, int j);
 void cover_axis(float margin, float edge, float column_scale_factor, float row_scale_factor);
 
@@ -93,7 +93,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             h1[i][k] = (TH1D*)finput->Get(hist_names[5*k+i+1].c_str());
 	    h1[i][k]->SetBinContent(1,-999);
             set_hist_style(h1[i][k], k);
-            set_axis_style(h1[i][k], i, 0);
+            set_axis_style(h1[i][k], i, 0, ratio);
             if (draw_log_scale)
                 h1[i][k]->SetAxisRange(0.001, 10, "Y");
             if(gammaxi==1)  h1[i][k]->SetYTitle("dN/d#xi_{#gamma}");
@@ -109,7 +109,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	}
 	if(i==0) {
 	  hold->SetLineColor(kBlue);
-	  hold->Draw("same l");
+	  // hold->Draw("same l");
 	}
         TLine * lone = new TLine(0,1,5,1);
         lone->SetLineStyle(9);
@@ -289,8 +289,9 @@ void set_hist_style(TH1D* h1, int k) {
     }
 }
 
-void set_axis_style(TH1D* h1, int i, int j) {
-    h1->SetAxisRange(0, 6, "Y");
+void set_axis_style(TH1D* h1, int i, int j, int ratio) {
+    if(ratio == 0) h1->SetAxisRange(0, 6, "Y");
+    if(ratio == 1) h1->SetAxisRange(0, 3, "Y");
     h1->SetNdivisions(609);
 
     TAxis* x_axis = h1->GetXaxis();
