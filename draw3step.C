@@ -20,6 +20,7 @@ float getpurity(float phoetmin, float hibinmin, bool ispp)
 }
 
 void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
+  float uescale[] = {1,1, 0.97, 0.7};
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   TFile *_fout = new TFile("pbpbmcff.root","recreate");
   const static int ncentbins = 4;
@@ -70,8 +71,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmix_pbpbmc_gengen[icent]->Sumw2();
     rawffjetmixue_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixue_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixue_pbpbmc_gengen[icent]->Sumw2();
-    rawffue_pbpbmc_gengen[icent]->Scale(-1);
-    rawffjetmixue_pbpbmc_gengen[icent]->Scale(-1);
+    rawffue_pbpbmc_gengen[icent]->Scale(-1*uescale[icent]);
+    rawffjetmixue_pbpbmc_gengen[icent]->Scale(-1*uescale[icent]);
     rawff_pbpbmc_gengen[icent]->Add(rawffue_pbpbmc_gengen[icent]);
     rawffjetmix_pbpbmc_gengen[icent]->Add(rawffjetmixue_pbpbmc_gengen[icent]);
     rawffjetmix_pbpbmc_gengen[icent]->Scale(-1);
@@ -95,8 +96,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     rawffjetmixsideband_pbpbmc_gengen[icent]->Sumw2();
     rawffjetmixuesideband_pbpbmc_gengen[icent] = (TH1D*)_file0->Get(Form("hgammaffxijetmixuesideband_pbpbmc_gengen_%d_%d",centmins[icent],centmaxs[icent]));
     rawffjetmixuesideband_pbpbmc_gengen[icent]->Sumw2();
-    rawffuesideband_pbpbmc_gengen[icent]->Scale(-1);
-    rawffjetmixuesideband_pbpbmc_gengen[icent]->Scale(-1);
+    rawffuesideband_pbpbmc_gengen[icent]->Scale(-1*uescale[icent]);
+    rawffjetmixuesideband_pbpbmc_gengen[icent]->Scale(-1*uescale[icent]);
     rawffsideband_pbpbmc_gengen[icent]->Add(rawffuesideband_pbpbmc_gengen[icent]);
     rawffjetmixsideband_pbpbmc_gengen[icent]->Add(rawffjetmixuesideband_pbpbmc_gengen[icent]);
     rawffjetmixsideband_pbpbmc_gengen[icent]->Scale(-1);
