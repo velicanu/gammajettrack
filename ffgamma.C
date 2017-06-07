@@ -222,8 +222,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     for (ij = 0; ij < nij; ij++) {
       if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 ) continue;
       float tmpjetpt = j_pt[ij];
-      if(isPP) tmpjetpt *= 0.99; 
-      else     tmpjetpt *= 0.98; 
+      if( gen.compare("recoreco")==0 ) {
+	if(isPP) tmpjetpt *= 0.99; 
+	else     tmpjetpt *= 0.98; 
+      }
       if ( whichSys == 2 ) // jes0
       {
 	tmpjetpt *= (1-(0.05*sysScaleFactor));
@@ -386,8 +388,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       float tmpjetpt = j_pt_mix[ij_mix];
-      if(isPP)  tmpjetpt *= 0.99;
-      else      tmpjetpt *= 0.98;
+      if( gen.compare("recoreco")==0 ) {
+	if(isPP)  tmpjetpt *= 0.99;
+	else      tmpjetpt *= 0.98;
+      }
       if ( whichSys == 2 ) // jes0
       {
 	tmpjetpt *= (1-(0.05*sysScaleFactor));
