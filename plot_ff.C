@@ -40,10 +40,19 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     }
     TFile* fsysfile = new TFile(fsys, "read");
 
-    float olddatay[10] = { 0.04026 , 0.3153 , 0.8085 , 1.3881 , 1.8831 , 2.1877 , 2.2316 , 2.1016 , 1.6635 , 0.7050 };
-    TH1D * hold = new TH1D("hold","",10,0,5);
-    for( int iold = 0 ; iold < 10 ; iold++ ) {
-      hold->SetBinContent(iold+1,olddatay[iold]);
+    float olddatay[4][10] = {
+      {0.04026,0.3153,0.8085,1.3881,1.8831,2.1877,2.2316,2.1016,1.6635,0.7050},
+      {0.04225,0.3197,0.8357,1.4200,1.9076,2.2186,2.2790,2.1055,1.6581,0.7029},
+      {0.04246,0.3173,0.8376,1.4251,1.9223,2.2455,2.3224,2.1200,1.6531,0.6907},
+      {0.02814,0.2198,0.5748,1.0033,1.3923,1.6486,1.7122,1.5091,1.0556,0.4027}
+    };
+    
+    TH1D * hold[4];
+    for(int icent = 0 ; icent < 4 ; icent++) {
+      hold[icent] = new TH1D(Form("hold%d",icent),"",10,0,5);
+      for( int iold = 0 ; iold < 10 ; iold++ ) {
+	hold[icent]->SetBinContent(iold+1,olddatay[icent][iold]);
+      }
     }
 
     std::string systag;
@@ -109,15 +118,15 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	h1[i][0]->Draw("e x0");
 	if(ratio ==0 )
 	{
-	  hpythia[4][2]->Draw("hist same");
+	  // hpythia[4][2]->Draw("hist same");
 	  h1[i][1]->Draw("same e x0");
 	} else {
 	  h1_sys[i][0]->Divide(h1[i][1]);
 	}
-	if(i==0) {
-	  hold->SetLineColor(kBlue);
-	  // hold->Draw("same l");
-	}
+	// if(i==0) {
+	  hold[i]->SetLineColor(kBlue);
+	  hold[i]->Draw("same l");
+	// }
         TLine * lone = new TLine(0,1,5,1);
         lone->SetLineStyle(9);
         if(ratio==1) lone->Draw();
@@ -165,7 +174,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
             adjust_coordinates(prelim_box, margin, edge, 0, 0);
             latexPrelim->DrawLatexNDC(prelim_box.x1, prelim_box.y1, "Preliminary");
 
-            box_t l_box = (box_t) {0.06, 0.64, 0.64, 0.8};
+            box_t l_box = (box_t) {0.06, 0.56, 0.64, 0.8};
             if (draw_log_scale)
                 l_box = (box_t) {0.25, 0.32, 0.84, 0.48};
             adjust_coordinates(l_box, margin, edge, i, 0);
@@ -181,6 +190,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	    {
 	      for (std::size_t m=0; m<2; ++m)
 		l1->AddEntry(h1[0][m], Form("%s Data %s",hist_names[5*m].c_str(),legstring.data()), "pf");
+	      l1->AddEntry(hold[0], "HIN-12-013", "l");
 	    } else {
 	      for (std::size_t m=0; m<1; ++m)
 		l1->AddEntry(h1[0][m], Form("%s/%s %s",hist_names[5*m].c_str(),hist_names[5*(m+1)].c_str(),tag.data()), "pf");
