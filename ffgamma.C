@@ -164,7 +164,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     }
 
     ismc = (weight!=0);
-    weight=1;
+    // weight=1;
     if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
     if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix

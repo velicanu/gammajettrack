@@ -31,7 +31,13 @@ void cover_axis(float margin, float edge, float column_scale_factor, float row_s
 
 int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int draw_log_scale, const std::string tag = "", int gammaxi=-1, int phoetmin=60, int phoetmax=1000, int jetptmin = 30, int ratio = 0) {
     TFile* finput = new TFile(fresults, "read");
-
+    TFile * fpythia = TFile::Open(Form("pythia_%d_1000_uemixff_jetpt%d_pbpbdata_recoreco_%d.root",phoetmin,jetptmin,gammaxi));
+    TH1D * hpythia[4][2] = {0};
+    for(int igamma = 0 ; igamma < 2 ; igamma++) {
+      for(int icent = 0 ; icent < 4 ; icent++ ) {
+	hpythia[4][2] = (TH1D*) fpythia->Get(Form("hgammaffxi_ppmc_recoreco_%d_%d",min_hiBin[icent],max_hiBin[icent]));
+      }
+    }
     TFile* fsysfile = new TFile(fsys, "read");
 
     float olddatay[10] = { 0.04026 , 0.3153 , 0.8085 , 1.3881 , 1.8831 , 2.1877 , 2.2316 , 2.1016 , 1.6635 , 0.7050 };
@@ -82,7 +88,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     h1_sys[1][1] = (TH1D*)fsysfile->Get(Form("hff_final_ppdata_recoreco_20_60_%s",systag.data()));
     h1_sys[2][1] = (TH1D*)fsysfile->Get(Form("hff_final_ppdata_recoreco_60_100_%s",systag.data()));
     h1_sys[3][1] = (TH1D*)fsysfile->Get(Form("hff_final_ppdata_recoreco_100_200_%s",systag.data()));
-    
+
     TH1D* h1[4][2] = {0};
     for (int i=0; i<4; ++i) {
         c1->cd(i+1);
@@ -103,6 +109,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	h1[i][0]->Draw("e x0");
 	if(ratio ==0 )
 	{
+	  hpythia[4][2]->Draw("hist same");
 	  h1[i][1]->Draw("same e x0");
 	} else {
 	  h1_sys[i][0]->Divide(h1[i][1]);

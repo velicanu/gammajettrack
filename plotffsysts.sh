@@ -32,7 +32,3 @@ done
 
 # clean up
 rm finalff_*.root
-
-
-
-
