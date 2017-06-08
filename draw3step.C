@@ -19,7 +19,7 @@ float getpurity(float phoetmin, int centbin)
 
 void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, int do_divide=0, int gammaxi = 0) {
   // float uescale[] = {1,1,1,1};
-  float uescale[] = {1,1, 0.97, 0.87};
+  float uescale[] = {1,1, 0.97, 0.7};
   gStyle->SetFrameLineColor(0);
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,gammaxi));
   TFile *_fout = new TFile("pbpbmcff.root","recreate");
