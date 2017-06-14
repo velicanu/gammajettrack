@@ -125,7 +125,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	}
 	// if(i==0) {
 	  hold[i]->SetLineColor(kBlue);
-	  hold[i]->Draw("same l");
+	  // hold[i]->Draw("same l");
 	// }
         TLine * lone = new TLine(0,1,5,1);
         lone->SetLineStyle(9);
@@ -190,7 +190,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	    {
 	      for (std::size_t m=0; m<2; ++m)
 		l1->AddEntry(h1[0][m], Form("%s Data %s",hist_names[5*m].c_str(),legstring.data()), "pf");
-	      l1->AddEntry(hold[0], "HIN-12-013", "l");
+	      // l1->AddEntry(hold[0], "HIN-12-013", "l");
 	    } else {
 	      for (std::size_t m=0; m<1; ++m)
 		l1->AddEntry(h1[0][m], Form("%s/%s %s",hist_names[5*m].c_str(),hist_names[5*(m+1)].c_str(),tag.data()), "pf");
