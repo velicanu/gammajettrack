@@ -269,14 +269,14 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       // exit(1);
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
-        hjetpt->Fill(tmpjetpt);
-        hgenjetpt->Fill(tmpjetpt);
+        hjetpt->Fill(tmpjetpt,weight);
+        hgenjetpt->Fill(tmpjetpt,weight);
         njets_perevent++;
-        xjgsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale));
+        xjgsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),weight);
       }
       if(sideband) {
-        hjetptsideband->Fill(tmpjetpt);
-        xjgsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale));
+        hjetptsideband->Fill(tmpjetpt,weight);
+        xjgsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),weight);
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012);
       TLorentzVector vjet;
@@ -340,6 +340,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     float nmixedjetevents = nmix/2;
     // nmixedjetevents = 1;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
+      if(checkjetid>0) continue; // no mix jets for quarks
       float tmpjetpt = j_pt_mix[ij_mix];
       if( gen.compare("recoreco")==0 ) {
 	if(isPP) tmpjetpt *= 0.99;
@@ -375,13 +376,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       if(signal) {
-        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents,weight); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       if(sideband) {
-        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents);
+        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents,weight);
         hnmixsideband->Fill(1);
         xjgmixsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
