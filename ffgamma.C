@@ -376,13 +376,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       if(signal) {
-        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents,weight); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt,weight/nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       if(sideband) {
-        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents,weight);
+        hjetptjetmixsideband->Fill(tmpjetpt,weight/nmixedjetevents);
         hnmixsideband->Fill(1);
         xjgmixsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
