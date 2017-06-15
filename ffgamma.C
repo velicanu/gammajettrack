@@ -216,7 +216,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
 
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
-      if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 ) continue;
+      if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 )    continue;
+      if( gen.compare("recoreco")==0 && checkjetid == 1) if( fabs(gjetflavor->at(ij)) > 7 )  continue; //only quark jets
+      if( gen.compare("recoreco")==0 && checkjetid == 2) if( gjetflavor->at(ij) != 21 )      continue; //only gluon jets
+      
       float tmpjetpt = j_pt[ij];
       if( gen.compare("recoreco")==0 ) {
 	if(isPP) tmpjetpt *= 0.99;
