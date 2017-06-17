@@ -59,6 +59,17 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 // this function does the raw FF analysis and writes histograms to output file
 void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor)
 {
+  TFile * fjetweight = TFile::Open(Form("v3syst/nominal_forreweight/all_%d_1000_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,gammaxi));
+  TH1D * pbpbweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbdata_recoreco_%d_%d",centmin,centmax));
+  TH1D * ppweight = (TH1D*)fjetweight->Get(Form("hjetpt_ppdata_recoreco_%d_%d",centmin,centmax));
+  float ppnorm = ppweight->Integral();
+  float pbpbnorm = pbpbweight->Integral();
+  ppweight->Scale(1.0/ppnorm);
+  pbpbweight->Scale(1.0/pbpbnorm);
+  ppweight->Divide(pbpbweight);
+
+
+  
   float phoScale = 1;
   if ( whichSys == 4 ) {        //pes0
     if ( centmin < 60 )  phoScale -= 0.01 * sysScaleFactor;
@@ -264,15 +275,16 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       // cout<<jentry<<" "<<tmpjetpt<<" "<<tmpjeteta<<" "<<tmpjetphi<<endl;
       // exit(1);
+      if(!ismc && isPP) weight = ppweight->GetBinContent(ppweight->FindBin(tmpjetpt));
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
-        hjetpt->Fill(tmpjetpt);
+        hjetpt->Fill(tmpjetpt,weight);
         hgenjetpt->Fill(tmpjetpt);
         njets_perevent++;
         xjgsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       if(sideband) {
-        hjetptsideband->Fill(tmpjetpt);
+        hjetptsideband->Fill(tmpjetpt,weight);
         xjgsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale));
       }
       hphoSigmaIEtaIEta_2012->Fill(phoSigmaIEtaIEta_2012);
@@ -372,13 +384,13 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( fabs(tmpjeteta) > 1.6) continue; //jeteta_mix Cut
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       if(signal) {
-        hjetptjetmix->Fill(tmpjetpt,1./nmixedjetevents); // TODO: double check this
+        hjetptjetmix->Fill(tmpjetpt,weight/nmixedjetevents); // TODO: double check this
         njets_permixevent++;
         hnmixsignal->Fill(1);
         xjgmixsignal->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
       if(sideband) {
-        hjetptjetmixsideband->Fill(tmpjetpt,1./nmixedjetevents);
+        hjetptjetmixsideband->Fill(tmpjetpt,weight/nmixedjetevents);
         hnmixsideband->Fill(1);
         xjgmixsideband->Fill(tmpjetpt/(phoEtCorrected*phoScale),1/nmixedjetevents);
       }
