@@ -13,10 +13,10 @@ fi
 
 wait
 
-./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root ppdata 0 20 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
-./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root ppdata 20 60 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
-./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root ppdata 60 100 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
-./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170406.root ppdata 100 200 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
+./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170519.root ppdata 0 20 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
+./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170519.root ppdata 20 60 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
+./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170519.root ppdata 60 100 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
+./ffgamma.exe /export/d00/scratch/biran/photon-jet-track/pp-Data-skim-170519.root ppdata 100 200 $1 $2 $3 recoreco $4 $5 $6 $7 $8 &
 
 wait
 
