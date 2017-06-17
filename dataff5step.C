@@ -165,7 +165,9 @@ void dataff5step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4
 
     rawff_pbpbdata_recoreco[icent]->Scale(1/binwidth);
     rawff_ppdata_recoreco[icent]->Scale(1/binwidth);
-
+    rawff_pbpbdata_recoreco[icent]->Clone(Form("hgammaffxi_pbpbdata_recoreco_%d_1000_%d_gammaxi%d_%d_%d",phoetmin,jetptmin,gammaxi,centmins[icent],centmaxs[icent]))->Write();
+    rawff_ppdata_recoreco[icent]->Clone(Form("hgammaffxi_ppdata_recoreco_%d_1000_%d_gammaxi%d_%d_%d",phoetmin,jetptmin,gammaxi,centmins[icent],centmaxs[icent]))->Write();
+    
     if(do_divide==0) {
       rawff_pbpbdata_recoreco[icent]->Draw("same");
       rawff_ppdata_recoreco[icent]->SetMarkerColor(kRed);

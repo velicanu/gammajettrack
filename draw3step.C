@@ -22,9 +22,9 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   float uescale[] = {1,1, 0.97, 0.7};
   gStyle->SetFrameLineColor(0);
   TFile *_file0 = TFile::Open(Form("closure_pbpb_%d_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,quarkgluon,gammaxi));
-  TFile *_fout = new TFile("pbpbmcff.root","recreate");
+  TFile *_fout = new TFile(Form("mc_pbpb_%d_%d_%d_%d_gammaxi%d.root",phoetmin,phoetmax,jetptmin,quarkgluon,gammaxi),"recreate");
   const static int ncentbins = 4;
-  float yaxismax = 4.0;
+  float yaxismax = 6.0;
   float yaxismin = 0.0;
   if(do_divide==1) yaxismax = 1.5;
   if(do_divide==1) yaxismin = 0.5;
@@ -132,11 +132,15 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     float ngenjets = hgenjetpt_pbpbmc_gengen0[icent]->Integral();
     rawff_pbpbmc_gengen0[icent]->Scale(1/ngenjets);
 
-    rawff_pbpbmc_recoreco[icent]->SetBinContent(1,999);
-    rawff_pbpbmc_gengen0[icent]->SetBinContent(1,-999);
+    rawff_pbpbmc_recoreco[icent]->SetBinContent(1,0);
+    rawff_pbpbmc_recoreco[icent]->Scale(1/binwidth);
+    rawff_pbpbmc_gengen0[icent]->SetBinContent(1,0);
+    rawff_pbpbmc_gengen0[icent]->Scale(1/binwidth);
     if(do_divide==0) {
       rawff_pbpbmc_recoreco[icent]->Draw("same");
+      rawff_pbpbmc_recoreco[icent]->Clone(Form("hgammaffxi_pbpbmc_recoreco_%d_%d_%d_%d_gammaxi%d_%d_%d",phoetmin,phoetmax,jetptmin,quarkgluon,gammaxi,centmins[icent],centmaxs[icent]));
       rawff_pbpbmc_gengen0[icent]->Draw("hist same");
+      rawff_pbpbmc_gengen0[icent]->Clone();
     } else {
       rawff_pbpbmc_recoreco[icent]->Divide(rawff_pbpbmc_gengen0[icent]);
       rawff_pbpbmc_recoreco[icent]->Draw("same");
@@ -209,7 +213,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
   ldndxi->SetNDC();
   ldndxi->SetTextAngle(90);
 
-  const int nlabels = 5;
+  int nlabels = 5;
+  if(do_divide==0) nlabels=7;
   std::vector<float> fylabels;
   std::vector<string> sylabels;
 
@@ -217,8 +222,8 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     fylabels = {0.6,0.8,1.0,1.2,1.4};
     sylabels = {"0.6","0.8","1.0","1.2","1.4"};
   } else {
-    fylabels = {0,1,2,3,4};
-    sylabels = {"0","1","2","3","4"};
+    fylabels = {0,1,2,3,4,5,6};
+    sylabels = {"0","1","2","3","4","5","6"};
   }
   TLatex * laxis[nlabels];
   for (int ilatex = 0; ilatex < nlabels; ilatex++) {
@@ -248,6 +253,6 @@ void draw3step(int phoetmin, int phoetmax, int jetptmin = 30, int trkptcut = 4, 
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.png",phoetmin,phoetmax,jetptmin,gammaxi));
     call->SaveAs(Form("finalff_%d_%d_uemixff_jetpt%d_pbpbmc_recoreco_%d_ratio.pdf",phoetmin,phoetmax,jetptmin,gammaxi));
   }
-  // _fout->Write();
+  _fout->Write();
   _fout->Save();
 }
