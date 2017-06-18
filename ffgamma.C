@@ -168,7 +168,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       phoetsideband->Fill(phoEtCorrected*phoScale);
     }
 
-    ismc = (weight!=0);
+    ismc = (mult!=0);
     // weight=1;
     if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
     if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
