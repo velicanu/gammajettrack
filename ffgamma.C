@@ -59,14 +59,14 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 // this function does the raw FF analysis and writes histograms to output file
 void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor)
 {
-  TFile * fjetweight = TFile::Open(Form("v3syst/nominal_forreweight/all_%d_1000_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,gammaxi));
+  TFile * fjetweight = TFile::Open(Form("forreweight_all_%d_1000_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,gammaxi));
   TH1D * pbpbweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbdata_recoreco_%d_%d",centmin,centmax));
   TH1D * ppweight = (TH1D*)fjetweight->Get(Form("hjetpt_ppdata_recoreco_%d_%d",centmin,centmax));
   float ppnorm = ppweight->Integral();
   float pbpbnorm = pbpbweight->Integral();
   ppweight->Scale(1.0/ppnorm);
   pbpbweight->Scale(1.0/pbpbnorm);
-  ppweight->Divide(pbpbweight);
+  // ppweight->Divide(pbpbweight);
 
 
   
@@ -275,7 +275,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       // cout<<jentry<<" "<<tmpjetpt<<" "<<tmpjeteta<<" "<<tmpjetphi<<endl;
       // exit(1);
-      if(!ismc && isPP) weight = ppweight->GetBinContent(ppweight->FindBin(tmpjetpt));
+      float fppweight = ppweight->GetBinContent(ppweight->FindBin(tmpjetpt));
+      float fpbpbweight = pbpbweight->GetBinContent(pbpbweight->FindBin(tmpjetpt));
+      if(!ismc && isPP && fppweight>0 ) weight = fpbpbweight/fppweight;
+      // if(!ismc && isPP && tmpjetpt > 34 && tmpjetpt < 35) std::cout<<tmpjetpt<<" "<<weight<<std::endl;
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt,weight);
