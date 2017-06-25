@@ -35,7 +35,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
     TH1D * hpythia[4][2] = {0};
     for(int igamma = 0 ; igamma < 2 ; igamma++) {
       for(int icent = 0 ; icent < 4 ; icent++ ) {
-	hpythia[4][2] = (TH1D*) fpythia->Get(Form("hgammaffxi_ppmc_recoreco_%d_%d",min_hiBin[icent],max_hiBin[icent]));
+	hpythia[icent][igamma] = (TH1D*) fpythia->Get(Form("hgammaffxi_ppmc_recoreco_%d_%d",min_hiBin[icent],max_hiBin[icent]));
       }
     }
     TFile* fsysfile = new TFile(fsys, "read");
@@ -191,6 +191,7 @@ int plot_ff(const char* fresults, const char* fsys, const char* plot_name, int d
 	      for (std::size_t m=0; m<2; ++m)
 		l1->AddEntry(h1[0][m], Form("%s Data %s",hist_names[5*m].c_str(),legstring.data()), "pf");
 	      // l1->AddEntry(hold[0], "HIN-12-013", "l");
+	      // l1->AddEntry(hpythia[0][0], "PYTHIA", "l");
 	    } else {
 	      for (std::size_t m=0; m<1; ++m)
 		l1->AddEntry(h1[0][m], Form("%s/%s %s",hist_names[5*m].c_str(),hist_names[5*(m+1)].c_str(),tag.data()), "pf");
