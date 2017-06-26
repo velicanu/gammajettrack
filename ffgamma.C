@@ -59,6 +59,19 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 // this function does the raw FF analysis and writes histograms to output file
 void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor)
 {
+
+  TFile * fjetweight;
+  TH1D * pbpbweight;
+  TH1D * ppweight;
+  if(whichSys!=999) { // turn off everything to get just jet pt histograms for future weighting
+    fjetweight = TFile::Open(Form("pyreweight_%d_1000_%d_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,checkjetid,gammaxi));
+    pbpbweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbdata_recoreco_%d_%d",centmin,centmax));
+    ppweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbmc_recoreco_%d_%d",centmin,centmax));
+    float ppnorm = ppweight->Integral();
+    float pbpbnorm = pbpbweight->Integral();
+    ppweight->Scale(1.0/ppnorm);
+    pbpbweight->Scale(1.0/pbpbnorm);
+  }
   float phoScale = 1;
   if ( whichSys == 4 ) {        //pes0
     if ( centmin < 60 )  phoScale -= 0.01 * sysScaleFactor;
@@ -67,11 +80,11 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
     if ( centmin < 60 )  phoScale += 0.01 * sysScaleFactor;
     if ( centmin >= 60 ) phoScale += 0.005 * sysScaleFactor;
   }
-  bool ismc;
-  TFile * fvzweight = TFile::Open("fvzweight.root");
-  TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
-  TFile * fcentweight = TFile::Open("fcentweight.root");
-  TH1D * hcentweight = (TH1D*) fcentweight->Get(Form("hcentdata_%d_%d",centmin,centmax));
+  // bool ismc;
+  // TFile * fvzweight = TFile::Open("fvzweight.root");
+  // TH1D * hvzweight = (TH1D*) fvzweight->Get("hvzdata");
+  // TFile * fcentweight = TFile::Open("fcentweight.root");
+  // TH1D * hcentweight = (TH1D*) fcentweight->Get(Form("hcentdata_%d_%d",centmin,centmax));
 
   std::string tag = outfname;
   std::string s_alpha = gen;
@@ -130,14 +143,26 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
   std::vector<float> p_phi;
   std::vector<float> p_phi_mix;
 
-
+  if(whichSys==999) {
+    fChain->SetBranchStatus("*",0);
+    fChain->SetBranchStatus("weight",1);
+    fChain->SetBranchStatus("hiBin",1);
+    fChain->SetBranchStatus("isPP",1);
+    fChain->SetBranchStatus("pho*",1);
+    fChain->SetBranchStatus("nmixEv_mix",1);
+    fChain->SetBranchStatus("njet",1);
+    fChain->SetBranchStatus("jet*",1);
+    fChain->SetBranchStatus("gjet*",1);
+    fChain->SetBranchStatus("ngen",1);
+    fChain->SetBranchStatus("gen*",1);
+  }
 //! (2) Loop
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     if(jentry%10000==0) { std::cout<<jentry<<"/"<<nentries<<std::endl; }
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
-
+    // if(jentry>10000) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 //! (2.1) Event selections
     if(!isPP)
@@ -157,10 +182,10 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       phoetsideband->Fill(phoEtCorrected*phoScale);
     }
 
-    ismc = (weight!=0);
+    // ismc = true;
     // weight=1;
-    if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
-    if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
+    // if(ismc) weight = weight * hvzweight->GetBinContent(hvzweight->FindBin(vz));
+    // if(ismc && !isPP) weight = weight * hcentweight->GetBinContent(hcentweight->FindBin(hiBin));
 //! now we'll loop through the different jet collections first, reco, gen, recomix, and genmix
 
     hvz->Fill(vz,weight);
@@ -214,6 +239,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       p_ev_mix = *nev_mix;
     }
 
+    float eventweight = weight;
     //! Jet loop
     for (ij = 0; ij < nij; ij++) {
       if( gen.compare("gengen0")==0 && (*gensubid)[ij]!=0 )    continue;
@@ -267,6 +293,14 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       if( acos(cos(tmpjetphi - phoPhi)) < 7 * pi / 8 ) continue;
       // cout<<jentry<<" "<<tmpjetpt<<" "<<tmpjeteta<<" "<<tmpjetphi<<endl;
       // exit(1);
+      float fppweight = -1;
+      float fpbpbweight = -1;
+      if(whichSys!=999) {
+	fppweight = ppweight->GetBinContent(ppweight->FindBin(tmpjetpt));
+	fpbpbweight = pbpbweight->GetBinContent(pbpbweight->FindBin(tmpjetpt));
+      }
+      if(fppweight>0 && whichSys!=999 ) weight = eventweight*fpbpbweight/fppweight;
+
       if(signal) {
         // cout<<ijet<<" "<<jetphi[ijet]<<","<<jeteta[ijet]<<endl;
         hjetpt->Fill(tmpjetpt,weight);
@@ -282,7 +316,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
       TLorentzVector vjet;
       if(isPP)  vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
       else      vjet.SetPtEtaPhiM(tmpjetpt,tmpjeteta,tmpjetphi,0);
-
+      if(whichSys==999) continue;
       for(ip = 0 ; ip < nip ; ++ip)
       {
         if(gen.compare("recogen")==0 || gen.compare("gengen")==0 || gen.compare("gengen0")==0) {
@@ -335,6 +369,7 @@ void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, 
         }
       }
     }
+    if(whichSys==999) continue;
 
 //! (2.4) Mix jet loop
     float nmixedjetevents = nmix/2;
