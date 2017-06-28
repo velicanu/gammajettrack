@@ -60,13 +60,14 @@ void photonjettrack::jetshape(std::string sample, int centmin, int centmax, floa
 void photonjettrack::ffgammajet(std::string outfname, int centmin, int centmax, float phoetmin, float phoetmax, float jetptcut, std::string gen, int checkjetid, float trkptmin, int gammaxi, int whichSys, float sysScaleFactor)
 {
 
-  TFile * fjetweight;
-  TH1D * pbpbweight;
-  TH1D * ppweight;
+  TFile * fjetweight = 0;
+  TH1D * pbpbweight = 0;
+  TH1D * ppweight = 0;
   if(whichSys!=999) { // turn off everything to get just jet pt histograms for future weighting
-    fjetweight = TFile::Open(Form("pyreweight_%d_1000_%d_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,checkjetid,gammaxi));
+    fjetweight = TFile::Open(Form("pyreweight_pbpb_%d_1000_%d_%d_gammaxi%d.root",(int)phoetmin,(int)jetptcut,checkjetid,gammaxi));
     pbpbweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbdata_recoreco_%d_%d",centmin,centmax));
     ppweight = (TH1D*)fjetweight->Get(Form("hjetpt_pbpbmc_recoreco_%d_%d",centmin,centmax));
+    std::cout<<pbpbweight<<std::endl;
     float ppnorm = ppweight->Integral();
     float pbpbnorm = pbpbweight->Integral();
     ppweight->Scale(1.0/ppnorm);
