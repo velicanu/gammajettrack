@@ -9,7 +9,7 @@ do
     do
 	for q in `echo ${qg[*]}` 
 	do
-	    hadd -f pyreweight_pbpb_${pho[$pt]}_1000_${jet[$pt]}_${q}_gammaxi${g}.root closure_pbpb_${pho[$pt]}_1000_${jet[$pt]}_${q}_gammaxi${g}.root all_${pho[$pt]}_1000_${jet[$pt]}_gammaxi${g}.root  
+	    hadd -f pyreweight_pbpb_${pho[$pt]}_1000_${jet[$pt]}_${q}_gammaxi${g}.root closure_pbpb_${pho[$pt]}_1000_${jet[$pt]}_${q}_gammaxi${g}.root v3syst/nominal/all_${pho[$pt]}_1000_${jet[$pt]}_gammaxi${g}.root  
 	done
     done
 done
