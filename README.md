@@ -18,6 +18,8 @@ cp closure_* tmp_closure  # just to backup mc histograms since runmc takes a whi
 ## Step 3: Quark gluon fit
 
 ```bash
-./drawqg.sh
+./drawqg.sh               # makes the template histograms ( mc_pbpb.root ), input is closure_*.root and v3syst/nominal/
+./makeallquarkgluon.sh    # makes the plots, input is the output of above , mc_pbpb.root
 ```
+
 
