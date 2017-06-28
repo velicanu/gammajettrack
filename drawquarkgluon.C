@@ -33,7 +33,7 @@ void drawquarkgluon(int phoetmin, int jetptmin, int icent, int datamc, int gamma
   leg->AddEntry(h1,Form("PbPb %s %d-%d%%",sdatamc[datamc].data(),centmins[icent]/2,centmaxs[icent]/2),"pe");
   leg->AddEntry(h22,Form("quark fraction %2.1f%% (%2.1f%%)",quarkfraction*100,error*100),"l");
   leg->AddEntry(h33,Form("gluon fraction %2.1f%% (%2.1f%%)",gluonfraction*100,error*100),"l");
-  leg->AddEntry(fitted,"fit","l");
+  leg->AddEntry(fitted,Form("fit E^{#gamma}_{T}>%d",phoetmin),"l");
   leg->Draw();
   c1->SaveAs(Form("quarkgluon_%d_%d_1000_%d_gammaxi%d_%d_%d.png",datamc,phoetmin,jetptmin,gammaxi,centmins[icent],centmaxs[icent]));
 }

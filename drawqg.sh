@@ -1,13 +1,13 @@
 #!/bin/bash
-a=(60 60 80 80)
-b=(30 30 40 40)
-c=(1 2 1 2)
+phomin=(60 60 60 80 80 80)
+jetmin=(30 30 30 40 40 40)
+qg=(0 1 2 0 1 2)
 
-for i in `seq 0 3`
+for i in `seq 0 5`
 do
     
-    root -b -q draw3step.C\(${a[i]},1000,${b[i]},1,0,0,${c[i]}\)  
-    root -b -q draw3step.C\(${a[i]},1000,${b[i]},1,0,1,${c[i]}\)  
+    root -b -q draw3step.C\(${phomin[i]},1000,${jetmin[i]},1,0,0,${qg[i]}\)  
+    root -b -q draw3step.C\(${phomin[i]},1000,${jetmin[i]},1,0,1,${qg[i]}\)  
 done
 
 ajetptmin=(30 40)

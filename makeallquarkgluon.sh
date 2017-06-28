@@ -4,7 +4,7 @@ gammaxi=(0 1)
 
 for gammaxi in `seq 0 1`
 do
-    for imc in `seq 0 1`
+    for imc in `seq 0 1` # 0 is mc , 1 is data
     do
 	for ipt in `seq 0 1`
 	do
